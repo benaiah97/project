@@ -87,19 +87,23 @@ public class DLRHTTPClient {
 	 * 
 	 */
 	public DLRHTTPClient() {
+
 		logger = EventLogger.getLogger(this.getClass());
+
+		AbstractInitializer abstrInit = AbstractInitializer.getInitializer();
+		props = abstrInit.getProps("DLRCLIENT.properties");
+		
+		//this may be overwritten, depending on transaction type
+		READ_TIMEOUT_STRING = PropertyHelper.readPropsValue("READ_TIMEOUT_MILLIS", props, null);
 
 		// initialize only once
 		if (!INITIALIZED) {
-			AbstractInitializer abstrInit = AbstractInitializer.getInitializer();
 
 			logger.sendEvent("About to Initialize DLRCLIENT.properties file ...",EventType.DEBUG, this);
-			props = abstrInit.getProps("DLRCLIENT.properties");
 			logger.sendEvent("Successfully Initialized DLRCLIENT.properties file ...", EventType.DEBUG, this);
 			ACTIVE_CONNECTION = PropertyHelper.readPropsValue("ACTIVECONN",	props, null);
 			URL_STRING = PropertyHelper.readPropsValue(ACTIVE_CONNECTION,props, null);
 			CONNECT_TIMEOUT_STRING = PropertyHelper.readPropsValue("CONNECT_TIMEOUT_MILLIS", props, null);
-			READ_TIMEOUT_STRING = PropertyHelper.readPropsValue("READ_TIMEOUT_MILLIS", props, null);
 
 			INITIALIZED = true;
 

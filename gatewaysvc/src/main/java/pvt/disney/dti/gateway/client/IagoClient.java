@@ -73,21 +73,24 @@ public class IagoClient {
 	 * Constructor for IagoSoapClient. Gets the logger for the class and initializes connection properties (if not already INITIALIZED).
 	 */
 	public IagoClient() {
+
 		// create the logger
 		logger = EventLogger.getLogger(this.getClass());
 
+		AbstractInitializer abstrInit = AbstractInitializer .getInitializer();
+		props = abstrInit.getProps("IAGO.properties");
+
+		//this may be overwritten, depending on transaction type
+		SOCKET_TIMEOUT = Integer.parseInt(PropertyHelper.readPropsValue("iago.socketTimeout", props, null));
+		
 		if (!INITIALIZED) {
-			AbstractInitializer abstrInit = AbstractInitializer .getInitializer();
 			// initialize IAGO properties
 			logger.sendEvent("About to Initialize IAGO.properties file ...", EventType.DEBUG, this);
-			props = abstrInit.getProps("IAGO.properties");
 			logger.sendEvent("Successfully Initialized IAGO.properties file ...", EventType.DEBUG, this);
 
 			ENDPOINT = PropertyHelper.readPropsValue("iago.endpoint", props,
 					null);
 			
-			SOCKET_TIMEOUT = Integer.parseInt(PropertyHelper.readPropsValue(
-					"iago.socketTimeout", props, null));
 
 			CONNECTION_TIMEOUT = Integer.parseInt(PropertyHelper
 					.readPropsValue("iago.connectionTimeout", props, null));
@@ -151,8 +154,7 @@ public class IagoClient {
 
 			// Convert to Document
 			InputStream in = UtilityXML.getStringToInputStream(xmlRequest);
-			logger.sendEvent("About to build docRequest ...", EventType.DEBUG,
-					this);
+			logger.sendEvent("About to build docRequest ...", EventType.DEBUG,	this);
 			DocumentBuilderFactory docFactory = DocumentBuilderFactoryImpl
 					.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -180,6 +182,8 @@ public class IagoClient {
 			default:
 				break;
 			}
+
+			logger.sendEvent("Resulting SOCKET_TIMEOUT for DTI Transaction Type (" + dtiTxn.getTransactionType() + "): " + SOCKET_TIMEOUT, EventType.INFO, this);
 			conn.setReadTimeout(SOCKET_TIMEOUT);
 
 			logger.sendEvent("Connection established to URL: " + conn.getURL()
@@ -270,6 +274,7 @@ public class IagoClient {
 			logger.sendEvent(
 					"Fell through Caught: " + e + ":" + e.getMessage() + ":" + e
 							.getCause(), EventType.WARN, this);
+			
 			e.printStackTrace();
 			throw new DTIException(IagoClient.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,

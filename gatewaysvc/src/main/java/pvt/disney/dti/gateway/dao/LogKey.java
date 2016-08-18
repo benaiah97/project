@@ -89,14 +89,10 @@ public class LogKey {
 	private static final Integer CMD_QUERY_RESERVATION = new Integer(10);
 	private static final Integer CMD_UPGRADE_ENTITLEMENT = new Integer(11); // 2.10
 	private static final Integer CMD_RENEW_ENTITLEMENT = new Integer(12); // as of 2.16.1, JTL
-<<<<<<< HEAD
-	
-=======
 	private static final Integer CMD_ASSOCIATE_MEDIA_TO_ACCOUNT = new Integer(
 			13); // 2.16.1 BIEST001
 	private static final Integer CMD_TICKERATE_ENTITLEMENT = new Integer(14); // 2.16.1 BIEST001
 
->>>>>>> develop
 	/**
 	 * Constructor for LogKey
 	 */
@@ -927,12 +923,6 @@ public class LogKey {
 			commandCode = CMD_UPGRADE_ENTITLEMENT;
 			break;
 
-<<<<<<< HEAD
-    case RENEWENTITLEMENT: // as of 2.16.1, JTL
-      commandCode = CMD_RENEW_ENTITLEMENT;
-      break;			
-			
-=======
 		case RENEWENTITLEMENT: // as of 2.16.1, JTL
 			commandCode = CMD_RENEW_ENTITLEMENT;
 			break;
@@ -945,7 +935,6 @@ public class LogKey {
 			commandCode = CMD_TICKERATE_ENTITLEMENT;
 			break;
 
->>>>>>> develop
 		case UNDEFINED:
 			commandCode = 0;
 

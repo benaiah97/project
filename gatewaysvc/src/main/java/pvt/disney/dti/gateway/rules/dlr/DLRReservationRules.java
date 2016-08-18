@@ -60,11 +60,7 @@ import pvt.disney.dti.gateway.rules.TransformRules;
  * The Class DLRReservationRules.
  */
 public class DLRReservationRules implements TransformConstants {
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> develop
 	/**
 	 * Transforms a DTI transaction into a eGalaxy XML request.
 	 * 
@@ -186,15 +182,9 @@ public class DLRReservationRules implements TransformConstants {
 		// Pre-processing to "flatten" the DTI order out if
 		// there is an annual pass with a quantity > 1. (As of 2.16.1, JTL)
 		ArrayList<TicketTO> dtiFlatTktList = flattenApQuantities(dtiTktList,
-<<<<<<< HEAD
-				dtiProductMap, resReq );
-	    
-	  // Set the order lines, returning the order total (required by the header)
-=======
 				dtiProductMap, resReq);
 
 		// Set the order lines, returning the order total (required by the header)
->>>>>>> develop
 		BigDecimal orderTotal = setProductOrderLines(resReq, orderTO,
 				dtiProductMap, dtiFlatTktList);
 
@@ -545,26 +535,11 @@ public class DLRReservationRules implements TransformConstants {
 							.getEGalaxyDateFromGCal(dtiDemo.getDateOfBirth());
 					gwDemo.setDateOfBirth(dateOfBirth);
 				}
-<<<<<<< HEAD
-				
-=======
 
->>>>>>> develop
 				// Gender (Added default for unspecified, as of 2.16.1)
 				if (dtiDemo.getGenderType() != DemographicsTO.GenderType.NOTPRESENT) {
 					if (dtiDemo.getGenderType() == DemographicsTO.GenderType.MALE) {
 						gwDemo.setGender("1");
-<<<<<<< HEAD
-					} else if (dtiDemo.getGenderType() == DemographicsTO.GenderType.FEMALE) {
-						gwDemo.setGender("2"); 
-				  } else {
-				    gwDemo.setGender("0");
-				  }
-				
-				  gwLineItemTO.addMember(gwDemo);
-				}
-				
-=======
 					}
 					else if (dtiDemo.getGenderType() == DemographicsTO.GenderType.FEMALE) {
 						gwDemo.setGender("2");
@@ -576,7 +551,6 @@ public class DLRReservationRules implements TransformConstants {
 					gwLineItemTO.addMember(gwDemo);
 				}
 
->>>>>>> develop
 			}
 
 			// add to orderTO

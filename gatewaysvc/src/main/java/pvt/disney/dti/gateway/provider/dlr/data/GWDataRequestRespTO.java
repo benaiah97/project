@@ -22,13 +22,6 @@ public class GWDataRequestRespTO implements Serializable {
 		UNKNOWN
 	}
 
-<<<<<<< HEAD
-  public static enum Status {
-    VALID, VOIDED, RETURNED, REPLACED, PURCHASER, EXPIRED, UPGRADED, REPRINTED, BLOCKED, UNISSUED, UNKNOWN
-  }
-  
-  
-=======
 	public static enum Status {
 		VALID,
 		VOIDED,
@@ -42,7 +35,6 @@ public class GWDataRequestRespTO implements Serializable {
 		UNISSUED,
 		UNKNOWN
 	}
->>>>>>> develop
 
 	private Integer itemKind;
 
@@ -100,23 +92,7 @@ public class GWDataRequestRespTO implements Serializable {
 
 	private String passKindName;
 
-<<<<<<< HEAD
-  private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
-  
-  private String kind; // Added as of 2.11
-  
-  private Integer remainingUse; // Added as of 2.14 JTL
-  
-  private Integer gender; // As of 2.16.1, JTL - used on request.
-  
-  private String genderRespString; // As of 2.16.1, JTL - used on response (Galaxy type violation)
-  
-  private GregorianCalendar dateOfBirth; // As of 2.16.1, JTL
-  
-  private Boolean renewable; // As of 2.16.1, JTL
-=======
 	private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
->>>>>>> develop
 
 	private String kind; // Added as of 2.11
 
@@ -679,61 +655,5 @@ public class GWDataRequestRespTO implements Serializable {
 	public void setRenewable(Boolean renewable) {
 		this.renewable = renewable;
 	}
-
-/**
- * @return the gender
- */
-public Integer getGender() {
-  return gender;
-}
-
-/**
- * @param gender the gender to set
- */
-public void setGender(Integer gender) {
-  this.gender = gender;
-}
-
-/**
- * @return the dateOfBirth
- */
-public GregorianCalendar getDateOfBirth() {
-  return dateOfBirth;
-}
-
-/**
- * @param dateOfBirth the dateOfBirth to set
- */
-public void setDateOfBirth(GregorianCalendar dateOfBirth) {
-  this.dateOfBirth = dateOfBirth;
-}
-
-/**
- * @return the genderRespString
- */
-public String getGenderRespString() {
-  return genderRespString;
-}
-
-/**
- * @param genderRespString the genderRespString to set
- */
-public void setGenderRespString(String genderRespString) {
-  this.genderRespString = genderRespString;
-}
-
-/**
- * @return the renewable
- */
-public Boolean getRenewable() {
-  return renewable;
-}
-
-/**
- * @param renewable the renewable to set
- */
-public void setRenewable(Boolean renewable) {
-  this.renewable = renewable;
-}
 
 }

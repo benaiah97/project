@@ -56,24 +56,30 @@ import com.disney.util.PropertyHelper;
  */
 public class TiXMLHandler extends DefaultHandler {
 
-  public static final String UPGRADE_ALPHA      = "UpgradeAlpha           ";
-  public static final String VOID_TICKET        = "VoidTicket             ";
-  public static final String QUERY_TICKET       = "QueryTicket            ";
-  public static final String RESERVATION        = "Reservation            ";
-  public static final String QUERY_RESERVATION  = "QueryReservation       ";
-  public static final String CREATEALPHA        = "CreateAlpha            ";
-  public static final String UPDATETICKET       = "UpdateTicket           ";
-  public static final String UPDATETRANSACTION  = "UpdateTransaction      ";
-  public static final String UPGRADEENTITLEMENT = "UpgradeEntitlement     "; // 2.10
-  public static final String UPGRADE_ALPHA_REQUEST = "UpgradeAlphaRequest";
-  public static final String VOID_TICKET_REQUEST = "VoidTicketRequest";
-  public static final String QUERY_TICKET_REQUEST = "QueryTicketRequest";
-  public static final String RESERVATION_REQUEST = "ReservationRequest";
-  public static final String CREATE_ALPHA_REQUEST = "CreateTicketRequest";
-  public static final String UPDATE_TICKET_REQUEST = "UpdateTicketRequest";
-  public static final String QUERY_RESERVATION_REQUEST = "QueryReservationRequest";
-  public static final String UPDATE_TRANSACTION_REQUEST = "UpdateTransactionRequest";
-  public static final String UPGRADE_ENTITLEMENT_REQUEST = "UpgradeEntitlementRequest"; // 2.10
+  public static final String UPGRADE_ALPHA      	= "UpgradeAlpha           	";
+  public static final String VOID_TICKET        	= "VoidTicket             	";
+  public static final String QUERY_TICKET       	= "QueryTicket            	";
+  public static final String RESERVATION        	= "Reservation            	";
+  public static final String QUERY_RESERVATION  	= "QueryReservation       	";
+  public static final String CREATEALPHA        	= "CreateAlpha            	";
+  public static final String UPDATETICKET       	= "UpdateTicket           	";
+  public static final String UPDATETRANSACTION  	= "UpdateTransaction      	";
+  public static final String UPGRADEENTITLEMENT 	= "UpgradeEntitlement     	"; // 2.10
+  public static final String ASSOCIATEMEDIATOACCOUNT= "AssociateMediaToAccount	"; // 2.16.1 BIEST001
+  public static final String TICKERATEENTITLEMENT 	= "TickerateEntitlement		"; //2.16.1 BIEST001
+  
+  public static final String UPGRADE_ALPHA_REQUEST 				= "UpgradeAlphaRequest";
+  public static final String VOID_TICKET_REQUEST 				= "VoidTicketRequest";
+  public static final String QUERY_TICKET_REQUEST 				= "QueryTicketRequest";
+  public static final String RESERVATION_REQUEST 				= "ReservationRequest";
+  public static final String QUERY_RESERVATION_REQUEST 			= "QueryReservationRequest";
+  public static final String CREATE_ALPHA_REQUEST 				= "CreateTicketRequest";
+  public static final String UPDATE_TICKET_REQUEST 				= "UpdateTicketRequest";
+  public static final String UPDATE_TRANSACTION_REQUEST 		= "UpdateTransactionRequest";
+  public static final String UPGRADE_ENTITLEMENT_REQUEST 		= "UpgradeEntitlementRequest"; // 2.10
+  public static final String ASSOCIATE_MEDIA_TO_ACCOUNT_REQUEST = "AssociateMediaToAccountRequest"; //2.16.1 BIEST001
+  public static final String TICKERATE_ENTITLEMENT_REQUEST 		= "TickerateEntitlementRequest"; //2.16.1 BIEST001
+  
   public static final String PAYLOAD_ID = "PayloadID";
   public static final String TS_MAC = "TSMAC";
   public static final String TS_LOCATION = "TSLocation";
@@ -307,7 +313,20 @@ public class TiXMLHandler extends DefaultHandler {
           txnType = TransactionType.UPGRADEENTITLEMENT;
         }
       }
-    
+   
+    if (doc.getElementsByTagName(ASSOCIATE_MEDIA_TO_ACCOUNT_REQUEST) != null) { // 2.16.1 BIEST001
+        if (doc.getElementsByTagName(ASSOCIATE_MEDIA_TO_ACCOUNT_REQUEST).getLength() > 0) {
+          returnData.put(ACTION, ASSOCIATEMEDIATOACCOUNT);
+          txnType = TransactionType.ASSOCIATEMEDIATOACCOUNT;
+        }
+      }    
+
+    if (doc.getElementsByTagName(TICKERATE_ENTITLEMENT_REQUEST) != null) { // 2.16.1 BIEST001
+        if (doc.getElementsByTagName(TICKERATE_ENTITLEMENT_REQUEST).getLength() > 0) {
+          returnData.put(ACTION, TICKERATEENTITLEMENT);
+          txnType = TransactionType.TICKERATEENTITLEMENT;
+        }
+      }    
 
     returnData.put(TXN_TYPE, txnType);
 

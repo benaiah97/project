@@ -28,13 +28,8 @@ public class ProductRules {
 	public static final String MALE_GENDER = "M";
 	/** Single character denoting female gender. */
 	public static final String FEMALE_GENDER = "F";
-<<<<<<< HEAD
-  /** Single character denoting female gender. */
-  public static final String UNSPECIFIED_GENDER = "U";	
-=======
 	/** Single character denoting female gender. */
 	public static final String UNSPECIFIED_GENDER = "U";
->>>>>>> develop
 	/** String indicating a "Shipping" day class. */
 	public static final String SHIPPING = "SHIP";
 
@@ -673,28 +668,16 @@ public class ProductRules {
 			/** Validate demographics internals. */
 			for /* each */(DemographicsTO aDemo : /* in */demoList) {
 
-<<<<<<< HEAD
-				// Gender must be male, female, or unspecified by business rule. 
-			  // Note, that when building to TO, any invalid value will default to
-			  // NOTPRESENT.
-=======
 				// Gender must be male, female, or unspecified by business rule.
 				// Note, that when building to TO, any invalid value will default to
 				// NOTPRESENT.
->>>>>>> develop
 				if (aDemo.getGenderType() == GenderType.NOTPRESENT) {
 					throw new DTIException(
 							ProductRules.class,
 							DTIErrorCode.INVALID_TICKET_DEMOGRAPHICS,
-<<<<<<< HEAD
-							"On Product "
-									+ aProdCode
-									+ ", ticket demographics supplied did not meet required " + 
-									" values of M or F or U (unspecified).");
-=======
 							"On Product " + aProdCode + ", ticket demographics supplied did not meet required " + " values of M or F or U (unspecified).");
->>>>>>> develop
 				}
+
 			}
 
 		} // tktListTO

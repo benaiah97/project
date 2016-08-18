@@ -13,20 +13,13 @@ public class GWQueryTicketRqstTO implements Serializable {
 
 	/** Standard serial version UID. */
 	final static long serialVersionUID = 9129231995L;
-<<<<<<< HEAD
-	
-  /** Defines the ticket demographics request type. */
-=======
 
 	/** Defines the ticket demographics request type. */
->>>>>>> develop
 	private boolean includeTktDemographics = false;
 
 	private boolean includePassAttributes = false;
 
 	private boolean includeTicketRedeemability = false;
-	
-	private boolean includeRenewalAttributes = false;
 
 	private boolean includeRenewalAttributes = false;
 
@@ -72,8 +65,6 @@ public class GWQueryTicketRqstTO implements Serializable {
 		this.includePassAttributes = includePassAttributes;
 	}
 
-<<<<<<< HEAD
-=======
 	/**
 	 * @return the includeTicketRedeemability
 	 */
@@ -104,7 +95,6 @@ public class GWQueryTicketRqstTO implements Serializable {
 		this.includeTktDemographics = includeTktDemographics;
 	}
 
->>>>>>> develop
 	/**
 	 * @return the includeRenewalAttributes
 	 */
@@ -119,33 +109,5 @@ public class GWQueryTicketRqstTO implements Serializable {
 	public void setIncludeRenewalAttributes(boolean includeRenewalAttributes) {
 		this.includeRenewalAttributes = includeRenewalAttributes;
 	}
-
-  /**
-   * @return the includeTktDemographics
-   */
-  public boolean isIncludeTktDemographics() {
-    return includeTktDemographics;
-  }
-
-  /**
-   * @param includeTktDemographics the includeTktDemographics to set
-   */
-  public void setIncludeTktDemographics(boolean includeTktDemographics) {
-    this.includeTktDemographics = includeTktDemographics;
-  }
-
-  /**
-   * @return the includeRenewalAttributes
-   */
-  public boolean isIncludeRenewalAttributes() {
-    return includeRenewalAttributes;
-  }
-
-  /**
-   * @param includeRenewalAttributes the includeRenewalAttributes to set
-   */
-  public void setIncludeRenewalAttributes(boolean includeRenewalAttributes) {
-    this.includeRenewalAttributes = includeRenewalAttributes;
-  }
 
 }

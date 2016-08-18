@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD RESORT) -->
-<!--TiXML 1.0  12/17/02  Copyright The Walt Disney Company-->
+<!-- edited with XMLSpy v2015 rel. 3 sp1 (http://www.altova.com) by Tamra F. Biese (WALT DISNEY WORLD RESORT) -->
+<!--TiXML 1.0 12/17/02 Copyright The Walt Disney Company -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
 	<xs:element name="Transmission">
 		<xs:complexType>
@@ -12,19 +12,6 @@
 							<xs:element name="Command">
 								<xs:complexType>
 									<xs:sequence>
-<<<<<<< HEAD
-										<xs:element ref="CommandHeader"/>
-										<xs:element ref="QueryTicketRequest" minOccurs="0"/>
-										<xs:element ref="UpgradeAlphaRequest" minOccurs="0"/>
-										<xs:element ref="VoidTicketRequest" minOccurs="0"/>
-										<xs:element ref="ReservationRequest" minOccurs="0"/>
-										<xs:element ref="CreateTicketRequest" minOccurs="0"/>
-										<xs:element ref="UpdateTicketRequest" minOccurs="0"/>
-										<xs:element ref="UpdateTransactionRequest" minOccurs="0"/>
-										<xs:element ref="UpgradeEntitlementRequest" minOccurs="0"/>
-										<xs:element ref="QueryReservationRequest" minOccurs="0"/>
-										<xs:element ref="RenewEntitlementRequest" minOccurs="0"/>
-=======
 										<xs:element ref="CommandHeader" />
 										<xs:element ref="QueryTicketRequest" minOccurs="0" />
 										<xs:element ref="UpgradeAlphaRequest" minOccurs="0" />
@@ -38,7 +25,6 @@
 										<xs:element ref="RenewEntitlementRequest" minOccurs="0" />
 										<xs:element ref="AssociateMediaToAccountRequest" minOccurs="0" />
 										<xs:element ref="TickerateEntitlementRequest" minOccurs="0" />
->>>>>>> develop
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -797,19 +783,11 @@
 																					</xs:restriction>
 																				</xs:simpleType>
 																			</xs:element>
-<<<<<<< HEAD
-																			<xs:element name="CCName" type="xs:string"/>
-																			<xs:element name="CCVV" type="xs:string" minOccurs="0"/>
-																			<xs:element name="CCStreet" type="xs:string" minOccurs="0"/>
-																			<xs:element name="CCZipcode" type="xs:string" minOccurs="0"/>
-																			<xs:element name="CCType" type="xs:string" minOccurs="0"/>
-=======
 																			<xs:element name="CCName" type="xs:string" />
 																			<xs:element name="CCVV" type="xs:string" minOccurs="0" />
 																			<xs:element name="CCStreet" type="xs:string" minOccurs="0" />
 																			<xs:element name="CCZipcode" type="xs:string" minOccurs="0" />
 																			<xs:element name="CCType" type="xs:string" minOccurs="0" />
->>>>>>> develop
 																		</xs:sequence>
 																	</xs:complexType>
 																</xs:element>
@@ -1066,19 +1044,16 @@
 						<xs:documentation>Defaults to false</xs:documentation>
 					</xs:annotation>
 				</xs:element>
+				<xs:element name="IncludeEntitlementAccount" type="xs:boolean" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Defaults to false</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="IncludeRenewalAttributes" type="xs:boolean" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Defaults to false</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-<<<<<<< HEAD
-=======
-				<xs:element name="IncludeRenewalAttributes" type="xs:boolean" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>Defaults to false</xs:documentation>
-					</xs:annotation>
-				</xs:element>
->>>>>>> develop
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -2204,20 +2179,6 @@
 							<xs:element name="ClientPaymentMethod" minOccurs="0">
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
-<<<<<<< HEAD
-										<xs:enumeration value="CREDIT CARD"/>
-										<xs:enumeration value="DISNEY GIFT CARD"/>
-										<xs:enumeration value="ORGANIZATIONAL CHECK"/>
-										<xs:enumeration value="CASHIER'S CHECK"/>
-										<xs:enumeration value="MONEY ORDER"/>
-										<xs:enumeration value="WIRE TRANSFER"/>
-										<xs:enumeration value="PAY AT PICKUP"/>
-										<xs:enumeration value="MASTER ACCOUNT"/>
-										<xs:enumeration value="SAP JOB NUMBER"/>
-										<xs:enumeration value="TICKET EXCHANGE"/>
-										<xs:enumeration value="MONEY ON ACCOUNT"/>
-										<xs:enumeration value="ACCOUNT CREDIT"/>
-=======
 										<xs:enumeration value="CREDIT CARD" />
 										<xs:enumeration value="DISNEY GIFT CARD" />
 										<xs:enumeration value="ORGANIZATIONAL CHECK" />
@@ -2230,7 +2191,6 @@
 										<xs:enumeration value="TICKET EXCHANGE" />
 										<xs:enumeration value="MONEY ON ACCOUNT" />
 										<xs:enumeration value="ACCOUNT CREDIT" />
->>>>>>> develop
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
@@ -3022,8 +2982,6 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-<<<<<<< HEAD
-=======
 	<xs:element name="AssociateMediaToAccountRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -3042,7 +3000,6 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
->>>>>>> develop
 	<xs:complexType name="ExternalReferenceType">
 		<xs:sequence>
 			<xs:element name="ExternalReferenceType">
@@ -3078,8 +3035,6 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-<<<<<<< HEAD
-=======
 	<xs:complexType name="MediaData">
 		<xs:sequence>
 			<xs:element name="MediaId">
@@ -3166,5 +3121,4 @@
 			<xs:element name="Ticket" type="Ticket" />
 		</xs:choice>
 	</xs:complexType>
->>>>>>> develop
 </xs:schema>

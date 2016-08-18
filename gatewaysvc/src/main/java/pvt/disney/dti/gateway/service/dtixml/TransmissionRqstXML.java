@@ -21,12 +21,14 @@ import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
+import pvt.disney.dti.gateway.request.xsd.AssociateMediaToAccountRequest;
 import pvt.disney.dti.gateway.request.xsd.CommandHeader;
 import pvt.disney.dti.gateway.request.xsd.CreateTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.PayloadHeader;
 import pvt.disney.dti.gateway.request.xsd.QueryReservationRequest;
 import pvt.disney.dti.gateway.request.xsd.QueryTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest;
+import pvt.disney.dti.gateway.request.xsd.TickerateEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.Transmission;
 import pvt.disney.dti.gateway.request.xsd.UpdateTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.UpdateTransactionRequest;
@@ -181,14 +183,6 @@ public class TransmissionRqstXML {
 					.getUpgradeEntitlementRequest();
 			commandBodyTO = UpgradeEntitlementXML.getTO(uEntReq);
 			break;
-<<<<<<< HEAD
-			
-		case RENEWENTITLEMENT: // as of 2.16.1, JTL 
-		  RenewEntitlementRequest rEntReq = payload.getCommand().getRenewEntitlementRequest();
-		  commandBodyTO = RenewEntitlementXML.getTO(rEntReq);
-		  break;
-			
-=======
 
 		case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
 			AssociateMediaToAccountRequest amReq = payload.getCommand()
@@ -208,7 +202,6 @@ public class TransmissionRqstXML {
 			commandBodyTO = RenewEntitlementXML.getTO(rEntReq);
 			break;
 
->>>>>>> develop
 		default:
 			break;
 

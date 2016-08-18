@@ -17,19 +17,6 @@ public class QueryTicketRequestTO extends CommandBodyTO implements Serializable 
 	/** Standard serial version UID. */
 	final static long serialVersionUID = 9129231995L;
 
-<<<<<<< HEAD
-//  /** Defines the ticket demographics request type. */
-//  public enum TktDemographicsRequestType {
-//    TRUE, FALSE, RENEWAL
-//  };
-  
-//  /** Defines what the string value of true is. */
-//  private final static String TRUESTRING = "TRUE";
-//  
-//  /** Defines what the string value of all is. */
-//  private final static String RENEWALSTRING = "RENEWAL";
-	
-=======
 	// /** Defines the ticket demographics request type. */
 	// public enum TktDemographicsRequestType {
 	// TRUE, FALSE, RENEWAL
@@ -41,46 +28,31 @@ public class QueryTicketRequestTO extends CommandBodyTO implements Serializable 
 	// /** Defines what the string value of all is. */
 	// private final static String RENEWALSTRING = "RENEWAL";
 
->>>>>>> develop
 	/**
-	 * An array list of tickets (although generally there should only be one,
-	 * this matches the XML specification.
+	 * An array list of tickets (although generally there should only be one, this matches the XML specification.
 	 */
 	private ArrayList<TicketTO> tktList = new ArrayList<TicketTO>();
 
 	/**
-	 * An optional value that determines if ticket demographics should be
-	 * returned in the response.
+	 * An optional value that determines if ticket demographics should be returned in the response.
 	 */
 	private boolean includeTktDemographics = false;
 
 	/**
-	 * An optional value that determines if pass attributes should be returned
-	 * in the response (in addition to the normal ticket attributes).
+	 * An optional value that determines if pass attributes should be returned in the response (in addition to the normal ticket attributes).
 	 */
 	private boolean includePassAttributes = false;
 
 	/**
-	 * An optional value that determines if Electronic Attributes should be
-	 * returned in the response (in addition to then normal ticket attributes).
-	 * currently limited to ELECTRONICELIGIBLE and ELECTRONICENTITILEMENT
+	 * An optional value that determines if Electronic Attributes should be returned in the response (in addition to then normal ticket attributes). currently limited to ELECTRONICELIGIBLE and ELECTRONICENTITILEMENT
 	 */
 	private boolean includeElectronicAttributes = false;
 
 	/**
-	 * An optional value that determines if the ticket redeemability will be
-	 * returned in the response.
+	 * An optional value that determines if the ticket redeemability will be returned in the response.
 	 */
 	private boolean includeTicketRedeemability = false;
 
-<<<<<<< HEAD
-	 /**
-   * An optional value that determines if the renewal attributes should be 
-   * returned in the response.
-   */
-  private boolean includeRenewalAttributes = false;
-	
-=======
 	/**
 	 * An optional value that determines if the renewal attributes should be returned in the response.
 	 */
@@ -91,7 +63,6 @@ public class QueryTicketRequestTO extends CommandBodyTO implements Serializable 
 	 */
 	private boolean includeEntitlementAccount = false;
 
->>>>>>> develop
 	/**
 	 * @return the tktList
 	 */
@@ -155,49 +126,6 @@ public class QueryTicketRequestTO extends CommandBodyTO implements Serializable 
 		this.includeTicketRedeemability = includeTicketRedeemability;
 	}
 
-<<<<<<< HEAD
-  /**
-   * @return the includeTktDemographics
-   */
-  public boolean isIncludeTktDemographics() {
-    return includeTktDemographics;
-  }
-
-  /**
-   * @param includeTktDemographics the includeTktDemographics to set
-   */
-  public void setIncludeTktDemographics(boolean includeTktDemographics) {
-    this.includeTktDemographics = includeTktDemographics;
-  }
-  
-//  /**
-//   * @param String the includeTktDemographics to set
-//   */
-//  public void setIncludeTktDemographics(String inString) {
-//    
-//    if (inString.equalsIgnoreCase(RENEWALSTRING)) {
-//      this.includeTktDemographics = TktDemographicsRequestType.RENEWAL;
-//    } else if (inString.equalsIgnoreCase(TRUESTRING)) {
-//      this.includeTktDemographics = TktDemographicsRequestType.TRUE;
-//    } else {
-//      this.includeTktDemographics = TktDemographicsRequestType.FALSE;
-//    }
-//  }
-
-  /**
-   * @return the includeRenewalAttributes
-   */
-  public boolean isIncludeRenewalAttributes() {
-    return includeRenewalAttributes;
-  }
-
-  /**
-   * @param includeRenewalAttributes the includeRenewalAttributes to set
-   */
-  public void setIncludeRenewalAttributes(boolean includeRenewalAttributes) {
-    this.includeRenewalAttributes = includeRenewalAttributes;
-  }
-=======
 	/**
 	 * @return the includeTktDemographics
 	 */
@@ -256,6 +184,5 @@ public class QueryTicketRequestTO extends CommandBodyTO implements Serializable 
 	public void setIncludeEntitlementAccount(boolean includeEntitlementAccount) {
 		this.includeEntitlementAccount = includeEntitlementAccount;
 	}
->>>>>>> develop
 
 }

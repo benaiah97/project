@@ -30,12 +30,6 @@ public interface TransformConstants {
 
 	/** Pass Type attribute */
 	String PASS_KIND = "PassKind";
-	
-	/** Pass Renew attribute */
-	String PASS_RENEW = "PassRenew";
-	
-	 /** Parking db attribute */
-  String PARKING = "PARKING";
 
 	/** Pass Renew attribute */
 	String PASS_RENEW = "PassRenew";
@@ -148,17 +142,10 @@ public interface TransformConstants {
 
 	/** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
 	String GW_PASS = "PASS";
-<<<<<<< HEAD
-	
-	 /** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
-  String GW_RENEW = "RENEW";
-	
-=======
 
 	/** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
 	String GW_RENEW = "RENEW";
 
->>>>>>> develop
 	/** gateway galaxy DLR weddings eligibility group */
 	String GW_ORDERS_DLR_WEDDINGS_ELIGIBILITY_GROUP = "DLR_WED";
 
@@ -204,17 +191,11 @@ public interface TransformConstants {
 
 	/** The OT_UPGRADE_ENTITLEMENT. */
 	String OT_UPGRADE_ENTITLEMENT = "UpgradeEntitlement"; // 2.10
-<<<<<<< HEAD
-	
-	 /** The OT_UPGRADE_ENTITLEMENT. */
-  String OT_RENEW_TICKET = "RenewTicket"; // as of 2.16.1, JTL
-=======
 
 	/** The OT_MULTI_ENTITLEMENT_ACCOUNT */
 	String OT_MULTI_ENTITLEMENT_ACCOUNT = "MultiEntitlementAccount"; // 2.16.1 BIEST001 (used for all NGE Responses)
 
 	/** The OT_UPGRADE_ENTITLEMENT. */
 	String OT_RENEW_TICKET = "RenewTicket"; // as of 2.16.1, JTL
->>>>>>> develop
 
 }

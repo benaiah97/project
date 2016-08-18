@@ -65,13 +65,6 @@ public class AttributeKey {
 	private static final String UENT_DBSTRING = "UpgradeEntitlement";
 
 	/** Constant value indicating renew entitlement XML text. */
-<<<<<<< HEAD
-  private static final String RENT_DBSTRING = "RenewEntitlement";
-	
-	/** Constant value indicating query reservation XML text. */
-	private static final String QR_DBSTRING = "QueryReservation";
-
-=======
 	private static final String RENT_DBSTRING = "RenewEntitlement";
 
 	/** Constant value indicating query reservation XML text. */
@@ -83,7 +76,6 @@ public class AttributeKey {
 	/** Constant value indicating tickerate entitlement XML text. */
 	private static final String TE_DBSTRING = "TickerateEntitlement"; // 2.16.1 BIEST001
 
->>>>>>> develop
 	/**
 	 * Constructor for AttributeKey
 	 */
@@ -274,11 +266,6 @@ public class AttributeKey {
 			commandCode = UENT_DBSTRING;
 			break;
 
-<<<<<<< HEAD
-	  case RENEWENTITLEMENT: // as of 2.16.1, JTL
-	    commandCode = RENT_DBSTRING;
-	    break;
-=======
 		case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
 			commandCode = AM_DBSTRING;
 			break;
@@ -290,7 +277,6 @@ public class AttributeKey {
 		case RENEWENTITLEMENT: // as of 2.16.1, JTL
 			commandCode = RENT_DBSTRING;
 			break;
->>>>>>> develop
 
 		case UNDEFINED:
 			commandCode = new String("");

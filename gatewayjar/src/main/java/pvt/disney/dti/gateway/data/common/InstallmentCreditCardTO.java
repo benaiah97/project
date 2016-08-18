@@ -125,70 +125,6 @@ public class InstallmentCreditCardTO implements Serializable {
 	public void setCcTrack1(String ccTrack1) {
 		cCardTO.setCcTrack1(ccTrack1);
 	}
-<<<<<<< HEAD
-	
-  /**
-   * @return the ccType
-   */
-  public String getCcType() {
-    return cCardTO.getCcType();
-  }
-
-  /**
-   * @param ccType
-   *          the ccType to set
-   */
-  public void setCcType(String ccType) {
-    cCardTO.setCcType(ccType);
-  }
-  
-  /**
-   * @param ccZipCode
-   *          the ccZipCode to set
-   */
-  public void setCcZipCode(String ccZipCode) {
-    cCardTO.setCcZipCode(ccZipCode);
-  }
-  
-  /**
-   * @return the ccZipCode
-   */
-  public String getCcZipCode() {
-    return cCardTO.getCcZipCode();
-  }
-  
-  /**
-   * @return the ccVV
-   */
-  public String getCcVV() {
-    return cCardTO.getCcVV();
-  }
-  
-  /**
-   * @param ccVV
-   *          the ccVV to set
-   */
-  public void setCcVV(String ccVV) {
-    cCardTO.setCcVV(ccVV);;
-  }
-
-  /**
-   * 
-   * @param ccStreet
-   */
-  public void setCcStreet(String ccStreet) {
-    cCardTO.setCcStreet(ccStreet);
-  }
-  
-  /**
-   * 
-   * @return
-   */
-  public String getCcStreet() {
-    return cCardTO.getCcStreet();
-  }
-  
-=======
 
 	/**
 	 * @return the ccType
@@ -252,5 +188,4 @@ public class InstallmentCreditCardTO implements Serializable {
 		return cCardTO.getCcStreet();
 	}
 
->>>>>>> develop
 }

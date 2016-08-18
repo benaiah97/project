@@ -16,10 +16,12 @@ import org.dom4j.tree.FlyweightAttribute;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCreateTransactionTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTMultiEntitlementAccountTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTRenewTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTUpdateTicketTO;
@@ -32,6 +34,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTErrorTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTInTransactionAttributeTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTInstallmentTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTMultiEntitlementAccountTO.CommandType;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
@@ -40,11 +43,8 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTVoucherTO;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
 /**
- * This class is responsible for marshalling Omni Ticket transfer objects into
- * XML and unmarshalling XML response strings back into transfer objects. The
- * class contains the only two public methods: getTO (for get transfer object)
- * and getXML. All marshalling and unmarshalling are accomplished through these
- * two methods.
+ * This class is responsible for marshalling Omni Ticket transfer objects into XML and unmarshalling XML response strings back into transfer objects. The class contains the only two public methods: getTO (for get transfer object) and
+ * getXML. All marshalling and unmarshalling are accomplished through these two methods.
  * 
  * @author lewit019
  */
@@ -54,8 +54,7 @@ public class OTCommandXML implements TransformConstants {
 	private final static String XSINONSSCHLOC = "xsi:noNamespaceSchemaLocation";
 
 	/**
-	 * Constant value of a generic error message for partially successful
-	 * transactions.
+	 * Constant value of a generic error message for partially successful transactions.
 	 */
 	public final static int GENERIC_OPER_PARTIALLY_SUCCESSFUL = 1;
 
@@ -63,14 +62,13 @@ public class OTCommandXML implements TransformConstants {
 	public final static int GENERIC_OPER_FAILED = 2;
 
 	/**
-	 * When provided a complete transfer object, renders the XML for a request to
-	 * the provider system.
+	 * When provided a complete transfer object, renders the XML for a request to the provider system.
 	 * 
 	 * @param otCommandTO
-	 *          The Omni Ticket Command Transfer Object.
+	 *            The Omni Ticket Command Transfer Object.
 	 * @return the XML string version of the request.
 	 * @throws DTIException
-	 *           for any parsing errors or missing fields.
+	 *             for any parsing errors or missing fields.
 	 */
 	public static String getXML(OTCommandTO otCommandTO) throws DTIException {
 
@@ -82,11 +80,7 @@ public class OTCommandXML implements TransformConstants {
 
 		// Set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		Attribute xmlns = new FlyweightAttribute("xmlns:xsi",
-<<<<<<< HEAD
-		"http://www.w3.org/2001/XMLSchema-instance");
-=======
 				"http://www.w3.org/2001/XMLSchema-instance");
->>>>>>> develop
 		attribList.add(xmlns);
 
 		OTCommandTO.OTTransactionType txnType = otCommandTO.getTxnType();
@@ -151,17 +145,6 @@ public class OTCommandXML implements TransformConstants {
 			OTUpdateTransactionXML
 					.addTxnBodyElement(otUpdtTxnTO, commandStanza);
 			break;
-<<<<<<< HEAD
-			
-		case RENEWTICKET: // as of 2.16.1, JTL
-      xsi = new FlyweightAttribute(XSINONSSCHLOC, "RenewTicketRequest.xsd");
-      OTRenewTicketTO otRenewTktTO = otCommandTO.getRenewTicketTO();
-      OTRenewTicketXML.addTxnBodyElement(otRenewTktTO, commandStanza);		  
-		  break;
-
-		default:
-			throw new DTIException(OTCommandXML.class, DTIErrorCode.INVALID_COMMAND,
-=======
 
 		case MULTIENTITLEMENTACCOUNT:
 			xsi = new FlyweightAttribute(XSINONSSCHLOC,
@@ -182,7 +165,6 @@ public class OTCommandXML implements TransformConstants {
 		default:
 			throw new DTIException(OTCommandXML.class,
 					DTIErrorCode.INVALID_COMMAND,
->>>>>>> develop
 					"Internal Error:  Unknown enumeration on OTCommandTO class.");
 
 		}
@@ -196,14 +178,13 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * When passed an XML response from the provider, parses it into a transfer
-	 * object.
+	 * When passed an XML response from the provider, parses it into a transfer object.
 	 * 
 	 * @param xmlResponse
-	 *          the string version of the XML response.
+	 *            the string version of the XML response.
 	 * @return The Omni Ticket Command Transfer Object.
 	 * @throws DTIException
-	 *           for any parsing errors that are discovered.
+	 *             for any parsing errors that are discovered.
 	 */
 	public static OTCommandTO getTO(String xmlResponse) throws DTIException {
 
@@ -215,66 +196,47 @@ public class OTCommandXML implements TransformConstants {
 
 		try {
 			document = DocumentHelper.parseText(xmlResponse);
-<<<<<<< HEAD
-		} catch (DocumentException de) {
-			throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Unable to parse XML response from provider: " + de.toString());
-=======
 		}
 		catch (DocumentException de) {
 			throw new DTIException(OTCommandXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Unable to parse XML response from provider: " + de
 							.toString());
->>>>>>> develop
 		}
 
 		// Command
 		Node commandStanza = document.getRootElement();
 
-<<<<<<< HEAD
-		if (commandStanza.getName().compareTo("Command") != 0)
-			throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-			"Ticket provider returned XML without a Command element.");
-=======
 		if (commandStanza.getName().compareTo("Command") != 0) throw new DTIException(
 				OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a Command element.");
->>>>>>> develop
 
 		// Header
 		Node headerNode = commandStanza.selectSingleNode("Header");
 
 		if (headerNode == null) {
-<<<<<<< HEAD
-			throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a Header element.");
-		} else {
-=======
 			throw new DTIException(OTCommandXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a Header element.");
 		}
 		else {
->>>>>>> develop
 			otHdrTO = OTHeaderXML.getTO(headerNode);
 			otCmdTO.setHeaderTO(otHdrTO);
 
 			if (otHdrTO.getRequestSubType().compareTo(OT_MANAGE_RES_TYPE) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.MANAGERESERVATION);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_UPGRADE_TICKET) == 0) {
+			}
+			else if (otHdrTO.getRequestSubType().compareTo(OT_UPGRADE_TICKET) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.UPGRADETICKET);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_VOID_TICKET) == 0) {
+			}
+			else if (otHdrTO.getRequestSubType().compareTo(OT_VOID_TICKET) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.VOIDTICKET);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_QUERY_TICKET) == 0) {
+			}
+			else if (otHdrTO.getRequestSubType().compareTo(OT_QUERY_TICKET) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.QUERYTICKET);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_UPDATE_TICKET) == 0) {
+			}
+			else if (otHdrTO.getRequestSubType().compareTo(OT_UPDATE_TICKET) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.UPDATETICKET);
-<<<<<<< HEAD
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_UPDATE_TRANSACTION) == 0) {
-				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.UPDATETRANSACTION);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_CREATE_TRANSACTION) == 0) {
-=======
 			}
 			else if (otHdrTO.getRequestSubType().compareTo(
 					OT_UPDATE_TRANSACTION) == 0) {
@@ -282,23 +244,8 @@ public class OTCommandXML implements TransformConstants {
 			}
 			else if (otHdrTO.getRequestSubType().compareTo(
 					OT_CREATE_TRANSACTION) == 0) {
->>>>>>> develop
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.CREATETRANSACTION);
-			} else if (otHdrTO.getRequestSubType().compareTo(OT_RENEW_TICKET) == 0) {
-			  otCmdTO.setTxnType(OTCommandTO.OTTransactionType.RENEWTICKET);
 			}
-<<<<<<< HEAD
-			
-			else {
-				StringBuffer errorBuffer = new StringBuffer(
-						"Ticket provider returned unknown Header,Message type: ");
-				if (otHdrTO.getRequestSubType() == null)
-					errorBuffer.append("null");
-				else
-					errorBuffer.append(otHdrTO.getRequestSubType());
-				throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE, errorBuffer
-						.toString());
-=======
 			else if (otHdrTO.getRequestSubType().compareTo(OT_RENEW_TICKET) == 0) {
 				otCmdTO.setTxnType(OTCommandTO.OTTransactionType.RENEWTICKET);
 			}
@@ -315,7 +262,6 @@ public class OTCommandXML implements TransformConstants {
 				throw new DTIException(OTCommandXML.class,
 						DTIErrorCode.TP_INTERFACE_FAILURE,
 						errorBuffer.toString());
->>>>>>> develop
 			}
 
 			// ==== Body Sections ====
@@ -387,21 +333,6 @@ public class OTCommandXML implements TransformConstants {
 				otCmdTO.setCreateTransactionTO(otCrtTxnRes);
 				bodyElementFound = true;
 			}
-<<<<<<< HEAD
-			
-	    // RenewTicket (as of 2.16.1, JTL)
-      Node renewTicketNode = commandStanza.selectSingleNode("RenewTicket");
-      if (renewTicketNode != null) {
-        OTRenewTicketTO otRenewTktRes = OTRenewTicketXML.getTO(renewTicketNode);
-        otCmdTO.setRenewTicketTO(otRenewTktRes);
-        bodyElementFound = true;
-      }
-			
-			// if no body found, error out.
-			if (!bodyElementFound)
-				throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML without a Body element.");
-=======
 
 			// MultiEntitlementAccount (encompasses all NGE signatures)
 			Node multiEntitlementAccountNode = commandStanza
@@ -427,7 +358,6 @@ public class OTCommandXML implements TransformConstants {
 			if (!bodyElementFound) throw new DTIException(OTCommandXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a Body element.");
->>>>>>> develop
 
 		}
 
@@ -435,23 +365,18 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Adds the payment information stanzas to the XML document based on the
-	 * transfer object provided. Package level access is intentional on this
-	 * method (absence of public, private, protected). Note, that by the time this
-	 * code is called, the request should have already been edited for missing
-	 * fields.
+	 * Adds the payment information stanzas to the XML document based on the transfer object provided. Package level access is intentional on this method (absence of public, private, protected). Note, that by the time this code is called,
+	 * the request should have already been edited for missing fields.
 	 * 
 	 * @param txnStanza
-	 *          the transaction stanza which should be populated with the payment
-	 *          info.
+	 *            the transaction stanza which should be populated with the payment info.
 	 * @param payList
-	 *          A list of Omni Ticket Payment Transfer Objects.
+	 *            A list of Omni Ticket Payment Transfer Objects.
 	 */
 	static void addPaymentInfoStanza(Element txnStanza,
 			ArrayList<OTPaymentTO> payList) {
 
-		if ((payList == null) || (payList.size() == 0))
-			return;
+		if ((payList == null) || (payList.size() == 0)) return;
 
 		for /* each */(OTPaymentTO aPaymentTO : /* in */payList) {
 
@@ -468,14 +393,9 @@ public class OTCommandXML implements TransformConstants {
 					aPaymentTO.getPayTypeInt().toString());
 
 			// PaymentAmount
-<<<<<<< HEAD
-			if (aPaymentTO.getPayAmount() != null)
-				payStanza.addElement("PaymentAmount").addText(aPaymentTO.getPayAmount().toString());
-=======
 			if (aPaymentTO.getPayAmount() != null) payStanza.addElement(
 					"PaymentAmount").addText(
 					aPaymentTO.getPayAmount().toString());
->>>>>>> develop
 
 			// CreditCard
 			if (aPaymentTO.getCreditCard() != null) {
@@ -486,7 +406,7 @@ public class OTCommandXML implements TransformConstants {
 			if (aPaymentTO.getVoucher() != null) {
 				addVoucherStanza(payStanza, aPaymentTO.getVoucher());
 			}
-			
+
 			// Installment (as of 2.15, JTL)
 			if (aPaymentTO.getInstallment() != null) {
 				addInstallmentStanza(payStanza, aPaymentTO.getInstallment());
@@ -502,16 +422,14 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Adds the credit card stanza to the payment stanza XML based on the transfer
-	 * object provided. Package level access is intentional on this method
-	 * (absence of public, private, protected).
+	 * Adds the credit card stanza to the payment stanza XML based on the transfer object provided. Package level access is intentional on this method (absence of public, private, protected).
 	 * 
 	 * @param payStanza
-	 *          XML stanza that needs the credit card information.
+	 *            XML stanza that needs the credit card information.
 	 * @param ccardTO
-	 *          The Omni Ticket Credit Card Transfer Object.
+	 *            The Omni Ticket Credit Card Transfer Object.
 	 */
-  static void addCreditCardStanza(Element payStanza, OTCreditCardTO ccardTO) {
+	static void addCreditCardStanza(Element payStanza, OTCreditCardTO ccardTO) {
 
 		Element ccardStanza = payStanza.addElement("CreditCard");
 
@@ -521,28 +439,13 @@ public class OTCommandXML implements TransformConstants {
 			Element ccSwipedStanza = ccInfoStanza.addElement("Swiped");
 
 			// Track1 (optional)
-<<<<<<< HEAD
-			if (ccardTO.getTrack1() != null)
-				ccSwipedStanza.addElement("Track1").addText(ccardTO.getTrack1());
-=======
 			if (ccardTO.getTrack1() != null) ccSwipedStanza
 					.addElement("Track1").addText(ccardTO.getTrack1());
->>>>>>> develop
 
 			// Track2 (required)
 			ccSwipedStanza.addElement("Track2").addText(ccardTO.getTrack2());
-			
+
 			// PosTerminalId (optional - as of 2.12)
-<<<<<<< HEAD
-			if (ccardTO.getPosTerminalId() != null)
-			  ccSwipedStanza.addElement("PosTerminalId").addText(ccardTO.getPosTerminalId());
-			
-			// External Device Serial Id (optional - as of 2.12)
-			if (ccardTO.getExternalDeviceSerialId() != null)
-				ccSwipedStanza.addElement("ExternalDeviceSerialId").addText(ccardTO.getExternalDeviceSerialId());
-			
-		} else {
-=======
 			if (ccardTO.getPosTerminalId() != null) ccSwipedStanza.addElement(
 					"PosTerminalId").addText(ccardTO.getPosTerminalId());
 
@@ -553,7 +456,6 @@ public class OTCommandXML implements TransformConstants {
 
 		}
 		else {
->>>>>>> develop
 			Element ccManualStanza = ccInfoStanza.addElement("Manual");
 
 			// CardNumber
@@ -561,58 +463,29 @@ public class OTCommandXML implements TransformConstants {
 					ccardTO.getCardNumber());
 
 			// CardExpDate
-<<<<<<< HEAD
-			if (ccardTO.getCardExpDate() != null)
-				ccManualStanza.addElement("CardExpDate").addText(ccardTO.getCardExpDate());
-
-			// CVV
-			if (ccardTO.getCVV() != null)
-				ccManualStanza.addElement("CVV").addText(ccardTO.getCVV());
-=======
 			if (ccardTO.getCardExpDate() != null) ccManualStanza.addElement(
 					"CardExpDate").addText(ccardTO.getCardExpDate());
 
 			// CVV
 			if (ccardTO.getCVV() != null) ccManualStanza.addElement("CVV")
 					.addText(ccardTO.getCVV());
->>>>>>> develop
 
 			// AVS
 			if ((ccardTO.getAvs_AvsStreet() != null) || (ccardTO
 					.getAvs_AvsZipCode() != null)) {
 				Element avsStanza = ccManualStanza.addElement("AVS");
 
-<<<<<<< HEAD
-				if (ccardTO.getAvs_AvsZipCode() != null)
-					avsStanza.addElement("AVSZipCode").addText(ccardTO.getAvs_AvsZipCode());
-
-				if (ccardTO.getAvs_AvsStreet() != null)
-					avsStanza.addElement("AVSStreet").addText(ccardTO.getAvs_AvsStreet());
-=======
 				if (ccardTO.getAvs_AvsZipCode() != null) avsStanza.addElement(
 						"AVSZipCode").addText(ccardTO.getAvs_AvsZipCode());
 
 				if (ccardTO.getAvs_AvsStreet() != null) avsStanza.addElement(
 						"AVSStreet").addText(ccardTO.getAvs_AvsStreet());
->>>>>>> develop
 			}
 
 			// IssueCode (omitted)
 			// CardStartDate (omitted)
 
 			// CAVVFormat
-<<<<<<< HEAD
-			if (ccardTO.getCAVVFormat() != null)
-				ccManualStanza.addElement("CAVVFormat").addText(ccardTO.getCAVVFormat());
-
-			// CAVVValue
-			if (ccardTO.getCAVVValue() != null)
-				ccManualStanza.addElement("CAVVValue").addText(ccardTO.getCAVVValue());
-
-			// GiftCardStartDate (omitted)
-			if (ccardTO.getECommerceValue() != null)
-				ccManualStanza.addElement("ECommerceValue").addText(ccardTO.getECommerceValue());
-=======
 			if (ccardTO.getCAVVFormat() != null) ccManualStanza.addElement(
 					"CAVVFormat").addText(ccardTO.getCAVVFormat());
 
@@ -623,7 +496,6 @@ public class OTCommandXML implements TransformConstants {
 			// GiftCardStartDate (omitted)
 			if (ccardTO.getECommerceValue() != null) ccManualStanza.addElement(
 					"ECommerceValue").addText(ccardTO.getECommerceValue());
->>>>>>> develop
 
 		}
 
@@ -638,15 +510,13 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Adds the voucher XML nodes based on the voucher transfer object that is
-	 * passed in. Note that, at this point, these nodes would have already been
-	 * validated for missing fields, values, etc. Package level access is
-	 * intentional on this method (absence of public, private, protected).
+	 * Adds the voucher XML nodes based on the voucher transfer object that is passed in. Note that, at this point, these nodes would have already been validated for missing fields, values, etc. Package level access is intentional on this
+	 * method (absence of public, private, protected).
 	 * 
 	 * @param payStanza
-	 *          The XML stanza which will contain the voucher information.
+	 *            The XML stanza which will contain the voucher information.
 	 * @param voucherTO
-	 *          The Omni Ticket Voucher Transfer Object.
+	 *            The Omni Ticket Voucher Transfer Object.
 	 */
 	static void addVoucherStanza(Element payStanza, OTVoucherTO voucherTO) {
 
@@ -655,62 +525,44 @@ public class OTCommandXML implements TransformConstants {
 		voucherStanza.addElement("MasterCode").addText(
 				voucherTO.getMasterCode());
 
-<<<<<<< HEAD
-		if (voucherTO.getUniqueCode() != null)
-			voucherStanza.addElement("UniqueCode").addText(voucherTO.getUniqueCode());
-=======
 		if (voucherTO.getUniqueCode() != null) voucherStanza.addElement(
 				"UniqueCode").addText(voucherTO.getUniqueCode());
->>>>>>> develop
 
 		return;
 	}
 
 	/**
-	 * Adds the installment XML nodes based on the installment transfer object that is
-	 * passed in. Note that, at this point, these nodes would have already been
-	 * validated for missing fields, values, etc. Package level access is
-	 * intentional on this method (absence of public, private, protected).
+	 * Adds the installment XML nodes based on the installment transfer object that is passed in. Note that, at this point, these nodes would have already been validated for missing fields, values, etc. Package level access is intentional
+	 * on this method (absence of public, private, protected).
 	 * 
 	 * @param payStanza
-	 *          The XML stanza which will contain the voucher information.
+	 *            The XML stanza which will contain the voucher information.
 	 * @param installmentTO
-	 *          The Omni Ticket Installment Transfer Object.
+	 *            The Omni Ticket Installment Transfer Object.
 	 */
 	static void addInstallmentStanza(Element payStanza,
 			OTInstallmentTO installTO) {
 
 		// Installment
 		Element installStanza = payStanza.addElement("Installment");
-<<<<<<< HEAD
-		
-		installStanza.addElement("ContractAlphaCode").addText(Integer.toString(OTInstallmentTO.getContractalphacode()));
-		
-=======
 
 		installStanza.addElement("ContractAlphaCode").addText(
 				Integer.toString(OTInstallmentTO.getContractalphacode()));
 
->>>>>>> develop
 		// Credit Card Stanza
 		Element ccardStanza = installStanza.addElement("CreditCard");
 		Element cInfoStanza = ccardStanza.addElement("CardInfo");
-		
+
 		if (installTO.getCcManualOrSwiped() == CreditCardEntryType.SWIPED) {
-			
+
 			Element swipedStanza = cInfoStanza.addElement("Swiped");
 			swipedStanza.addElement("Track1").addText(installTO.getTrack1());
 			swipedStanza.addElement("Track2").addText(installTO.getTrack2());
-			
-		} else { // must be manual
-			
+
+		}
+		else { // must be manual
+
 			Element manualStanza = cInfoStanza.addElement("Manual");
-<<<<<<< HEAD
-			manualStanza.addElement("CardNumber").addText(installTO.getCardNumber());
-			manualStanza.addElement("CardExpDate").addText(installTO.getCardExpDate());
-			manualStanza.addElement("CardHolderName").addText(installTO.getCardHolderName());
-			
-=======
 			manualStanza.addElement("CardNumber").addText(
 					installTO.getCardNumber());
 			manualStanza.addElement("CardExpDate").addText(
@@ -718,40 +570,27 @@ public class OTCommandXML implements TransformConstants {
 			manualStanza.addElement("CardHolderName").addText(
 					installTO.getCardHolderName());
 
->>>>>>> develop
 		}
-		
+
 		// Installment Payor Info
 		Element payorStanza = installStanza.addElement("PayorInfo");
-<<<<<<< HEAD
-		payorStanza.addElement("ClientUniqueId").addText(Integer.toString(OTInstallmentTO.getClientuniqueid()));
-        Element demoDataStanza = payorStanza.addElement("DemographicData");
-        ArrayList<OTFieldTO> oTFieldList = installTO.getDemographicData();
-=======
 		payorStanza.addElement("ClientUniqueId").addText(
 				Integer.toString(OTInstallmentTO.getClientuniqueid()));
 		Element demoDataStanza = payorStanza.addElement("DemographicData");
 		ArrayList<OTFieldTO> oTFieldList = installTO.getDemographicData();
 
 		OTCommonXML.addOTDemoAsFieldType(demoDataStanza, oTFieldList);
->>>>>>> develop
 
-        OTCommonXML.addOTDemoAsFieldType(demoDataStanza, oTFieldList);
-		
 		return;
 	}
-	
-	
-	
+
 	/**
-	 * Adds the in-transaction attributes to the XML based on the transaction
-	 * attribute list provided. Package level access is intentional on this method
-	 * (absence of public, private, protected).
+	 * Adds the in-transaction attributes to the XML based on the transaction attribute list provided. Package level access is intentional on this method (absence of public, private, protected).
 	 * 
 	 * @param tktStanza
-	 *          XML ticket stanza that requires the ticket attributes.
+	 *            XML ticket stanza that requires the ticket attributes.
 	 * @param inTxnAttrList
-	 *          List of Omni Ticket In-Transaction Attribute Transfer Objects
+	 *            List of Omni Ticket In-Transaction Attribute Transfer Objects
 	 */
 	static void addInTransactionAttributeStanzas(Element tktStanza,
 			ArrayList<OTInTransactionAttributeTO> inTxnAttrList) {
@@ -781,18 +620,14 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Sets the transfer object for the error based on the parsed XML that is
-	 * passed in. Package level access is intentional on this method (absence of
-	 * public, private, protected). Also note that while this is not a section
-	 * found in the command section of the response XML, it is uniform in every
-	 * response body, hence its inclusion here (it should have been in the XML's
-	 * command header).
+	 * Sets the transfer object for the error based on the parsed XML that is passed in. Package level access is intentional on this method (absence of public, private, protected). Also note that while this is not a section found in the
+	 * command section of the response XML, it is uniform in every response body, hence its inclusion here (it should have been in the XML's command header).
 	 * 
 	 * @param errorNode
-	 *          The parsed XML section containing the error section of the XML.
+	 *            The parsed XML section containing the error section of the XML.
 	 * @return The Omni Ticket Error Transfer Object.
 	 * @throws DTIException
-	 *           for any parsing errors or missing mandatory fields.
+	 *             for any parsing errors or missing mandatory fields.
 	 */
 	static OTErrorTO setOTErrorTO(Node errorNode) throws DTIException {
 
@@ -800,32 +635,16 @@ public class OTCommandXML implements TransformConstants {
 
 		// ErrorCode
 		Node errorCodeNode = errorNode.selectSingleNode("ErrorCode");
-<<<<<<< HEAD
-		if (errorCodeNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a Error,ErrorCode element.");
-=======
 		if (errorCodeNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a Error,ErrorCode element.");
->>>>>>> develop
 		else {
 			String inText = errorCodeNode.getText();
 			errTO.setErrorCode(new Integer(inText));
 		}
 
 		// ErrorShortDescription
-<<<<<<< HEAD
-		Node errShortDescNode = errorNode.selectSingleNode("ErrorShortDescription");
-		if (errShortDescNode != null)
-			errTO.setErrorShortDescription(errShortDescNode.getText());
-
-		// ErrorDescription
-		Node errDescNode = errorNode.selectSingleNode("ErrorDescription");
-		if (errDescNode != null)
-			errTO.setErrorDescription(errDescNode.getText());
-=======
 		Node errShortDescNode = errorNode
 				.selectSingleNode("ErrorShortDescription");
 		if (errShortDescNode != null) errTO
@@ -835,21 +654,18 @@ public class OTCommandXML implements TransformConstants {
 		Node errDescNode = errorNode.selectSingleNode("ErrorDescription");
 		if (errDescNode != null) errTO.setErrorDescription(errDescNode
 				.getText());
->>>>>>> develop
 
 		return errTO;
 	}
 
 	/**
-	 * Sets the transfer object of a ticket based on the parsed XML that is passed
-	 * in. Package level access is intentional on this method (absence of public,
-	 * private, protected).
+	 * Sets the transfer object of a ticket based on the parsed XML that is passed in. Package level access is intentional on this method (absence of public, private, protected).
 	 * 
 	 * @param ticketNode
-	 *          The section of the XML document containing the ticket.
+	 *            The section of the XML document containing the ticket.
 	 * @return The Omni Ticket Ticket Transfer Object.
 	 * @throws DTIException
-	 *           for any missing fields or other parsing errors.
+	 *             for any missing fields or other parsing errors.
 	 */
 	static OTTicketTO setOTTicketTO(Node ticketNode) throws DTIException {
 
@@ -858,24 +674,18 @@ public class OTCommandXML implements TransformConstants {
 		// TDSSN
 		Node tdssnNode = ticketNode.selectSingleNode("TDSSN");
 		if (tdssnNode != null) {
-			//      throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-			//          "Ticket provider returned XML without a Ticket,TDSSN element.");
+			// throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+			// "Ticket provider returned XML without a Ticket,TDSSN element.");
 
 			// Site, Station, Date, TicketId
 			Node siteNode = tdssnNode.selectSingleNode("Site");
 			Node stationNode = tdssnNode.selectSingleNode("Station");
 			Node dateNode = tdssnNode.selectSingleNode("Date");
 			Node ticketIdNode = tdssnNode.selectSingleNode("TicketId");
-<<<<<<< HEAD
-			if ((siteNode == null) || (stationNode == null) || (dateNode == null) || (ticketIdNode == null))
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML with incomplete TDSSN element.");
-=======
 			if ((siteNode == null) || (stationNode == null) || (dateNode == null) || (ticketIdNode == null)) throw new DTIException(
 					OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML with incomplete TDSSN element.");
->>>>>>> develop
 
 			String dateString = dateNode.getText();
 			String siteString = siteNode.getText();
@@ -883,18 +693,12 @@ public class OTCommandXML implements TransformConstants {
 			String ticketIdString = ticketIdNode.getText();
 
 			try {
-<<<<<<< HEAD
-				otTicket.setTDssn(dateString, siteString, stationString, ticketIdString);
-			} catch (ParseException pe) {
-				throw new DTIException(OTCommandXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-=======
 				otTicket.setTDssn(dateString, siteString, stationString,
 						ticketIdString);
 			}
 			catch (ParseException pe) {
 				throw new DTIException(OTCommandXML.class,
 						DTIErrorCode.TP_INTERFACE_FAILURE,
->>>>>>> develop
 						"Ticket provider returned XML with invalid TDSSN element.");
 			}
 
@@ -928,32 +732,21 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Sets the transfer object for ticket availability bsed on the parsed XML
-	 * provided. Package level access is intentional on this method (absence of
-	 * public, private, protected).
+	 * Sets the transfer object for ticket availability bsed on the parsed XML provided. Package level access is intentional on this method (absence of public, private, protected).
 	 * 
 	 * @param aNode
-	 *          parsed XML document section containing ticket validity.
+	 *            parsed XML document section containing ticket validity.
 	 * @param otTktTO
-	 *          The Omni Ticket Ticket Info Transfer Object that needs to be
-	 *          populated.
+	 *            The Omni Ticket Ticket Info Transfer Object that needs to be populated.
 	 * @throws DTIException
-	 *           for any missing fields or parsing exceptions.
+	 *             for any missing fields or parsing exceptions.
 	 */
 	static void setOTTicketInfoValidity(Node aNode, OTTicketInfoTO otTktTO) throws DTIException {
-<<<<<<< HEAD
-	  
-		// Ticket
-		Node ticketNode = aNode.selectSingleNode("Ticket");
-		if (ticketNode != null)
-			otTktTO.setTicket(OTCommandXML.setOTTicketTO(ticketNode));
-=======
 
 		// Ticket
 		Node ticketNode = aNode.selectSingleNode("Ticket");
 		if (ticketNode != null) otTktTO.setTicket(OTCommandXML
 				.setOTTicketTO(ticketNode));
->>>>>>> develop
 
 		// Validity
 		Node validityNode = aNode.selectSingleNode("Validity");
@@ -962,28 +755,17 @@ public class OTCommandXML implements TransformConstants {
 			Node startDateNode = validityNode.selectSingleNode("StartDate");
 			Node endDateNode = validityNode.selectSingleNode("EndDate");
 
-<<<<<<< HEAD
-			if ((startDateNode == null) || (endDateNode == null))
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML with an incomplete Validity element.");
-=======
 			if ((startDateNode == null) || (endDateNode == null)) throw new DTIException(
 					OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML with an incomplete Validity element.");
->>>>>>> develop
 
 			String startDateString = startDateNode.getText();
 			String endDateString = endDateNode.getText();
-			
+
 			try {
 				otTktTO.setValidityStartDate(startDateString);
 				otTktTO.setValidityEndDate(endDateString);
-<<<<<<< HEAD
-			} catch (ParseException pe) {
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML with an invalid Validity element: " + pe.toString());
-=======
 			}
 			catch (ParseException pe) {
 				throw new DTIException(
@@ -991,21 +773,18 @@ public class OTCommandXML implements TransformConstants {
 						DTIErrorCode.TP_INTERFACE_FAILURE,
 						"Ticket provider returned XML with an invalid Validity element: " + pe
 								.toString());
->>>>>>> develop
 			}
 		}
 	}
 
 	/**
-	 * Sets up the transfer object from the DSSN node provided from a parsed XML
-	 * document. Package level access is intentional on this method (absence of
-	 * public, private, protected).
+	 * Sets up the transfer object from the DSSN node provided from a parsed XML document. Package level access is intentional on this method (absence of public, private, protected).
 	 * 
 	 * @param dssnNode
-	 *          The XML node containing the dssn section of the XML.
+	 *            The XML node containing the dssn section of the XML.
 	 * @return a completed Omni Ticket Transaction DSSN Transfer Object.
 	 * @throws DTIException
-	 *           for any parsing errors, generally the absence of required fields.
+	 *             for any parsing errors, generally the absence of required fields.
 	 */
 	static OTTransactionDSSNTO setOTTransactionDSSNTO(Node dssnNode) throws DTIException {
 
@@ -1013,43 +792,22 @@ public class OTCommandXML implements TransformConstants {
 
 		// Site
 		Node siteNode = dssnNode.selectSingleNode("Site");
-<<<<<<< HEAD
-		if (siteNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a TransactionDSSN,Site element.");
-=======
 		if (siteNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a TransactionDSSN,Site element.");
->>>>>>> develop
 		otTranDssn.setSite(siteNode.getText());
 
 		// Station
 		Node stationNode = dssnNode.selectSingleNode("Station");
-<<<<<<< HEAD
-		if (stationNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a TransactionDSSN,Station element.");
-=======
 		if (stationNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a TransactionDSSN,Station element.");
->>>>>>> develop
 		otTranDssn.setStation(stationNode.getText());
 
 		// Date
 		Node dateNode = dssnNode.selectSingleNode("Date");
-<<<<<<< HEAD
-		if (dateNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a TransactionDSSN,Date element.");
-		try {
-			otTranDssn.setDate(dateNode.getText());
-		} catch (ParseException pe) {
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-=======
 		if (dateNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
@@ -1060,22 +818,15 @@ public class OTCommandXML implements TransformConstants {
 		catch (ParseException pe) {
 			throw new DTIException(OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
->>>>>>> develop
 					"Ticket provider returned XML with an invalid TransactionDSSN,Date element.");
 		}
 
 		// TransactionId
 		Node tranIdNode = dssnNode.selectSingleNode("TransactionId");
-<<<<<<< HEAD
-		if (tranIdNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a TransactionDSSN,TransactionId element.");
-=======
 		if (tranIdNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a TransactionDSSN,TransactionId element.");
->>>>>>> develop
 		String inString = tranIdNode.getText();
 		otTranDssn.setTransactionId(new Integer(inString));
 
@@ -1083,24 +834,17 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Sets up the transfer object from the Omni Ticket payment section of a
-	 * response XML. Package level access is intentional (the absence of public,
-	 * private, or protected).
+	 * Sets up the transfer object from the Omni Ticket payment section of a response XML. Package level access is intentional (the absence of public, private, or protected).
 	 * 
 	 * @param otPayList
-	 *          ArrayList of Omni Ticket Payment Transfer Objects.
+	 *            ArrayList of Omni Ticket Payment Transfer Objects.
 	 * @param payNodeList
-	 *          List of XML nodes from a parsed document
+	 *            List of XML nodes from a parsed document
 	 * @throws DTIException
-	 *           for any parse errors
+	 *             for any parse errors
 	 */
-<<<<<<< HEAD
-	static void setOTPaymentTOList(ArrayList<OTPaymentTO> otPayList, List<Node> payNodeList)
-	throws DTIException {
-=======
 	static void setOTPaymentTOList(ArrayList<OTPaymentTO> otPayList,
 			List<Node> payNodeList) throws DTIException {
->>>>>>> develop
 
 		List<Node> payList = (List<Node>) payNodeList;
 
@@ -1110,65 +854,33 @@ public class OTCommandXML implements TransformConstants {
 
 			// Item
 			Node itemNode = aNode.selectSingleNode("Item");
-<<<<<<< HEAD
-			if (itemNode == null)
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML without a PaymentInfo,Item element.");
-=======
 			if (itemNode == null) throw new DTIException(
 					OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a PaymentInfo,Item element.");
->>>>>>> develop
 			String inString = itemNode.getText();
 			otPayTO.setPayItem(new BigInteger(inString));
 
 			// PaymentType
 			Node payTypeNode = aNode.selectSingleNode("PaymentType");
-<<<<<<< HEAD
-			if (payTypeNode == null)
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML without a PaymentInfo,PaymentType element.");
-=======
 			if (payTypeNode == null) throw new DTIException(
 					OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a PaymentInfo,PaymentType element.");
->>>>>>> develop
 			inString = payTypeNode.getText();
 			otPayTO.setPayTypeInt(Integer.parseInt(inString));
 
 			// PaymentAmount
 			Node payAmountNode = aNode.selectSingleNode("PaymentAmount");
-<<<<<<< HEAD
-			if (payAmountNode == null)
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML without a PaymentInfo,PaymentAmount element.");
-=======
 			if (payAmountNode == null) throw new DTIException(
 					OTManageReservationXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a PaymentInfo,PaymentAmount element.");
->>>>>>> develop
 			inString = payAmountNode.getText();
 			otPayTO.setPayAmount(new BigDecimal(inString));
 
 			// CreditCard
 			Node creditCardNode = aNode.selectSingleNode("CreditCard");
-<<<<<<< HEAD
-			if (creditCardNode != null)
-				otPayTO.setCreditCard(setOTCreditCardTO(creditCardNode));
-
-			// Voucher
-			Node voucherNode = aNode.selectSingleNode("Voucher");
-			if (voucherNode != null)
-				otPayTO.setVoucher(setOTVoucherTO(voucherNode));
-			
-			// Installment (new with 2.15, JTL)
-			Node installmentNode = aNode.selectSingleNode("Installment");
-			if (installmentNode != null) 
-				otPayTO.setInstallment(setOTInstallmentTO(installmentNode));
-=======
 			if (creditCardNode != null) otPayTO
 					.setCreditCard(setOTCreditCardTO(creditCardNode));
 
@@ -1181,7 +893,6 @@ public class OTCommandXML implements TransformConstants {
 			Node installmentNode = aNode.selectSingleNode("Installment");
 			if (installmentNode != null) otPayTO
 					.setInstallment(setOTInstallmentTO(installmentNode));
->>>>>>> develop
 
 			otPayList.add(otPayTO);
 		}
@@ -1190,14 +901,13 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Sets the transfer object for credit card based on the response that is
-	 * passed in.
+	 * Sets the transfer object for credit card based on the response that is passed in.
 	 * 
 	 * @param ccNode
-	 *          the parsed XML containing the credit card.
+	 *            the parsed XML containing the credit card.
 	 * @return The Omni Ticket Credit Card Transfer Object
 	 * @throws DTIException
-	 *           for any missing mandatory fields or other parsing errors.
+	 *             for any missing mandatory fields or other parsing errors.
 	 */
 	private static OTCreditCardTO setOTCreditCardTO(Node ccNode) throws DTIException {
 
@@ -1205,44 +915,23 @@ public class OTCommandXML implements TransformConstants {
 
 		// CardType
 		Node cardTypeNode = ccNode.selectSingleNode("CardType");
-<<<<<<< HEAD
-		if (cardTypeNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a CreditCard,CardType element.");
-=======
 		if (cardTypeNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a CreditCard,CardType element.");
->>>>>>> develop
 		String inString = cardTypeNode.getText();
 		otCreditCard.setGiftCardIndicator(Integer.parseInt(inString));
 
 		// AuthErrorCode
 		Node authErrCodeNode = ccNode.selectSingleNode("AuthErrorCode");
-<<<<<<< HEAD
-		if (authErrCodeNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a CreditCard,AuthErrorCode element.");
-=======
 		if (authErrCodeNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a CreditCard,AuthErrorCode element.");
->>>>>>> develop
 		otCreditCard.setAuthErrorCode(authErrCodeNode.getText());
 
 		// AuthNumber
 		Node authNumNode = ccNode.selectSingleNode("AuthNumber");
-<<<<<<< HEAD
-		if (authNumNode != null)
-			otCreditCard.setAuthNumber(authNumNode.getText());
-
-		// AuthMessage
-		Node authMsgNode = ccNode.selectSingleNode("AuthMessage");
-		if (authMsgNode != null)
-			otCreditCard.setAuthMessage(authMsgNode.getText());
-=======
 		if (authNumNode != null) otCreditCard.setAuthNumber(authNumNode
 				.getText());
 
@@ -1250,12 +939,10 @@ public class OTCommandXML implements TransformConstants {
 		Node authMsgNode = ccNode.selectSingleNode("AuthMessage");
 		if (authMsgNode != null) otCreditCard.setAuthMessage(authMsgNode
 				.getText());
->>>>>>> develop
 
 		// CCNumber
 		Node ccNumNode = ccNode.selectSingleNode("CCNumber");
-		if (ccNumNode != null)
-			otCreditCard.setCcNumber(ccNumNode.getText());
+		if (ccNumNode != null) otCreditCard.setCcNumber(ccNumNode.getText());
 
 		// CCExpiration (ignored)
 
@@ -1272,12 +959,6 @@ public class OTCommandXML implements TransformConstants {
 			inString = promoExpNode.getText();
 			try {
 				otCreditCard.setPromoExpDate(inString);
-<<<<<<< HEAD
-			} catch (ParseException pe) {
-				throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Ticket provider returned XML with an invalid CreditCard,PromoExpDate element: "
-						+ pe.toString());
-=======
 			}
 			catch (ParseException pe) {
 				throw new DTIException(
@@ -1285,7 +966,6 @@ public class OTCommandXML implements TransformConstants {
 						DTIErrorCode.TP_INTERFACE_FAILURE,
 						"Ticket provider returned XML with an invalid CreditCard,PromoExpDate element: " + pe
 								.toString());
->>>>>>> develop
 			}
 		}
 
@@ -1295,14 +975,13 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Sets the transfer object for the voucher based on parsed XML that is passed
-	 * in.
+	 * Sets the transfer object for the voucher based on parsed XML that is passed in.
 	 * 
 	 * @param voucherNode
-	 *          the parsed XML document containing a voucher.
+	 *            the parsed XML document containing a voucher.
 	 * @return The Omni Ticket Voucher Transfer Object.
 	 * @throws DTIException
-	 *           for any missing required fields or other parsing errors.
+	 *             for any missing required fields or other parsing errors.
 	 */
 	private static OTVoucherTO setOTVoucherTO(Node voucherNode) throws DTIException {
 
@@ -1310,16 +989,6 @@ public class OTCommandXML implements TransformConstants {
 
 		// MasterCode
 		Node masterCodeNode = voucherNode.selectSingleNode("MasterCode");
-<<<<<<< HEAD
-		if (masterCodeNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a Voucher,MasterCode element.");
-		otVoucher.setMasterCode(masterCodeNode.getText());
-
-		Node uniqueCodeNode = voucherNode.selectSingleNode("UniqueCode");
-		if (uniqueCodeNode != null)
-			otVoucher.setUniqueCode(uniqueCodeNode.getText());
-=======
 		if (masterCodeNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
@@ -1329,22 +998,20 @@ public class OTCommandXML implements TransformConstants {
 		Node uniqueCodeNode = voucherNode.selectSingleNode("UniqueCode");
 		if (uniqueCodeNode != null) otVoucher.setUniqueCode(uniqueCodeNode
 				.getText());
->>>>>>> develop
 
 		return otVoucher;
 	}
 
 	/**
-	 * Sets the transfer object for credit card based on the response that is
-	 * passed in.
+	 * Sets the transfer object for credit card based on the response that is passed in.
 	 * 
-	 * @since 2.15 
+	 * @since 2.15
 	 * @author lewit019
 	 * @param instNode
-	 *          the parsed XML containing the credit card.
+	 *            the parsed XML containing the credit card.
 	 * @return The Omni Ticket Credit Card Transfer Object
 	 * @throws DTIException
-	 *           for any missing mandatory fields or other parsing errors.
+	 *             for any missing mandatory fields or other parsing errors.
 	 */
 	private static OTInstallmentTO setOTInstallmentTO(Node instNode) throws DTIException {
 
@@ -1352,34 +1019,25 @@ public class OTCommandXML implements TransformConstants {
 
 		// ContractID
 		Node contractIdNode = instNode.selectSingleNode("ContractId");
-<<<<<<< HEAD
-		if (contractIdNode == null)
-			throw new DTIException(OTManageReservationXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without an Installment,ContractId element.");
-=======
 		if (contractIdNode == null) throw new DTIException(
 				OTManageReservationXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without an Installment,ContractId element.");
->>>>>>> develop
 		String inString = contractIdNode.getText();
 		otInstallmentTO.setContractId(inString);
 
-		// PayorId (ignored)  
+		// PayorId (ignored)
 
 		return otInstallmentTO;
-	}	
-	
-	
+	}
+
 	/**
-	 * Adds the work rules to the transaction XML clause provided in the transfer
-	 * object list. Package level access is intentional (the absence of public,
-	 * private, or protected).
+	 * Adds the work rules to the transaction XML clause provided in the transfer object list. Package level access is intentional (the absence of public, private, or protected).
 	 * 
 	 * @param txnStanza
-	 *          the transaction stanza which needs to have the work rules added.
+	 *            the transaction stanza which needs to have the work rules added.
 	 * @param tagTOList
-	 *          A list of work rule strings from the Omni Ticket transfer objects.
+	 *            A list of work rule strings from the Omni Ticket transfer objects.
 	 */
 	static void addWorkRules(Element txnStanza, ArrayList<String> tagTOList) {
 
@@ -1396,29 +1054,18 @@ public class OTCommandXML implements TransformConstants {
 	}
 
 	/**
-	 * Gets the error node, adjusting for generic errors (replacing generic error
-	 * codes, if present, with ItemStatus, which has more detail.
+	 * Gets the error node, adjusting for generic errors (replacing generic error codes, if present, with ItemStatus, which has more detail.
 	 * 
 	 * @param bodyNode
-	 *          The body response node containing the error clause.
+	 *            The body response node containing the error clause.
 	 * @return The Omni Ticket Error Transport Object
 	 * @throws DTIException
-	 *           for a missing "Error" element.
+	 *             for a missing "Error" element.
 	 */
 	public static OTErrorTO getErrorTO(Node bodyNode) throws DTIException {
 
 		// Error
 		Node errorNode = bodyNode.selectSingleNode("Error");
-<<<<<<< HEAD
-		if (errorNode == null)
-			throw new DTIException(OTUpdateTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a Error element.");
-
-		// ItemStatus replacement for generic errors, if required.
-		OTErrorTO otErrorTO = OTCommandXML.setOTErrorTO(errorNode);
-		if ((otErrorTO.getErrorCode().intValue() == OTCommandXML.GENERIC_OPER_PARTIALLY_SUCCESSFUL)
-				|| (otErrorTO.getErrorCode().intValue() == OTCommandXML.GENERIC_OPER_FAILED)) {
-=======
 		if (errorNode == null) throw new DTIException(OTUpdateTicketXML.class,
 				DTIErrorCode.TP_INTERFACE_FAILURE,
 				"Ticket provider returned XML without a Error element.");
@@ -1427,7 +1074,6 @@ public class OTCommandXML implements TransformConstants {
 		OTErrorTO otErrorTO = OTCommandXML.setOTErrorTO(errorNode);
 		if ((otErrorTO.getErrorCode().intValue() == OTCommandXML.GENERIC_OPER_PARTIALLY_SUCCESSFUL) || (otErrorTO
 				.getErrorCode().intValue() == OTCommandXML.GENERIC_OPER_FAILED)) {
->>>>>>> develop
 			Node itemStatusNode = bodyNode.selectSingleNode("//ItemStatus");
 			if (itemStatusNode != null) {
 				String inText = itemStatusNode.getText();

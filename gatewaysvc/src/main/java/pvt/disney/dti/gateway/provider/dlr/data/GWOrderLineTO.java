@@ -39,7 +39,7 @@ public class GWOrderLineTO {
 	private String cvn;
 	/** PaymentPlanID - detail type 8 */
 	private String paymentPlanID;
-	
+
 	/** pass members */
 	private ArrayList<GWMemberDemographicsTO> memberList = new ArrayList<GWMemberDemographicsTO>();
 

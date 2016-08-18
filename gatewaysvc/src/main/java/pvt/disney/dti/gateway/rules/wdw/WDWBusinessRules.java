@@ -90,6 +90,18 @@ public class WDWBusinessRules {
 	/** The standard length for a numeric OT bar code. (20) */
 	public static final int BARCODE_LENGTH_NUMERIC = 20;
 
+	/** The standard length for an Electronic Account. (17) */
+	public static final int ACCOUNT_ID_LENGTH = 20;
+
+	/** The standard length for a Media Id. (32) */
+	public static final int MEDIA_ID_LENGTH = 32;
+
+	/** The standard length for a Manufacturer's Id. (20) */
+	public static final int MFR_ID_LENGTH = 20;
+
+	/** The standard length for a Visual Id. (32) */
+	public static final int VISUAL_ID_LENGTH = 32;
+
 	/** Constant indicating the XML Scheme Instance. */
 	final static String XML_SCHEMA_INSTANCE = "http://www.w3.org/2001/XMLSchema-instance";
 
@@ -163,12 +175,9 @@ public class WDWBusinessRules {
 	public final static String NO = "NO";
 	/** Indicates the gender is unspecified. */
 	private final static String UNSPECIFIED_GENDER_DEFAULT = " ";
-<<<<<<< HEAD
-=======
 
 	private static final EventLogger logger = EventLogger
 			.getLogger(WDWBusinessRules.class.getCanonicalName());
->>>>>>> develop
 
 	/**
 	 * Gets the properties for this application found in "dtiApp.properties"
@@ -184,21 +193,19 @@ public class WDWBusinessRules {
 		try {
 			abstrInitl = AbstractInitializer.getInitializer();
 			properties = abstrInitl.getProps("dtiApp.properties");
-		} catch (Throwable e) {
+		}
+		catch (Throwable e) {
 			System.err
-					.println("ERROR *** Unable to initialize DTIService object.  Properties issue! ***"
-							+ e.toString());
+					.println("ERROR *** Unable to initialize DTIService object.  Properties issue! ***" + e
+							.toString());
 		}
 
 		return properties;
 	}
 
 	/**
-	 * For provider-centric rules only that are NOT transaction-centric.
-	 * Provider-centric rules that are also transaction centric are to added in
-	 * their correct WDWTransactionNamed class. This method is primarily for
-	 * handling anything in the payload header or the command header that has a
-	 * provider-centric rule.
+	 * For provider-centric rules only that are NOT transaction-centric. Provider-centric rules that are also transaction centric are to added in their correct WDWTransactionNamed class. This method is primarily for handling anything in the
+	 * payload header or the command header that has a provider-centric rule.
 	 * 
 	 * @param dtiTxn
 	 *            the dti txn
@@ -208,24 +215,20 @@ public class WDWBusinessRules {
 	 * @throws DTIException
 	 *             should any rule fail.
 	 */
-	public static DTITransactionTO applyBusinessRules(DTITransactionTO dtiTxn)
-			throws DTIException {
+	public static DTITransactionTO applyBusinessRules(DTITransactionTO dtiTxn) throws DTIException {
 		return dtiTxn;
 	}
 
 	/**
-	 * This method changes from the DTITransaction to the WDW provider's request
-	 * string format.
+	 * This method changes from the DTITransaction to the WDW provider's request string format.
 	 * 
 	 * @param dtiTxn
 	 *            The dtiTxn object containing the request.
 	 * @return The WDW provider's request format.
 	 * @throws DTIException
-	 *             if called. Currently, the WDW transformation is not
-	 *             supported.
+	 *             if called. Currently, the WDW transformation is not supported.
 	 */
-	public static String changeToWDWProviderFormat(DTITransactionTO dtiTxn)
-			throws DTIException {
+	public static String changeToWDWProviderFormat(DTITransactionTO dtiTxn) throws DTIException {
 
 		String xmlRequest = null;
 		TransactionType requestType = dtiTxn.getTransactionType();
@@ -263,10 +266,15 @@ public class WDWBusinessRules {
 		case UPGRADEENTITLEMENT: // 2.10
 			xmlRequest = WDWUpgradeEntitlementRules.transformRequest(dtiTxn);
 			break;
-			
-		case RENEWENTITLEMENT: // As of 2.16.1, JTL
-		  xmlRequest = WDWRenewEntitlementRules.transformRequest(dtiTxn); 
-		  break;
+
+		case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
+			xmlRequest = WDWAssociateMediaToAccountRules
+					.transformRequest(dtiTxn);
+			break;
+
+		case TICKERATEENTITLEMENT: // 2.16.1 BIEST001
+			xmlRequest = WDWTickerateEntitlementRules.transformRequest(dtiTxn);
+			break;
 
 		case RENEWENTITLEMENT: // As of 2.16.1, JTL
 			xmlRequest = WDWRenewEntitlementRules.transformRequest(dtiTxn);
@@ -286,8 +294,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Parses the xmlResponse string from the WDW provider into the
-	 * DTITransactionTO object.
+	 * Parses the xmlResponse string from the WDW provider into the DTITransactionTO object.
 	 * 
 	 * @param dtiTxn
 	 *            The dtiTxn object for this transaction.
@@ -295,8 +302,7 @@ public class WDWBusinessRules {
 	 *            The response string returned by the DLR provider.
 	 * @return The dtiTxn object enhanced with the response.
 	 * @throws DTIException
-	 *             for any error. Contains enough detail to formulate an error
-	 *             response to the seller.
+	 *             for any error. Contains enough detail to formulate an error response to the seller.
 	 */
 	public static DTITransactionTO changeWDWProviderFormatToDti(
 			DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
@@ -308,13 +314,10 @@ public class WDWBusinessRules {
 
 	/**
 	 * Enforces the following rules: <BR>
-	 * 1. If the TicketIdType is MAG, then it must be 73 characters long with an
-	 * 'F' in position 37. <BR>
-	 * 2. If the TicketIdType is DSSN, then all four components must be filled
-	 * out and the DSSN Station must be of a valid length. <BR>
+	 * 1. If the TicketIdType is MAG, then it must be 73 characters long with an 'F' in position 37. <BR>
+	 * 2. If the TicketIdType is DSSN, then all four components must be filled out and the DSSN Station must be of a valid length. <BR>
 	 * 3. If the TicketIdType is TKTNID, then it must be 17 characters long. <BR>
-	 * 4. If the TicketIdType is BARCODE, then it must be 20 characters long
-	 * (new). <BR>
+	 * 4. If the TicketIdType is BARCODE, then it must be 20 characters long (new). <BR>
 	 * 5. There may only be one TicketIdType per in-bound ticket.
 	 * 
 	 * @param aTktList
@@ -322,63 +325,58 @@ public class WDWBusinessRules {
 	 * @throws DTIException
 	 *             for any failure of validation
 	 */
-	static void validateInBoundWDWTickets(ArrayList<TicketTO> aTktList)
-			throws DTIException {
+	static void validateInBoundWDWTickets(ArrayList<TicketTO> aTktList) throws DTIException {
 
 		for /* each */(TicketTO aTicketTO : /* in */aTktList) {
 
 			// Only one TktId on this ticket?
-			if (aTicketTO.getTicketTypes().size() != 1)
-				throw new DTIException(WDWBusinessRules.class,
-						DTIErrorCode.INVALID_TICKET_ID,
-						"In-bound WDW txn with <> 1 TktId: "
-								+ aTicketTO.getTicketTypes().size());
+			if (aTicketTO.getTicketTypes().size() != 1) throw new DTIException(
+					WDWBusinessRules.class, DTIErrorCode.INVALID_TICKET_ID,
+					"In-bound WDW txn with <> 1 TktId: " + aTicketTO
+							.getTicketTypes().size());
 
 			// Mag Track checks
 			if (aTicketTO.getTicketTypes().get(0) == TicketTO.TicketIdType.MAG_ID) {
 
-				if (aTicketTO.getMagTrack1().length() != MAG1_LENGTH)
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid Mag length: "
-									+ aTicketTO.getMagTrack1().length());
+				if (aTicketTO.getMagTrack1().length() != MAG1_LENGTH) throw new DTIException(
+						WDWBusinessRules.class,
+						DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid Mag length: " + aTicketTO
+								.getMagTrack1().length());
 
 				char midChar = Character.toUpperCase(aTicketTO.getMagTrack1()
 						.charAt(MIDPOINT_CHAR_INDEX));
-				if (midChar != MIDPOINT_CHAR)
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid midpoint char: "
-									+ midChar);
+				if (midChar != MIDPOINT_CHAR) throw new DTIException(
+						WDWBusinessRules.class,
+						DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid midpoint char: " + midChar);
 
 			}
 
 			// DSSN
 			if (aTicketTO.getTicketTypes().get(0) == TicketTO.TicketIdType.DSSN_ID) {
 
-				if ((aTicketTO.getDssnDate() == null)
-						|| (aTicketTO.getDssnSite() == null)
-						|| (aTicketTO.getDssnStation() == null)
-						|| (aTicketTO.getDssnNumber() == null))
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid DSSN.");
+				if ((aTicketTO.getDssnDate() == null) || (aTicketTO
+						.getDssnSite() == null) || (aTicketTO.getDssnStation() == null) || (aTicketTO
+						.getDssnNumber() == null)) throw new DTIException(
+						WDWBusinessRules.class, DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid DSSN.");
 
-				if ((aTicketTO.getDssnSite().length() == 0)
-						|| (aTicketTO.getDssnStation().length() == 0)
-						|| (aTicketTO.getDssnNumber().length() == 0))
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid DSSN.");
+				if ((aTicketTO.getDssnSite().length() == 0) || (aTicketTO
+						.getDssnStation().length() == 0) || (aTicketTO
+						.getDssnNumber().length() == 0)) throw new DTIException(
+						WDWBusinessRules.class, DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid DSSN.");
 
-				if ((aTicketTO.getDssnStation().length() == DSSN_STATION_MIN_LENGTH)
-						|| (aTicketTO.getDssnStation().length() == DSSN_STATION_MAX_LENGTH)) {
-				} else {
+				if ((aTicketTO.getDssnStation().length() == DSSN_STATION_MIN_LENGTH) || (aTicketTO
+						.getDssnStation().length() == DSSN_STATION_MAX_LENGTH)) {
+				}
+				else {
 					throw new DTIException(
 							WDWBusinessRules.class,
 							DTIErrorCode.INVALID_TICKET_ID,
-							"For DSSN transactions, station must be either 3 or 6 digits long.  Request had length of "
-									+ aTicketTO.getDssnStation().length() + ".");
+							"For DSSN transactions, station must be either 3 or 6 digits long.  Request had length of " + aTicketTO
+									.getDssnStation().length() + ".");
 				}
 
 			}
@@ -386,21 +384,21 @@ public class WDWBusinessRules {
 			// TKTNID
 			if (aTicketTO.getTicketTypes().get(0) == TicketTO.TicketIdType.TKTNID_ID) {
 
-				if (aTicketTO.getTktNID().length() != TKTNID_LENGTH)
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid TktNID length: "
-									+ aTicketTO.getTktNID().length());
+				if (aTicketTO.getTktNID().length() != TKTNID_LENGTH) throw new DTIException(
+						WDWBusinessRules.class,
+						DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid TktNID length: " + aTicketTO
+								.getTktNID().length());
 			}
 
 			// BARCODE
 			if (aTicketTO.getTicketTypes().get(0) == TicketTO.TicketIdType.BARCODE_ID) {
-				if ((aTicketTO.getBarCode().length() != BARCODE_LENGTH_NUMERIC)
-						&& (aTicketTO.getBarCode().length() != BARCODE_LENGTH_ALPHANUM))
-					throw new DTIException(WDWBusinessRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,
-							"In-bound WDW txn with invalid Barcode length: "
-									+ aTicketTO.getBarCode().length());
+				if ((aTicketTO.getBarCode().length() != BARCODE_LENGTH_NUMERIC) && (aTicketTO
+						.getBarCode().length() != BARCODE_LENGTH_ALPHANUM)) throw new DTIException(
+						WDWBusinessRules.class,
+						DTIErrorCode.INVALID_TICKET_ID,
+						"In-bound WDW txn with invalid Barcode length: " + aTicketTO
+								.getBarCode().length());
 			}
 
 		}
@@ -423,25 +421,19 @@ public class WDWBusinessRules {
 	static void validateTicketShellActive(HashSet<Integer> orderShells,
 			ArrayList<Integer> activeShells) throws DTIException {
 
-		if (orderShells.size() == 0)
-			return;
+		if (orderShells.size() == 0) return;
 
-		if ((activeShells == null) || (activeShells.size() == 0))
-			throw new DTIException(WDWBusinessRules.class,
-					DTIErrorCode.INVALID_SHELL_NUMBER,
-					"No shells on ticket order are known to the database.");
+		if ((activeShells == null) || (activeShells.size() == 0)) throw new DTIException(
+				WDWBusinessRules.class, DTIErrorCode.INVALID_SHELL_NUMBER,
+				"No shells on ticket order are known to the database.");
 
 		for /* each */(Integer anOrderShell : /* in */orderShells) {
 
-			if (activeShells.contains(anOrderShell))
-				continue;
-			else
-				throw new DTIException(
-						WDWBusinessRules.class,
-						DTIErrorCode.INVALID_SHELL_NUMBER,
-						"Shell "
-								+ anOrderShell.toString()
-								+ " is not known or is not active in the database.");
+			if (activeShells.contains(anOrderShell)) continue;
+			else throw new DTIException(
+					WDWBusinessRules.class,
+					DTIErrorCode.INVALID_SHELL_NUMBER,
+					"Shell " + anOrderShell.toString() + " is not known or is not active in the database.");
 		}
 
 		return;
@@ -462,24 +454,20 @@ public class WDWBusinessRules {
 	 *             the DTI exception
 	 */
 	static void validateTicketShellToProduct(ArrayList<TicketTO> aTktListTO,
-			HashMap<String, ArrayList<Integer>> prodShellsXRef)
-			throws DTIException {
+			HashMap<String, ArrayList<Integer>> prodShellsXRef) throws DTIException {
 
 		for /* each */(TicketTO aTicketTO : /* in */aTktListTO) {
 
 			String productCode = aTicketTO.getProdCode();
 			String shellString = getShellStringFromTicket(aTicketTO);
-			if (shellString == null)
-				continue;
+			if (shellString == null) continue;
 			Integer shellNbr = new Integer(shellString);
 
 			ArrayList<Integer> validShells = prodShellsXRef.get(productCode);
-			if ((validShells == null) || (!validShells.contains(shellNbr)))
-				throw new DTIException(WDWBusinessRules.class,
-						DTIErrorCode.INVALID_SHELL_FOR_PRODUCT, "Shell "
-								+ shellNbr.toString()
-								+ " not associated with product " + productCode
-								+ " in the database.");
+			if ((validShells == null) || (!validShells.contains(shellNbr))) throw new DTIException(
+					WDWBusinessRules.class,
+					DTIErrorCode.INVALID_SHELL_FOR_PRODUCT,
+					"Shell " + shellNbr.toString() + " not associated with product " + productCode + " in the database.");
 		}
 
 		return;
@@ -507,33 +495,25 @@ public class WDWBusinessRules {
 
 			String shellString = getShellStringFromTicket(aTicketTO);
 
-			if (shellString == null)
-				continue;
+			if (shellString == null) continue;
 
 			int shellNbr;
 			try {
 				shellNbr = Integer.parseInt(shellString);
-			} catch (NumberFormatException nfe) {
+			}
+			catch (NumberFormatException nfe) {
 				throw new DTIException(
 						WDWBusinessRules.class,
 						DTIErrorCode.INVALID_SHELL_NUMBER,
-						"Ticket item "
-								+ aTicketTO.getTktItem().intValue()
-								+ " Mag Track 2 contains non-numeric shell number: "
-								+ shellString);
+						"Ticket item " + aTicketTO.getTktItem().intValue() + " Mag Track 2 contains non-numeric shell number: " + shellString);
 			}
 
-			if ((shellNbr <= 0) || (shellNbr > SHELLMAXVALUE))
-				throw new DTIException(
-						WDWBusinessRules.class,
-						DTIErrorCode.INVALID_SHELL_NUMBER,
-						"Ticket item "
-								+ aTicketTO.getTktItem().intValue()
-								+ " Mag Track 2 contains invalid shell number: "
-								+ shellString);
+			if ((shellNbr <= 0) || (shellNbr > SHELLMAXVALUE)) throw new DTIException(
+					WDWBusinessRules.class,
+					DTIErrorCode.INVALID_SHELL_NUMBER,
+					"Ticket item " + aTicketTO.getTktItem().intValue() + " Mag Track 2 contains invalid shell number: " + shellString);
 
-			if (shellString.length() != 0)
-				aSet.add(new Integer(shellString));
+			if (shellString.length() != 0) aSet.add(new Integer(shellString));
 		}
 
 		return aSet;
@@ -572,8 +552,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Validates the void ticket actor to make sure it satisfies one of the two
-	 * required values.<BR>
+	 * Validates the void ticket actor to make sure it satisfies one of the two required values.<BR>
 	 * (MGR or SYS).
 	 * 
 	 * @param cmdHeader
@@ -581,29 +560,25 @@ public class WDWBusinessRules {
 	 * @throws DTIException
 	 *             if the rule is violated.
 	 */
-	static void validateVoidTicketActor(CommandHeaderTO cmdHeader)
-			throws DTIException {
+	static void validateVoidTicketActor(CommandHeaderTO cmdHeader) throws DTIException {
 
 		String cmdActor = cmdHeader.getCmdActor();
 
-		if (cmdActor == null)
-			throw new DTIException(WDWBusinessRules.class,
-					DTIErrorCode.ACTOR_NOT_AUTHORIZED,
-					"No CmdActor tag provided where required.");
+		if (cmdActor == null) throw new DTIException(WDWBusinessRules.class,
+				DTIErrorCode.ACTOR_NOT_AUTHORIZED,
+				"No CmdActor tag provided where required.");
 
-		if ((cmdActor.compareTo(WDWBusinessRules.MANAGER) != 0)
-				&& (cmdActor.compareTo(WDWBusinessRules.SYSTEM) != 0))
-			throw new DTIException(WDWBusinessRules.class,
-					DTIErrorCode.ACTOR_NOT_AUTHORIZED, "CmdActor tag of "
-							+ cmdActor
-							+ " not authorized for void (MGR or SYS only)");
+		if ((cmdActor.compareTo(WDWBusinessRules.MANAGER) != 0) && (cmdActor
+				.compareTo(WDWBusinessRules.SYSTEM) != 0)) throw new DTIException(
+				WDWBusinessRules.class,
+				DTIErrorCode.ACTOR_NOT_AUTHORIZED,
+				"CmdActor tag of " + cmdActor + " not authorized for void (MGR or SYS only)");
 
 		return;
 	}
 
 	/**
-	 * Transforms the Omni Ticket Header using the dtiTxn, the request type, and
-	 * the request sub type.
+	 * Transforms the Omni Ticket Header using the dtiTxn, the request type, and the request sub type.
 	 * 
 	 * @param dtiTxn
 	 *            the DTITransactionTO for this interaction.
@@ -621,8 +596,8 @@ public class WDWBusinessRules {
 		OTHeaderTO hdr;
 		hdr = new OTHeaderTO();
 
-		String referenceNumber = IAGO_PREFIX_VALUE
-				+ dtiTxn.getTpRefNum().toString();
+		String referenceNumber = IAGO_PREFIX_VALUE + dtiTxn.getTpRefNum()
+				.toString();
 		hdr.setReferenceNumber(referenceNumber);
 
 		hdr.setRequestType(requestType);
@@ -652,7 +627,8 @@ public class WDWBusinessRules {
 		Integer userId = null;
 		try {
 			userId = Integer.decode(userIdString);
-		} catch (NumberFormatException nfe) {
+		}
+		catch (NumberFormatException nfe) {
 			throw new DTIException(WDWBusinessRules.class,
 					DTIErrorCode.DTI_DATA_ERROR,
 					"User ID not a parsable integer: " + userIdString);
@@ -670,7 +646,8 @@ public class WDWBusinessRules {
 		Integer password = null;
 		try {
 			password = Integer.decode(passwordString);
-		} catch (NumberFormatException nfe) {
+		}
+		catch (NumberFormatException nfe) {
 			throw new DTIException(WDWBusinessRules.class,
 					DTIErrorCode.DTI_DATA_ERROR,
 					"Password not a parsable integer: " + passwordString);
@@ -684,35 +661,32 @@ public class WDWBusinessRules {
 	 * 
 	 * @return the numerical site number
 	 * @throws DTIException
-	 *             should the property not be properly specified in
-	 *             configuration.
+	 *             should the property not be properly specified in configuration.
 	 */
 	static Integer getSiteNumberProperty() throws DTIException {
 
-		if (props == null)
-			props = getProperties();
-		if (props == null)
-			throw new DTIException(WDWBusinessRules.class,
-					DTIErrorCode.DTI_CONFIG_ERROR,
-					"Internal Error:  Cannot get properties values.");
+		if (props == null) props = getProperties();
+		if (props == null) throw new DTIException(WDWBusinessRules.class,
+				DTIErrorCode.DTI_CONFIG_ERROR,
+				"Internal Error:  Cannot get properties values.");
 
 		String siteNumberString = PropertyHelper.readPropsValue(
 				PropertyName.ATS_SITE_NUMBER, props, null);
 		Integer siteNumber;
 
-		if (siteNumberString == null)
-			throw new DTIException(WDWBusinessRules.class,
-					DTIErrorCode.DTI_CONFIG_ERROR, "Internal Error:  No "
-							+ PropertyName.ATS_SITE_NUMBER
-							+ " in properties file.");
+		if (siteNumberString == null) throw new DTIException(
+				WDWBusinessRules.class,
+				DTIErrorCode.DTI_CONFIG_ERROR,
+				"Internal Error:  No " + PropertyName.ATS_SITE_NUMBER + " in properties file.");
 		else {
 			try {
 				siteNumber = Integer.decode(siteNumberString);
-			} catch (NumberFormatException nfe) {
-				throw new DTIException(WDWBusinessRules.class,
-						DTIErrorCode.DTI_CONFIG_ERROR, "Internal Error:  "
-								+ PropertyName.ATS_SITE_NUMBER
-								+ " in properties file is not numeric.");
+			}
+			catch (NumberFormatException nfe) {
+				throw new DTIException(
+						WDWBusinessRules.class,
+						DTIErrorCode.DTI_CONFIG_ERROR,
+						"Internal Error:  " + PropertyName.ATS_SITE_NUMBER + " in properties file is not numeric.");
 			}
 		}
 
@@ -739,8 +713,8 @@ public class WDWBusinessRules {
 
 			String defPymtData = null;
 
-			if ((entityTO.getDefPymtIdEnum() == DefaultPaymentType.VOUCHER)
-					&& (entityTO.getDefPymtData() != null)) {
+			if ((entityTO.getDefPymtIdEnum() == DefaultPaymentType.VOUCHER) && (entityTO
+					.getDefPymtData() != null)) {
 				defPymtData = entityTO.getDefPymtData();
 
 				VoucherTO dtiVoucherTO = new VoucherTO();
@@ -753,12 +727,14 @@ public class WDWBusinessRules {
 				otPaymentTO = transformOTVoucherRequest(dtiPaymentTO);
 				otPaymentList.add(otPaymentTO);
 
-			} else {
+			}
+			else {
 
 				// do nothing (generate no payment clause)
 
 			}
-		} else {
+		}
+		else {
 
 			for /* each */(PaymentTO dtiPaymentTO : /* in */dtiPayList) {
 
@@ -772,8 +748,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Transforms the DTI payment and entity transfer objects into an OT Payment
-	 * object. Supports credit card, gift card, or voucher.
+	 * Transforms the DTI payment and entity transfer objects into an OT Payment object. Supports credit card, gift card, or voucher.
 	 * 
 	 * @param dtiPaymentTO
 	 *            The DTI payment transfer object.
@@ -855,22 +830,23 @@ public class WDWBusinessRules {
 						.getExtnlDevSerial());
 			}
 
-		} else {
+		}
+		else {
 
 			otCreditCard.setCardNumber(dtiCreditCard.getCcNbr());
 
 			// Omni Ticket requires expiration date in reverse order (MMYY to
 			// YYMM)
 			String dtiExpiration = dtiCreditCard.getCcExpiration();
-			String otExpiration = dtiExpiration.substring(2)
-					+ dtiExpiration.substring(0, 2);
+			String otExpiration = dtiExpiration.substring(2) + dtiExpiration
+					.substring(0, 2);
 			otCreditCard.setCardExpDate(otExpiration);
 
 			// the Gateway doesn't have to send a CVV XML element to IAGO, but
 			// if it
 			// does, it must have a value
-			if (dtiCreditCard.getCcVV() != null
-					&& dtiCreditCard.getCcVV().length() > 0) {
+			if (dtiCreditCard.getCcVV() != null && dtiCreditCard.getCcVV()
+					.length() > 0) {
 				otCreditCard.setCVV(dtiCreditCard.getCcVV());
 			}
 
@@ -882,12 +858,11 @@ public class WDWBusinessRules {
 				otCreditCard.setCAVVValue(dtiCreditCard.getCcCAVV());
 			}
 
-			if (dtiCreditCard.getCcEcommerce() != null)
-				otCreditCard.setECommerceValue(dtiCreditCard.getCcEcommerce());
+			if (dtiCreditCard.getCcEcommerce() != null) otCreditCard
+					.setECommerceValue(dtiCreditCard.getCcEcommerce());
 			else {
-				if (entityTO.getECommerceValue() != null)
-					otCreditCard
-							.setECommerceValue(entityTO.getECommerceValue());
+				if (entityTO.getECommerceValue() != null) otCreditCard
+						.setECommerceValue(entityTO.getECommerceValue());
 			}
 
 		}
@@ -927,11 +902,12 @@ public class WDWBusinessRules {
 
 		if (entryType == GiftCardTO.GiftCardType.GCSWIPE) {
 
-			if (dtiGiftCard.getGcTrack1() != null)
-				otCreditCard.setTrack1(dtiGiftCard.getGcTrack1());
+			if (dtiGiftCard.getGcTrack1() != null) otCreditCard
+					.setTrack1(dtiGiftCard.getGcTrack1());
 			otCreditCard.setTrack2(dtiGiftCard.getGcTrack2());
 
-		} else {
+		}
+		else {
 			otCreditCard.setCardNumber(dtiGiftCard.getGcNbr());
 		}
 
@@ -943,8 +919,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Transforms a DTI payment to an Omni Ticket Payment transfer object for
-	 * vouchers.
+	 * Transforms a DTI payment to an Omni Ticket Payment transfer object for vouchers.
 	 * 
 	 * @param dtiPayment
 	 *            containing a voucher
@@ -982,8 +957,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Transforms a DTI payment to an Omni Ticket Payment transfer object for
-	 * installment payment.
+	 * Transforms a DTI payment to an Omni Ticket Payment transfer object for installment payment.
 	 * 
 	 * @param dtiPayment
 	 *            containing a voucher
@@ -1012,12 +986,13 @@ public class WDWBusinessRules {
 			// Omni Ticket requires expiration date in reverse order (MMYY to
 			// YYMM)
 			String dtiExpiration = creditCardTO.getCcExpiration();
-			String otExpiration = dtiExpiration.substring(2)
-					+ dtiExpiration.substring(0, 2);
+			String otExpiration = dtiExpiration.substring(2) + dtiExpiration
+					.substring(0, 2);
 			otInstallmentTO.setCardExpDate(otExpiration);
 
 			otInstallmentTO.setCardHolderName(creditCardTO.getCcName());
-		} else {
+		}
+		else {
 			otInstallmentTO.setTrack1(creditCardTO.getCcTrack1());
 			otInstallmentTO.setTrack2(creditCardTO.getCcTrack2());
 		}
@@ -1038,14 +1013,12 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Sets the in-transaction attributes on the Omni Ticket transfer object
-	 * based on data provided in the DTI transfer objects.
+	 * Sets the in-transaction attributes on the Omni Ticket transfer object based on data provided in the DTI transfer objects.
 	 * 
 	 * @param dtiTxn
 	 *            The DTI Transaction object.
 	 * @param inTxnAttrList
-	 *            The list of Omni Ticket In-Transaction Attribute Transfer
-	 *            Objects.
+	 *            The list of Omni Ticket In-Transaction Attribute Transfer Objects.
 	 */
 	static void setOTInTransactionAttributes(DTITransactionTO dtiTxn,
 			ArrayList<OTInTransactionAttributeTO> inTxnAttrList) {
@@ -1054,8 +1027,8 @@ public class WDWBusinessRules {
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
 		String cmdActor = dtiCmdHdr.getCmdActor();
 
-		if ((cmdActor == null) || (cmdActor.length() == 0)
-				|| (cmdActor.compareTo(MANAGER) == 0)) {
+		if ((cmdActor == null) || (cmdActor.length() == 0) || (cmdActor
+				.compareTo(MANAGER) == 0)) {
 
 			// CmdOperator
 			String cmdOperator = dtiRequest.getCommandHeader().getCmdOperator();
@@ -1114,14 +1087,9 @@ public class WDWBusinessRules {
 
 			// Prod Price (omitted)
 			/*
-			 * Note, while code was in the old gateway to populate an
-			 * in-transaction attribute for <Product Price>, having spaces in
-			 * the tag name is actually not legal in XML. While WMB would not
-			 * error on this type of mistake, the Java version will not compile
-			 * if it is attempted. Therefore, mapping product price to attribute
-			 * key 6 with a value comprised of the product code (again, unknown
-			 * where this would come from) and a colon (":") plus the prod price
-			 * has been omitted as code that never functioned. JTL
+			 * Note, while code was in the old gateway to populate an in-transaction attribute for <Product Price>, having spaces in the tag name is actually not legal in XML. While WMB would not error on this type of mistake, the Java
+			 * version will not compile if it is attempted. Therefore, mapping product price to attribute key 6 with a value comprised of the product code (again, unknown where this would come from) and a colon (":") plus the prod price has
+			 * been omitted as code that never functioned. JTL
 			 */
 
 			return;
@@ -1129,8 +1097,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Sets the Omni Ticket transfer object based upon the DTI ticket and ticket
-	 * type provided.
+	 * Sets the Omni Ticket transfer object based upon the DTI ticket and ticket type provided.
 	 * 
 	 * @param dtiTicket
 	 *            The DTI Ticket transfer object.
@@ -1164,22 +1131,15 @@ public class WDWBusinessRules {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Transforms a reservation response string from the WDW provider and
-	 * updates the DTITransactionTO object with the response information.
-=======
 	 * Transforms a reservation response string from the WDW provider and updates the DTITransactionTO object with the response information.
->>>>>>> develop
 	 * 
 	 * @param dtiTxn
 	 *            The transaction object for this request.
 	 * @param xmlResponse
 	 *            The WDW provider's response in string format.
-	 * @return The DTITransactionTO object, enriched with the response
-	 *         information.
+	 * @return The DTITransactionTO object, enriched with the response information.
 	 * @throws DTIException
-	 *             for any error. Contains enough detail to formulate an error
-	 *             response to the seller.
+	 *             for any error. Contains enough detail to formulate an error response to the seller.
 	 */
 	private static DTIResponseTO transformResponse(DTITransactionTO dtiTxn,
 			String xmlResponse) throws DTIException {
@@ -1198,25 +1158,6 @@ public class WDWBusinessRules {
 		dtiRespTO.setCommandHeader(commandHdrTO);
 
 		// Check for blatant error
-<<<<<<< HEAD
-		if (otCmdTO == null)
-			throw new DTIException(
-					TransformRules.class,
-					DTIErrorCode.UNDEFINED_FAILURE,
-					"Internal Error:  Omni XML translated into a response with null Command object.");
-		if (otCmdTO.getHeaderTO() == null)
-			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_FAILURE,
-					"Internal Error:  Omni XML translated into a response with null Header object.");
-		if (otCmdTO.hasBodyObject() == false)
-			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_FAILURE,
-					"Internal Error:  Omni XML translated into a response with null body object.");
-		if (otCmdTO.getErrorTO() == null)
-			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_FAILURE,
-					"Internal Error:  Omni XML translated into a response with null Error object.");
-=======
 		if (otCmdTO == null) throw new DTIException(
 				TransformRules.class,
 				DTIErrorCode.UNDEFINED_FAILURE,
@@ -1230,7 +1171,6 @@ public class WDWBusinessRules {
 		if (otCmdTO.getErrorTO() == null) throw new DTIException(
 				TransformRules.class, DTIErrorCode.UNDEFINED_FAILURE,
 				"Internal Error:  Omni XML translated into a response with null Error object.");
->>>>>>> develop
 
 		String otRefNumString = otCmdTO.getHeaderTO().getReferenceNumber();
 		// Validate numeric reference number string
@@ -1245,7 +1185,8 @@ public class WDWBusinessRules {
 				errorString = errorString.substring(0, DESC_MAX_LENGTH);
 			}
 			dtiRespTO.setProviderErrName(errorString);
-		} else {
+		}
+		else {
 			dtiRespTO.setProviderErrName(OT_NO_ERROR);
 		}
 
@@ -1255,29 +1196,18 @@ public class WDWBusinessRules {
 
 			DTIErrorTO dtiErrorTO = ErrorKey.getTPErrorMap(otErrorCode
 					.toString());
-<<<<<<< HEAD
-			if (dtiErrorTO == null)
-				throw new DTIException(
-						TransformRules.class,
-						DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Internal Error:  Provider error code "
-								+ otErrorCode.toString()
-								+ " does has have a translation in TP_ERROR table.");
-=======
 
 			if (dtiErrorTO == null) throw new DTIException(
 					TransformRules.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Internal Error:  Provider error code " + otErrorCode
 							.toString() + " does has have a translation in TP_ERROR table.");
->>>>>>> develop
 
 			DTIErrorCode
 					.populateDTIErrorResponse(dtiErrorTO, dtiTxn, dtiRespTO);
 
 			/**
-			 * Some transactions process the body portion translations or some
-			 * contingency actions even if there is an error.
+			 * Some transactions process the body portion translations or some contingency actions even if there is an error.
 			 */
 
 			String payloadId = null;
@@ -1290,29 +1220,20 @@ public class WDWBusinessRules {
 
 				WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO,
 						dtiRespTO);
-<<<<<<< HEAD
-			} else if (requestType == OTTransactionType.VOIDTICKET) {
-=======
 				break;
 
 			case VOIDTICKET:
 
->>>>>>> develop
 				WDWVoidTicketRules.transformResponseBody(dtiTxn, otCmdTO,
 						dtiRespTO);
 				payloadId = dtiTxn.getRequest().getPayloadHeader()
 						.getPayloadID();
 				ArchiveKey.deleteVoidTicketRequest(payloadId);
-<<<<<<< HEAD
-			} else if (requestType == OTTransactionType.UPGRADETICKET) {
-				String payloadId = dtiTxn.getRequest().getPayloadHeader()
-=======
 				break;
 
 			case UPGRADETICKET:
 
 				payloadId = dtiTxn.getRequest().getPayloadHeader()
->>>>>>> develop
 						.getPayloadID();
 				ArchiveKey.deleteUpgradeAlphaRequest(payloadId);
 				break;
@@ -1371,7 +1292,8 @@ public class WDWBusinessRules {
 
 			}
 
-		} else {
+		}
+		else {
 
 			// If the provider had no error, transform the response.
 			OTTransactionType requestType = otCmdTO.getTxnType();
@@ -1380,20 +1302,16 @@ public class WDWBusinessRules {
 			switch (requestType) {
 
 			case QUERYTICKET:
-        WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO,
+						dtiRespTO);
 				break;
 
 			case UPGRADETICKET:
 
 				/*
-				 * With 2.10, the complexity here increases slightly as a single
-				 * response type from ATS can be translated into two different
-				 * commands with DTI. The answer here is NOT to create "faux"
-				 * ATS return transaction types (which don't exist) but rather
-				 * to condition translation of the response based upon the
-				 * transaction currently understood by the DTI Transaction
-				 * Object. It's the ultimate arbiter of what the in-bound
-				 * command context was supposed to be.
+				 * With 2.10, the complexity here increases slightly as a single response type from ATS can be translated into two different commands with DTI. The answer here is NOT to create "faux" ATS return transaction types (which
+				 * don't exist) but rather to condition translation of the response based upon the transaction currently understood by the DTI Transaction Object. It's the ultimate arbiter of what the in-bound command context was supposed
+				 * to be.
 				 */
 				if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.UPGRADEALPHA) {
 					WDWUpgradeAlphaRules.transformResponseBody(dtiTxn, otCmdTO,
@@ -1402,7 +1320,8 @@ public class WDWBusinessRules {
 					// tables.
 					ArchiveKey.updateUpgradeAlphaResponse(dtiTxn);
 
-				} else { // Upgrade Entitlement
+				}
+				else { // Upgrade Entitlement
 					WDWUpgradeEntitlementRules.transformResponseBody(dtiTxn,
 							otCmdTO, dtiRespTO);
 				}
@@ -1450,12 +1369,6 @@ public class WDWBusinessRules {
 				WDWCreateTicketRules.transformResponseBody(dtiTxn, otCmdTO,
 						dtiRespTO);
 				break;
-<<<<<<< HEAD
-				
-			case RENEWTICKET: // As of 2.16.1, JTL
-			  WDWRenewEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-			  break;
-=======
 
 			case MULTIENTITLEMENTACCOUNT:
 
@@ -1481,7 +1394,6 @@ public class WDWBusinessRules {
 				default:
 					break;
 				}
->>>>>>> develop
 
 				break;
 
@@ -1504,8 +1416,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Sets the DTI payment list transfer object list based upon the transfer
-	 * objects created from the provider response.
+	 * Sets the DTI payment list transfer object list based upon the transfer objects created from the provider response.
 	 * 
 	 * @param dtiPmtList
 	 *            The list of DTI payment transfer objects.
@@ -1548,9 +1459,8 @@ public class WDWBusinessRules {
 						GiftCardTO dtiGiftCardTO = new GiftCardTO();
 						dtiGiftCardTO.setGcAuthCode(otCreditCardTO
 								.getAuthErrorCode());
-						if (otCreditCardTO.getAuthNumber() != null)
-							dtiGiftCardTO.setGcAuthNumber(otCreditCardTO
-									.getAuthNumber());
+						if (otCreditCardTO.getAuthNumber() != null) dtiGiftCardTO
+								.setGcAuthNumber(otCreditCardTO.getAuthNumber());
 
 						// AuthSystemResponse, as specified in the old gateway
 						// is
@@ -1560,25 +1470,24 @@ public class WDWBusinessRules {
 						// (omitted)
 						// dtiGiftCardTO.setGcAuthSysResponse(gcAuthSysResponse)
 
-						if (otCreditCardTO.getCcNumber() != null)
-							dtiGiftCardTO.setGcNumber(otCreditCardTO
-									.getCcNumber());
-						if (otCreditCardTO.getRemainingBalance() != null)
-							dtiGiftCardTO.setGcRemainingBalance(otCreditCardTO
-									.getRemainingBalance());
-						if (otCreditCardTO.getPromoExpDate() != null)
-							dtiGiftCardTO.setGcPromoExpDate(otCreditCardTO
-									.getPromoExpDate());
+						if (otCreditCardTO.getCcNumber() != null) dtiGiftCardTO
+								.setGcNumber(otCreditCardTO.getCcNumber());
+						if (otCreditCardTO.getRemainingBalance() != null) dtiGiftCardTO
+								.setGcRemainingBalance(otCreditCardTO
+										.getRemainingBalance());
+						if (otCreditCardTO.getPromoExpDate() != null) dtiGiftCardTO
+								.setGcPromoExpDate(otCreditCardTO
+										.getPromoExpDate());
 
 						dtiPmtTO.setGiftCard(dtiGiftCardTO);
-					} else { // Credit Card
+					}
+					else { // Credit Card
 						CreditCardTO dtiCredCardTO = new CreditCardTO();
 						dtiCredCardTO.setCcAuthCode(otCreditCardTO
 								.getAuthErrorCode());
 
-						if (otCreditCardTO.getAuthNumber() != null)
-							dtiCredCardTO.setCcAuthNumber(otCreditCardTO
-									.getAuthNumber());
+						if (otCreditCardTO.getAuthNumber() != null) dtiCredCardTO
+								.setCcAuthNumber(otCreditCardTO.getAuthNumber());
 
 						// AuthSystemResponse, as specified in the old gateway
 						// is not
@@ -1586,8 +1495,8 @@ public class WDWBusinessRules {
 						// responses. (omitted)
 						// dtiCredCardTO.setCcAuthSysResponse(ccAuthSysResponse);
 
-						if (otCreditCardTO.getCcNumber() != null)
-							dtiCredCardTO.setCcNumber(otCreditCardTO.getCcNumber());
+						if (otCreditCardTO.getCcNumber() != null) dtiCredCardTO
+								.setCcNumber(otCreditCardTO.getCcNumber());
 
 						dtiPmtTO.setCreditCard(dtiCredCardTO);
 
@@ -1618,10 +1527,8 @@ public class WDWBusinessRules {
 
 			// Last/First
 			String lastFirstString = DTIFormatter.websafe(aDtiTicket
-					.getLastName().toUpperCase())
-					+ "/"
-					+ DTIFormatter.websafe(aDtiTicket.getFirstName()
-							.toUpperCase());
+					.getLastName().toUpperCase()) + "/" + DTIFormatter
+					.websafe(aDtiTicket.getFirstName().toUpperCase());
 			OTFieldTO aField = new OTFieldTO(OTFieldTO.TKT_DEMO_LASTFIRST,
 					lastFirstString);
 			otDemoData.addOTField(aField);
@@ -1635,16 +1542,6 @@ public class WDWBusinessRules {
 
 			// Gender
 			if (aDtiTicket.getGenderType() == DemographicsTO.GenderType.UNSPECIFIED) {
-<<<<<<< HEAD
-	       otDemoData
-         .addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
-			} else {
-			  otDemoData
-					.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER,
-							DTIFormatter.websafe(aDtiTicket.getGender()
-									.toUpperCase())));
-			}  
-=======
 				otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER,
 						UNSPECIFIED_GENDER_DEFAULT));
 			}
@@ -1653,7 +1550,6 @@ public class WDWBusinessRules {
 						DTIFormatter.websafe(aDtiTicket.getGender()
 								.toUpperCase())));
 			}
->>>>>>> develop
 
 			// Address 1
 			otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ADDRESS_ONE,
@@ -1703,7 +1599,8 @@ public class WDWBusinessRules {
 			if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
 				otDemoData.addOTField(new OTFieldTO(
 						OTFieldTO.TKT_DEMO_OPTINSOLICIT, WDWBusinessRules.YES));
-			} else {
+			}
+			else {
 				otDemoData.addOTField(new OTFieldTO(
 						OTFieldTO.TKT_DEMO_OPTINSOLICIT, WDWBusinessRules.NO));
 			}
@@ -1806,8 +1703,7 @@ public class WDWBusinessRules {
 	}
 
 	/**
-	 * Get the Omni Ticket Byte value for the External Reference Type given to
-	 * DTI in a Reservation Request. If it is an invalid type, return NULL.
+	 * Get the Omni Ticket Byte value for the External Reference Type given to DTI in a Reservation Request. If it is an invalid type, return NULL.
 	 * 
 	 * @param dtiType
 	 * @return
@@ -1816,35 +1712,50 @@ public class WDWBusinessRules {
 		Byte OTByte = null;
 		if (XBANDID.equals(dtiType)) {
 			OTByte = new Byte("1");
-		} else if (GXP_LINK_ID.equals(dtiType)) {
+		}
+		else if (GXP_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("2");
-		} else if (XBAND_EXTERNAL_NUMBER.equals(dtiType)) {
+		}
+		else if (XBAND_EXTERNAL_NUMBER.equals(dtiType)) {
 			OTByte = new Byte("3");
-		} else if (SWID.equals(dtiType)) {
+		}
+		else if (SWID.equals(dtiType)) {
 			OTByte = new Byte("4");
-		} else if (GUID.equals(dtiType)) {
+		}
+		else if (GUID.equals(dtiType)) {
 			OTByte = new Byte("5");
-		} else if (XBMS_LINK_ID.equals(dtiType)) {
+		}
+		else if (XBMS_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("6");
-		} else if (XPASSID.equals(dtiType)) {
+		}
+		else if (XPASSID.equals(dtiType)) {
 			OTByte = new Byte("7");
-		} else if (TRANSACTIONAL_GUEST_ID.equals(dtiType)) {
+		}
+		else if (TRANSACTIONAL_GUEST_ID.equals(dtiType)) {
 			OTByte = new Byte("8");
-		} else if (ADMISSION_LINK_ID.equals(dtiType)) {
+		}
+		else if (ADMISSION_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("9");
-		} else if (PAYMENT_LINK_ID.equals(dtiType)) {
+		}
+		else if (PAYMENT_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("10");
-		} else if (MEDIA_LINK_ID.equals(dtiType)) {
+		}
+		else if (MEDIA_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("11");
-		} else if (XID.equals(dtiType)) {
+		}
+		else if (XID.equals(dtiType)) {
 			OTByte = new Byte("12");
-		} else if (DME_LINK_ID.equals(dtiType)) {
+		}
+		else if (DME_LINK_ID.equals(dtiType)) {
 			OTByte = new Byte("13");
-		} else if (SECURE_ID.equals(dtiType)) {
+		}
+		else if (SECURE_ID.equals(dtiType)) {
 			OTByte = new Byte("14");
-		} else if (TXN_GUID.equals(dtiType)) {
+		}
+		else if (TXN_GUID.equals(dtiType)) {
 			OTByte = new Byte("15");
-		} else {
+		}
+		else {
 			// Invalid External Reference Account Type
 			OTByte = null;
 		}

@@ -10,18 +10,9 @@ import java.util.GregorianCalendar;
  * 
  */
 public class DemographicsTO implements Serializable {
-  
+
 	/** Serial Version UID */
 	private static final long serialVersionUID = 9129231995L;
-<<<<<<< HEAD
-	
-	public enum GenderType { MALE, FEMALE, UNSPECIFIED, NOTPRESENT }
-	
-	public final static String GENDER_MALE_VALUE = "M";
-	
-	public final static String GENDER_FEMALE_VALUE = "F";
-	
-=======
 
 	public enum GenderType {
 		MALE,
@@ -34,7 +25,6 @@ public class DemographicsTO implements Serializable {
 
 	public final static String GENDER_FEMALE_VALUE = "F";
 
->>>>>>> develop
 	public final static String GENDER_UNSPECIFIED_VALUE = "U";
 
 	/** Guest full name. */
@@ -299,19 +289,6 @@ public class DemographicsTO implements Serializable {
 	 * @return the gender in DTI string format ("M", "F", "U", or NULL)
 	 */
 	public String getGender() {
-<<<<<<< HEAD
-	   if (this.gender == GenderType.FEMALE) {
-	     return GENDER_FEMALE_VALUE;
-	    } else if (this.gender == GenderType.MALE) {
-	      return GENDER_MALE_VALUE;
-	    } else if (this.gender == GenderType.UNSPECIFIED){
-	      return GENDER_UNSPECIFIED_VALUE;
-	    } else {
-	      return null;
-	    }
-	}
-	
-=======
 		if (this.gender == GenderType.FEMALE) {
 			return GENDER_FEMALE_VALUE;
 		}
@@ -326,16 +303,11 @@ public class DemographicsTO implements Serializable {
 		}
 	}
 
->>>>>>> develop
 	/**
 	 * @return the gender by enumerated type.
 	 */
 	public GenderType getGenderType() {
-<<<<<<< HEAD
-	  return this.gender;
-=======
 		return this.gender;
->>>>>>> develop
 	}
 
 	/**
@@ -343,25 +315,6 @@ public class DemographicsTO implements Serializable {
 	 *            the gender to set
 	 */
 	public void setGender(String genderString) {
-<<<<<<< HEAD
-	  
-	  if (genderString.equalsIgnoreCase(GENDER_FEMALE_VALUE)) {
-	    this.gender = GenderType.FEMALE;
-	  } else if (genderString.equalsIgnoreCase(GENDER_MALE_VALUE)) {
-	    this.gender = GenderType.MALE;
-	  } else if (genderString.equalsIgnoreCase(GENDER_UNSPECIFIED_VALUE)) {
-	    this.gender = GenderType.UNSPECIFIED;
-	  } else 
-	    this.gender = GenderType.NOTPRESENT;
-	}
-	
-	/**
-	 * 
-	 * @param genderTypeIn the gender to set
-	 */
-	public void setGender(GenderType genderTypeIn) {
-	  this.gender = genderTypeIn;
-=======
 
 		if (genderString.trim().substring(0, 1).equalsIgnoreCase(GENDER_FEMALE_VALUE)) {
 			this.gender = GenderType.FEMALE;
@@ -382,7 +335,6 @@ public class DemographicsTO implements Serializable {
 	 */
 	public void setGender(GenderType genderTypeIn) {
 		this.gender = genderTypeIn;
->>>>>>> develop
 	}
 
 	/**

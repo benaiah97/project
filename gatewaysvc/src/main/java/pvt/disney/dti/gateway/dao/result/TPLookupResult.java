@@ -121,17 +121,10 @@ public class TPLookupResult implements ResultSetProcessor {
 		}
 
 		// Capture Link ID (as of 2.16.1)
-<<<<<<< HEAD
-    String linkIdString = rs.getString("LINKID");
-    if (linkIdString != null)
-      tpLookupTO.setLinkId(new BigInteger(cmdIdString));
-		
-=======
 		String linkIdString = rs.getString("LINKID");
 		if (linkIdString != null) tpLookupTO.setLinkId(new BigInteger(
 				cmdIdString));
 
->>>>>>> develop
 		tpLookupList.add(tpLookupTO);
 
 		this.recordsProcessed++;

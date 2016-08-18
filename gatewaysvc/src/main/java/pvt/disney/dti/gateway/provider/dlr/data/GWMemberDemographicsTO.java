@@ -34,8 +34,6 @@ public class GWMemberDemographicsTO implements Serializable {
 	private String dateOfBirth; // Galaxy Date Time
 
 	private String gender; // Galaxy Numeric
-	
-	private String visualID; // For renewals
 
 	private String visualID; // For renewals
 
@@ -219,21 +217,6 @@ public class GWMemberDemographicsTO implements Serializable {
 		this.street2 = street2;
 	}
 
-<<<<<<< HEAD
-  /**
-   * @return the visualID
-   */
-  public String getVisualID() {
-    return visualID;
-  }
-
-  /**
-   * @param visualID the visualID to set
-   */
-  public void setVisualID(String visualID) {
-    this.visualID = visualID;
-  }
-=======
 	/**
 	 * @return the visualID
 	 */
@@ -248,6 +231,5 @@ public class GWMemberDemographicsTO implements Serializable {
 	public void setVisualID(String visualID) {
 		this.visualID = visualID;
 	}
->>>>>>> develop
 
 }

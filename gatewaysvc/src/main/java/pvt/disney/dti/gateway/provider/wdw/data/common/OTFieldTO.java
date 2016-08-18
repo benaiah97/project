@@ -288,13 +288,4 @@ public class OTFieldTO implements Serializable {
 		return dataString;
 	}
 
-  /* (non-Javadoc)
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    String dataString = "OTFieldTO:  fieldIndex(" + fieldIndex + "), fieldType(" + fieldType + "), fieldValue(" + fieldValue + ")";
-    return dataString;
-  }
-
 }

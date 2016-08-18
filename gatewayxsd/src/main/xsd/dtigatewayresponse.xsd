@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD RESORT) -->
+<!-- edited with XMLSpy v2015 rel. 3 sp1 (http://www.altova.com) by Tamra F. Biese (WALT DISNEY WORLD RESORT) -->
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Kevin Graham (Walt Disney World Co) -->
-<!--TiXML 1.0  12/17/02  Copyright The Walt Disney Company-->
+<!--TiXML 1.0 12/17/02 Copyright The Walt Disney Company -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
 	<xs:element name="Transmission">
 		<xs:complexType>
@@ -13,19 +13,6 @@
 							<xs:element name="Command" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
-<<<<<<< HEAD
-										<xs:element ref="CommandHeader"/>
-										<xs:element ref="QueryTicketResponse" minOccurs="0"/>
-										<xs:element ref="UpgradeAlphaResponse" minOccurs="0"/>
-										<xs:element ref="VoidTicketResponse" minOccurs="0"/>
-										<xs:element ref="ReservationResponse" minOccurs="0"/>
-										<xs:element ref="CreateTicketResponse" minOccurs="0"/>
-										<xs:element ref="UpdateTicketResponse" minOccurs="0"/>
-										<xs:element ref="UpdateTransactionResponse" minOccurs="0"/>
-										<xs:element ref="UpgradeEntitlementResponse" minOccurs="0"/>
-										<xs:element ref="QueryReservationResponse" minOccurs="0"/>
-										<xs:element ref="RenewEntitlementResponse" minOccurs="0"/>
-=======
 										<xs:element ref="CommandHeader" />
 										<xs:element ref="QueryTicketResponse" minOccurs="0" />
 										<xs:element ref="UpgradeAlphaResponse" minOccurs="0" />
@@ -39,7 +26,6 @@
 										<xs:element ref="RenewEntitlementResponse" minOccurs="0" />
 										<xs:element ref="AssociateMediaToAccountResponse" minOccurs="0" />
 										<xs:element ref="TickerateEntitlementResponse" minOccurs="0" />
->>>>>>> develop
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -66,21 +52,12 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-<<<<<<< HEAD
-				<xs:element name="TransmitDate" type="xs:date"/>
-				<!--xs:element name="TransmitTime" type="xs:time"/-->
-				<xs:element name="TransmitTime" type="xs:string"/>
-				<xs:element name="TktBroker" type="xs:string"/>
-				<xs:element name="CommandCount" type="xs:integer"/>
-				<xs:element name="PayloadNote" type="xs:string" minOccurs="0"/>
-=======
 				<xs:element name="TransmitDate" type="xs:date" />
 				<!--xs:element name="TransmitTime" type="xs:time"/ -->
 				<xs:element name="TransmitTime" type="xs:string" />
 				<xs:element name="TktBroker" type="xs:string" />
 				<xs:element name="CommandCount" type="xs:integer" />
 				<xs:element name="PayloadNote" type="xs:string" minOccurs="0" />
->>>>>>> develop
 				<xs:element name="PayloadError" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
@@ -97,19 +74,11 @@
 	<xs:element name="CommandHeader">
 		<xs:complexType>
 			<xs:sequence>
-<<<<<<< HEAD
-				<xs:element name="CmdItem" type="xs:integer"/>
-				<xs:element name="CmdDuration" type="xs:decimal"/>
-				<xs:element name="CmdDate" type="xs:date"/>
-				<!--xs:element name="CmdTime" type="xs:time"/-->
-				<xs:element name="CmdTime" type="xs:string"/>
-=======
 				<xs:element name="CmdItem" type="xs:integer" />
 				<xs:element name="CmdDuration" type="xs:decimal" />
 				<xs:element name="CmdDate" type="xs:date" />
 				<!--xs:element name="CmdTime" type="xs:time"/ -->
 				<xs:element name="CmdTime" type="xs:string" />
->>>>>>> develop
 				<xs:element name="CmdNote" type="xs:string" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Not supported by DTI</xs:documentation>
@@ -246,8 +215,6 @@
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
-<<<<<<< HEAD
-=======
 							<xs:element name="AccountId" minOccurs="0">
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
@@ -255,7 +222,6 @@
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
->>>>>>> develop
 							<xs:element name="TktError" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
@@ -1292,27 +1258,13 @@
 				<xs:element name="Renewal" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
-<<<<<<< HEAD
-							<xs:element name="ContractId" type="xs:string" minOccurs="0"/>
-=======
 							<xs:element name="ContractId" type="xs:string" minOccurs="0" />
->>>>>>> develop
 							<xs:element name="TktTransaction" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="TranDSSN" minOccurs="0">
 											<xs:complexType>
 												<xs:sequence>
-<<<<<<< HEAD
-													<xs:element name="TranDate" type="xs:string"/>
-													<xs:element name="TranSite" type="xs:string"/>
-													<xs:element name="TranStation" type="xs:string"/>
-													<xs:element name="TranNbr" type="xs:string"/>
-												</xs:sequence>
-											</xs:complexType>
-										</xs:element>
-										<xs:element name="TranNID" type="xs:string" minOccurs="0"/>
-=======
 													<xs:element name="TranDate" type="xs:string" />
 													<xs:element name="TranSite" type="xs:string" />
 													<xs:element name="TranStation" type="xs:string" />
@@ -1321,7 +1273,6 @@
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="TranNID" type="xs:string" minOccurs="0" />
->>>>>>> develop
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -1745,13 +1696,6 @@
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
-<<<<<<< HEAD
-							<xs:element name="TktProdCode" type="xs:string" minOccurs="0"/>
-							<xs:element name="AccountId" type="xs:string" minOccurs="0">
-								<xs:annotation>
-									<xs:documentation>DRAFT for the Direct To Gate Project</xs:documentation>
-								</xs:annotation>
-=======
 							<xs:element name="TktProdCode" type="xs:string" minOccurs="0" />
 							<xs:element name="AccountId" minOccurs="0">
 								<xs:simpleType>
@@ -1759,7 +1703,6 @@
 										<xs:length value="17" />
 									</xs:restriction>
 								</xs:simpleType>
->>>>>>> develop
 							</xs:element>
 						</xs:choice>
 					</xs:complexType>
@@ -1950,8 +1893,6 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-<<<<<<< HEAD
-=======
 	<xs:element name="AssociateMediaToAccountResponse">
 		<xs:complexType>
 			<xs:sequence>
@@ -2052,5 +1993,4 @@
 			<xs:element name="TktErrorText" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
->>>>>>> develop
 </xs:schema>

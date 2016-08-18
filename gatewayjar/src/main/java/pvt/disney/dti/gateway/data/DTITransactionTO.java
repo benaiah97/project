@@ -25,12 +25,6 @@ public class DTITransactionTO implements Serializable {
 
 	/** The enumeration of possible transaction types in DTI. */
 	public enum TransactionType {
-<<<<<<< HEAD
-		QUERYTICKET, UPGRADEALPHA, VOIDTICKET, RESERVATION, CREATETICKET, UPDATETICKET, 
-		UPDATETRANSACTION, QUERYRESERVATION, 
-		UPGRADEENTITLEMENT, // 2.10
-		RENEWENTITLEMENT, // As of 2.16.1, JTL
-=======
 		QUERYTICKET,
 		UPGRADEALPHA,
 		VOIDTICKET,
@@ -43,7 +37,6 @@ public class DTITransactionTO implements Serializable {
 		RENEWENTITLEMENT, // As of 2.16.1, JTL
 		ASSOCIATEMEDIATOACCOUNT, // 2.16.1 BIEST001
 		TICKERATEENTITLEMENT, // 2.16.1 BIEST001
->>>>>>> develop
 		UNDEFINED
 	};
 
@@ -429,7 +422,7 @@ public class DTITransactionTO implements Serializable {
 
 		tpLookupTOMap = new HashMap<TPLookupTO.TPLookupType, TPLookupTO>();
 
-		for /* each */(TPLookupTO aTPLookup : /* in */ tpLookupTOList) {
+		for /* each */(TPLookupTO aTPLookup : /* in */tpLookupTOList) {
 			TPLookupTO.TPLookupType type = aTPLookup.getLookupType();
 
 			// Break out look-ups that have a different cardinality then one type to

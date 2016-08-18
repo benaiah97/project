@@ -112,25 +112,6 @@ public class GWOrderXML {
 						.getPaymntContractList();
 				// There should be only one.
 				GWPaymentContractTO gwPayContract = paymentContractList.get(0);
-<<<<<<< HEAD
-				
-				Element pmntCntrctElement = pmntCntrctsElement.addElement("PaymentContract");
-				Element recurElement = pmntCntrctElement.addElement("RecurrencePattern");
-				
-				recurElement.addElement("RecurrenceType").addText(gwPayContract.getRecurrenceType());
-				recurElement.addElement("DayOfMonth").addText(gwPayContract.getDayOfMonth().toString());
-				recurElement.addElement("Interval").addText(gwPayContract.getInterval().toString());
-				recurElement.addElement("StartDate").addText(gwPayContract.getStartDate());
-				recurElement.addElement("EndDate").addText(gwPayContract.getEndDate());
-				
-				pmntCntrctElement.addElement("PaymentPlanID").addText(gwPayContract.getPaymentPlanID()); 
-				pmntCntrctElement.addElement("RenewContract").addText(gwPayContract.getRenewContract().toString());
-				pmntCntrctElement.addElement("PaymentContractStatusID").addText(gwPayContract.getPaymentContractStatusID());
-				if (gwPayContract.getDownPaymentAmount() != null) {
-				  pmntCntrctElement.addElement("DownPaymentAmount").addText(gwPayContract.getDownPaymentAmount());
-				}
-				pmntCntrctElement.addElement("ContactMethod").addText(gwPayContract.getContactMethod());
-=======
 
 				Element pmntCntrctElement = pmntCntrctsElement
 						.addElement("PaymentContract");
@@ -160,7 +141,6 @@ public class GWOrderXML {
 				}
 				pmntCntrctElement.addElement("ContactMethod").addText(
 						gwPayContract.getContactMethod());
->>>>>>> develop
 			}
 
 			// OrderReference
@@ -401,16 +381,7 @@ public class GWOrderXML {
 						passElement.addElement("VisualID").addText(
 								gwDemoTO.getVisualID());
 					}
-<<<<<<< HEAD
-					
-					// VisualID
-					if (gwDemoTO.getVisualID() != null) {
-					  passElement.addElement("VisualID").addText(gwDemoTO.getVisualID());
-					}
-					
-=======
 
->>>>>>> develop
 				}
 
 			}
@@ -709,20 +680,12 @@ public class GWOrderXML {
 					// Get the price (Strip $, w/2.16.1, JTL)
 					if (ticketElement.getName().compareTo("Price") == 0) {
 						String formattedPriceString = ticketElement.getText();
-<<<<<<< HEAD
-						String priceString = formattedPriceString.replaceAll("[$,]","");
-						if (priceString.contains("."))
-							gwTicketTO.setPrice(new BigDecimal(priceString));
-						else
-							gwTicketTO.setPrice(new BigDecimal(priceString + ".00"));
-=======
 						String priceString = formattedPriceString.replaceAll(
 								"[$,]", "");
 						if (priceString.contains(".")) gwTicketTO
 								.setPrice(new BigDecimal(priceString));
 						else gwTicketTO.setPrice(new BigDecimal(
 								priceString + ".00"));
->>>>>>> develop
 					}
 				}
 

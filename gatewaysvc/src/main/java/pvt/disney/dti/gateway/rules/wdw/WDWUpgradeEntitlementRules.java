@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
@@ -73,12 +74,6 @@ public class WDWUpgradeEntitlementRules {
 	 */
 	static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 
-<<<<<<< HEAD
-    // === Command Level ===
-    OTCommandTO atsCommand = new OTCommandTO(OTCommandTO.OTTransactionType.UPGRADETICKET);
-    atsCommand.setXmlSchemaInstance(WDWBusinessRules.XML_SCHEMA_INSTANCE);
-    atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
-=======
 		String xmlString = null;
 
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
@@ -90,7 +85,6 @@ public class WDWUpgradeEntitlementRules {
 				OTCommandTO.OTTransactionType.UPGRADETICKET);
 		atsCommand.setXmlSchemaInstance(WDWBusinessRules.XML_SCHEMA_INSTANCE);
 		atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
->>>>>>> develop
 
 		// === Header Level ===
 		OTHeaderTO hdr = WDWBusinessRules.transformOTHeader(dtiTxn,
