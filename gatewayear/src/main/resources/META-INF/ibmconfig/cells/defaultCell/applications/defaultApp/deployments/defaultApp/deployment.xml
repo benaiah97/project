@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appdeployment:Deployment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:appdeployment="http://www.ibm.com/websphere/appserver/schemas/5.0/appdeployment.xmi" xmi:id="Deployment_1208196255903">
+  <deployedObject xmi:type="appdeployment:ApplicationDeployment" xmi:id="ApplicationDeployment_1208196255903" startingWeight="10" binariesURL="$(APP_INSTALL_ROOT)/$(CELL)/DTIGATEWAYEAR.ear" useMetadataFromBinaries="false" enableDistribution="true" createMBeansForResources="true" reloadEnabled="false" appContextIDForSecurity="href:DTI001Cell/DTIGATEWAYEAR" filePermission=".*\.dll=755#.*\.so=755#.*\.a=755#.*\.sl=755" allowDispatchRemoteInclude="false" allowServiceRemoteInclude="false">
+    <targetMappings xmi:id="DeploymentTargetMapping_1227102580174" enable="true" target="ServerTarget_1227102580174"/>
+    <targetMappings xmi:id="DeploymentTargetMapping_1227102580175" enable="true" target="ServerTarget_1227102580175"/>
+    <classloader xmi:id="Classloader_1208196255903" mode="PARENT_LAST"/>
+    <modules xmi:type="appdeployment:WebModuleDeployment" xmi:id="WebModuleDeployment_1208196255903" startingWeight="10000" uri="DTIGATEWAYWAR.war" classloaderMode="PARENT_LAST">
+      <targetMappings xmi:id="DeploymentTargetMapping_1227102580176" target="ServerTarget_1227102580174"/>
+      <targetMappings xmi:id="DeploymentTargetMapping_1227102580177" target="ServerTarget_1227102580175"/>
+      <classloader xmi:id="Classloader_1227102580174"/>
+    </modules>
+    <modules xmi:type="appdeployment:WebModuleDeployment" xmi:id="WebModuleDeployment_1208196255904" startingWeight="10000" uri="DTIGATEWAYADM.war" classloaderMode="PARENT_LAST">
+      <targetMappings xmi:id="DeploymentTargetMapping_1227102580178" target="ServerTarget_1227102580174"/>
+      <targetMappings xmi:id="DeploymentTargetMapping_1227102580179" target="ServerTarget_1227102580175"/>
+      <classloader xmi:id="Classloader_1227102580175"/>
+    </modules>
+  </deployedObject>
+  <deploymentTargets xmi:type="appdeployment:ServerTarget" xmi:id="ServerTarget_1227102580174" name="webserver1" nodeName="oiand001"/>
+  <deploymentTargets xmi:type="appdeployment:ServerTarget" xmi:id="ServerTarget_1227102580175" name="DTIServer001-Gateway1" nodeName="oiand001"/>
+</appdeployment:Deployment>

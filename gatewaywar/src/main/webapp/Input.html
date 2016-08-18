@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
+<HTML>
+<HEAD>
+<%@ page import="com.dti.app.util.PropServer" %> <% PropServer ps =
+PropServer.getInstance(); %>
+<TITLE>DTICLAW - Production Https Adapter Test App</TITLE>
+<LINK href="theme/Master.css" rel="stylesheet" type="text/css">
+<META name="GENERATOR" content="IBM WebSphere Studio">
+</HEAD>
+<BODY>
+	<H1>DTICLAW - Production Https Test App</H1>
+	<FORM action="servlet/com.dti.app.common.POSApp" method="POST"
+		target="bodyFrame">
+		<TABLE>
+
+			<TR>
+				<TD colspan="3"><font color="red"><B>Please Enter a
+							folder name as c:\\temp\\ for Windows /tmp/ for Unix<BR>
+							Please Enter a WebApp Path as http://server
+							name/DTIApp/com.dti.app.common.DTIApp
+					</B></font></TD>
+			</TR>
+
+			<TR>
+				<TD><B>Folder Name: </B></TD>
+				<TD><input type="text" name="folder" size="50"
+					value="/var/opt/apps/RT/schemas/xml/"></TD>
+				<TD></TD>
+			</TR>
+			<TR>
+				<TD><B>URL: </B></TD>
+				<TD><input type="text" name="host" size="50"
+					value="http://dti.noceast.dws.disney.com/DTIApp/servlet/com.dti.app.common.DTIApp">
+				</TD>
+				<TD></TD>
+			</TR>
+			<TR>
+				<TD colspan="3"><input type="radio" name="file"
+					value="UpgradeAlphaRequest.xml">UpgradeAlphaRequest.xml<BR>
+					<input type="radio" name="file" value="VoidTicketRequest.xml">VoidTicketRequest.xml<BR>
+					<input type="radio" name="file" value="QueryTicketRequest.xml">QueryTicketRequest.xml<BR>
+					<input type="radio" name="file" value="ReservationRequest.xml">ReservationRequest.xml
+				</TD>
+			</TR>
+			<TR>
+				<TD><input type="submit"></TD>
+				<TD>
+					<!--a href="xml.html" target="headerFrame">XML Retriever</a>-->
+				</TD>
+			</TR>
+		</TABLE>
+	</FORM>
+</BODY>
+</HTML>
+

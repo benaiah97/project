@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Copyright Notice: This document (written or otherwise displayed on magnetic media or other medium) contains confidential and proprietary information of OmniTicket Network, Inc. 
+	or its affiliates. It has been furnished only for informational purposes, and no license or permission is hereby granted to use such information in any manner. In no event may this 
+	information be reproduced, distributed and/or publicly displayed in any form or by any means without prior expressed written permission of OmniTicket Network, Inc. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Command">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header">
+					<xs:annotation>
+						<xs:documentation>Recap information on Message type</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReferenceNumber">
+								<xs:annotation>
+									<xs:documentation>Incoming </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="30" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestNumber" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Match the Incoming Request Number</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SessionId" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Session Id
+										One for each new Login where managed
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="RequestType">
+								<xs:annotation>
+									<xs:documentation>Command Group
+										Command group type
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Query" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestSubType">
+								<xs:annotation>
+									<xs:documentation>Command subtype
+										Detailed command
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="QueryShow" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ValueMsg">
+								<xs:annotation>
+									<xs:documentation>Value messages Group
+										Only on answer Messages
+									</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ValuedQty" type="xs:integer" />
+										<xs:element name="NonValuedQty" type="xs:integer" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="QueryShow">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Error">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ErrorCode" type="xs:integer">
+											<xs:annotation>
+												<xs:documentation>0 = no error</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ErrorShortDescription" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="25" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ErrorDescription" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Error Description</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ShowDetails" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="GateId" type="xs:integer" />
+										<xs:element name="ShowId" type="xs:integer" />
+										<xs:element name="GateCode" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="5" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ShowCode" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="8" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ShowDescriptionOne" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="40" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ShowDescriptionTwo" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="40" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Validity" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="StartDate" type="xs:string" />
+													<xs:element name="EndDate" type="xs:string" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Slot" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MaxPerSlot" type="xs:integer" />
+													<xs:element name="MaxNotReserved" type="xs:integer" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TimesInfo" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Duration" type="xs:integer" />
+													<xs:element name="Opening" type="xs:integer" />
+													<xs:element name="Limit" type="xs:integer" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DynamicTicketInfo" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TicketId" type="xs:integer" />
+													<xs:element name="TicketCode">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="5" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="TicketName">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="20" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Price" type="xs:float" />
+													<xs:element name="PrintedPrice" type="xs:float" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DataMask" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Field" maxOccurs="30">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="FieldId" type="xs:integer" />
+																<xs:element name="FieldType" type="xs:integer" />
+																<xs:element name="FieldValue" type="xs:string" />
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SeatAllocation" type="xs:boolean" minOccurs="0" />
+										<xs:element name="WebEnabled" type="xs:boolean" minOccurs="0" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

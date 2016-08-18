@@ -1,0 +1,26 @@
+<Envelope>
+	<Header>
+		<MessageID>0</MessageID>
+		<MessageType>CreateTicketsResponse</MessageType>
+		<SourceID>WDPRONADLR</SourceID>
+		<TimeStamp>2009-06-19 11:38:52</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status>
+		<TicketCreationResponse>
+			<CreatedTicket>
+				<VisualID>208760055100000002</VisualID>
+				<PLU>20876</PLU>
+			</CreatedTicket>
+			<CreatedTicket>
+				<VisualID>208760055100000003</VisualID>
+				<PLU>20876</PLU>
+			</CreatedTicket>
+		</TicketCreationResponse>
+	</Body>
+</Envelope>

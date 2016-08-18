@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<Envelope>
+	<Header>
+		<SourceID>VLINK</SourceID>
+		<MessageID>12702847</MessageID>
+		<TimeStamp>2009-06-25 17:17:15.49</TimeStamp>
+		<MessageType>ActivateTicket</MessageType>
+	</Header>
+	<Body>
+		<TicketActivation>
+			<Command>Activate</Command>
+			<CustomerID>300010434</CustomerID>
+			<Tickets>
+				<Ticket>
+					<VisualID>6051039879902575</VisualID>
+					<ItemCode>21353</ItemCode>
+					<Price>65.00</Price>
+				</Ticket>
+			</Tickets>
+		</TicketActivation>
+		<Payments>
+			<Payment>
+				<PaymentCode>64</PaymentCode>
+				<Description>MrchTktSls</Description>
+				<Amount>65.00</Amount>
+			</Payment>
+		</Payments>
+	</Body>
+</Envelope>

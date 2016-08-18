@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
+<HTML>
+<HEAD>
+<TITLE>Main Frame</TITLE>
+<LINK href="theme/Master.css" rel="stylesheet" type="text/css">
+<META name="GENERATOR" content="IBM WebSphere Studio">
+</HEAD>
+<BODY>
+	<H1>DTIUA - Development Environment</H1>
+	<FORM action="servlet/com.dti.app.common.POSApp" method="POST"
+		target="bodyFrame">
+		<TABLE>
+			<TR>
+				<TD colspan="3"><B>Please Enter a Payload ID</B></TD>
+			</TR>
+			<TR>
+				<TD><B>Payload ID: </B></TD>
+				<TD><input type="text" name="payload" size="50" value="">
+				</TD>
+			</TR>
+			<TR>
+				<TD colspan="3"><input type="radio" name="table"
+					value="inboundTS">Inbound TS<BR> <input type="radio"
+					name="table" value="inboundTP">Inbound TP<BR> <input
+					type="radio" name="table" value="outboundTS">Outbound TS<BR>
+					<input type="radio" name="table" value="outboundTP">Outbound
+					TP<BR></TD>
+			</TR>
+			<TR>
+				<TD colspan="2"><input type="submit"></TD>
+				<TD><a href="Input.html" target="headerFrame">Back to TDS
+						Simulator</a></TD>
+			</TR>
+		</TABLE>
+	</FORM>
+</BODY>
+</HTML>
+

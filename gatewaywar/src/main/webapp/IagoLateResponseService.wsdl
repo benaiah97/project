@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://services.nexus.wdw.com/NexusTicketingService/" xmlns:controlAns="http://services.nexus.wdw.com/NexusTicketingService/types/ControlAnswer"
+	xmlns:larpResp="http://services.nexus.wdw.com/NexusTicketingService/types/LarpResponse" xmlns:createXactionAns="http://services.nexus.wdw.com/NexusTicketingService/types/CreateTransactionAnswer"
+	xmlns:enhancedAns="http://services.nexus.wdw.com/NexusTicketingService/types/EnhancedQueryProductAnswer" xmlns:manageResAns="http://services.nexus.wdw.com/NexusTicketingService/types/ManageReservationAnswer"
+	xmlns:manageSeatAns="http://services.nexus.wdw.com/NexusTicketingService/types/ManageSeatAnswer" xmlns:manageVoucherAns="http://services.nexus.wdw.com/NexusTicketingService/types/ManageVoucherAnswer"
+	xmlns:qDemogAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryDemographicAnswer" xmlns:qEventsAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsAnswer"
+	xmlns:qPriceAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryPriceListAnswer" xmlns:qProductAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryProductAnswer"
+	xmlns:qShowAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryShowAnswer" xmlns:qTktAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryTicketAnswer"
+	xmlns:qXactionAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryTransactionAnswer" xmlns:renewTktAns="http://services.nexus.wdw.com/NexusTicketingService/types/RenewTicketAnswer"
+	xmlns:updTktAns="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTicketAnswer" xmlns:updXactionAns="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTransactionAnswer"
+	xmlns:upgTktAns="http://services.nexus.wdw.com/NexusTicketingService/types/UpgradeTicketAnswer" xmlns:voidTktAns="http://services.nexus.wdw.com/NexusTicketingService/types/VoidTicketAnswer"
+	xmlns:voidXactionAns="http://services.nexus.wdw.com/NexusTicketingService/types/VoidTransactionAnswer" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" name="NexusTicketingService" targetNamespace="http://services.nexus.wdw.com/NexusTicketingService/">
+	<wsdl:documentation>
+		Copyright 2009 Walt Disney World®. All rights reserved.
+		WSDL Service Interface for Nexus.
+	</wsdl:documentation>
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://services.nexus.wdw.com/NexusTicketingService/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+			attributeFormDefault="unqualified">
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/ControlAnswer" schemaLocation="ControlAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/LarpResponse" schemaLocation="IagoLateResponseAnswer.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/CreateTransactionAnswer" schemaLocation="CreateTransactionAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/EnhancedQueryProductAnswer" schemaLocation="EnhancedQueryProductAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/ManageReservationAnswer" schemaLocation="ManageReservationAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/ManageSeatAnswer" schemaLocation="ManageSeatAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/ManageVoucherAnswer" schemaLocation="ManageVoucherAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryDemographicAnswer" schemaLocation="QueryDemographicAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsAnswer" schemaLocation="QueryEventsAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryPriceListAnswer" schemaLocation="QueryPriceListAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryProductAnswer" schemaLocation="QueryProductAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryShowAnswer" schemaLocation="QueryShowAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryTicketAnswer" schemaLocation="QueryTicketAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryTransactionAnswer" schemaLocation="QueryTransactionAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/RenewTicketAnswer" schemaLocation="RenewTicketAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTicketAnswer" schemaLocation="UpdateTicketAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTransactionAnswer" schemaLocation="UpdateTransactionAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/UpgradeTicketAnswer" schemaLocation="UpgradeTicketAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/VoidTicketAnswer" schemaLocation="VoidTicketAnswerProxy.xsd" />
+			<xsd:import namespace="http://services.nexus.wdw.com/NexusTicketingService/types/VoidTransactionAnswer" schemaLocation="VoidTransactionAnswerProxy.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="IagoLateResponseAnswer">
+		<wsdl:part name="IagoLateResponseAnswer" element="larpResp:Command" />
+	</wsdl:message>
+	<wsdl:message name="ControlResponse">
+		<wsdl:part name="ControlResponse" element="controlAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="CreateTransactionResponse">
+		<wsdl:part name="CreateTransactionResponse" element="createXactionAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="EnhancedQueryProductResponse">
+		<wsdl:part name="EnhancedQueryProductResponse" element="enhancedAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="ManageReservationResponse">
+		<wsdl:part name="ManageReservationRsponse" element="manageResAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="ManageSeatResponse">
+		<wsdl:part name="ManageSeatResponse" element="manageSeatAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="ManageVoucherResponse">
+		<wsdl:part name="ManageVoucherResponse" element="manageVoucherAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryDemographicResponse">
+		<wsdl:part name="QueryDemographicResponse" element="qDemogAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryEventsResponse">
+		<wsdl:part name="QueryEventsResponse" element="qEventsAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryPriceListResponse">
+		<wsdl:part name="QueryPriceListResponse" element="qPriceAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryProductResponse">
+		<wsdl:part name="QueryProductResponse" element="qProductAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryShowResponse">
+		<wsdl:part name="QueryShowResponse" element="qShowAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryTicketResponse">
+		<wsdl:part name="QueryTicketResponse" element="qTktAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="QueryTransactionResponse">
+		<wsdl:part name="QueryTransactionResponse" element="qXactionAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="RenewTicketResponse">
+		<wsdl:part name="RenewTicketResponse" element="renewTktAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="UpdateTicketResponse">
+		<wsdl:part name="UpdateTicketResponse" element="updTktAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="UpdateTransactionResponse">
+		<wsdl:part name="UpdateTransactionResponse" element="updXactionAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="UpgradeTicketResponse">
+		<wsdl:part name="UpgradeTicketResponse" element="upgTktAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="VoidTicketResponse">
+		<wsdl:part name="VoidTicketResponse" element="voidTktAns:Command" />
+	</wsdl:message>
+	<wsdl:message name="VoidTransactionResponse">
+		<wsdl:part name="VoidTransactionResponse" element="voidXactionAns:Command" />
+	</wsdl:message>
+
+	<wsdl:portType name="NexusTicketingServicePortType">
+		<wsdl:operation name="control">
+			<wsdl:input message="tns:ControlResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="createTransaction">
+			<wsdl:input message="tns:CreateTransactionResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="enhancedQueryProduct">
+			<wsdl:input message="tns:EnhancedQueryProductResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="manageReservation">
+			<wsdl:input message="tns:ManageReservationResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="manageSeat">
+			<wsdl:input message="tns:ManageSeatResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="manageVoucher">
+			<wsdl:input message="tns:ManageVoucherResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryDemographic">
+			<wsdl:input message="tns:QueryDemographicResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryEvents">
+			<wsdl:input message="tns:QueryEventsResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryPriceList">
+			<wsdl:input message="tns:QueryPriceListResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryProduct">
+			<wsdl:input message="tns:QueryProductResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryShow">
+			<wsdl:input message="tns:QueryShowResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryTicket">
+			<wsdl:input message="tns:QueryTicketResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="queryTransaction">
+			<wsdl:input message="tns:QueryTransactionResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="renewTicket">
+			<wsdl:input message="tns:RenewTicketResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="updateTicket">
+			<wsdl:input message="tns:UpdateTicketResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="updateTransaction">
+			<wsdl:input message="tns:UpdateTransactionResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="upgradeTicket">
+			<wsdl:input message="tns:UpgradeTicketResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="voidTicket">
+			<wsdl:input message="tns:VoidTicketResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+		<wsdl:operation name="voidTransaction">
+			<wsdl:input message="tns:VoidTransactionResponse" />
+			<wsdl:output message="tns:IagoLateResponseAnswer" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="NexusTicketingServiceSoapBinding" type="tns:NexusTicketingServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="control">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/control" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createTransaction">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/createTransaction" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="enhancedQueryProduct">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/enhancedQueryProduct" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="manageReservation">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/manageReservation" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="manageSeat">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/manageSeat" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="manageVoucher">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/manageVoucher" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryDemographic">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryDemographic" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryEvents">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryEvents" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryPriceList">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryPriceList" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryProduct">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryProduct" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryShow">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryShow" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryTicket">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryTicket" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryTransaction">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/queryTransaction" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="renewTicket">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/renewTicket" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateTicket">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/updateTicket" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateTransaction">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/updateTransaction" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="upgradeTicket">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/upgradeTicket" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="voidTicket">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/voidTicket" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="voidTransaction">
+			<soap:operation soapAction="http://services.nexus.wdw.com/NexusTicketingService/voidTransaction" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+</wsdl:definitions>

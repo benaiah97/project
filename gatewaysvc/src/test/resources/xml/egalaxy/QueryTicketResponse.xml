@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Envelope>
+	<Header>
+		<MessageID>290529</MessageID>
+		<MessageType>QueryTicketResponse</MessageType>
+		<SourceID>DLRMerch</SourceID>
+		<TimeStamp>2009-06-08 15:41:49</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status>
+		<QueryTicketResponse>
+			<DataRequestResponse>
+				<DateOpened>2009-03-14 00:00:00</DateOpened>
+				<ItemKind>2</ItemKind>
+				<LockedOut>NO</LockedOut>
+				<Price>134</Price>
+				<Returnable>YES</Returnable>
+				<Status>0</Status>
+				<Tax>0</Tax>
+				<UseCount>0</UseCount>
+				<ValidUntil>2010-03-14 00:00:00</ValidUntil>
+				<VisualID>210000050200001352</VisualID>
+			</DataRequestResponse>
+		</QueryTicketResponse>
+	</Body>
+</Envelope>

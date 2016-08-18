@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/reservationrq.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>35100000000002021869</PayloadID>
+			<Target>Test</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-07-27</TransmitDate>
+			<TransmitTime>08:54:13.85</TransmitTime>
+			<TktSeller>
+				<TSMAC>WDPRONA</TSMAC>
+				<TSSystem>CC</TSSystem>
+				<TSLocation>500</TSLocation>
+				<TSSecurity>WaltDisney1</TSSecurity>
+			</TktSeller>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdTimeout>45</CmdTimeout>
+				<CmdDate>2009-07-27</CmdDate>
+				<CmdTime>08:54:13.85</CmdTime>
+				<CmdInvoice>00000000002021869</CmdInvoice>
+				<CmdDevice>WDPRO</CmdDevice>
+				<CmdOperator>WDPRO</CmdOperator>
+			</CommandHeader>
+			<ReservationRequest>
+				<RequestType>Create</RequestType>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<ProdCode>NBV52</ProdCode>
+					<ProdQty>1</ProdQty>
+					<ProdPrice>323.76</ProdPrice>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<ProdCode>M0008</ProdCode>
+					<ProdQty>1</ProdQty>
+					<ProdPrice>15.00</ProdPrice>
+				</Ticket>
+				<Payment>
+					<PayItem>1</PayItem>
+					<PayType>
+						<CreditCard>
+							<CCManual>
+								<CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+								<CCExpiration>0111</CCExpiration>
+								<CCName>carol galo</CCName>
+								<CCStreet>1323 N Edmondson Ave</CCStreet>
+								<CCZipcode>76590</CCZipcode>
+								<CCType>VI</CCType>
+							</CCManual>
+						</CreditCard>
+					</PayType>
+					<PayAmount>338.76</PayAmount>
+				</Payment>
+				<Reservation>
+					<ResCode />
+					<ResCreateDate>2009-07-27</ResCreateDate>
+					<ResPickupDate>2009-07-27</ResPickupDate>
+					<ResPickupArea>MailOrder</ResPickupArea>
+					<ResSalesType>Overnight</ResSalesType>
+				</Reservation>
+				<ClientData>
+					<ClientType>Private</ClientType>
+					<ClientCategory>WW</ClientCategory>
+					<DemoLanguage>en</DemoLanguage>
+					<DemoData>
+						<Bill Addr1="1323 N Edmondson Ave" Addr2="Apt. 6" City="Indianapolis" Country="USA" Email="Carol.X.Galo.-ND@disney.com" FirstName="Butter" LastName="Pecan" Name="Butter Pecan"
+							State="IN" Telephone="4072962917" Zip="76590" />
+						<Ship Addr1="1323 N Edmondson Ave" Addr2="Apt. 6" City="Indianapolis" Country="USA" Email="" FirstName="Butter" LastName="Pecan" Name="Butter Pecan" State="IN"
+							Telephone="4072962917" Zip="76590" />
+					</DemoData>
+				</ClientData>
+			</ReservationRequest>
+		</Command>
+	</Payload>
+</Transmission>

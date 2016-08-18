@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<Envelope>
+	<Header>
+		<MessageID>13761182</MessageID>
+		<MessageType>SetOrderStatus</MessageType>
+		<SourceID>WDPRONADLR</SourceID>
+		<TimeStamp>2009-09-05 15:40:38</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Username />
+		<Password />
+		<OrderID>DOL48291890902</OrderID>
+		<GalaxyOrderID>2651323</GalaxyOrderID>
+		<Status>2</Status>
+		<AuthCode>01145Z</AuthCode>
+		<ResponseText>APPROVED 01145Z</ResponseText>
+		<AVSResultCode />
+		<CVNResultCode />
+	</Body>
+</Envelope>

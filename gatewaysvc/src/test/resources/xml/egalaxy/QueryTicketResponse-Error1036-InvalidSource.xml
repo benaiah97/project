@@ -1,0 +1,25 @@
+<Envelope>
+	<Header>
+		<MessageID>290118</MessageID>
+		<MessageType>QueryTicketResponse</MessageType>
+		<SourceID>WDPRODLRNA</SourceID>
+		<TimeStamp>2009-06-17 07:55:56</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>1300</StatusCode>
+			<StatusText>QueryTicket request error</StatusText>
+		</Status>
+		<QueryTicketErrors>
+			<Errors>
+				<Error>
+					<ErrorCode>1306</ErrorCode>
+					<ErrorText>Can not process messages from source WDPRODLRNA, source is inactive</ErrorText>
+				</Error>
+			</Errors>
+			<DataRequestErrors />
+		</QueryTicketErrors>
+	</Body>
+</Envelope>

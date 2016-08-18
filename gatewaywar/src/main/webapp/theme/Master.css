@@ -1,0 +1,29 @@
+BODY {
+	BACKGROUND-COLOR: #aaaaff;
+	COLOR: black;
+	FONT-FAMILY: 'Arial'
+}
+
+H1 {
+	COLOR: navy;
+	FONT-FAMILY: Arial;
+	FONT-SIZE: x-large;
+	FONT-WEIGHT: bolder;
+	TEXT-TRANSFORM: capitalize
+}
+
+H2 {
+	COLOR: navy;
+	FONT-FAMILY: 'Arial';
+	FONT-SIZE: large;
+	FONT-WEIGHT: bolder;
+	TEXT-TRANSFORM: capitalize
+}
+
+H3 {
+	COLOR: navy;
+	FONT-FAMILY: 'Arial';
+	FONT-SIZE: large;
+	FONT-WEIGHT: lighter;
+	TEXT-TRANSFORM: capitalize
+}

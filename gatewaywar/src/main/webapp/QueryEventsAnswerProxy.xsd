@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:qEventsAns="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsAnswer" targetNamespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsAnswer"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="QueryEventsAnswer.xsd" />
+</xsd:schema>

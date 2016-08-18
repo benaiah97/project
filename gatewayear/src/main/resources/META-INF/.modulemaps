@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modulemap:EARProjectMap xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="application.xmi" xmlns:modulemap="modulemap.xmi" xmi:id="EARProjectMap_1193678841277">
+  <mappings xmi:id="ModuleMapping_1193678841292" projectName="DTIGATEWAYWAR">
+    <module xmi:type="application:WebModule" href="META-INF/application.xml#WebModule_1193678841292"/>
+  </mappings>
+  <mappings xmi:id="ModuleMapping_1193681886650" projectName="DTIGATEWAYADM">
+    <module xmi:type="application:WebModule" href="META-INF/application.xml#WebModule_1193681886650"/>
+  </mappings>
+  <utilityJARMappings xmi:id="UtilityJARMapping_1193678841292" projectName="DTIGATEWAYJAR" uri="DTIGATEWAYJAR.jar"/>
+  <utilityJARMappings xmi:id="UtilityJARMapping_1193678841293" projectName="DTIGATEWAYSVC" uri="DTIGATEWAYSVC.jar"/>
+</modulemap:EARProjectMap>

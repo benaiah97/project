@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/reservationrq.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>39900000000004760816</PayloadID>
+			<Target>Prod-DLR</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-06-25</TransmitDate>
+			<TransmitTime>08:16:59.32</TransmitTime>
+			<TktSeller>
+				<TSMAC>WDPRONADLR</TSMAC>
+				<TSSystem>CC</TSSystem>
+				<TSLocation>500</TSLocation>
+				<TSSecurity>WaltDisney1</TSSecurity>
+			</TktSeller>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdTimeout>45</CmdTimeout>
+				<CmdDate>2009-06-25</CmdDate>
+				<CmdTime>08:16:59.32</CmdTime>
+				<CmdInvoice>00000000004760816</CmdInvoice>
+				<CmdDevice>WDPRO</CmdDevice>
+				<CmdOperator>WDPRO</CmdOperator>
+			</CommandHeader>
+			<ReservationRequest>
+				<RequestType>Create</RequestType>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<ProdCode>21424PAH</ProdCode>
+					<ProdQty>2</ProdQty>
+					<ProdPrice>120.00</ProdPrice>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<ProdCode>20025</ProdCode>
+					<ProdQty>1</ProdQty>
+					<ProdPrice>0.00</ProdPrice>
+				</Ticket>
+				<Payment>
+					<PayItem>1</PayItem>
+					<PayType>
+						<CreditCard>
+							<CCManual>
+								<CCNbr>ZZZZZZZZZZZ1065</CCNbr>
+								<CCExpiration>0713</CCExpiration>
+								<CCVV>ZZZZ</CCVV>
+								<CCName>Gregory Andrews</CCName>
+								<CCStreet>8472 Palm Parkway</CCStreet>
+								<CCZipcode>90000</CCZipcode>
+								<CCType>AX</CCType>
+							</CCManual>
+						</CreditCard>
+					</PayType>
+					<PayAmount>240.0</PayAmount>
+				</Payment>
+				<Eligibility>
+					<Group>DLR</Group>
+					<Member>300019307</Member>
+				</Eligibility>
+				<Reservation>
+					<ResCode>DOL46864546902</ResCode>
+					<ResCreateDate>2009-06-25</ResCreateDate>
+					<ResPickupDate>2009-06-25</ResPickupDate>
+					<ResPickupArea>WillCall</ResPickupArea>
+					<ResSalesType>PrintAtHome</ResSalesType>
+				</Reservation>
+				<ClientData>
+					<ClientType>Private</ClientType>
+					<ClientCategory>WW</ClientCategory>
+					<DemoLanguage>en</DemoLanguage>
+					<DemoData>
+						<Bill Addr1="8472 Palm Parkway" City="Orlando" Country="USA" Email="eticket@entertainmentbenefits.com" FirstName="Greg" LastName="Andrews" Name="Greg Andrews" State="FL"
+							Telephone="4075973519" Zip="90000" />
+						<Ship Country="" Email="" Name="null null" Zip="" />
+					</DemoData>
+				</ClientData>
+			</ReservationRequest>
+		</Command>
+	</Payload>
+</Transmission>

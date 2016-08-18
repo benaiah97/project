@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Andrea Martinotti (OmniTicket Network Administration) -->
+<!--Copyright Notice: This document (written or otherwise displayed on magnetic media or other medium) contains confidential and proprietary information of OmniTicket Network, Inc. 
+	or its affiliates. It has been furnished only for informational purposes, and no license or permission is hereby granted to use such information in any manner. In no event may this 
+	information be reproduced, distributed and/or publicly displayed in any form or by any means without prior expressed written permission of OmniTicket Network, Inc. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Command">
+		<xs:annotation>
+			<xs:documentation>Message Format Answer</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header">
+					<xs:annotation>
+						<xs:documentation>Recap information on Message type</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReferenceNumber">
+								<xs:annotation>
+									<xs:documentation>Incoming </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="30" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestNumber" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Match the Incoming Request Number</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SessionId" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Session Id
+										One for each new Login where managed
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="RequestType">
+								<xs:annotation>
+									<xs:documentation>Command Group
+										Command group type
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Query" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestSubType">
+								<xs:annotation>
+									<xs:documentation>Command subtype
+										Detailed command
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="EnhancedQueryProduct" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ValueMsg">
+								<xs:annotation>
+									<xs:documentation>Value messages Group
+										Only on answer Messages
+									</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ValuedQty" type="xs:integer" />
+										<xs:element name="NonValuedQty" type="xs:integer" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="EnhancedQueryProduct">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Error">
+								<xs:annotation>
+									<xs:documentation>General Error</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ErrorCode" type="xs:integer">
+											<xs:annotation>
+												<xs:documentation>0 = no error</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ErrorShortDescription" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="25" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ErrorDescription" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Error Description</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ProductInfo" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="TicketType" type="xs:integer" />
+										<xs:element name="TicketCode" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Alpha short code</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="5" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="TicketName" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="20" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Price" type="xs:float" minOccurs="0" />
+										<xs:element name="Tax" type="xs:float" minOccurs="0" />
+										<xs:element name="Description" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Product Description / Ticket Name</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="40" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Validity" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>General Validity
+													General gate attributes
+												</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="StartDate" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Start Date at gates</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="EndDate" type="xs:string" minOccurs="0" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SalesPeriod" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Sales date range
+													General Sale Attributes
+												</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="StartDate" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Start Visibility on Sales</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="EndDate" type="xs:string" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>End visibility on Sales</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="GroupEntry" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Group Entry attributes
+													GE001 Table
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="BiometricLevel" type="xs:integer" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Level of biometric check
+													See BL001
+												</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="TicketText" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="40" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Layout" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:maxInclusive value="99" />
+													<xs:minInclusive value="0" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Flags" type="xs:integer" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Ticket Options See TF001</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="PrintedPrice" type="xs:float" minOccurs="0" />
+										<xs:element name="Level" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:minInclusive value="0" />
+													<xs:maxInclusive value="99" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="UpgradeInfo" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="UpgradeId" type="xs:integer" />
+													<xs:element name="UpgradeDescription">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="21" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TicketFamily" type="xs:byte" minOccurs="0" maxOccurs="5" />
+										<xs:element name="AssociationId" type="xs:integer" minOccurs="0" />
+										<xs:element name="CharAtTurnstile" type="xs:byte" minOccurs="0" />
+										<xs:element name="PrintGroupCode" type="xs:integer" minOccurs="0" />
+										<xs:element name="Status" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>'A': Active - 'D': Inactive 'C': Contingency</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Order" type="xs:integer" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Position in the level</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ShowTicket" type="xs:boolean" minOccurs="0" />
+										<xs:element name="CostCenters" minOccurs="0" maxOccurs="5">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Family">
+														<xs:annotation>
+															<xs:documentation>C=Cost Centre
+																T=Taxes
+																M=Commissions
+																P=Prevendita (Italy only)
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="1" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Code">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="5" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Description">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="15" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Type">
+														<xs:annotation>
+															<xs:documentation>0=No Proportion
+																1=Proportion With Optional Price
+																2=Proportion Without Optional Price
+																3=Remaining Value
+																4=Variable Price Ticket
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:integer">
+																<xs:maxInclusive value="5" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="GiftAid" type="xs:boolean" />
+													<xs:element name="Price" type="xs:float" />
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MaskData" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Field" maxOccurs="30">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="FieldId" type="xs:integer" />
+																<xs:element name="FieldType" type="xs:integer" />
+																<xs:element name="FieldValue" type="xs:string" />
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="AccessArea" minOccurs="0" maxOccurs="16">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AccessAreaId" type="xs:integer" />
+													<xs:element name="AccessAreaCode">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="5" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="EntryType" type="xs:byte">
+														<xs:annotation>
+															<xs:documentation>0=NOT PERMIT
+																1=PERMITTED
+																5=RESERVATION
+																6=OPTIONAL
+																7=SAME DAY
+																9=" "
+																10=DYNAMIC
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="ReentryType" type="xs:byte">
+														<xs:annotation>
+															<xs:documentation>0=NOT PERMIT
+																1=BEYOUND DEL
+																2=WITHIN DEL
+																3=PERMITTED
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>pvt.disney.dti</groupId>
+  <version>1.0.0</version>
+  <artifactId>DTI_Gateway</artifactId>
+  <packaging>pom</packaging>
+  <name>DTI_Gateway</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<exclude>true</exclude>
+		<project.version>1.0.0</project.version>
+		<shared.version>2.0.4</shared.version>
+	</properties>
+  
+    <modules>
+      <module>gatewayxsd</module>
+      <module>gatewayjar</module>
+      <module>gatewaysvc</module>
+      <module>gatewaygte</module>
+      <module>gatewaywar</module>   
+	  <module>gatewayadm</module>
+      <module>gatewayear</module>
+    </modules>
+
+</project>

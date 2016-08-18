@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<Envelope>
+	<Header>
+		<SourceID>WDPRONADLR</SourceID>
+		<MessageID>289157</MessageID>
+		<TimeStamp>2009-05-20 21:09:09.11</TimeStamp>
+		<MessageType>ORDERS</MessageType>
+	</Header>
+	<Body>
+		<Orders>
+			<Order>
+				<OrderNote>168430028401108238 22046SP</OrderNote>
+				<OrderID>DLR774195903</OrderID>
+				<CustomerID>300011350</CustomerID>
+				<OrderDate>2009-05-20 21:09:09</OrderDate>
+				<OrderStatus>2</OrderStatus>
+				<OrderTotal>308.00</OrderTotal>
+				<OrderContact>
+					<Contact>
+						<FirstName>TESTING</FirstName>
+						<LastName>TESTING</LastName>
+						<Street1>1234 TESTING AVENUE</Street1>
+						<City>ANAHEIM</City>
+						<State>CA</State>
+						<Zip>91221</Zip>
+						<Country>USA</Country>
+						<Phone>4075662824</Phone>
+						<Email>socal1@testing.com</Email>
+					</Contact>
+				</OrderContact>
+				<ShipToContact>
+					<Contact>
+						<FirstName>TESTING</FirstName>
+						<LastName>TESTING</LastName>
+						<Street1>1234 TESTING AVENUE</Street1>
+						<City>ANAHEIM</City>
+						<State>CA</State>
+						<Zip>91221</Zip>
+						<Country>USA</Country>
+						<Phone>4075662824</Phone>
+					</Contact>
+				</ShipToContact>
+				<Shipping>
+					<DeliveryMethod>2</DeliveryMethod>
+					<DeliveryDetails>US MAIL</DeliveryDetails>
+				</Shipping>
+				<OrderLines>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>22046SP</PLU>
+						<Description>Deluxe AP Spc w/parking</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>308.00</Amount>
+						<Total>308.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>10801</PLU>
+						<Description>DLR_FREE_SHIPPING</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>0.00</Amount>
+						<Total>0.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>2</DetailType>
+						<PaymentCode>32</PaymentCode>
+						<PaymentDate>2009-05-20 21:09:09.11</PaymentDate>
+						<Description>MC</Description>
+						<Endorsement>XXXXXXXXXXXX8281</Endorsement>
+						<BillingZIP>91221</BillingZIP>
+						<Amount>308.0</Amount>
+						<Total>308.0</Total>
+						<ExpDate>0615</ExpDate>
+						<CVN>XXX</CVN>
+					</OrderLine>
+				</OrderLines>
+			</Order>
+		</Orders>
+	</Body>
+</Envelope>

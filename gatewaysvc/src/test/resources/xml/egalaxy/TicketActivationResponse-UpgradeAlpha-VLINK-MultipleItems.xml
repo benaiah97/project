@@ -1,0 +1,16 @@
+<Envelope>
+	<Header>
+		<MessageID>12345678</MessageID>
+		<MessageType>ActivateTicketResponse</MessageType>
+		<SourceID>VLINK</SourceID>
+		<TimeStamp>2009-06-25 10:38:45</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status>
+	</Body>
+</Envelope>

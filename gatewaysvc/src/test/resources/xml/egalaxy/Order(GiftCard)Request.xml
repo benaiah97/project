@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Envelope>
+	<Header>
+		<SourceID>WDPRONADLR</SourceID>
+		<MessageID>285631</MessageID>
+		<TimeStamp>2009-04-20 18:05:42.22</TimeStamp>
+		<MessageType>ORDERS</MessageType>
+	</Header>
+	<Body>
+		<Orders>
+			<Order>
+				<OrderID>DLR764984003</OrderID>
+				<CustomerID>300000783</CustomerID>
+				<OrderDate>2009-04-20 18:05:42</OrderDate>
+				<OrderStatus>2</OrderStatus>
+				<OrderTotal>100.00</OrderTotal>
+				<OrderNote>I am regression testing Gift Card Personalized Message.....weeeeee!!! :)</OrderNote>
+				<OrderContact>
+					<Contact>
+						<FirstName>GIFT</FirstName>
+						<LastName>CARD</LastName>
+						<Street1>756 PARIS WAY</Street1>
+						<Street2>APT. 6</Street2>
+						<City>SONORA</City>
+						<State>TX</State>
+						<Zip>76590</Zip>
+						<Country>USA</Country>
+						<Phone>4072962917</Phone>
+						<Email>tamara.naylor@disney.com</Email>
+					</Contact>
+				</OrderContact>
+				<ShipToContact>
+					<Contact>
+						<FirstName>GIFT</FirstName>
+						<LastName>CARD</LastName>
+						<Street1>756 PARIS WAY</Street1>
+						<Street2>APT. 6</Street2>
+						<City>SONORA</City>
+						<State>TX</State>
+						<Zip>76590</Zip>
+						<Country>USA</Country>
+						<Phone>4072962917</Phone>
+					</Contact>
+				</ShipToContact>
+				<Shipping>
+					<DeliveryMethod>2</DeliveryMethod>
+					<DeliveryDetails>US MAIL</DeliveryDetails>
+				</Shipping>
+				<OrderLines>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>13828LUV025</PLU>
+						<Description>$25 Disney Gift Card</Description>
+						<TaxCode />
+						<Qty>2</Qty>
+						<Amount>25.00</Amount>
+						<Total>50.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>13828LUV050</PLU>
+						<Description>$50 Disney Gift Card</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>50.00</Amount>
+						<Total>50.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>10801</PLU>
+						<Description>DLR_FREE_SHIPPING</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>0.00</Amount>
+						<Total>0.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>2</DetailType>
+						<PaymentCode>33</PaymentCode>
+						<PaymentDate>2009-04-20 18:05:42.22</PaymentDate>
+						<Description>VI</Description>
+						<Endorsement>XXXXXXXXXXXX2688</Endorsement>
+						<BillingZIP>76590</BillingZIP>
+						<Amount>100.0</Amount>
+						<Total>100.0</Total>
+						<ExpDate>0514</ExpDate>
+						<CVN>XXX</CVN>
+					</OrderLine>
+				</OrderLines>
+			</Order>
+		</Orders>
+	</Body>
+</Envelope>
