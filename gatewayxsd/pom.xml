@@ -90,12 +90,12 @@
 
 		<!-- TODO: NEED A FILTER TO EXCLUDE THIS FOR A WAS BUILD -->
 		<!-- reworked and removed these, WAS chokes on 'em, but Tomcat needs it -->
-
+		<!--
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.9.0</version>
-		</dependency>
+		</dependency>  -->
 
 		<dependency>
 			<groupId>activesoap</groupId>
