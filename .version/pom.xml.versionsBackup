@@ -1,0 +1,33 @@
+<ns0:project xmlns:ns0="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <ns0:parent>
+  	<ns0:groupId>com.wdpr</ns0:groupId>
+  	<ns0:artifactId>wdpr-parent</ns0:artifactId>
+  	<ns0:version>RELEASE</ns0:version>
+  </ns0:parent>
+  
+  <ns0:modelVersion>4.0.0</ns0:modelVersion>
+  <ns0:groupId>pvt.disney.dti</ns0:groupId>
+  <ns0:version>1.0.0</ns0:version>
+  <ns0:artifactId>DTI_Gateway</ns0:artifactId>
+  <ns0:packaging>pom</ns0:packaging>
+  <ns0:name>DTI_Gateway</ns0:name>
+
+	<ns0:properties>
+		<ns0:project.build.sourceEncoding>UTF-8</ns0:project.build.sourceEncoding>
+		<ns0:exclude>true</ns0:exclude>
+		<ns0:project.version>1.0.0</ns0:project.version>
+		<ns0:shared.version>2.0.4</ns0:shared.version>
+	</ns0:properties>
+  
+    <ns0:modules>
+      <ns0:module>gatewayxsd</ns0:module>
+      <ns0:module>gatewayjar</ns0:module>
+      <ns0:module>gatewaysvc</ns0:module>
+      <ns0:module>gatewaygte</ns0:module>
+      <ns0:module>gatewaywar</ns0:module>   
+	  <ns0:module>gatewayadm</ns0:module>
+      <ns0:module>gatewayear</ns0:module>
+    </ns0:modules>
+
+</ns0:project>
