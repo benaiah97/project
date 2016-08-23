@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>  
     <groupId>pvt.disney.dti</groupId>
@@ -23,22 +22,8 @@
            <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-pmd-plugin</artifactId>
-               <!-- NOTE: we should really add our own rulesets as specified
-                    below. Files can be located relative to the pom, or off
-                    on a webserver.
-               <configuration>
-                <rulesets>
-                    <ruleset>/rulesets/braces.xml</ruleset>
-                    <ruleset>/rulesets/naming.xml</ruleset>
-                    <ruleset>/rulesets/strings.xml</ruleset>
-                    <ruleset>http://localhost/design.xml</ruleset>
-                </rulesets>
-               </configuration>
-                -->
-                <!--  NOTE: Must specify target jdk versino for PMD so it can
-                      process rules for version specific JDKs, such as
-                      generics, autoboxing, etc.
-                 -->
+               
+                
                 <configuration>
                     <targetJdk>1.5</targetJdk>
                 </configuration>
@@ -49,17 +34,9 @@
             <reportSets>
                <reportSet>
                   <reports>
-                    <!-- generate pmd report -->
+                    
                     <report>maven-pmd-plugin</report>
-                    <!--  note: additional posible reports below: 
-                     <report>dependencies</report>
-                     <report>project-team</report>
-                     <report>mailing-list</report>
-                     <report>cim</report>
-                     <report>issue-tracking</report>
-                     <report>license</report>
-                     <report>scm</report>
-                     -->
+                    
                   </reports>
                </reportSet>
             </reportSets>
@@ -69,7 +46,7 @@
      
 	<build>
 		<plugins>
-			<!-- REQUIRED FOR JAVA 5 -->
+			
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5</version>
@@ -78,8 +55,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!-- Adding test exclusions for Surefire reporting..
-				TODO : This is a hack until SHAN can setup filters -->
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -93,7 +69,7 @@
 	</build>
 
 	<dependencies>
-		<!-- JUNIT AND TESTING -->
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -101,14 +77,14 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- LOGGING -->
+		
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.13</version>
 		</dependency>
 
-		<!-- ORACLE JAR -->
+		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc5</artifactId>
@@ -116,7 +92,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Websphere Dependency;  DB StaleConnectionException -->
+		
 
 		<dependency>
 			<groupId>com.ibm</groupId>
@@ -124,7 +100,7 @@
 			<version>4.0.0</version>
 		</dependency>
 
-		<!-- DISNEY SHARED CORE -->
+		
 		<dependency>
 			<groupId>com.disney.shared</groupId>
 			<artifactId>SharedCore</artifactId>
@@ -136,8 +112,8 @@
 			<version>${shared.version}</version>
 		</dependency>
 
-		<!-- DTI DEPENDENCIES -->
-		<!-- VERSIONS HERE MAY NEED UPDATED ONCE WE ARE OUT OF SNAPSHOT  -->
+		
+		
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayjar</artifactId>
