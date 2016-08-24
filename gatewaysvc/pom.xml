@@ -3,13 +3,13 @@
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0-1.1.0.0</version>
+		<version>1.0.0-1.1.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
 	<artifactId>gatewaysvc</artifactId>
 	<name>gatewaysvc</name>
-	<version>1.0.0-1.1.0.0</version>
+	<version>1.0.0-1.1.1.0</version>
 	<url>http://maven.apache.org</url>
 
 	<build>
