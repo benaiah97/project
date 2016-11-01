@@ -15,8 +15,9 @@
 				<include>*.*</include>
 			</includes>
 			<excludes>
-        <exclude>*.xml</exclude>
-      </excludes>
+        			<exclude>pom.xml</exclude>
+        			<exclude>assembly.xml</exclude>
+      			</excludes>
 		</fileSet>	
 	</fileSets>
 </assembly>
