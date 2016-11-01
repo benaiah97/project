@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<Envelope>
+	<Header>
+		<SourceID>WDPRONADLR</SourceID>
+		<MessageID>294703</MessageID>
+		<TimeStamp>2009-07-23 15:11:10.88</TimeStamp>
+		<MessageType>ORDERS</MessageType>
+	</Header>
+	<Body>
+		<Orders>
+			<Order>
+				<OrderID>DLR805131403</OrderID>
+				<CustomerID>300026300</CustomerID>
+				<OrderDate>2009-07-23 15:11:10</OrderDate>
+				<OrderStatus>2</OrderStatus>
+				<OrderTotal>253.00</OrderTotal>
+				<OrderReference>9020</OrderReference>
+				<OrderContact>
+					<Contact>
+						<FirstName>CAROL</FirstName>
+						<LastName>GALO</LastName>
+						<Street1>123</Street1>
+						<City>CORONA</City>
+						<State>CA</State>
+						<Zip>91221</Zip>
+						<Country>USA</Country>
+						<Phone>1234567890</Phone>
+						<Email>carol.x.galo.-nd@disney.com</Email>
+					</Contact>
+				</OrderContact>
+				<ShipToContact>
+					<Contact>
+						<Zip />
+						<Country />
+					</Contact>
+				</ShipToContact>
+				<Shipping>
+					<DeliveryMethod>6</DeliveryMethod>
+					<DeliveryDetails>PRNT HOME</DeliveryDetails>
+				</Shipping>
+				<GroupVisit>
+					<VisitDate>2009-07-23 00:00:00</VisitDate>
+				</GroupVisit>
+				<OrderLines>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>23819PAH</PLU>
+						<Description>2010 DLR CM 1 Day PH Adult PAH</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>72.00</Amount>
+						<Total>72.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>23820PAH</PLU>
+						<Description>2010 DLR CM 1 Day PH Child PAH</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>62.00</Amount>
+						<Total>62.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>23817PAH</PLU>
+						<Description>2010 DLR CM 1 Day Adult PAH</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>64.00</Amount>
+						<Total>64.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>23818PAH</PLU>
+						<Description>2010 DLR CM 1 Day Child PAH</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>55.00</Amount>
+						<Total>55.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>20025</PLU>
+						<Description>Disneys E-Ticket</Description>
+						<TaxCode />
+						<Qty>1</Qty>
+						<Amount>0.00</Amount>
+						<Total>0.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>2</DetailType>
+						<PaymentCode>32</PaymentCode>
+						<PaymentDate>2009-07-23 15:11:10.88</PaymentDate>
+						<Description>MC</Description>
+						<Endorsement>XXXXXXXXXXXX8281</Endorsement>
+						<BillingZIP>91221</BillingZIP>
+						<Amount>253.0</Amount>
+						<Total>253.0</Total>
+						<ExpDate>0111</ExpDate>
+						<CVN>XXX</CVN>
+					</OrderLine>
+				</OrderLines>
+			</Order>
+		</Orders>
+	</Body>
+</Envelope>

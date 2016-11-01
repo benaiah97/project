@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<Envelope>
+	<Header>
+		<SourceID>WDPRONADLR</SourceID>
+		<MessageID> 12700676</MessageID>
+		<TimeStamp>2009-06-25 13:39:55.20</TimeStamp>
+		<MessageType>ORDERS</MessageType>
+	</Header>
+	<Body>
+		<Orders>
+			<Order>
+				<OrderID>DOL99962619802</OrderID>
+				<CustomerID>300000783</CustomerID>
+				<OrderDate>2009-07-23 15:39:55</OrderDate>
+				<OrderStatus>2</OrderStatus>
+				<OrderTotal>686.00</OrderTotal>
+				<OrderContact>
+					<Contact>
+						<FirstName>JILLIAN</FirstName>
+						<LastName>HOLT</LastName>
+						<Street1>PO BOX 305</Street1>
+						<City>AVALON NSW</City>
+						<State>NSW</State>
+						<Zip>2107</Zip>
+						<Country>AUS</Country>
+						<Phone>+612413236073</Phone>
+						<Email>jsneyd@bigpond.com</Email>
+					</Contact>
+				</OrderContact>
+				<ShipToContact>
+					<Contact>
+						<Zip></Zip>
+						<Country></Country>
+					</Contact>
+				</ShipToContact>
+				<Shipping>
+					<DeliveryMethod>6</DeliveryMethod>
+					<DeliveryDetails>PRNT HOME</DeliveryDetails>
+				</Shipping>
+				<GroupVisit>
+					<VisitDate>2009-06-25 00:00:00</VisitDate>
+				</GroupVisit>
+				<OrderLines>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>22910PAH</PLU>
+						<Description>2009 DLR 5DPH FOR 3DPH Ad PAH</Description>
+						<TaxCode></TaxCode>
+						<Qty>3</Qty>
+						<Amount>179.00</Amount>
+						<Total>537.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>22911PAH</PLU>
+						<Description>2009 DLR 5DPH FOR 3DPH Ch PAH</Description>
+						<TaxCode></TaxCode>
+						<Qty>1</Qty>
+						<Amount>149.00</Amount>
+						<Total>149.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>1</DetailType>
+						<PLU>20025</PLU>
+						<Description>Disneys E-Ticket</Description>
+						<TaxCode></TaxCode>
+						<Qty>1</Qty>
+						<Amount>0.00</Amount>
+						<Total>0.00</Total>
+					</OrderLine>
+					<OrderLine>
+						<DetailType>2</DetailType>
+						<PaymentCode>31</PaymentCode>
+						<PaymentDate>2009-06-25 13:39:55.20</PaymentDate>
+						<Description>AX</Description>
+						<Endorsement>XXXXXXXXXXXX357</Endorsement>
+						<BillingZIP>2107</BillingZIP>
+						<Amount>686.0</Amount>
+						<Total>686.0</Total>
+						<ExpDate>0512</ExpDate>
+						<CVN>XXX</CVN>
+					</OrderLine>
+				</OrderLines>
+			</Order>
+		</Orders>
+	</Body>
+</Envelope>

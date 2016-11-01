@@ -1,0 +1,26 @@
+<Envelope>
+	<Header>
+		<MessageID>0</MessageID>
+		<MessageType>CreateTicketsResponse</MessageType>
+		<SourceID>WDPRONADLR</SourceID>
+		<TimeStamp>2009-06-17 07:36:34</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>2700</StatusCode>
+			<StatusText>Ticket creation request error</StatusText>
+		</Status>
+		<Errors>
+			<Error>
+				<ErrorCode>2708</ErrorCode>
+				<ErrorText>Customer ID 123456 not found</ErrorText>
+			</Error>
+			<Error>
+				<ErrorCode>2712</ErrorCode>
+				<ErrorText>Payment amount (59.90) does not match the total price (79.85) of all tickets</ErrorText>
+			</Error>
+		</Errors>
+	</Body>
+</Envelope>

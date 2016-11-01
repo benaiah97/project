@@ -1,0 +1,22 @@
+<Envelope>
+	<Header>
+		<MessageID>12700676</MessageID>
+		<MessageType>SetOrderStatus</MessageType>
+		<SourceID>WDPRONADLR</SourceID>
+		<TimeStamp>2009-07-27 10:15:50</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Username />
+		<Password />
+		<OrderID>DLR072709111</OrderID>
+		<Status>3</Status>
+		<OrderStatusErrors>
+			<OrderStatusError>
+				<ErrorCode>128</ErrorCode>
+				<ErrorText>Unable to authorize new payment: Payment authorization failed. Result: 100, ResponseText: AVS Mismatch</ErrorText>
+			</OrderStatusError>
+		</OrderStatusErrors>
+	</Body>
+</Envelope>

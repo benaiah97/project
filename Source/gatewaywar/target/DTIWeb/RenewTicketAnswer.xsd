@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Andrea Martinotti (OmniTicket Network Administration) -->
+<!--Copyright Notice: This document (written or otherwise displayed on magnetic media or other medium) contains confidential and proprietary information of OmniTicket Network, Inc. 
+	or its affiliates. It has been furnished only for informational purposes, and no license or permission is hereby granted to use such information in any manner. In no event may this 
+	information be reproduced, distributed and/or publicly displayed in any form or by any means without prior expressed written permission of OmniTicket Network, Inc. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Command">
+		<xs:annotation>
+			<xs:documentation>Message Format Answer</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header">
+					<xs:annotation>
+						<xs:documentation>Recap information on Message type</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReferenceNumber">
+								<xs:annotation>
+									<xs:documentation>Incoming </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="30" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestNumber" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Match the Incoming Request Number</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="SessionId" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>Session Id
+										One for each new Login where managed
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="RequestType">
+								<xs:annotation>
+									<xs:documentation>Command Group
+										Command group type
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Renew" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestSubType">
+								<xs:annotation>
+									<xs:documentation>Command subtype
+										Detailed command
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="RenewTicket" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ValueMsg">
+								<xs:annotation>
+									<xs:documentation>Value messages Group
+										Only on answer Messages
+									</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ValuedQty" type="xs:integer" />
+										<xs:element name="NonValuedQty" type="xs:integer" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="RenewTicket">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Error">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ErrorCode" type="xs:integer">
+											<xs:annotation>
+												<xs:documentation>0 = no error</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ErrorShortDescription" minOccurs="0">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="25" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ErrorDescription" type="xs:string" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Error Description</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="RenewTicketInfo" minOccurs="0" maxOccurs="8">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Item">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:minInclusive value="1" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ItemStatus">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:maxInclusive value="65000" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Ticket">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TDSSN">
+														<xs:annotation>
+															<xs:documentation>String Code</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Site">
+																	<xs:annotation>
+																		<xs:documentation>Site String</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="3" />
+																			<xs:maxLength value="3" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Station">
+																	<xs:annotation>
+																		<xs:documentation>Station String</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="6" />
+																			<xs:maxLength value="6" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Date" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>Date String</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="TicketId" type="xs:integer">
+																	<xs:annotation>
+																		<xs:documentation>Ticket string</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="TCOD">
+														<xs:annotation>
+															<xs:documentation>Numeric Code</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="17" />
+																<xs:minLength value="17" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="BarCode">
+														<xs:annotation>
+															<xs:documentation>Ticket Barcode</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="21" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="MagCode">
+														<xs:annotation>
+															<xs:documentation>Mag Track 1</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="73" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ExternalTicketCode">
+														<xs:annotation>
+															<xs:documentation>External ticket code
+																(phase 2)
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="20" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TicketType" type="xs:integer" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TicketInfo" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Item" type="xs:integer" />
+										<xs:element name="ItemStatus">
+											<xs:annotation>
+												<xs:documentation>Item Result Code</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:maxInclusive value="65000" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Ticket">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TDSSN">
+														<xs:annotation>
+															<xs:documentation>String Code</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Site">
+																	<xs:annotation>
+																		<xs:documentation>Site String</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="3" />
+																			<xs:maxLength value="3" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Station">
+																	<xs:annotation>
+																		<xs:documentation>Station String</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="6" />
+																			<xs:maxLength value="6" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Date" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>Date String</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="TicketId" type="xs:integer">
+																	<xs:annotation>
+																		<xs:documentation>Ticket string</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="TCOD">
+														<xs:annotation>
+															<xs:documentation>Numeric Code</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="17" />
+																<xs:minLength value="17" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="BarCode">
+														<xs:annotation>
+															<xs:documentation>Ticket Barcode</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="21" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="MagCode">
+														<xs:annotation>
+															<xs:documentation>Mag Track 1</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="73" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ExternalTicketCode">
+														<xs:annotation>
+															<xs:documentation>External ticket code
+																(phase 2)
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="20" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="PaymentInfo" minOccurs="0" maxOccurs="3">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Item">
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:minInclusive value="1" />
+													<xs:maxInclusive value="3" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="PaymentType">
+											<xs:annotation>
+												<xs:documentation>Payment Type Code
+													See PT001 Table
+												</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:integer">
+													<xs:minInclusive value="1" />
+													<xs:maxInclusive value="16" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="PaymentAmount" type="xs:float">
+											<xs:annotation>
+												<xs:documentation>Payment Amount</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:choice minOccurs="0">
+											<xs:element name="CreditCard" minOccurs="0">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="CardType" type="xs:byte">
+															<xs:annotation>
+																<xs:documentation>0=Credit Card 1=Gift Card</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="AuthErrorCode">
+															<xs:annotation>
+																<xs:documentation>Authorizator Error
+																	0=no error
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string" />
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="AuthNumber" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Bank Authorization number</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string" />
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="AuthMessage" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Bank Authorization message</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="25" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="CCNumber" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Credit Card Number
+																	Only last four digits if CC
+																	Mask last four digits if Gift Card
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="20" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="CCExpiration" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>MMYY</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="4" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="RemainingBalance" type="xs:float" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Gift Card only</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="PromoExpDate" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Gift Card only</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="8" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="RRN" type="xs:string" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>Only if PCI complient</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Voucher" minOccurs="0">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="MasterCode" type="xs:integer" />
+														<xs:element name="UniqueCode" minOccurs="0">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="25" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TransactionDSSN" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Site">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="3" />
+													<xs:maxLength value="3" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Station">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="6" />
+													<xs:maxLength value="6" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Date" type="xs:string" />
+										<xs:element name="TransactionId" type="xs:integer">
+											<xs:annotation>
+												<xs:documentation>Transaction Number</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TransactionCOD" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="17" />
+										<xs:maxLength value="17" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TotalAmount" type="xs:float" minOccurs="0" />
+							<xs:element name="TotalTax" type="xs:float" minOccurs="0" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

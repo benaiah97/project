@@ -1,0 +1,33 @@
+<Envelope>
+	<Header>
+		<MessageID>12345678</MessageID>
+		<MessageType>ActivateTicketResponse</MessageType>
+		<SourceID>VLINK</SourceID>
+		<TimeStamp>2009-06-26 10:35:27</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>1400</StatusCode>
+			<StatusText>Ticket activation request error</StatusText>
+		</Status>
+		<TicketActivationErrors>
+			<TicketActivationError>
+				<VisualID>6051039879902575</VisualID>
+				<StatusCode>1409</StatusCode>
+				<StatusText>Item price (144.00) does not match Galaxy's price (65.00) for item 21353</StatusText>
+			</TicketActivationError>
+			<TicketActivationError>
+				<VisualID>6051039879902575</VisualID>
+				<StatusCode>1405</StatusCode>
+				<StatusText>Ticket already active</StatusText>
+			</TicketActivationError>
+			<TicketActivationError>
+				<VisualID>6051039879902576</VisualID>
+				<StatusCode>1405</StatusCode>
+				<StatusText>Ticket already active</StatusText>
+			</TicketActivationError>
+		</TicketActivationErrors>
+	</Body>
+</Envelope>

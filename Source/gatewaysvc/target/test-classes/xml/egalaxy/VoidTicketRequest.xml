@@ -1,0 +1,19 @@
+<Envelope>
+	<Header>
+		<SourceID>DLRMerch</SourceID>
+		<MessageID>123456</MessageID>
+		<TimeStamp>2009-01-23 11:38:20.123</TimeStamp>
+		<MessageType>ActivateTicket</MessageType>
+	</Header>
+	<Body>
+		<TicketActivation>
+			<Command>Cancel</Command>
+			<CustomerID>300010434</CustomerID>
+			<Tickets>
+				<Ticket>
+					<VisualID>210000050200001352</VisualID>
+				</Ticket>
+			</Tickets>
+		</TicketActivation>
+	</Body>
+</Envelope>

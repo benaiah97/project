@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Transmission>
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>302004</PayloadID>
+			<TSPayloadID>301541513290</TSPayloadID>
+			<Target>Test-DLR</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-09-10</TransmitDate>
+			<TransmitTime>18:15:33.104</TransmitTime>
+			<TktBroker>DTIQ1</TktBroker>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdDuration>0.0</CmdDuration>
+				<CmdDate>2009-09-10</CmdDate>
+				<CmdTime>18:15:33.106</CmdTime>
+			</CommandHeader>
+			<QueryTicketResponse>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<TktID>
+						<External>210000050200001352</External>
+					</TktID>
+					<TktPrice>269.00</TktPrice>
+					<TktTax>0.00</TktTax>
+					<TktStatus>
+						<StatusItem>Voidable</StatusItem>
+						<StatusValue>NO</StatusValue>
+					</TktStatus>
+					<TktStatus>
+						<StatusItem>Active</StatusItem>
+						<StatusValue>YES</StatusValue>
+					</TktStatus>
+					<TktValidity>
+						<ValidStart>2009-01-01</ValidStart>
+						<ValidEnd>2010-01-01</ValidEnd>
+					</TktValidity>
+					<TktAttribute PassType="ANNUAL  " />
+				</Ticket>
+			</QueryTicketResponse>
+		</Command>
+	</Payload>
+</Transmission>
+

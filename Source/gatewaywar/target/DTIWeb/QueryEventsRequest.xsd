@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Andrea Martinotti (OmniTicket Network Administration) -->
+<!--Copyright Notice: This document (written or otherwise displayed on magnetic media or other medium) contains confidential and proprietary information of OmniTicket Network, Inc. 
+	or its affiliates. It has been furnished only for informational purposes, and no license or permission is hereby granted to use such information in any manner. In no event may this 
+	information be reproduced, distributed and/or publicly displayed in any form or by any means without prior expressed written permission of OmniTicket Network, Inc. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Command">
+		<xs:annotation>
+			<xs:documentation>Message Format Request</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header">
+					<xs:annotation>
+						<xs:documentation>Recap information on Message type</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReferenceNumber">
+								<xs:annotation>
+									<xs:documentation>Incoming </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="30" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestType">
+								<xs:annotation>
+									<xs:documentation>Command Group</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Query" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RequestSubType">
+								<xs:annotation>
+									<xs:documentation>Command subtype</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="QueryEvents" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="OperatingArea">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="5" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:choice>
+								<xs:element name="UserId" type="xs:positiveInteger">
+									<xs:annotation>
+										<xs:documentation>InternalId assigned by WinSYS at creation time</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="AlphaId">
+									<xs:annotation>
+										<xs:documentation>AlphaId ad defined in WinSYS</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="15" />
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="NumericId" type="xs:integer">
+									<xs:annotation>
+										<xs:documentation>NumericId as defined in WinSYS module</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="UniqueId">
+									<xs:annotation>
+										<xs:documentation>This would be the first field as defined in the cashier datamask field.</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="50" />
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:choice>
+							<xs:element name="Password" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>No security/password check performed by OTN</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="QueryEvents">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="WorkRules" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence maxOccurs="13">
+										<xs:element name="Tags">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="Date" />
+													<xs:enumeration value="Time" />
+													<xs:enumeration value="ShowId" />
+													<xs:enumeration value="ShowCode" />
+													<xs:enumeration value="GateId" />
+													<xs:enumeration value="GateCode" />
+													<xs:enumeration value="Slot" />
+													<xs:enumeration value="TimesInfo" />
+													<xs:enumeration value="DynamicTicketInfo" />
+													<xs:enumeration value="SeatAllocation" />
+													<xs:enumeration value="WebEnabled" />
+													<xs:enumeration value="AvailabilityInfo" />
+													<xs:enumeration value="Description" />
+													<xs:enumeration value="All" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SiteNumber" type="xs:integer" />
+							<xs:element name="NexusNumber" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>NOT SUPPORTED YET</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:integer">
+										<xs:minInclusive value="1" />
+										<xs:maxInclusive value="255" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SearchFilter">
+								<xs:complexType>
+									<xs:choice>
+										<xs:element name="MultiplePerformances">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Period">
+														<xs:annotation>
+															<xs:documentation>Period to query for Performances</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="StartDate">
+																	<xs:annotation>
+																		<xs:documentation>Start Date to begin looking for valid performances.</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																			<xs:minLength value="8" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EndDate">
+																	<xs:annotation>
+																		<xs:documentation>End Date to stop looking for valid performances.</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																			<xs:minLength value="8" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:sequence>
+														<xs:element name="Quota" minOccurs="0" />
+														<xs:element name="ShowCode" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If tag missing, all shows</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="8" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:element>
+														<xs:element name="GateId" type="xs:integer" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If tag missing, all gates</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="SeatAllocation" type="xs:boolean" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If tag missing both SeatAllocation and not SeatAllocation will be returned.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="WebEnabled" type="xs:boolean" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If tag missing both WebEnabled and not WebEnabled will be returned. </xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:sequence>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SinglePerformance">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Quota" minOccurs="0" />
+													<xs:choice>
+														<xs:element name="ShowInfo">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:element name="Date">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="8" />
+																				<xs:maxLength value="10" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="Time" minOccurs="0">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:maxLength value="5" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																	<xs:element name="ShowCode">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:maxLength value="8" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="PerformanceId" type="xs:integer" />
+													</xs:choice>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

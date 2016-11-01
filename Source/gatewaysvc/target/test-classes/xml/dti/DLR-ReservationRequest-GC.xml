@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/reservationrq.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>39900000000002020955</PayloadID>
+			<Target>Test-DLR</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-04-20</TransmitDate>
+			<TransmitTime>11:05:40.000</TransmitTime>
+			<TktSeller>
+				<TSMAC>WDPRONADLR</TSMAC>
+				<TSSystem>CC</TSSystem>
+				<TSLocation>351</TSLocation>
+				<TSSecurity>WaltDisney1</TSSecurity>
+			</TktSeller>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdTimeout>45</CmdTimeout>
+				<CmdDate>2009-04-20</CmdDate>
+				<CmdTime>11:05:40.000</CmdTime>
+				<CmdInvoice>00000000002020955</CmdInvoice>
+				<CmdDevice>WDPRO</CmdDevice>
+				<CmdOperator>WDPRO</CmdOperator>
+			</CommandHeader>
+			<ReservationRequest>
+				<RequestType>Create</RequestType>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<ProdCode>13828LUV025</ProdCode>
+					<ProdQty>2</ProdQty>
+					<ProdPrice>25.00</ProdPrice>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<ProdCode>13828LUV050</ProdCode>
+					<ProdQty>1</ProdQty>
+					<ProdPrice>50.00</ProdPrice>
+				</Ticket>
+				<Ticket>
+					<TktItem>3</TktItem>
+					<ProdCode>10801</ProdCode>
+					<ProdQty>1</ProdQty>
+					<ProdPrice>0.00</ProdPrice>
+				</Ticket>
+				<Payment>
+					<PayItem>1</PayItem>
+					<PayType>
+						<CreditCard>
+							<CCManual>
+								<CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+								<CCExpiration>0514</CCExpiration>
+								<CCVV>ZZZ</CCVV>
+								<CCName>MM</CCName>
+								<CCStreet>756 Paris Way</CCStreet>
+								<CCZipcode>76590</CCZipcode>
+								<CCType>VI</CCType>
+							</CCManual>
+						</CreditCard>
+					</PayType>
+					<PayAmount>100.0</PayAmount>
+				</Payment>
+				<Eligibility>
+					<Group>GP</Group>
+					<Member />
+				</Eligibility>
+				<Reservation>
+					<ResCode>DLR764984003</ResCode>
+					<ResCreateDate>2009-04-20</ResCreateDate>
+					<ResPickupDate>2009-04-20</ResPickupDate>
+					<ResPickupArea>MailOrder</ResPickupArea>
+					<ResSalesType>MailOrder</ResSalesType>
+				</Reservation>
+				<ClientData>
+					<ClientType>Private</ClientType>
+					<ClientCategory>WW</ClientCategory>
+					<DemoLanguage>en</DemoLanguage>
+					<DemoData>
+						<Bill Addr1="756 Paris Way" Addr2="Apt. 6" City="Sonora" Country="USA" Email="tamara.naylor@disney.com" FirstName="Gift" LastName="Card" Name="Gift Card" State="TX"
+							Telephone="4072962917" Zip="76590" />
+						<Ship Addr1="756 Paris Way" Addr2="Apt. 6" City="Sonora" Country="USA" Email="" FirstName="Gift" LastName="Card" Name="Gift Card" State="TX" Telephone="4072962917" Zip="76590" />
+					</DemoData>
+				</ClientData>
+				<Note>Personal Message: I am regression testing Gift Card Personalized Message.....weeeeee!!! :)</Note>
+			</ReservationRequest>
+		</Command>
+	</Payload>
+</Transmission>

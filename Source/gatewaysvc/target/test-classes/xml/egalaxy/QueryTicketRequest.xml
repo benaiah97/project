@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Envelope>
+	<Header>
+		<SourceID>DLRMerch</SourceID>
+		<MessageID>290529</MessageID>
+		<TimeStamp>2009-06-08 22:41:48.45</TimeStamp>
+		<MessageType>QueryTicket</MessageType>
+	</Header>
+	<Body>
+		<QueryTicket>
+			<Query>
+				<VisualID>210000050200001352</VisualID>
+			</Query>
+			<DataRequest>
+				<Field>ItemKind</Field>
+				<Field>Returnable</Field>
+				<Field>Status</Field>
+				<Field>DateSold</Field>
+				<Field>TicketDate</Field>
+				<Field>StartDateTime</Field>
+				<Field>DateOpened</Field>
+				<Field>ExpirationDate</Field>
+				<Field>EndDateTime</Field>
+				<Field>ValidUntil</Field>
+				<Field>LockedOut</Field>
+				<Field>VisualID</Field>
+				<Field>Price</Field>
+				<Field>UseCount</Field>
+				<Field>Tax</Field>
+			</DataRequest>
+		</QueryTicket>
+	</Body>
+</Envelope>

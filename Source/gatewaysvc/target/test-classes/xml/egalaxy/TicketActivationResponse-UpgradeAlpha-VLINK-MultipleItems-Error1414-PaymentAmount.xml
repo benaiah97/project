@@ -1,0 +1,23 @@
+<Envelope>
+	<Header>
+		<MessageID>12702847</MessageID>
+		<MessageType>ActivateTicketResponse</MessageType>
+		<SourceID>VLINK</SourceID>
+		<TimeStamp>2009-06-25 08:17:10</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>1400</StatusCode>
+			<StatusText>Ticket activation request error</StatusText>
+		</Status>
+		<TicketActivationErrors>
+			<TicketActivationError>
+				<VisualID />
+				<StatusCode>1414</StatusCode>
+				<StatusText>Payment amount (130.00) does not match the total price (209.00) of all tickets</StatusText>
+			</TicketActivationError>
+		</TicketActivationErrors>
+	</Body>
+</Envelope>

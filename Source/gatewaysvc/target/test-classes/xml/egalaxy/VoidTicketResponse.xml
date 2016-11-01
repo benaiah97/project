@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<Envelope>
+	<Header>
+		<SourceID>DLRMerch</SourceID>
+		<MessageID>123456</MessageID>
+		<MessageType>ActivateTicketResponse</MessageType>
+		<SessionID>9507</SessionID>
+		<TimeStamp>2009-01-23 11:38:20.123</TimeStamp>
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status>
+	</Body>
+</Envelope>
