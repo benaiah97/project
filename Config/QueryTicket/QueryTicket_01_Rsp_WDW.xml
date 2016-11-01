@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="QueryTicketAnswer.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestNumber>7654321</RequestNumber>
+		<SessionId>7777777</SessionId>
+		<RequestType>Query</RequestType>
+		<RequestSubType>QueryTicket</RequestSubType>
+		<ValueMsg>
+			<ValuedQty>10</ValuedQty>
+			<NonValuedQty>0</NonValuedQty>
+		</ValueMsg>
+	</Header>
+	<QueryTicket>
+		<Error>
+			<ErrorCode>21</ErrorCode>
+			<ErrorShortDescription>OP_FAIL_CC_PAYM_NOT_APP</ErrorShortDescription>
+			<ErrorDescription>CREDIT CARD PAYMENT NOT APPROVED</ErrorDescription>
+		</Error>
+		<TicketInfo>
+			<Item>1</Item>
+			<ItemStatus>0</ItemStatus>
+			<TicketType>25834</TicketType>
+			<Price>239.63</Price>
+			<Tax>14.63</Tax>
+			<Ticket>
+				<TDSSN>
+					<Site>WDW</Site>
+					<Station>CAS999</Station>
+					<Date>09-06-15</Date>
+					<TicketId>303</TicketId>
+				</TDSSN>
+				<TCOD>99999999999999999</TCOD>
+				<BarCode>77777777777777777777</BarCode>
+				<MagCode> FFFFFFFFFFFFFFFFFFFFFFFF </MagCode>
+				<ExternalTicketCode>ABCDEFGHIJKLMNOPQRSTUVWXYZ</ExternalTicketCode>
+			</Ticket>
+			<RemainingValue>350.48</RemainingValue>
+			<VoidCode>0</VoidCode>
+			<Validity>
+				<StartDate>09-06-15</StartDate>
+				<EndDate>30-12-31</EndDate>
+			</Validity>
+			<TicketFlag>
+				<TicketFlagNumber>0</TicketFlagNumber>
+			</TicketFlag>
+			<Usages>
+				<Item>1</Item>
+				<UsageType>4</UsageType>
+				<SiteNumber>93</SiteNumber>
+				<Gate>9</Gate>
+				<Date>09-06-28</Date>
+				<Time>16:17</Time>
+			</Usages>
+			<Usages>
+				<Item>2</Item>
+				<UsageType>4</UsageType>
+				<SiteNumber>93</SiteNumber>
+				<Gate>9</Gate>
+				<Date>09-06-28</Date>
+				<Time>16:17</Time>
+			</Usages>
+			<TicketAttribute>0</TicketAttribute>
+			<TicketNote>I AM A TICKET NOTE</TicketNote>
+			<BiometricLevel>0</BiometricLevel>
+			<TransactionDSSN>
+				<Site>WST</Site>
+				<Station>CAS005</Station>
+				<Date>09-06-28</Date>
+				<TransactionId>3</TransactionId>
+			</TransactionDSSN>
+			<TransactionCOD>99999999999999999</TransactionCOD>
+			<GroupQuantity>0</GroupQuantity>
+			<TaxExempt>0</TaxExempt>
+			<AlreadyUsed>1</AlreadyUsed>
+		</TicketInfo>
+	</QueryTicket>
+</Command>

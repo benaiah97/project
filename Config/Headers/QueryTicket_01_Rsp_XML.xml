@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transmission>
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>99999999999999999999</PayloadID>
+			<TSPayloadID> 8888888</TSPayloadID>
+			<Target>PROD-WDW</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-01-23</TransmitDate>
+			<TransmitTime>11:38:20.123</TransmitTime>
+			<TktBroker>DTI01</TktBroker>
+			<CommandCount>1</CommandCount>
+			<PayloadError>
+			  <HdrErrorCode>310</HdrErrorCode>
+			  <HdrErrorType>Critical</HdrErrorType>
+			  <HdrErrorClass>Servelet</HdrErrorClass>
+			  <HdrErrorText>Transaction Time-Out</HdrErrorText>
+			</PayloadError>
+		</PayloadHeader>
+	</Payload>
+</Transmission>

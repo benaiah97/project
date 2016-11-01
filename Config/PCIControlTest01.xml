@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLTest>
+  <CCNbr>4444333322221111</CCNbr>
+  <CCNumber>4444333322221111</CCNumber>
+  <CCVV>123</CCVV>
+  <GCNbr>1111111111112222</GCNbr>
+  <Endorsement>4444333322221111</Endorsement>
+  <Endorsement>4444333322221111</Endorsement>
+  <Endorsement>4444333322221111</Endorsement>
+  <CCTrack1>TRACK1DATATRACK1DATA</CCTrack1>
+  <CCTrack2>TRACK2DATATRACK2DATA</CCTrack2>
+  <GCTrack1>TRACK1DATATRACK1DATA</GCTrack1>
+  <GCTrack2>TRACK2DATATRACK2DATA</GCTrack2>
+  <CVN>123</CVN>
+  <Track1>TRACK1DATATRACK1DATA</Track1>
+  <Track2>TRACK2DATATRACK2DATA</Track2>
+  <CVV>123</CVV>
+  <CardNumber>4444333322221111</CardNumber>
+  <CAVVValue>123</CAVVValue>
+</XMLTest>
+

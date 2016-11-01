@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\var\opt\apps\RT\schemas\update_transaction_request.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>99999999999999999999</PayloadID>
+			<Target>PROD-WDW</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-01-23</TransmitDate>
+			<TransmitTime>11:38:20.123</TransmitTime>
+			<TktSeller>
+				<TSMAC>TSMACTSMAC</TSMAC>
+				<TSSystem>CC</TSSystem>
+				<TSLocation>A352R</TSLocation>
+				<TSSecurity>WaltDisney1</TSSecurity>
+			</TktSeller>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdTimeout>45</CmdTimeout>
+				<CmdDate>2009-01-23</CmdDate>
+				<CmdTime>11:38:20.456</CmdTime>
+				<CmdInvoice>942871739062978</CmdInvoice>
+				<CmdDevice>DEVICE</CmdDevice>
+				<CmdOperator>BOBSMITH</CmdOperator>
+				<CmdActor>MGR</CmdActor>
+				<CmdNote>This is a command note.</CmdNote>
+				<CmdMarket>32832</CmdMarket>
+				<CmdAttribute>
+					<AttribName>AttributeNameOne</AttribName>
+					<AttribValue>AttributeValueOne</AttribValue>
+				</CmdAttribute>
+				<CmdAttribute>
+					<AttribName>AttributeNameTwo</AttribName>
+					<AttribValue>AttributeValueTwo</AttribValue>
+				</CmdAttribute>
+			</CommandHeader>
+			<UpdateTransactionRequest>
+				<Transaction>
+					<TranID>
+						<TranNID>77777777777777777</TranNID>
+					</TranID>
+				</Transaction>
+				<SalesRep>BillyBob</SalesRep>
+				<Agency>
+					<IATA>A02131A912</IATA>
+				</Agency>
+			</UpdateTransactionRequest>
+		</Command>
+	</Payload>
+</Transmission>

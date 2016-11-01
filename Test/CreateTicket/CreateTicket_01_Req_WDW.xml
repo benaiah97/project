@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CreateTransactionRequest.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestType>Create</RequestType>
+		<RequestSubType>CreateTransaction</RequestSubType>
+		<OperatingArea>WDWAD</OperatingArea>
+		<UserId>2222</UserId>
+		<Password>11111</Password>
+	</Header>
+	<CreateTransaction>
+		<WorkRules>
+			<Tags>TicketInfo</Tags>
+			<Tags>TransactionCOD</Tags>
+			<Tags>TransactionDSSN</Tags>
+		</WorkRules>
+		<SiteNumber>93</SiteNumber>
+		<Product>
+			<Item>1</Item>
+			<TicketType>25834</TicketType>
+			<Quantity>3</Quantity>
+			<TicketNote>I AM A TICKET NOTE</TicketNote>
+			<TicketAttribute>0</TicketAttribute>
+		</Product>
+		<PaymentInfo>
+			<Item>1</Item>
+			<PaymentType>6</PaymentType>
+			<Voucher>
+				<MasterCode>4444</MasterCode>
+			</Voucher>
+		</PaymentInfo>
+		<InTransactionAttribute>
+			<AttributeCmd>Insert</AttributeCmd>
+			<AttributeKey>4</AttributeKey>
+			<AttributeValue>100002684</AttributeValue>
+			<AttributeType>7</AttributeType>
+			<AttributeFlag>NotEditable</AttributeFlag>
+		</InTransactionAttribute>
+	</CreateTransaction>
+</Command>

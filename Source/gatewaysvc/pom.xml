@@ -1,0 +1,190 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>pvt.disney.dti</groupId>
+		<artifactId>DTI_Gateway</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>1.0.0-1.1.1.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>pvt.disney.dti</groupId>
+	<artifactId>gatewaysvc</artifactId>
+	<name>gatewaysvc</name>
+<<<<<<< HEAD:gatewaysvc/pom.xml
+	<version>1.0.0-1.1.1.0</version>
+=======
+>>>>>>> develop:Source/gatewaysvc/pom.xml
+	<url>http://maven.apache.org</url>
+
+	<build>
+		<plugins>
+			
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/GWOrdersResXMLTestCase*</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javanettasks</groupId>
+			<artifactId>httpunit</artifactId>
+			<version>1.7</version>
+			<scope>test</scope>
+		</dependency>
+
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+=======
+
+		<!-- LOGGING -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+		
+=======
+
+
+		<!-- BEGIN XML -->
+		<!-- Sun jaxb, from ws dev pack -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+
+		
+		
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.8.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>activesoap</groupId>
+			<artifactId>jaxb-xercesImpl</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>activesoap</groupId>
+			<artifactId>jaxb-xalan</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.3.04</version>
+		</dependency>
+
+
+		
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc5</artifactId>
+			<version>11.1.0.7.0</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.juliusdavies</groupId>
+			<artifactId>not-yet-commons-ssl</artifactId>
+			<version>0.3.11</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>com.disney.shared</groupId>
+			<artifactId>SharedCore</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+		
+=======
+
+		<!-- other DTI projects -->
+		<!-- VERSIONS HERE MAY NEED UPDATED FOR NEW VERSIONS -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
+		<dependency>
+			<groupId>pvt.disney.dti</groupId>
+			<artifactId>gatewayjar</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>pvt.disney.dti</groupId>
+			<artifactId>gatewayxsd</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		
+		
+		
+	</dependencies>
+</project>
