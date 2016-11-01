@@ -1,21 +1,23 @@
-<?xml version="1.0"?>
-<!-- WORKING FOR DEPLOYMENT Mark II -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0</version>
+		<version>1.0.0-1.1.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
 	<artifactId>gatewaysvc</artifactId>
 	<name>gatewaysvc</name>
+<<<<<<< HEAD:gatewaysvc/pom.xml
+	<version>1.0.0-1.1.1.0</version>
+=======
+>>>>>>> develop:Source/gatewaysvc/pom.xml
 	<url>http://maven.apache.org</url>
 
 	<build>
 		<plugins>
-			<!-- REQUIRED FOR JAVA 5 -->
+			
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -24,7 +26,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- Adding test exclusions for Surefire reporting.. TODO : This is a hack until SHAN can setup filters -->
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -39,7 +41,7 @@
 
 	<dependencies>
 
-		<!-- TESTING -->
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -54,18 +56,27 @@
 			<scope>test</scope>
 		</dependency>
 
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+=======
 
 		<!-- LOGGING -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
 
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+		
+=======
 
 
 		<!-- BEGIN XML -->
 		<!-- Sun jaxb, from ws dev pack -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -89,8 +100,8 @@
 		</dependency>
 
 
-		<!-- TODO: NEED A FILTER TO EXCLUDE THIS FOR A WAS BUILD -->
-		<!-- reworked and removed these, WAS chokes on 'em, but Tomcat needs it -->
+		
+		
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
@@ -128,14 +139,14 @@
 		</dependency>
 
 
-		<!-- ORACLE JAR -->
+		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc5</artifactId>
 			<version>11.1.0.7.0</version>
 		</dependency>
 
-		<!-- BEGIN Apache Commons Dependencies -->
+		
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
@@ -147,16 +158,21 @@
 			<version>0.3.11</version>
 		</dependency>
 
-		<!-- DISNEY SHARED CORE, ETC -->
+		
 		<dependency>
 			<groupId>com.disney.shared</groupId>
 			<artifactId>SharedCore</artifactId>
 			<version>2.0.4</version>
 		</dependency>
 
+<<<<<<< HEAD:gatewaysvc/pom.xml
+		
+		
+=======
 
 		<!-- other DTI projects -->
 		<!-- VERSIONS HERE MAY NEED UPDATED FOR NEW VERSIONS -->
+>>>>>>> develop:Source/gatewaysvc/pom.xml
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayjar</artifactId>
