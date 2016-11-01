@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/create_ticket_request.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>99999999999999999999</PayloadID>
+			<Target>PROD-WDW</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-01-23</TransmitDate>
+			<TransmitTime>11:38:20.123</TransmitTime>
+			<TktSeller>
+				<TSMAC>TSMACTSMAC</TSMAC>
+				<TSSystem>CC</TSSystem>
+				<TSLocation>A352R</TSLocation>
+				<TSSecurity>WaltDisney1</TSSecurity>
+			</TktSeller>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdTimeout>45</CmdTimeout>
+				<CmdDate>2009-01-23</CmdDate>
+				<CmdTime>11:38:20.456</CmdTime>
+				<CmdInvoice>942871739062978</CmdInvoice>
+				<CmdDevice>DEVICE</CmdDevice>
+				<CmdOperator>BOBSMITH</CmdOperator>
+				<CmdActor>MGR</CmdActor>
+				<CmdNote>This is a command note.</CmdNote>
+				<CmdMarket>32832</CmdMarket>
+				<CmdAttribute>
+					<AttribName>AttributeNameOne</AttribName>
+					<AttribValue>AttributeValueOne</AttribValue>
+				</CmdAttribute>
+				<CmdAttribute>
+					<AttribName>AttributeNameTwo</AttribName>
+					<AttribValue>AttributeValueTwo</AttribValue>
+				</CmdAttribute>
+			</CommandHeader>
+			<CreateTicketRequest>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<ProdCode>PRD11</ProdCode>
+					<ProdQty>5</ProdQty>
+					<ProdPrice>500.05</ProdPrice>
+					<TktShell>78</TktShell>
+					<TktNote>This is a ticket note.</TktNote>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<ProdCode>PRD11</ProdCode>
+					<ProdQty>5</ProdQty>
+					<ProdPrice>500.05</ProdPrice>
+					<TktShell>78</TktShell>
+					<TktNote>This is a ticket note.</TktNote>
+				</Ticket>
+			</CreateTicketRequest>
+		</Command>
+	</Payload>
+</Transmission>

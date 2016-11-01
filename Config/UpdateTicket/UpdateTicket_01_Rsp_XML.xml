@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\var\opt\apps\RT\schemas\update_ticket_response.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>99999999999999999999</PayloadID>
+			<TSPayloadID> 8888888</TSPayloadID>
+			<Target>PROD-WDW</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-01-23</TransmitDate>
+			<TransmitTime>11:38:20.123</TransmitTime>
+			<TktBroker>DTI01</TktBroker>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdDuration>0.00</CmdDuration>
+				<CmdDate>2009-01-23</CmdDate>
+				<CmdTime>11:38:20.456</CmdTime>
+			</CommandHeader>
+			<UpdateTicketResponse>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<TktError>
+						<TktErrorCode>853</TktErrorCode>
+						<TktErrorType>Error</TktErrorType>
+						<TktErrorClass>Ticket</TktErrorClass>
+						<TktErrorText>Ticket Already Voided</TktErrorText>
+					</TktError>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<TktError>
+						<TktErrorCode>853</TktErrorCode>
+						<TktErrorType>Error</TktErrorType>
+						<TktErrorClass>Ticket</TktErrorClass>
+						<TktErrorText>Ticket Already Voided</TktErrorText>
+					</TktError>
+				</Ticket>
+			</UpdateTicketResponse>
+		</Command>
+	</Payload>
+</Transmission>

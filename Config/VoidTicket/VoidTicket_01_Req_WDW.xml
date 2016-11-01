@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="VoidTicketRequest.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestType>Void</RequestType>
+		<RequestSubType>VoidTicket</RequestSubType>
+		<OperatingArea>WDWIT</OperatingArea>
+		<UserId>2222</UserId>
+		<Password>11111</Password>
+	</Header>
+	<VoidTicket>
+		<WorkRules>
+			<Tags>TicketInfoVoid</Tags>
+			<Tags>TransactionDSSN</Tags>
+			<Tags>TransactionCOD</Tags>
+			<Tags>PaymentInfo</Tags>
+		</WorkRules>
+		<SiteNumber>93</SiteNumber>
+		<VTicket>
+			<Item>1</Item>
+			<TicketSearchMode>
+				<MagCode> FFFFFFFFFFFFFFFFFFFFFFFF </MagCode>
+			</TicketSearchMode>
+		</VTicket>
+		<PaymentInfo>
+			<Item>1</Item>
+			<PaymentType>6</PaymentType>
+			<Voucher>
+				<MasterCode>4444</MasterCode>
+			</Voucher>
+		</PaymentInfo>
+		<TransactionNote>I AM A TRANSACTION NOTE</TransactionNote>
+		<InTransactionAttribute>
+			<AttributeCmd>Insert</AttributeCmd>
+			<AttributeKey>4</AttributeKey>
+			<AttributeValue>100002684</AttributeValue>
+			<AttributeType>7</AttributeType>
+			<AttributeFlag>NotEditable</AttributeFlag>
+		</InTransactionAttribute>
+		<InTransactionAttribute>
+			<AttributeCmd>Insert</AttributeCmd>
+			<AttributeKey>4</AttributeKey>
+			<AttributeValue>100002684</AttributeValue>
+			<AttributeType>7</AttributeType>
+			<AttributeFlag>NotEditable</AttributeFlag>
+		</InTransactionAttribute>
+	</VoidTicket>
+</Command>

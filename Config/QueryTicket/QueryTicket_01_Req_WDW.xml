@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="QueryTicketRequest.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestType>Query</RequestType>
+		<RequestSubType>QueryTicket</RequestSubType>
+		<OperatingArea>WDWIT</OperatingArea>
+		<UserId>2222</UserId>
+		<Password>11111</Password>
+	</Header>
+	<QueryTicket>
+		<WorkRules>
+			<Tags>All</Tags>
+		</WorkRules>
+		<SiteNumber>93</SiteNumber>
+		<TicketInfo>
+			<Item>1</Item>
+			<TicketSearchMode>
+				<TDSSN>
+					<Site>WDW</Site>
+					<Station>CAS999</Station>
+					<Date>2009-06-15</Date>
+					<TicketId>303</TicketId>
+				</TDSSN>
+			</TicketSearchMode>
+		</TicketInfo>
+	</QueryTicket>
+</Command>

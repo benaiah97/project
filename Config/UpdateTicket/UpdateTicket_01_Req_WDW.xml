@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="UpdateTicketRequest.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestType>Update</RequestType>
+		<RequestSubType>UpdateTicket</RequestSubType>
+		<OperatingArea>WDWIT</OperatingArea>
+		<UserId>2222</UserId>
+		<Password>11111</Password>
+	</Header>
+	<UpdateTicket>
+		<WorkRules>
+			<Tags>UpdateTicketInfo</Tags>
+		</WorkRules>
+		<SiteNumber>93</SiteNumber>
+		<TicketInfo>
+			<Ticket>
+				<Item>1</Item>
+				<TicketSearchMode>
+					<TCOD>99999999999999999</TCOD>
+				</TicketSearchMode>
+			</Ticket>
+			<Validity>
+				<StartDate>09-06-15</StartDate>
+				<EndDate>30-12-31</EndDate>
+			</Validity>
+			<TicketNote>I AM A TICKET NOTE</TicketNote>
+			<VoidCode>0</VoidCode>
+			<ZipCode>32832</ZipCode>
+			<BiometricLevel>0</BiometricLevel>
+		</TicketInfo>
+	</UpdateTicket>
+</Command>

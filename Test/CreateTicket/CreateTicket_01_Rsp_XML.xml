@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transmission xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\var\opt\apps\RT\schemas\create_ticket_response.xsd">
+	<Payload>
+		<PayloadHeader>
+			<PayloadID>99999999999999999999</PayloadID>
+			<TSPayloadID> 8888888</TSPayloadID>
+			<Target>PROD-WDW</Target>
+			<Version>1.0</Version>
+			<Comm>
+				<Protocol>IP</Protocol>
+				<Method>Network</Method>
+			</Comm>
+			<TransmitDate>2009-01-23</TransmitDate>
+			<TransmitTime>11:38:20.123</TransmitTime>
+			<TktBroker>DTI01</TktBroker>
+			<CommandCount>1</CommandCount>
+		</PayloadHeader>
+		<Command>
+			<CommandHeader>
+				<CmdItem>1</CmdItem>
+				<CmdDuration>0.00</CmdDuration>
+				<CmdDate>2009-01-23</CmdDate>
+				<CmdTime>11:38:20.456</CmdTime>
+			</CommandHeader>
+			<CreateTicketResponse>
+				<Ticket>
+					<TktItem>1</TktItem>
+					<TktID>
+						<Mag> BBBBBBBBBBBBBBBBBB </Mag>
+						<Barcode>33333333333333333333</Barcode>
+						<TktDSSN>
+							<TktDate>2008-11-01</TktDate>
+							<TktSite>WMK</TktSite>
+							<TktStation>111</TktStation>
+							<TktNbr>222</TktNbr>
+						</TktDSSN>
+						<TktNID>44444444444444444</TktNID>
+					</TktID>
+					<TktTransaction>
+						<TktProvider>WDW</TktProvider>
+						<TranDSSN>
+							<TranDate>2009-01-23</TranDate>
+							<TranSite>WDW</TranSite>
+							<TranStation>CAS002</TranStation>
+							<TranNbr>98</TranNbr>
+						</TranDSSN>
+					</TktTransaction>
+					<TktPrice>500.05</TktPrice>
+					<TktTax>50.05</TktTax>
+					<TktValidity>
+						<ValidStart>2008-09-20</ValidStart>
+						<ValidEnd>2009-09-20</ValidEnd>
+					</TktValidity>
+					<TktNote>This is a ticket note.</TktNote>
+					<TktError>
+						<TktErrorCode>853</TktErrorCode>
+						<TktErrorType>Error</TktErrorType>
+						<TktErrorClass>Ticket</TktErrorClass>
+						<TktErrorText>Ticket Already Voided</TktErrorText>
+					</TktError>
+				</Ticket>
+				<Ticket>
+					<TktItem>2</TktItem>
+					<TktID>
+						<Mag> BBBBBBBBBBBBBBBBBB </Mag>
+						<Barcode>33333333333333333333</Barcode>
+						<TktDSSN>
+							<TktDate>2008-11-01</TktDate>
+							<TktSite>WMK</TktSite>
+							<TktStation>111</TktStation>
+							<TktNbr>222</TktNbr>
+						</TktDSSN>
+						<TktNID>44444444444444444</TktNID>
+					</TktID>
+					<TktTransaction>
+						<TktProvider>WDW</TktProvider>
+						<TranDSSN>
+							<TranDate>2009-01-23</TranDate>
+							<TranSite>WDW</TranSite>
+							<TranStation>CAS002</TranStation>
+							<TranNbr>98</TranNbr>
+						</TranDSSN>
+						<TranNID>77777777777777777</TranNID>						
+					</TktTransaction>
+					<TktPrice>500.05</TktPrice>
+					<TktTax>50.05</TktTax>
+					<TktValidity>
+						<ValidStart>2008-09-20</ValidStart>
+						<ValidEnd>2009-09-20</ValidEnd>
+					</TktValidity>
+					<TktNote>This is a ticket note.</TktNote>
+					<TktError>
+						<TktErrorCode>853</TktErrorCode>
+						<TktErrorType>Error</TktErrorType>
+						<TktErrorClass>Ticket</TktErrorClass>
+						<TktErrorText>Ticket Already Voided</TktErrorText>
+					</TktError>
+				</Ticket>
+				<Product>
+					<ProdItem>1</ProdItem>
+					<ProdCode>PRD11</ProdCode>
+					<ProdQty>5</ProdQty>
+					<ProdParts>1</ProdParts>
+					<ProdPrice>500.05</ProdPrice>
+					<ProdTax1>50.05</ProdTax1>
+					<ProdTax2>5.50</ProdTax2>
+					<ProdDescription>This is a product description.</ProdDescription>
+					<ProdReceiptMsg>This is a product receipt message.</ProdReceiptMsg>
+				</Product>
+				<Product>
+					<ProdItem>2</ProdItem>
+					<ProdCode>PRD11</ProdCode>
+					<ProdQty>5</ProdQty>
+					<ProdParts>1</ProdParts>
+					<ProdPrice>500.05</ProdPrice>
+					<ProdTax1>50.05</ProdTax1>
+					<ProdTax2>5.50</ProdTax2>
+					<ProdDescription>This is a product description.</ProdDescription>
+					<ProdReceiptMsg>This is a product receipt message.</ProdReceiptMsg>
+				</Product>
+			</CreateTicketResponse>
+		</Command>
+	</Payload>
+</Transmission>

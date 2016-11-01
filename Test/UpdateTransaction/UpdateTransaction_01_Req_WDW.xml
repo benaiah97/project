@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Command SYSTEM "UpdateTransactionRequest.dtd">
+<Command xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="UpdateTransactionRequest.xsd">
+	<Header>
+		<ReferenceNumber> 12345678</ReferenceNumber>
+		<RequestType>Update</RequestType>
+		<RequestSubType>UpdateTransaction</RequestSubType>
+		<OperatingArea>WDWAD</OperatingArea>
+		<UserId>2222</UserId>
+		<Password>11111</Password>
+	</Header>
+	<UpdateTransaction>
+	    <SiteNumber>93</SiteNumber>
+		<Transaction>
+			<Item>1</Item>
+			<TransactionSearchMode>
+				<TransactionCOD>99999999999999999</TransactionCOD>
+			</TransactionSearchMode>
+		</Transaction>
+		<TransactionNote>I AM A TRANSACTION NOTE</TransactionNote>
+		<Seller>351</Seller>
+		<ZipCode>32832</ZipCode>
+		<IATA>382010293</IATA>
+		<InTransactionAttribute>
+			<AttributeCmd>Insert</AttributeCmd>
+			<AttributeKey>4</AttributeKey>
+			<AttributeValue>100002684</AttributeValue>
+			<AttributeType>7</AttributeType>
+			<AttributeFlag>NotEditable</AttributeFlag>
+		</InTransactionAttribute>
+	</UpdateTransaction>
+</Command>
