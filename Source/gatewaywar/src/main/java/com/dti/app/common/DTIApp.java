@@ -14,17 +14,16 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-import com.disney.util.AbstractInitializer;
-import com.disney.util.PropertyHelper;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.controller.DTIController;
 import pvt.disney.dti.gateway.service.DTIService;
 import pvt.disney.dti.gateway.util.ResourceLoader;
+
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
+import com.disney.util.PropertyHelper;
 
 /**
  * The DTIApp class implements the servlet that receives commands from a ticket
@@ -138,7 +137,6 @@ public class DTIApp extends HttpServlet {
       }
     }
 
-    eventLogger.sendEvent("Returning response to https ticket seller.  Servlet complete.",
-        EventType.INFO, this);
+    eventLogger.sendEvent("Returning response to https ticket seller.  Servlet complete.", EventType.INFO, this);
   }
 }

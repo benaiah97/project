@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
-Built-By: biest001
-Class-Path: xalan-2.7.1.jar serializer-2.7.1.jar xercesImpl-2.9.1.jar 
- XmlSchema-1.3.2.jar xml-apis-1.3.04.jar jaxb-api-2.1.jar stax-api-1.0
- -2.jar activation-1.1.jar jaxb-impl-2.1.9.jar stax-api-1.0.1.jar log4
- j-1.2.16.jar ojdbc5-11.1.0.7.0.jar agif-2003-01-24.jar javaagentapi-1
- .0.0.jar SecurityClient-1.2.jar SharedCore-2.0.4.jar gatewayjar-1.0.0
- .jar dom4j-1.6.jar gatewaygte-1.0.0.jar cm-4.0.0.jar gatewaysvc-1.0.0
- .jar jaxen-1.1.1.jar jdom-1.0.jar xom-1.0.jar xmlParserAPIs-2.6.2.jar
-  icu4j-2.6.1.jar jaxb-xercesImpl-1.5.jar jaxb-xalan-1.5.jar wsdl4j-1.
- 5.3.jar commons-httpclient-3.1.jar commons-logging-1.0.4.jar commons-
- codec-1.2.jar not-yet-commons-ssl-0.3.11.jar gatewayxsd-1.0.0.jar jsr
- 305-3.0.0.jar
+Built-By: BIEST001
+Class-Path: javax.servlet-api-3.0.1.jar xalan-2.7.1.jar serializer-2.7
+ .1.jar xercesImpl-2.9.1.jar XmlSchema-1.3.2.jar xml-apis-1.3.04.jar j
+ axb-api-2.1.jar stax-api-1.0-2.jar activation-1.1.jar jaxb-impl-2.1.9
+ .jar stax-api-1.0.1.jar log4j-1.2.16.jar ojdbc5-11.1.0.7.0.jar agif-2
+ 003-01-24.jar javaagentapi-1.0.0.jar SecurityClient-1.2.jar SharedCor
+ e-2.0.4.jar gatewayjar-1.0.0.jar dom4j-1.6.jar gatewaygte-1.0.0.jar c
+ m-4.0.0.jar gatewaysvc-1.0.0.jar jaxen-1.1.1.jar jdom-1.0.jar xom-1.0
+ .jar xmlParserAPIs-2.6.2.jar icu4j-2.6.1.jar jaxb-xercesImpl-1.5.jar 
+ jaxb-xalan-1.5.jar wsdl4j-1.5.3.jar commons-httpclient-3.1.jar common
+ s-logging-1.0.4.jar commons-codec-1.2.jar not-yet-commons-ssl-0.3.11.
+ jar gatewayxsd-1.0.0.jar jsr305-3.0.0.jar
 Build-Jdk: 1.8.0_101
 Created-By: Maven Integration for Eclipse
 
