@@ -159,12 +159,12 @@
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayjar</artifactId>
-			<version>RELEASE</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayxsd</artifactId>
-			<version>RELEASE</version>
+			<version>${project.version}</version>
 		</dependency>
 		
 		
