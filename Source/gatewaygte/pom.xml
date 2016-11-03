@@ -134,12 +134,12 @@
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayjar</artifactId>
-			<version>RELEASE</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewaysvc</artifactId>
-			<version>RELEASE</version>
+			<version>${project.version}</version>
 		</dependency>
 
 
