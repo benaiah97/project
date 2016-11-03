@@ -23,12 +23,12 @@
   
     <modules>
       <module>config</module>
-      <module>gatewaywar</module>   
-	  <module>gatewayadm</module>
       <module>gatewayxsd</module>
       <module>gatewayjar</module>
       <module>gatewaysvc</module>
       <module>gatewaygte</module>
+      <module>gatewaywar</module>   
+	  <module>gatewayadm</module>
     </modules>
 
 
