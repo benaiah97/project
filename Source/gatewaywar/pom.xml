@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
@@ -22,9 +23,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<!-- NOTE: we should really add our own rulesets as specified below. Files can be located relative to the pom, or off on a webserver. <configuration> <rulesets> <ruleset>/rulesets/braces.xml</ruleset> 
-					<ruleset>/rulesets/naming.xml</ruleset> <ruleset>/rulesets/strings.xml</ruleset> <ruleset>http://localhost/design.xml</ruleset> </rulesets> </configuration> -->
-				<!-- NOTE: Must specify target jdk versino for PMD so it can process rules for version specific JDKs, such as generics, autoboxing, etc. -->
+				<!-- NOTE: we should really add our own rulesets as specified below. 
+					Files can be located relative to the pom, or off on a webserver. <configuration> 
+					<rulesets> <ruleset>/rulesets/braces.xml</ruleset> <ruleset>/rulesets/naming.xml</ruleset> 
+					<ruleset>/rulesets/strings.xml</ruleset> <ruleset>http://localhost/design.xml</ruleset> 
+					</rulesets> </configuration> -->
+				<!-- NOTE: Must specify target jdk versino for PMD so it can process 
+					rules for version specific JDKs, such as generics, autoboxing, etc. -->
 				<configuration>
 					<targetJdk>1.5</targetJdk>
 				</configuration>
@@ -37,8 +42,9 @@
 						<reports>
 							<!-- generate pmd report -->
 							<report>maven-pmd-plugin</report>
-							<!-- note: additional posible reports below: <report>dependencies</report> <report>project-team</report> <report>mailing-list</report> <report>cim</report> <report>issue-tracking</report> 
-								<report>license</report> <report>scm</report> -->
+							<!-- note: additional posible reports below: <report>dependencies</report> 
+								<report>project-team</report> <report>mailing-list</report> <report>cim</report> 
+								<report>issue-tracking</report> <report>license</report> <report>scm</report> -->
 						</reports>
 					</reportSet>
 				</reportSets>
@@ -77,8 +83,6 @@
 
 	<dependencies>
 
-
-
 		<!-- TESTING / JUNIT DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -92,8 +96,8 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 		</dependency>
-		
-		
+
+
 		<!-- XML dependencies -->
 		<dependency>
 			<groupId>xalan</groupId>
@@ -155,7 +159,20 @@
 			<artifactId>ojdbc5</artifactId>
 			<version>11.2.0.2.0</version>
 		</dependency>
+
+		<!-- for Tomcat -->
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>2.1.7</version>
+		</dependency>
 		
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+
 		<!-- OTHER EXTERNAL JARS -->
 		<dependency>
 			<groupId>com.image.agif</groupId>

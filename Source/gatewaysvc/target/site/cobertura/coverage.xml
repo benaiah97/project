@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="18430" branches-covered="0" branches-valid="7988" complexity="3.353641777370591" version="2.1.1" timestamp="1478183757025">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="18430" branches-covered="0" branches-valid="7988" complexity="3.353641777370591" version="2.1.1" timestamp="1478543863929">
 	<sources>
 		<source>D:/DEV/github/DTIGateway/Source/gatewaysvc/src/main/java</source>
 		<source>--source</source>
