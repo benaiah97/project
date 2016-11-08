@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD CO.) -->
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Kevin Graham (Walt Disney World Co) -->
+<!--TiXML 1.0  12/17/02  Copyright The Walt Disney Company-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
+	<xs:element name="Transmission">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Payload">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="PayloadHeader"/>
+							<xs:element name="Command" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="CommandHeader"/>
+										<xs:element ref="ReservationResponse" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CommandHeader">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CmdItem" type="xs:integer"/>
+				<xs:element name="CmdDuration" type="xs:decimal"/>
+				<xs:element name="CmdDate" type="xs:date"/>
+				<xs:element name="CmdTime" type="xs:time"/>
+				<xs:element name="CmdNote" type="xs:string" minOccurs="0"/>
+				<xs:element name="CmdError" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CmdErrorCode" type="xs:integer"/>
+							<xs:element name="CmdErrorType" type="xs:string"/>
+							<xs:element name="CmdErrorClass" type="xs:string"/>
+							<xs:element name="CmdErrorText" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ReservationResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ResponseType" type="xs:string"/>
+				<xs:element name="Ticket" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:choice minOccurs="2" maxOccurs="unbounded">
+							<xs:element name="TktItem" type="xs:integer"/>
+							<xs:element name="TktPart" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktID" minOccurs="0">
+								<xs:complexType>
+									<xs:choice maxOccurs="unbounded">
+										<xs:element name="Mag" type="xs:string" minOccurs="0"/>
+										<xs:element name="Barcode" type="xs:string" minOccurs="0"/>
+										<xs:element name="TktDSSN" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TktDate" type="xs:string"/>
+													<xs:element name="TktSite" type="xs:string"/>
+													<xs:element name="TktStation" type="xs:string"/>
+													<xs:element name="TktNbr" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TktNID" type="xs:string" minOccurs="0"/>
+										<xs:element name="External" type="xs:string" minOccurs="0"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktTransaction" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="TktProvider" type="xs:string" minOccurs="0"/>
+										<xs:element name="WorkDate" type="xs:date" minOccurs="0"/>
+										<xs:element name="WorkTime" type="xs:time" minOccurs="0"/>
+										<xs:element name="TranDSSN" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TranDate" type="xs:string"/>
+													<xs:element name="TranSite" type="xs:string"/>
+													<xs:element name="TranStation" type="xs:string"/>
+													<xs:element name="TranNbr" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TranNID" type="xs:string" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktPrice" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktTax" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktStatus" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StatusItem" type="xs:string"/>
+										<xs:element name="StatusValue" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktUseText" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktValidity" minOccurs="0">
+								<xs:complexType>
+									<xs:choice maxOccurs="unbounded">
+										<xs:element name="ValidStart" type="xs:date"/>
+										<xs:element name="ValidEnd" type="xs:date"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktSecurity" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Type" type="xs:string"/>
+										<xs:element name="Level" type="xs:string"/>
+										<xs:element name="Template" type="xs:string" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktShell" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktMarket" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktGroupSize" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktFlags" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="FlagItem" type="xs:string"/>
+										<xs:element name="FlagValue" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktNote" type="xs:string" minOccurs="0"/>
+							<xs:element name="TktError" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="TktErrorCode" type="xs:integer"/>
+										<xs:element name="TktErrorType" type="xs:string"/>
+										<xs:element name="TktErrorClass" type="xs:string"/>
+										<xs:element name="TktErrorText" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktDemoData" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Field" type="xs:string"/>
+										<xs:element name="Value" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Product" minOccurs="0" maxOccurs="40">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProdItem" type="xs:integer"/>
+							<xs:element name="ProdCode" type="xs:string"/>
+							<xs:element name="ProdQty" type="xs:integer"/>
+							<xs:element name="ProdParts" type="xs:string"/>
+							<xs:element name="ProdPrice" type="xs:float"/>
+							<xs:element name="ProdTax1" type="xs:float"/>
+							<xs:element name="ProdTax2" type="xs:float" minOccurs="0"/>
+							<xs:element name="ProdDescription" type="xs:string" minOccurs="0"/>
+							<xs:element name="ProdReceiptMsg" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Payment" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PayItem" type="xs:integer"/>
+							<xs:element name="PayType">
+								<xs:complexType>
+									<xs:choice>
+										<xs:element name="CreditCard">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CCAuthCode" type="xs:string"/>
+													<xs:element name="CCAuthNumber" type="xs:string" minOccurs="0"/>
+													<xs:element name="CCAuthSysResponse" type="xs:string" minOccurs="0"/>
+													<xs:element name="CCNumber" type="xs:string" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="GiftCard">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="GCAuthCode" type="xs:string"/>
+													<xs:element name="GCAuthNumber" type="xs:string" minOccurs="0"/>
+													<xs:element name="GCAuthSysResponse" type="xs:string" minOccurs="0"/>
+													<xs:element name="GCNumber" type="xs:string" minOccurs="0"/>
+													<xs:element name="GCRemainingBalance" type="xs:float" minOccurs="0"/>
+													<xs:element name="GCPromoExpDate" type="xs:date" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Receipt" minOccurs="0">
+					<xs:complexType>
+						<xs:choice maxOccurs="unbounded">
+							<xs:element name="Total" type="xs:float" minOccurs="0"/>
+							<xs:element name="TaxTotal" type="xs:float" minOccurs="0"/>
+							<xs:element name="Tax1" type="xs:float" minOccurs="0"/>
+							<xs:element name="Tax2" type="xs:float" minOccurs="0"/>
+							<xs:element name="Message" type="xs:string" minOccurs="0"/>
+							<xs:element name="ReferenceNbr" type="xs:string" minOccurs="0"/>
+							<xs:element name="TotalBalance" type="xs:string" minOccurs="0"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Eligibility" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Group" type="xs:string"/>
+							<xs:element name="Member" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Reservation" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ResCode" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResNumber" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResCreateDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupArea" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResSalesType" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResStatus" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ClientData" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ClientId" type="xs:string"/>
+							<xs:element name="ClientType" type="xs:string" minOccurs="0"/>
+							<xs:element name="ClientCategory" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoLanguage" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoData" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence maxOccurs="30">
+										<xs:element name="Bill" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Ship" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Agency" type="xs:string" minOccurs="0"/>
+				<xs:element name="TaxExemptCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="Note" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="ShowData" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence maxOccurs="6">
+							<xs:element name="GroupCode" type="xs:string"/>
+							<xs:element name="PerformanceId" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PayloadHeader">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PayloadID" type="xs:string"/>
+				<xs:element name="TSPayloadID" type="xs:string"/>
+				<xs:element name="Target" type="xs:string"/>
+				<xs:element name="Version" type="xs:string"/>
+				<xs:element name="Priority" type="xs:string" minOccurs="0"/>
+				<xs:element name="ProcMethod" type="xs:string" minOccurs="0"/>
+				<xs:element name="Comm">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Protocol" type="xs:string"/>
+							<xs:element name="Method" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TransmitDate" type="xs:date"/>
+				<xs:element name="TransmitTime" type="xs:time"/>
+				<xs:element name="TktBroker" type="xs:string"/>
+				<xs:element name="CommandCount" type="xs:integer"/>
+				<xs:element name="PayloadNote" type="xs:string" minOccurs="0"/>
+				<xs:element name="PayloadError" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="HdrErrorCode" type="xs:integer"/>
+							<xs:element name="HdrErrorType" type="xs:string"/>
+							<xs:element name="HdrErrorClass" type="xs:string"/>
+							<xs:element name="HdrErrorText" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
