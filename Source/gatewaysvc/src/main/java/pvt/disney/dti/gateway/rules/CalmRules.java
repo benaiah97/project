@@ -29,7 +29,7 @@ import com.disney.util.PropertyHelper;
 /**
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class CalmRules {
 
@@ -70,7 +70,7 @@ public class CalmRules {
 		dlrDownFileName = PropertyHelper.readPropsValue(
 				PropertyName.CALM_DLR_DOWN_FILENAME, props, null);
 		if (dlrDownFileName == null) {
-			wdwCalmActive = false;
+			dlrCalmActive = false;
 		}
 		else {
 			dlrCalmActive = true;

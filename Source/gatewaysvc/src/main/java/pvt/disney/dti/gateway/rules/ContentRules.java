@@ -25,7 +25,7 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
  * This class has the responsibility of encapsulating all of the rules to validate the minimum contents of a message are all present or are in proper relationship to other (having this field means you need that field).
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class ContentRules {
 

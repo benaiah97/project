@@ -50,24 +50,34 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  */
 public class TiXMLHandler extends DefaultHandler {
 
-  public static final String UPGRADE_ALPHA      = "UpgradeAlpha           ";
-  public static final String VOID_TICKET        = "VoidTicket             ";
-  public static final String QUERY_TICKET       = "QueryTicket            ";
-  public static final String RESERVATION        = "Reservation            ";
-  public static final String QUERY_RESERVATION  = "QueryReservation       ";
-  public static final String CREATEALPHA        = "CreateAlpha            ";
-  public static final String UPDATETICKET       = "UpdateTicket           ";
-  public static final String UPDATETRANSACTION  = "UpdateTransaction      ";
-  public static final String UPGRADEENTITLEMENT = "UpgradeEntitlement     "; // 2.10
-  public static final String UPGRADE_ALPHA_REQUEST = "UpgradeAlphaRequest";
-  public static final String VOID_TICKET_REQUEST = "VoidTicketRequest";
-  public static final String QUERY_TICKET_REQUEST = "QueryTicketRequest";
-  public static final String RESERVATION_REQUEST = "ReservationRequest";
-  public static final String CREATE_ALPHA_REQUEST = "CreateTicketRequest";
-  public static final String UPDATE_TICKET_REQUEST = "UpdateTicketRequest";
-  public static final String QUERY_RESERVATION_REQUEST = "QueryReservationRequest";
-  public static final String UPDATE_TRANSACTION_REQUEST = "UpdateTransactionRequest";
-  public static final String UPGRADE_ENTITLEMENT_REQUEST = "UpgradeEntitlementRequest"; // 2.10
+  public static final String CREATE_TICKET      = "CreateTicket           "; // CMD 1
+  public static final String UPGRADE_ALPHA      = "UpgradeAlpha           "; // CMD 2  
+  public static final String UPDATETICKET       = "UpdateTicket           "; // CMD 3  
+  public static final String UPDATETRANSACTION  = "UpdateTransaction      "; // CMD 4
+  public static final String VOID_TICKET        = "VoidTicket             "; // CMD 5  
+  public static final String QUERY_TICKET       = "QueryTicket            "; // CMD 6  
+  public static final String RESERVATION        = "Reservation            "; // CMD 9
+  public static final String QUERY_RESERVATION  = "QueryReservation       "; // CMD 10
+  public static final String UPGRADEENTITLEMENT = "UpgradeEntitlement     "; // CMD 11
+  public static final String RENEW_ENTITLEMENT        = "RenewEntitlement       "; // CMD 12
+  public static final String ASSOC_MEDIA2ACCT   = "AssociateMediaToAccount"; // CMD 13
+  public static final String TICKERATE_ENTTL    = "TickerateEntitlement   "; // CMD 14
+  public static final String VOID_RESERVATION   = "VoidReservation        "; // CMD 15
+
+  public static final String CREATE_TICKET_REQUEST = "CreateTicketRequest"; // CMD 1
+  public static final String UPGRADE_ALPHA_REQUEST = "UpgradeAlphaRequest"; // CMD 2
+  public static final String UPDATE_TICKET_REQUEST = "UpdateTicketRequest"; // CMD 3
+  public static final String UPDATE_TRANSACTION_REQUEST = "UpdateTransactionRequest"; // CMD 4
+  public static final String VOID_TICKET_REQUEST = "VoidTicketRequest"; // CMD 5
+  public static final String QUERY_TICKET_REQUEST = "QueryTicketRequest"; // CMD 6
+  public static final String RESERVATION_REQUEST = "ReservationRequest"; // CMD 9
+  public static final String QUERY_RESERVATION_REQUEST = "QueryReservationRequest"; // CMD 10
+  public static final String UPGRADE_ENTITLEMENT_REQUEST = "UpgradeEntitlementRequest"; // CMD 11
+  public static final String RENEW_ENTITLEMENT_REQUEST = "RenewEntitlementRequest"; // CMD 12
+  public static final String ASSOC_MEDIA2ACCT_REQUEST = "AssociateMediaToAccountRequest"; // CMD 13
+  public static final String TICKERATE_ENTTL_REQUEST = "TickerateEntitlementRequest"; // CMD 14
+  public static final String VOID_RESERVATION_REQUEST = "VoidReservationRequest"; // CMD 15
+  
   public static final String PAYLOAD_ID = "PayloadID";
   public static final String TS_MAC = "TSMAC";
   public static final String TS_LOCATION = "TSLocation";
@@ -77,8 +87,7 @@ public class TiXMLHandler extends DefaultHandler {
   public static final String PAYLOAD_HEADER = "PayloadHeader";
   public static final String ACTION = "Action";
   public static final String TXN_TYPE = "TransactionType";
-  public static final String PRODCODE = "ProdCode";
-  public static final String RESCODE = "ResCode";
+  public static final String TICKETS = "Tickets";
   public static final String MAGTRACK1 = "MagTrack1";
   public static final String BARCODE = "Barcode";
   public static final String TKTDATE = "TktDate";
@@ -88,8 +97,11 @@ public class TiXMLHandler extends DefaultHandler {
   public static final String TKTNID = "TktNID";
   public static final String EXTERNAL = "External";
   public static final String PRODUCTS = "Products";
+  public static final String PRODCODE = "ProdCode";
+  public static final String RESCODE = "ResCode";
   public static final String RESCODES = "ResCodes";
-  public static final String TICKETS = "Tickets";
+  public static final String VISUALMEDIAID = "VisualId";
+  public static final String VISUALMEDIAIDS = "VisualIds";
 
   /** The standard core logging mechanism. */
   //private EventLogger eventLogger = EventLogger.getLogger(this.getClass());
@@ -153,6 +165,9 @@ public class TiXMLHandler extends DefaultHandler {
    * @throws DTIException
    */
   public void validate() throws DTIException {
+
+    /* Core properties management initializer. */
+    /* Properties variable to store properties from AbstractInitializer. */
 
     try {
 
@@ -240,66 +255,93 @@ public class TiXMLHandler extends DefaultHandler {
     // happens.
     txnType = TransactionType.UNDEFINED;
 
-    if (doc.getElementsByTagName(UPGRADE_ALPHA_REQUEST) != null) {
+    if (doc.getElementsByTagName(CREATE_TICKET_REQUEST) != null) { // CMD 1
+      if (doc.getElementsByTagName(CREATE_TICKET_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, CREATE_TICKET);
+        txnType = TransactionType.CREATETICKET;
+      }
+    }
+    if (doc.getElementsByTagName(UPGRADE_ALPHA_REQUEST) != null) { // CMD 2
       if (doc.getElementsByTagName(UPGRADE_ALPHA_REQUEST).getLength() > 0) {
         returnData.put(ACTION, UPGRADE_ALPHA);
         txnType = TransactionType.UPGRADEALPHA;
       }
     }
-    if (doc.getElementsByTagName(VOID_TICKET_REQUEST) != null) {
-      if (doc.getElementsByTagName(VOID_TICKET_REQUEST).getLength() > 0) {
-        returnData.put(ACTION, VOID_TICKET);
-        txnType = TransactionType.VOIDTICKET;
-      }
-    }
-    if (doc.getElementsByTagName(QUERY_TICKET_REQUEST) != null) {
-      if (doc.getElementsByTagName(QUERY_TICKET_REQUEST).getLength() > 0) {
-        returnData.put(ACTION, QUERY_TICKET);
-        txnType = TransactionType.QUERYTICKET;
-      }
-    }
-    if (doc.getElementsByTagName(RESERVATION_REQUEST) != null) {
-      if (doc.getElementsByTagName(RESERVATION_REQUEST).getLength() > 0) {
-        returnData.put(ACTION, RESERVATION);
-        txnType = TransactionType.RESERVATION;
-      }
-    }
-    if (doc.getElementsByTagName(CREATE_ALPHA_REQUEST) != null) {
-      if (doc.getElementsByTagName(CREATE_ALPHA_REQUEST).getLength() > 0) {
-        returnData.put(ACTION, CREATEALPHA);
-        txnType = TransactionType.CREATETICKET;
-      }
-    }
-    if (doc.getElementsByTagName(UPDATE_TICKET_REQUEST) != null) {
+    if (doc.getElementsByTagName(UPDATE_TICKET_REQUEST) != null) { // CMD 3
       if (doc.getElementsByTagName(UPDATE_TICKET_REQUEST).getLength() > 0) {
         returnData.put(ACTION, UPDATETICKET);
         txnType = TransactionType.UPDATETICKET;
       }
     }
-    if (doc.getElementsByTagName(UPDATE_TRANSACTION_REQUEST) != null) {
+    if (doc.getElementsByTagName(UPDATE_TRANSACTION_REQUEST) != null) { // CMD 4
       if (doc.getElementsByTagName(UPDATE_TRANSACTION_REQUEST).getLength() > 0) {
         returnData.put(ACTION, UPDATETRANSACTION);
         txnType = TransactionType.UPDATETRANSACTION;
       }
     } 
-    if (doc.getElementsByTagName(QUERY_RESERVATION_REQUEST) != null) {
+    if (doc.getElementsByTagName(VOID_TICKET_REQUEST) != null) { // CMD 5
+      if (doc.getElementsByTagName(VOID_TICKET_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, VOID_TICKET);
+        txnType = TransactionType.VOIDTICKET;
+      }
+    }
+    if (doc.getElementsByTagName(QUERY_TICKET_REQUEST) != null) { // CMD 6
+      if (doc.getElementsByTagName(QUERY_TICKET_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, QUERY_TICKET);
+        txnType = TransactionType.QUERYTICKET;
+      }
+    }
+    if (doc.getElementsByTagName(RESERVATION_REQUEST) != null) { // CMD 9
+      if (doc.getElementsByTagName(RESERVATION_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, RESERVATION);
+        txnType = TransactionType.RESERVATION;
+      }
+    }
+    if (doc.getElementsByTagName(QUERY_RESERVATION_REQUEST) != null) { // CMD 10
       if (doc.getElementsByTagName(QUERY_RESERVATION_REQUEST).getLength() > 0) {
         returnData.put(ACTION, QUERY_RESERVATION);
         txnType = TransactionType.QUERYRESERVATION;
       }
     }
-    if (doc.getElementsByTagName(UPGRADE_ENTITLEMENT_REQUEST) != null) { // 2.10
+    if (doc.getElementsByTagName(UPGRADE_ENTITLEMENT_REQUEST) != null) { // CMD 11
         if (doc.getElementsByTagName(UPGRADE_ENTITLEMENT_REQUEST).getLength() > 0) {
           returnData.put(ACTION, UPGRADEENTITLEMENT);
           txnType = TransactionType.UPGRADEENTITLEMENT;
         }
+    }
+    if (doc.getElementsByTagName(RENEW_ENTITLEMENT_REQUEST) != null) { // CMD 12
+      if (doc.getElementsByTagName(RENEW_ENTITLEMENT_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, RENEW_ENTITLEMENT);
+        txnType = TransactionType.RENEWENTITLEMENT;
       }
-    
+    }
+    if (doc.getElementsByTagName(ASSOC_MEDIA2ACCT_REQUEST) != null) { // CMD 13
+      if (doc.getElementsByTagName(ASSOC_MEDIA2ACCT_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, ASSOC_MEDIA2ACCT);
+        txnType = TransactionType.ASSOCIATEMEDIATOACCOUNT;
+      }
+    }    
+    if (doc.getElementsByTagName(TICKERATE_ENTTL_REQUEST) != null) { // CMD 14
+     if (doc.getElementsByTagName(TICKERATE_ENTTL_REQUEST).getLength() > 0) {
+       returnData.put(ACTION, TICKERATE_ENTTL);
+       txnType = TransactionType.TICKERATEENTITLEMENT;
+     }
+    }
+    if (doc.getElementsByTagName(VOID_RESERVATION_REQUEST) != null) { // CMD 15
+      if (doc.getElementsByTagName(VOID_RESERVATION_REQUEST).getLength() > 0) {
+        returnData.put(ACTION, VOID_RESERVATION);
+        txnType = TransactionType.VOIDRESERVATION;
+      }
+    }
 
     returnData.put(TXN_TYPE, txnType);
 
     // Get the products listed on the order
-    if ((txnType == TransactionType.UPGRADEALPHA) || (txnType == TransactionType.RESERVATION)) {
+    if ((txnType == TransactionType.UPGRADEALPHA) || 
+        (txnType == TransactionType.RESERVATION)  ||
+        (txnType == TransactionType.CREATETICKET) ||
+        (txnType == TransactionType.UPGRADEENTITLEMENT) ||
+        (txnType == TransactionType.RENEWENTITLEMENT)) {
 
       StringBuffer products = new StringBuffer();
 
@@ -315,11 +357,48 @@ public class TiXMLHandler extends DefaultHandler {
 
     }
 
+    // Get the reservations listed
+    if ((txnType == TransactionType.QUERYRESERVATION) || 
+        (txnType == TransactionType.VOIDRESERVATION)) {
+
+      StringBuffer resCode = new StringBuffer();
+
+      // Get all the RESCODE
+      valueList = getValueByTagName(doc, RESCODE);
+      if (valueList.size() != 0) {
+        for (int h = 0; h < valueList.size(); h++) {
+          resCode.append(valueList.get(h));
+        }
+      }
+
+      returnData.put(RESCODES, resCode.toString());
+
+    }
+
+    // Get the media listed
+    if ((txnType == TransactionType.ASSOCIATEMEDIATOACCOUNT)) {
+
+      StringBuffer mediaVisualIds = new StringBuffer();
+
+      // Get all the RESCODE
+      valueList = getValueByTagName(doc, VISUALMEDIAID);
+      if (valueList.size() != 0) {
+        for (int h = 0; h < valueList.size(); h++) {
+          mediaVisualIds.append(valueList.get(h));
+        }
+      }
+
+      returnData.put(VISUALMEDIAIDS, mediaVisualIds.toString());
+
+    }
+    
     // This nesting prioritizes the most frequently used ticket versions
     // first for speed of processing.  Note, that this also relies on having one
     // and only one ticket per void ticket and query ticket.
     // In order, MAG Stripe, DSSN, External, Bar code, and NID
-    if ((txnType == TransactionType.VOIDTICKET) || (txnType == TransactionType.QUERYTICKET)) {
+    if ((txnType == TransactionType.VOIDTICKET) || 
+        (txnType == TransactionType.QUERYTICKET) ||
+        (txnType == TransactionType.TICKERATEENTITLEMENT)) {
 
       // MAGTRACK
       ArrayList<String> magTrack = getValueByTagName(doc, MAGTRACK1);
@@ -367,24 +446,6 @@ public class TiXMLHandler extends DefaultHandler {
       }
     }
     
-    // Get the reservation codes listed on the query reservation 
-    // Should be 1, but this allows for expansion. 
-    if (txnType == TransactionType.QUERYRESERVATION) {
-
-      StringBuffer rescodes = new StringBuffer();
-
-      // Get all the PRODUCTS
-      valueList = getValueByTagName(doc, RESCODE);
-      if (valueList.size() != 0) {
-        for (int h = 0; h < valueList.size(); h++) {
-          rescodes.append(valueList.get(h));
-        }
-      }
-
-      returnData.put(RESCODES, rescodes.toString());
-
-    }
-
     return returnData;
   }
 

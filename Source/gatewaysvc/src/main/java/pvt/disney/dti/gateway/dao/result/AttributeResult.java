@@ -13,7 +13,7 @@ import pvt.disney.dti.gateway.connection.ResultSetProcessor;
  * This class is used by the DAO to process the result sets from attribute queries.
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class AttributeResult implements ResultSetProcessor {
 
@@ -25,6 +25,7 @@ public class AttributeResult implements ResultSetProcessor {
 	private static final String CCNOTPRESENTIND_STRING = "CCNotPresentInd";
 	private static final String SITENUMBER_STRING = "SiteNumber";
 	private static final String DEFAULTELECTENC_STRING = "DefaultElectEnc";
+	private static final String SELLER_PREFIX_STRING = "SellerResPrefix";
 
 	/** Map of attributes and values. */
 	private HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> results = new HashMap<AttributeTO.CmdAttrCodeType, AttributeTO>();
@@ -91,6 +92,9 @@ public class AttributeResult implements ResultSetProcessor {
 		else if (cmdAttrCodeString.compareTo(SITENUMBER_STRING) == 0) {
 			anAttribute.setCmdAttrCode(AttributeTO.CmdAttrCodeType.SITE_NUMBER);
 		}
+		else if (cmdAttrCodeString.compareTo(SELLER_PREFIX_STRING) == 0) {
+      anAttribute.setCmdAttrCode(AttributeTO.CmdAttrCodeType.SELLER_RES_PREFIX);
+    }
 		else anAttribute.setCmdAttrCode(AttributeTO.CmdAttrCodeType.UNDEFINED);
 
 		anAttribute.setActiveInd(rs.getString("ACTIVE_IND"));

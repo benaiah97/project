@@ -8,6 +8,7 @@ import pvt.disney.dti.gateway.constants.DTIException;
  * Provider client is an abstract wrapper around the provider-centric communication classes. It cannot be instantiated directly, because it can't do any do anything without the provider classes.
  * 
  * @author lewit019
+ * @since 2.16.3
  * 
  */
 public abstract class ProviderClient {

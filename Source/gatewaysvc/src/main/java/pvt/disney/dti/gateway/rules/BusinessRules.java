@@ -33,6 +33,7 @@ import pvt.disney.dti.gateway.data.UpdateTicketRequestTO;
 import pvt.disney.dti.gateway.data.UpdateTransactionRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeAlphaRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
+import pvt.disney.dti.gateway.data.VoidReservationRequestTO;
 import pvt.disney.dti.gateway.data.VoidTicketRequestTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
@@ -71,7 +72,7 @@ import pvt.disney.dti.gateway.rules.wdw.WDWVoidTicketRules;
  * 
  * @author lewit019
  * @version 1
- * 
+ * @since 2.16.3
  */
 public abstract class BusinessRules {
 
@@ -166,6 +167,10 @@ public abstract class BusinessRules {
     case RENEWENTITLEMENT: // As of 2.16.1, JTL
       applyRenewEntitlementRules(dtiTxn);
       break;
+      
+    case VOIDRESERVATION: // As of 2.16.3, JTL
+      applyVoidReservationRules(dtiTxn);
+      break;      
 
     default:
       throw new DTIException(BusinessRules.class,
@@ -795,6 +800,43 @@ public abstract class BusinessRules {
     return;
   }
 
+  /**
+   * Apply query reservation business rules.
+   * 
+   * @param dtiTxn
+   *            the DTI transaction
+   * 
+   * @throws DTIException
+   *             should any rule fail.
+   */
+  public static void applyVoidReservationRules(DTITransactionTO dtiTxn) throws DTIException {
+
+    // RULE: Is this a VoidReservationRequest TO?
+    CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
+    if (commandBody.getClass() != VoidReservationRequestTO.class) {
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
+          "Internal Error:  Non-void reservation transaction class passed to applyVoidReservationRules.");
+    }
+
+    // RULE: Is this type of reservation identifier supported for a query?
+    VoidReservationRequestTO queryResReqTO = (VoidReservationRequestTO) dtiTxn
+        .getRequest().getCommandBody();
+    if ((queryResReqTO.getExternalResCode() != null) ||
+        (queryResReqTO.getResNumber() != null)) {
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.INVALID_MSG_CONTENT,
+          "Void Reservation attempted with illegal reservation identifier type.  Must be ResCode.");
+    }
+
+    // Apply any rules unique to one provider.
+    // None at this time.
+
+    return;
+  }  
+  
   /**
    * Apply upgrade entitlement business rules.
    * 

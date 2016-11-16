@@ -58,6 +58,8 @@ import pvt.disney.dti.gateway.rules.TransformRules;
 
 /**
  * The Class DLRReservationRules.
+ * @author lewit019
+ * @since 2.16.3
  */
 public class DLRReservationRules implements TransformConstants {
 
@@ -900,29 +902,8 @@ public class DLRReservationRules implements TransformConstants {
     // the down-payment matches the required amount. (As of 2.16.1, JTL)
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    // RULE: If tickets have demographics, the country code must be of
-    // length = 2. This is an oddity in the galaxy specification, but
-    // still compliant to the ISO codes.
-    for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
-
-      if (aTicketTO.getTicketDemoList() != null) {
-
-        ArrayList<DemographicsTO> demoListTO = aTicketTO
-            .getTicketDemoList();
-
-        for /* each */(DemographicsTO aDemo : /* in */demoListTO) {
-          if (aDemo.getCountry() != null) {
-            if (aDemo.getCountry().length() != 2) {
-              throw new DTIException(
-                  DLRReservationRules.class,
-                  DTIErrorCode.INVALID_MSG_CONTENT,
-                  "DLR Demographics country code must be length 2 - length found was " + aDemo
-                      .getCountry().length());
-            }
-          }
-        } // for each demographic
-      }
-    } // for each ticket
+    // RULE: Validate ticket level demographics for DLR. (As of 2.16.3, JTL)
+    ProductRules.validateDlrTicketDemo(tktListTO);
 
     return;
 
