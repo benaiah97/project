@@ -33,7 +33,6 @@ import com.disney.context.ContextManager;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
-import com.disney.util.AbstractInitializer;
 import com.disney.util.PropertyHelper;
 
 /**
@@ -41,14 +40,12 @@ import com.disney.util.PropertyHelper;
  * 
  * @author lewit019
  * @version 1
+ * @since 2.16.3
  */
 public class DTIService {
 
   /** The standard core logging mechanism. */
   private EventLogger logger = EventLogger.getLogger(this.getClass());
-
-  /** Core properties management initializer. */
-  private AbstractInitializer abstrInit = null;
 
   /**
    * The ticket broker currently in use. Defaults to DTIUK if properties can't be read.
@@ -424,6 +421,9 @@ public class DTIService {
     }
     if (compare.equals("RenewEntitlementRequest")) { // as of 2.16.1 JTL
       return TransactionType.RENEWENTITLEMENT;
+    }
+    if (compare.equals("VoidReservationRequest")) { // as of 2.16.3, JTL
+      return TransactionType.VOIDRESERVATION;
     }
 
     return TransactionType.UNDEFINED;

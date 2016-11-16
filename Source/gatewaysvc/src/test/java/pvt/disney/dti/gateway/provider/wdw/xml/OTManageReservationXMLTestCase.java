@@ -572,10 +572,10 @@ public class OTManageReservationXMLTestCase {
     otClient.setClientCategory(OTTestUtil.CLIENTCATEGORY);
     otClient.setClientLanguage(Integer.decode(OTTestUtil.REQCLIENTLANGUAGE));
     ArrayList<OTFieldTO> demoList = otClient.getDemographicData();
-    OTFieldTO otField1 = new OTFieldTO(OTFieldTO.RES_BILL_NAME,
-        OTTestUtil.FIELDVALUE);
+    OTFieldTO otField1 = new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_NAME,
+        OTTestUtil.FIELDVALUE);    
     demoList.add(otField1);
-    OTFieldTO otField2 = new OTFieldTO(OTFieldTO.RES_BILL_NAME,
+    OTFieldTO otField2 = new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_NAME,
         OTTestUtil.FIELDVALUE);
     demoList.add(otField2);
     otMngTO.setClientData(otClient);

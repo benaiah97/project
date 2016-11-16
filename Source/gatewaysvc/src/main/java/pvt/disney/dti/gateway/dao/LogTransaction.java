@@ -26,6 +26,7 @@ import com.disney.util.PropertyHelper;
  * This class, while not using the core DAO, handles the remaining queries concerning the DTI log tables. Since these tables use the Oracle CLOB, they cannot use the standard DAO classes.
  * 
  * @author Todd Lewis
+ * @since 2.16.3
  * 
  */
 public class LogTransaction {
@@ -581,60 +582,57 @@ public class LogTransaction {
 	 * @throws DTIException
 	 */
 	private CLOB getXMLCLOB(String xmlData, java.sql.Connection c) throws DTIException {
-		CLOB tempClob = null;
-		Writer tempClobWriter = null;
+    CLOB tempClob = null;
+    Writer tempClobWriter = null;
 
-		eventLogger.sendEvent("Entering getXMLCLOB(String,Connection)",
-				EventType.DEBUG, this);
+    eventLogger.sendEvent("Entering getXMLCLOB(String,Connection)",
+        EventType.DEBUG, this);
 
-		try {
-			// If the temporary CLOB has not yet been created, create new
-			tempClob = CLOB.createTemporary(c, true, CLOB.DURATION_SESSION);
+    try {
+      // If the temporary CLOB has not yet been created, create new
+      tempClob = CLOB.createTemporary(c, true, CLOB.DURATION_SESSION);
 
-			// Open the temporary CLOB in readwrite mode to enable writing
-			tempClob.open(CLOB.MODE_READWRITE);
+      // Open the temporary CLOB in read-write mode to enable writing
+      tempClob.open(CLOB.MODE_READWRITE);
 
-			// Get the output stream to write
-			tempClobWriter = tempClob.getCharacterOutputStream();
+      // Get the output stream to write
+      tempClobWriter = tempClob.getCharacterOutputStream();
 
-			// Write the data into the temporary CLOB
-			tempClobWriter.write(xmlData);
+      // Write the data into the temporary CLOB
+      tempClobWriter.write(xmlData);
 
-		}
-		catch (Exception exc) {
-			exc.printStackTrace();
-			throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
-					PropertyHelper.readPropsValue(
-							PropertyName.ERROR_INBOUND_LOG, props, null),
-					"Exception in populating the CLOB", exc);
-		}
-		finally {
-			try {
-				// Flush and close the stream
-				tempClobWriter.flush();
-				tempClobWriter.close();
+    }
+    catch (Exception exc) {
+      exc.printStackTrace();
+      throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
+          DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+          "Exception in populating the CLOB", exc);
+    }
+    finally {
+      try {
+        // Flush and close the stream
+        tempClobWriter.flush();
+        tempClobWriter.close();
 
-				// Close the temporary CLOB
-				tempClob.close();
-			}
-			catch (IOException ioe) {
-				ioe.printStackTrace();
-				throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
-						PropertyHelper.readPropsValue(
-								PropertyName.ERROR_INBOUND_LOG, props, null),
-						"Exception flushing Writer object.", ioe);
-			}
-			catch (SQLException sqe) {
-				sqe.printStackTrace();
-				throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
-						PropertyHelper.readPropsValue(
-								PropertyName.ERROR_INBOUND_LOG, props, null),
-						"Exception closing CLOB instance.", sqe);
-			}
+        // Close the temporary CLOB
+        tempClob.close();
+      }
+      catch (IOException ioe) {
+        ioe.printStackTrace();
+        throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
+            DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+            "Exception flushing Writer object.", ioe);
+      }
+      catch (SQLException sqe) {
+        sqe.printStackTrace();
+        throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
+            DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+            "Exception closing CLOB instance.", sqe);
+      }
 
-		}
+    }
 
-		return tempClob;
+    return tempClob;
 	}
 
 }

@@ -16,21 +16,19 @@ import org.w3c.dom.Document;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.controller.DTIController;
 import pvt.disney.dti.gateway.service.DTIService;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
-import com.disney.util.PropertyHelper;
 
 /**
  * The DTIApp class implements the servlet that receives commands from a ticket
  * seller and returns responses to them.
  * 
  * @author IBM
- * @version %version: %
+ * @since 2.16.3
  */
 public class DTIApp extends HttpServlet {
 
@@ -54,10 +52,10 @@ public class DTIApp extends HttpServlet {
   /**
    * doGet calls doPost
    * 
-   * @throws ServletException, IOException
+   * @throws ServletException
+   *           , IOException
    */
-  public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException,
-      IOException {
+  public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
     PrintWriter outPrint = null;
     String responseString = null;
@@ -85,8 +83,7 @@ public class DTIApp extends HttpServlet {
    * @throws ServletException
    *           , IOException
    */
-  public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException,
-      IOException {
+  public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
     Document docOut = null;
     XMLSerializer ser = null;
@@ -95,8 +92,7 @@ public class DTIApp extends HttpServlet {
 
     try {
       // get the XML from POS
-      eventLogger.sendEvent("About to Instantiate DTIController on DTIApp side", EventType.DEBUG,
-          this);
+      eventLogger.sendEvent("About to Instantiate DTIController on DTIApp side", EventType.DEBUG, this);
       try {
 
         eventLogger.sendEvent("Received ticket seller request from https.", EventType.INFO, this);
@@ -119,21 +115,20 @@ public class DTIApp extends HttpServlet {
           ser.serialize(docOut);
           res.getOutputStream().close();
         } catch (Exception e) {
-          throw new DTIException("doPost()...error writing XML to POS", getClass(), 3,
-              PropertyHelper.readPropsValue(PropertyName.ERROR_CODE_POS, props, null),
-              e.getMessage(), e);
+          String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
+          throw new DTIException("doPost()...error writing XML to POS", getClass(), 3, errorCode, e.getMessage(), e);
         } finally {
         }
       } catch (Exception e) {
+        String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
         eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
-        throw new DTIException("doPost()...error in XML from POS", getClass(), 3,
-            PropertyHelper.readPropsValue(PropertyName.ERROR_CODE_VALIDATION_WELL_FORMED, props,
-                null), "XML is not well Formed", null);
+        throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode, "XML is not well Formed",
+            null);
       }
     } catch (Exception ee) {
+      String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
       if (!(ee instanceof DTIException)) {
-        ee = new DTIException("doPost()", getClass(), 3, PropertyHelper.readPropsValue(
-            PropertyName.ERROR_CODE_DTI, props, null), ee.getMessage(), ee);
+        ee = new DTIException("doPost()", getClass(), 3, errorCode, ee.getMessage(), ee);
       }
     }
 

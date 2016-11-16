@@ -4,51 +4,93 @@ import java.io.Serializable;
 
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 
+/**
+ * 
+ * @author biest001
+ * @since 2.16.3
+ */
 public class QueryReservationRequestTO extends CommandBodyTO implements Serializable {
 
-	/**
-   * 
+  private static final long serialVersionUID = 5930876491753661660L;
+
+  private String requestType;
+
+  private String resCode;
+
+  private String resNumber;
+
+  private String externalResCode;
+  
+  private String payloadID;
+
+  /**
+   * @return the requestType
    */
-	private static final long serialVersionUID = 5930876491753661660L;
+  public String getRequestType() {
+    return requestType;
+  }
 
-	private String requestType;
+  /**
+   * @param requestType the requestType to set
+   */
+  public void setRequestType(String requestType) {
+    this.requestType = requestType;
+  }
 
-	public String getRequestType() {
-		return requestType;
-	}
+  /**
+   * @return the resCode
+   */
+  public String getResCode() {
+    return resCode;
+  }
 
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
-	}
+  /**
+   * @param resCode the resCode to set
+   */
+  public void setResCode(String resCode) {
+    this.resCode = resCode;
+  }
 
-	private String resCode;
+  /**
+   * @return the resNumber
+   */
+  public String getResNumber() {
+    return resNumber;
+  }
 
-	private String resNumber;
+  /**
+   * @param resNumber the resNumber to set
+   */
+  public void setResNumber(String resNumber) {
+    this.resNumber = resNumber;
+  }
 
-	private String externalResCode;
+  /**
+   * @return the externalResCode
+   */
+  public String getExternalResCode() {
+    return externalResCode;
+  }
 
-	public String getResCode() {
-		return resCode;
-	}
+  /**
+   * @param externalResCode the externalResCode to set
+   */
+  public void setExternalResCode(String externalResCode) {
+    this.externalResCode = externalResCode;
+  }
 
-	public void setResCode(String resCode) {
-		this.resCode = resCode;
-	}
+  /**
+   * @return the payloadID
+   */
+  public String getPayloadID() {
+    return payloadID;
+  }
 
-	public String getResNumber() {
-		return resNumber;
-	}
-
-	public void setResNumber(String resNumber) {
-		this.resNumber = resNumber;
-	}
-
-	public String getExternalResCode() {
-		return externalResCode;
-	}
-
-	public void setExternalResCode(String externalResCode) {
-		this.externalResCode = externalResCode;
-	}
+  /**
+   * @param payloadID the payloadID to set
+   */
+  public void setPayloadID(String payloadID) {
+    this.payloadID = payloadID;
+  }
 
 }

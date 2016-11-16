@@ -16,7 +16,7 @@ import pvt.disney.dti.gateway.data.dlr.GWTPLookupTO;
  * Class that represents all of the data associated with a DTI transaction as it passes through the system.
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class DTITransactionTO implements Serializable {
 
@@ -37,6 +37,7 @@ public class DTITransactionTO implements Serializable {
     RENEWENTITLEMENT, // As of 2.16.1, JTL
     ASSOCIATEMEDIATOACCOUNT, // 2.16.1 BIEST001
     TICKERATEENTITLEMENT, // 2.16.1 BIEST001
+    VOIDRESERVATION, // 2.16.3, JTL
     UNDEFINED
   };
 

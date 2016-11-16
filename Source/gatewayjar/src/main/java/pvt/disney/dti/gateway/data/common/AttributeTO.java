@@ -11,106 +11,107 @@ import java.io.Serializable;
  */
 public class AttributeTO implements Serializable {
 
-	/** Standard serial Version UID */
-	private static final long serialVersionUID = 9129227490L;
+  /** Standard serial Version UID */
+  private static final long serialVersionUID = 9129227490L;
 
-	/** The different types of command attributes supported by DTI. */
-	public enum CmdAttrCodeType {
-		OP_AREA,
-		USER,
-		PASS,
-		PRNT_TKT_CNT_MAX,
-		NO_PRNT_TKT_CNT_MAX,
-		CC_NOT_PRESENT_IND,
-		SITE_NUMBER,
-		DEFAULT_ELECT_ENC,
-		UNDEFINED
-	};
+  /** The different types of command attributes supported by DTI. */
+  public enum CmdAttrCodeType {
+    OP_AREA,
+    USER,
+    PASS,
+    PRNT_TKT_CNT_MAX,
+    NO_PRNT_TKT_CNT_MAX,
+    CC_NOT_PRESENT_IND,
+    SITE_NUMBER,
+    DEFAULT_ELECT_ENC,
+    SELLER_RES_PREFIX,
+    UNDEFINED
+  };
 
-	/** Key of attribute key-value pair. */
-	private CmdAttrCodeType cmdAttrCode;
-	/** Value portion of attribute key-value pair. */
-	private String attrValue;
-	/** The alphanumeric text which identifies a command, such as "QueryTicket". */
-	private String cmdCode;
-	/** Command actor, if relevant. */
-	private String actor;
-	/** Determines if the attribute key value pair is active or not. */
-	private String activeInd;
+  /** Key of attribute key-value pair. */
+  private CmdAttrCodeType cmdAttrCode;
+  /** Value portion of attribute key-value pair. */
+  private String attrValue;
+  /** The alphanumeric text which identifies a command, such as "QueryTicket". */
+  private String cmdCode;
+  /** Command actor, if relevant. */
+  private String actor;
+  /** Determines if the attribute key value pair is active or not. */
+  private String activeInd;
 
-	/**
-	 * @return the activeInd
-	 */
-	public String getActiveInd() {
-		return activeInd;
-	}
+  /**
+   * @return the activeInd
+   */
+  public String getActiveInd() {
+    return activeInd;
+  }
 
-	/**
-	 * @return the actor
-	 */
-	public String getActor() {
-		return actor;
-	}
+  /**
+   * @return the actor
+   */
+  public String getActor() {
+    return actor;
+  }
 
-	/**
-	 * @return the attrValue
-	 */
-	public String getAttrValue() {
-		return attrValue;
-	}
+  /**
+   * @return the attrValue
+   */
+  public String getAttrValue() {
+    return attrValue;
+  }
 
-	/**
-	 * @return the cmdCode
-	 */
-	public String getCmdCode() {
-		return cmdCode;
-	}
+  /**
+   * @return the cmdCode
+   */
+  public String getCmdCode() {
+    return cmdCode;
+  }
 
-	/**
-	 * @param activeInd
-	 *            the activeInd to set
-	 */
-	public void setActiveInd(String activeInd) {
-		this.activeInd = activeInd;
-	}
+  /**
+   * @param activeInd
+   *            the activeInd to set
+   */
+  public void setActiveInd(String activeInd) {
+    this.activeInd = activeInd;
+  }
 
-	/**
-	 * @param actor
-	 *            the actor to set
-	 */
-	public void setActor(String actor) {
-		this.actor = actor;
-	}
+  /**
+   * @param actor
+   *            the actor to set
+   */
+  public void setActor(String actor) {
+    this.actor = actor;
+  }
 
-	/**
-	 * @param attrValue
-	 *            the attrValue to set
-	 */
-	public void setAttrValue(String attrValue) {
-		this.attrValue = attrValue;
-	}
+  /**
+   * @param attrValue
+   *            the attrValue to set
+   */
+  public void setAttrValue(String attrValue) {
+    this.attrValue = attrValue;
+  }
 
-	/**
-	 * @return the cmdAttrCode
-	 */
-	public CmdAttrCodeType getCmdAttrCode() {
-		return cmdAttrCode;
-	}
+  /**
+   * @return the cmdAttrCode
+   */
+  public CmdAttrCodeType getCmdAttrCode() {
+    return cmdAttrCode;
+  }
 
-	/**
-	 * @param cmdAttrCode
-	 *            the cmdAttrCode to set
-	 */
-	public void setCmdAttrCode(CmdAttrCodeType cmdAttrCode) {
-		this.cmdAttrCode = cmdAttrCode;
-	}
+  /**
+   * @param cmdAttrCode
+   *            the cmdAttrCode to set
+   */
+  public void setCmdAttrCode(CmdAttrCodeType cmdAttrCode) {
+    this.cmdAttrCode = cmdAttrCode;
+  }
 
-	/**
-	 * @param cmdCode
-	 *            the cmdCode to set
-	 */
-	public void setCmdCode(String cmdCode) {
-		this.cmdCode = cmdCode;
-	}
+  /**
+   * @param cmdCode
+   *            the cmdCode to set
+   */
+  public void setCmdCode(String cmdCode) {
+    this.cmdCode = cmdCode;
+  }
 
 }

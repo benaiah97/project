@@ -1,6 +1,5 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -33,9 +32,6 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 /**
  * This class is responsible for three major functions for WDW query tickets:<BR>
  * 1. Defining the business rules specific to WDW query tickets.<BR>
@@ -43,7 +39,7 @@ import com.disney.logging.audit.EventType;
  * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class WDWQueryTicketRules {
 
@@ -116,8 +112,6 @@ public class WDWQueryTicketRules {
    * Constant integer indicating the number of days after a pass expires during which it can be renewed (in days).
    */
   private final static int POSTRENEWAL_WINDOW = 30;
-
-  private static final EventLogger logger = EventLogger.getLogger(WDWQueryTicketRules.class.getCanonicalName());
 
   /**
    * Transform the DTITransactionTO value object to the provider value objects and then pass those to XML Marshalling routines to create an XML string.
@@ -438,7 +432,7 @@ public class WDWQueryTicketRules {
         // FirstName
         // LastName
         if (anOTField.getFieldIndex().equals(
-            OTFieldTO.TKT_DEMO_LASTFIRST)) {
+            OTFieldTO.WDW_TKTDEMO_LASTFIRST)) {
 
           String lastFirstString = anOTField.getFieldValue();
           if (lastFirstString.contains("/")) {
@@ -461,7 +455,7 @@ public class WDWQueryTicketRules {
 
         // Addr1
         if (anOTField.getFieldIndex().equals(
-            OTFieldTO.TKT_DEMO_ADDRESS_ONE)) {
+            OTFieldTO.WDW_TKTDEMO_ADDRESS_ONE)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setAddr1(anOTField.getFieldValue());
           }
@@ -469,21 +463,21 @@ public class WDWQueryTicketRules {
 
         // Addr2
         if (anOTField.getFieldIndex().equals(
-            OTFieldTO.TKT_DEMO_ADDRESS_TWO)) {
+            OTFieldTO.WDW_TKTDEMO_ADDRESS_TWO)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setAddr2(anOTField.getFieldValue());
           }
         }
 
         // City
-        if (anOTField.getFieldIndex().equals(OTFieldTO.TKT_DEMO_CITY)) {
+        if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_CITY)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setCity(anOTField.getFieldValue());
           }
         }
 
         // State
-        if (anOTField.getFieldIndex().equals(OTFieldTO.TKT_DEMO_STATE)) {
+        if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_STATE)) {
           if (anOTField.getFieldValue() != null) {
             // as of 2.16.1, JTL - trunc'd per WDPRO request
             String stateString = anOTField.getFieldValue();
@@ -492,7 +486,7 @@ public class WDWQueryTicketRules {
         }
 
         // ZIP
-        if (anOTField.getFieldIndex().equals(OTFieldTO.TKT_DEMO_ZIP)) {
+        if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_ZIP)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setZip(anOTField.getFieldValue());
           }
@@ -500,7 +494,7 @@ public class WDWQueryTicketRules {
 
         // Country
         if (anOTField.getFieldIndex()
-            .equals(OTFieldTO.TKT_DEMO_COUNTRY)) {
+            .equals(OTFieldTO.WDW_TKTDEMO_COUNTRY)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setCountry(anOTField.getFieldValue());
           }
@@ -508,21 +502,21 @@ public class WDWQueryTicketRules {
 
         // Telephone
         if (anOTField.getFieldIndex().equals(
-            OTFieldTO.TKT_DEMO_TELEPHONE)) {
+            OTFieldTO.WDW_TKTDEMO_PHONE)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setTelephone(anOTField.getFieldValue());
           }
         }
 
         // Email
-        if (anOTField.getFieldIndex().equals(OTFieldTO.TKT_DEMO_EMAIL)) {
+        if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_EMAIL)) {
           if (anOTField.getFieldValue() != null) {
             dtiDemoTO.setEmail(anOTField.getFieldValue());
           }
         }
 
         // (Gender) - Not to be included in the response unless "ALL" was specified
-        if (anOTField.getFieldIndex().equals(OTFieldTO.TKT_DEMO_GENDER)) {
+        if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_GENDER)) {
           if ((anOTField.getFieldValue() != null) && (queryReq.isIncludeRenewalAttributes())) {
             dtiDemoTO.setGender(anOTField.getFieldValue());
           }
@@ -530,7 +524,7 @@ public class WDWQueryTicketRules {
 
         // (DOB) - Not to be included in the response unless "ALL" was specified
         if (anOTField.getFieldIndex().equals(
-            OTFieldTO.TKT_DEMO_DATE_OF_BIRTH)) {
+            OTFieldTO.WDW_TKTDEMO_DTE_OF_BIRTH)) {
           if ((anOTField.getFieldValue() != null) && (queryReq
               .isIncludeRenewalAttributes())) {
 

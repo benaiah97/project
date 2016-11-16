@@ -5,8 +5,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -22,15 +20,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.util.DTIFormatter;
-import pvt.disney.dti.gateway.util.ResourceLoader;
-
-import com.disney.util.PropertyHelper;
-//import com.disney.logging.EventLogger;
-//import com.disney.logging.audit.EventType;
 
 /**
  * The TiXMLHandler class performs XML validations and other XML- related
@@ -52,7 +45,7 @@ import com.disney.util.PropertyHelper;
  * specification for more information on these features.
  * 
  * @author Edwin Goei
- * @version %version: 2 %
+ * @since 2.16.3
  * 
  */
 public class TiXMLHandler extends DefaultHandler {
@@ -161,11 +154,6 @@ public class TiXMLHandler extends DefaultHandler {
    */
   public void validate() throws DTIException {
 
-    //eventLogger.sendEvent("Entering validate()", EventType.DEBUG, this);
-
-    ResourceBundle rb = ResourceLoader.getResourceBundle("dtiApp");
-    Properties props = ResourceLoader.convertResourceBundleToProperties(rb);
-
     try {
 
       // Create a JAXP SAXParserFactory and configure it
@@ -203,8 +191,8 @@ public class TiXMLHandler extends DefaultHandler {
       xmlReader.parse(inSource);
 
     } catch (Exception e) {
-      throw new DTIException("validate()", this.getClass(), 3, PropertyHelper.readPropsValue(
-          PropertyName.ERROR_CODE_VALIDATION_VALID, props, null), e.getMessage(), e);
+      throw new DTIException("validate()", this.getClass(), 3, 
+          DTIErrorCode.INVALID_MSG_CONTENT.getErrorCode(), e.getMessage(), e);
     }
   }
 

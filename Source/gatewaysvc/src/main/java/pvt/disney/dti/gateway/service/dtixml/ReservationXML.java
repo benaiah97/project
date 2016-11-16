@@ -56,7 +56,7 @@ import com.disney.logging.audit.EventType;
 /**
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public abstract class ReservationXML {
 
@@ -662,30 +662,70 @@ public abstract class ReservationXML {
         ReservationRequest.ClientData.DemoData.Bill billData = demoData.getBill();
 
         // Optional Attributes
-        if (billData.getName() != null)
+        // Name
+        if (billData.getName() != null) {
           demoTO.setName(billData.getName());
-        if (billData.getLastName() != null)
+        }
+        
+        // LastName
+        if (billData.getLastName() != null) {
           demoTO.setLastName(billData.getLastName());
-        if (billData.getFirstName() != null)
+        }
+        
+        // FirstName
+        if (billData.getFirstName() != null) {
           demoTO.setFirstName(billData.getFirstName());
-        if (billData.getAddr1() != null)
+        }
+        
+        // FirstNameCH
+        if (billData.getFirstNameCH() != null) {
+          demoTO.setFirstNameChinese(billData.getFirstNameCH());
+        }
+        
+        // Addr1
+        if (billData.getAddr1() != null) {
           demoTO.setAddr1(billData.getAddr1());
-        if (billData.getAddr2() != null)
+        }
+        
+        // Addr2
+        if (billData.getAddr2() != null) {
           demoTO.setAddr2(billData.getAddr2());
-        if (billData.getCity() != null)
+        }
+        
+        // City
+        if (billData.getCity() != null) {
           demoTO.setCity(billData.getCity());
-        if (billData.getState() != null)
+        }
+        
+        // State
+        if (billData.getState() != null) {
           demoTO.setState(billData.getState());
-        if (billData.getZip() != null)
+        }
+        
+        // Zip 
+        if (billData.getZip() != null) {
           demoTO.setZip(billData.getZip());
-        if (billData.getCountry() != null)
+        }
+        
+        // Country
+        if (billData.getCountry() != null) {
           demoTO.setCountry(billData.getCountry());
-        if (billData.getTelephone() != null)
+        }
+        
+        // Telephone
+        if (billData.getTelephone() != null) {
           demoTO.setTelephone(billData.getTelephone());
-        if (billData.getEmail() != null)
+        } 
+         
+        // Email
+        if (billData.getEmail() != null) {
           demoTO.setEmail(billData.getEmail());
-        if (billData.getSellerResNbr() != null)
+        }
+          
+        // SellerResNbr
+        if (billData.getSellerResNbr() != null) {
           demoTO.setSellerResNbr(billData.getSellerResNbr());
+        }
 
         clientDataTO.setBillingInfo(demoTO);
 
@@ -697,28 +737,60 @@ public abstract class ReservationXML {
         ReservationRequest.ClientData.DemoData.Ship shipData = demoData.getShip();
 
         // Optional Attributes
-        if (shipData.getName() != null)
+        // Name
+        if (shipData.getName() != null) {
           demoTO.setName(shipData.getName());
-        if (shipData.getLastName() != null)
+        }
+        
+        // LastName
+        if (shipData.getLastName() != null) {
           demoTO.setLastName(shipData.getLastName());
-        if (shipData.getFirstName() != null)
+        }
+        
+        // FirstName
+        if (shipData.getFirstName() != null) {
           demoTO.setFirstName(shipData.getFirstName());
-        if (shipData.getAddr1() != null)
+        }
+        
+        // Addr1
+        if (shipData.getAddr1() != null) {
           demoTO.setAddr1(shipData.getAddr1());
-        if (shipData.getAddr2() != null)
+        }
+        
+        // Addr2
+        if (shipData.getAddr2() != null) {
           demoTO.setAddr2(shipData.getAddr2());
-        if (shipData.getCity() != null)
+        }
+        
+        // City
+        if (shipData.getCity() != null) {
           demoTO.setCity(shipData.getCity());
-        if (shipData.getState() != null)
+        }
+        
+        // State
+        if (shipData.getState() != null) {
           demoTO.setState(shipData.getState());
-        if (shipData.getZip() != null)
+        }
+        
+        // Zip
+        if (shipData.getZip() != null) {
           demoTO.setZip(shipData.getZip());
-        if (shipData.getCountry() != null)
+        }
+        
+        // Country
+        if (shipData.getCountry() != null) {
           demoTO.setCountry(shipData.getCountry());
-        if (shipData.getTelephone() != null)
+        }
+        
+        // Telephone
+        if (shipData.getTelephone() != null) {
           demoTO.setTelephone(shipData.getTelephone());
-        if (shipData.getEmail() != null)
+        }
+        
+        // Email
+        if (shipData.getEmail() != null) {
           demoTO.setEmail(shipData.getEmail());
+        }
 
         clientDataTO.setShippingInfo(demoTO);
 
@@ -1342,21 +1414,31 @@ public abstract class ReservationXML {
           // so we know the length will never be zero.
 
           // FirstName
-          aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+          if (aTktDemographic.getFirstName() != null) {
+             aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+          }
 
           // LastName
-          aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+          if (aTktDemographic.getLastName() != null) {
+             aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+          }
 
           // DateOfBirth
-          XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic.getDateOfBirth();
-          GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
-          aTicketDemoTO.setDateOfBirth(tempCalendar);
-
+          if (aTktDemographic.getDateOfBirth() != null) {
+             XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic.getDateOfBirth();
+             GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+             aTicketDemoTO.setDateOfBirth(tempCalendar);
+          }
+          
           // Gender
-          aTicketDemoTO.setGender(aTktDemographic.getGender());
+          if (aTktDemographic.getGender() != null) {
+             aTicketDemoTO.setGender(aTktDemographic.getGender());
+          }
 
           // Addr1
-          aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+          if (aTktDemographic.getAddr1() != null) {
+             aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+          }
 
           // Addr2 (opt)
           if (aTktDemographic.getAddr2() != null) {
@@ -1364,7 +1446,9 @@ public abstract class ReservationXML {
           }
 
           // City
+          if (aTktDemographic.getCity() != null) {
           aTicketDemoTO.setCity(aTktDemographic.getCity());
+          }
 
           // State (opt)
           if (aTktDemographic.getState() != null) {
@@ -1372,9 +1456,12 @@ public abstract class ReservationXML {
           }
 
           // ZIP
-          aTicketDemoTO.setZip(aTktDemographic.getZip());
+          if (aTktDemographic.getZip() != null) {
+             aTicketDemoTO.setZip(aTktDemographic.getZip());
+          }
 
           // Country
+          if (aTktDemographic.getCountry() != null)
           aTicketDemoTO.setCountry(aTktDemographic.getCountry());
 
           // Telephone (opt) as of 2.16.1 APMP (JTL)
@@ -1388,12 +1475,24 @@ public abstract class ReservationXML {
           }
 
           // OptInSolicit (2.10)
-          if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
-            aTicketDemoTO.setOptInSolicit(new Boolean(true));
-          } else {
-            aTicketDemoTO.setOptInSolicit(new Boolean(false));
+          if (aTktDemographic.getOptInSolicit() != null) {
+            if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
+              aTicketDemoTO.setOptInSolicit(new Boolean(true));
+            } else {
+              aTicketDemoTO.setOptInSolicit(new Boolean(false));
+            }
           }
 
+          // CellPhone (as of 2.16.3, JTL)
+          if (aTktDemographic.getCellPhone() != null) {
+            aTicketDemoTO.setCellPhone(aTktDemographic.getCellPhone());
+          }
+          
+          // Seller Ref (as of 2.16.3, JTL)
+          if (aTktDemographic.getSellerRef() != null) {
+            aTicketDemoTO.setSellerRef(aTktDemographic.getSellerRef());
+          }
+          
           aTicketTO.addTicketDemographic(aTicketDemoTO);
 
         }

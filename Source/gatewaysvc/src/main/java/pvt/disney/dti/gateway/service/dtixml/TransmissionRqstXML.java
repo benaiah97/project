@@ -34,6 +34,7 @@ import pvt.disney.dti.gateway.request.xsd.UpdateTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.UpdateTransactionRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeAlphaRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest;
+import pvt.disney.dti.gateway.request.xsd.VoidReservationRequest;
 import pvt.disney.dti.gateway.request.xsd.VoidTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.RenewEntitlementRequest;
 
@@ -43,6 +44,7 @@ import pvt.disney.dti.gateway.request.xsd.RenewEntitlementRequest;
  * This class is separate from the RespXML class because of the name collisions between request and response class names in the XSD's.
  * 
  * @author lewit019
+ * @since 2.16.3
  */
 public class TransmissionRqstXML {
 
@@ -201,6 +203,11 @@ public class TransmissionRqstXML {
           .getRenewEntitlementRequest();
       commandBodyTO = RenewEntitlementXML.getTO(rEntReq);
       break;
+      
+    case VOIDRESERVATION: // as of 2.16.3, JTL
+      VoidReservationRequest vResReq = payload.getCommand().getVoidReservationRequest();
+      commandBodyTO = VoidReservationXML.getTO(vResReq);
+      break;      
 
     default:
       break;

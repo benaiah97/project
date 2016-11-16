@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
@@ -40,6 +39,7 @@ import pvt.disney.dti.gateway.rules.ProductRules;
  * 
  * @author HUFFM017
  * @author LEWIT019
+ * @since 2.16.3
  */
 
 public class WDWUpgradeEntitlementRules {
@@ -344,7 +344,7 @@ public class WDWUpgradeEntitlementRules {
 
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
-    ProductRules.validateTelephoneOnWdwDemo(tktListTO);
+    ProductRules.validateWdwTicketDemo(tktListTO);
 
   }
 

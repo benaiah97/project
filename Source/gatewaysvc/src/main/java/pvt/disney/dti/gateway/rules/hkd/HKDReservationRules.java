@@ -15,16 +15,23 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
+import pvt.disney.dti.gateway.dao.EntityKey;
+import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
+import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
+import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.ReservationRequestTO;
+import pvt.disney.dti.gateway.data.ReservationResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.AgencyTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
+import pvt.disney.dti.gateway.data.common.AttributeTO.CmdAttrCodeType;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.ExtTxnIdentifierTO;
@@ -32,23 +39,26 @@ import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTAssociationInfoTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTClientDataTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTExternalTransactionIDTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTReservationDataTO;
-import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
-import pvt.disney.dti.gateway.rules.ElectronicEntitlementRules;
+import pvt.disney.dti.gateway.dao.data.TransidRescode;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTHeaderTO;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTManageReservationTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTAssociationInfoTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTClientDataTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTDemographicInfo;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTExternalTransactionIDTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTFieldTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTPaymentTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTProductTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTReservationDataTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketInfoTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketTO;
+import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
+import pvt.disney.dti.gateway.rules.race.ResCodeApiI;
+import pvt.disney.dti.gateway.rules.race.ResCodeApiImpl;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
 /**
@@ -58,6 +68,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
  * 
  * @author lewit019
+ * @since 2.16.3
  * 
  */
 public class HKDReservationRules {
@@ -164,6 +175,37 @@ public class HKDReservationRules {
     ArrayList<TicketTO> tktListTO = dtiResReq.getTktList();
     
     /** TODO:  Assign or recover reservation code here */
+    // get res code prefix
+    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+    String resCode = null;
+    
+    if (dtiTxn.isRework()) {
+      // Get the reservation code array (there should only be one)
+      ArrayList<TransidRescode> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      TransidRescode rescodeTO = rescodeArray.get(0);
+      resCode = rescodeTO.getRescode();
+      
+      // TODO: What if we don't find it?
+      // If you can't find it, create it.  If it dupes when creating, re-create (X# of times)
+      
+    } else {
+      // if new, get res code from payload ID
+      HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+      AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+      String sellerResPrefix = resPrefixAttr.getAttrValue();    
+      ResCodeApiI resCodeGenerator = ResCodeApiImpl.getInstance();
+      resCode = resCodeGenerator.generateResCode(sellerResPrefix);
+      TransidRescodeKey.insertTransIdRescode(payloadId, resCode);
+      
+      // TODO:  What if we do find it/can't insert?
+      // If I can know which index failed, then that determines remediation.
+      // If I can't...
+      // (1) getTransidRescodeFromDB (if not null, then it was already created)
+      // (2) getTransidRescodeFromDB (if null, then recreate (x# of times).
+      
+    }
+    dtiResReq.getReservation().setResCode(resCode);
+    
     
     // Validate that the client ID is numeric and correct.
     validateHKDClientId(dtiResReq);
@@ -178,15 +220,8 @@ public class HKDReservationRules {
     // demographics
     validateMajorClientDemo(dtiResReq);
 
-    // Validate the electronic entitlement account section, if present (as of 2.10)
-    if (dtiResReq.getSpecifiedAccounts() != null) {
-      ElectronicEntitlementRules.validateSpecifiedAccounts(dtiResReq
-          .getSpecifiedAccounts());
-    }
-
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
-    // As of 2.16.1 APMP JTL
-    ProductRules.validateTelephoneOnWdwDemo(tktListTO);
+    ProductRules.validateHkdTicketDemo(tktListTO);
 
     // RULE: Validate that if the "installment" type of payment is present,
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
@@ -214,18 +249,18 @@ public class HKDReservationRules {
     ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
 
     // === Command Level ===
-    OTCommandTO atsCommand = new OTCommandTO(
-        OTCommandTO.OTTransactionType.MANAGERESERVATION);
+    HkdOTCommandTO atsCommand = new HkdOTCommandTO(
+        HkdOTCommandTO.OTTransactionType.MANAGERESERVATION);
     atsCommand.setXmlSchemaInstance(HKDBusinessRules.XML_SCHEMA_INSTANCE);
     atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
 
     // === Header Level ===
-    OTHeaderTO hdr = HKDBusinessRules.transformOTHeader(dtiTxn,
+    HkdOTHeaderTO hdr = HKDBusinessRules.transformOTHeader(dtiTxn,
         REQUEST_TYPE_MANAGE, REQUEST_SUBTYPE_MANAGERES);
     atsCommand.setHeaderTO(hdr);
 
     // === Manage Reservation Level ===
-    OTManageReservationTO otManageRes = new OTManageReservationTO();
+    HkdOTManageReservationTO otManageRes = new HkdOTManageReservationTO();
 
     // Tags
     ArrayList<String> tagList = new ArrayList<String>();
@@ -264,7 +299,7 @@ public class HKDReservationRules {
     // Payment Processing
     // There are three alternatives: default payment, no payment, and
     // payment.
-    ArrayList<OTPaymentTO> otPaymentList = otManageRes.getPaymentInfoList();
+    ArrayList<HkdOTPaymentTO> otPaymentList = otManageRes.getPaymentInfoList();
     ArrayList<PaymentTO> dtiPayList = dtiResReq.getPaymentList();
     EntityTO entityTO = dtiTxn.getEntityTO();
     HKDBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
@@ -278,7 +313,7 @@ public class HKDReservationRules {
 
     // Default is true;
     ReservationTO dtiRes = dtiResReq.getReservation();
-    OTReservationDataTO otRes = new OTReservationDataTO();
+    HkdOTReservationDataTO otRes = new HkdOTReservationDataTO();
 
     if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0) || (MANUALMAILORDER
         .compareTo(dtiRes.getResSalesType()) == 0)) {
@@ -300,8 +335,8 @@ public class HKDReservationRules {
     }
 
     // ******************************************************************
-    // Encode Everything Override (as of 2.11)
-    // For 2.11, DTI Gateway is to encode and electronically entitle all
+    // Encode Everything Override 
+    // DTI Gateway is to encode and electronically entitle all
     // orders that are paid and are under a set quantity of tickets.
     boolean executeOverride = true;
 
@@ -399,7 +434,7 @@ public class HKDReservationRules {
 
     // AssociationInfo
     if (dtiResReq.getEligibilityGroup() != null) {
-      OTAssociationInfoTO otAssocInfo = setAssociationInfo(dtiResReq);
+      HkdOTAssociationInfoTO otAssocInfo = setAssociationInfo(dtiResReq);
       otManageRes.setAssociationInfo(otAssocInfo);
     }
 
@@ -417,7 +452,7 @@ public class HKDReservationRules {
 
     // ClientData
     ClientDataTO dtiClientData = dtiResReq.getClientData();
-    OTClientDataTO otClientData = new OTClientDataTO();
+    HkdOTClientDataTO otClientData = new HkdOTClientDataTO();
     if (dtiClientData.getClientId() == null) otClientData
         .setClientUniqueId(NO_CLIENT_PROVIDED);
     else {
@@ -462,7 +497,7 @@ public class HKDReservationRules {
     }
 
     // ClientData Demographics Fields
-    ArrayList<OTFieldTO> otFieldList = otClientData.getDemographicData();
+    ArrayList<HkdOTFieldTO> otFieldList = otClientData.getDemographicData();
     DemographicsTO dtiBillInfo = dtiClientData.getBillingInfo();
     DemographicsTO dtiShipInfo = dtiClientData.getShippingInfo();
     AgencyTO agencyTO = dtiResReq.getAgency();
@@ -492,52 +527,49 @@ public class HKDReservationRules {
       }
     }
 
-    // Set Transaction note (2.10)
+    // Set Transaction note 
     otManageRes.setTransactionNote(dtiRequest.getPayloadHeader()
         .getPayloadID());
     
-    // Set ExternalTransactionID (optional) (as of 2.16.2, JTL)
+    // Set ExternalTransactionID (optional) 
     if (dtiResReq.getExtTxnIdentifier() != null) {
       
       ExtTxnIdentifierTO dtiExtId = dtiResReq.getExtTxnIdentifier(); 
       
-      OTExternalTransactionIDTO otExtTxnId = new OTExternalTransactionIDTO();
+      HkdOTExternalTransactionIDTO otExtTxnId = new HkdOTExternalTransactionIDTO();
       otExtTxnId.setId(dtiExtId.getTxnIdentifier());
       otExtTxnId.setAlreadyEncrypted(dtiExtId.getIsSHA1Encrypted());
       
       otManageRes.setExternalTransactionID(otExtTxnId);
     }
 
-    // Generate Event - Reservations affect entitlements and thus should
-    // generate an event.
-    otManageRes.setGenerateEvent(true);
+    // Generate Event - (not applicable for HKDL)
 
     // Set the manage reservation TO on the command
     atsCommand.setManageReservationTO(otManageRes);
 
     // Get the XML String
-    xmlString = OTCommandXML.getXML(atsCommand);
+    xmlString = HkdOTCommandXML.getXML(atsCommand);
 
     return xmlString;    
 
   }
   
   /**
-   * @since 2.9
    * @param otManageRes
    * @param dtiTktList
    * @param dtiPdtMap
    * @return
    */
-  private static boolean createOTProducts(OTManageReservationTO otManageRes,
+  private static boolean createOTProducts(HkdOTManageReservationTO otManageRes,
       ArrayList<TicketTO> dtiTktList,
       HashMap<String, DBProductTO> dtiPdtMap) {
 
-    boolean productsAssignAccounts = false;
+    boolean productsAssignAccounts = false; // Always false for HKDL
 
     for /* each */(TicketTO aDtiTicket : /* in */dtiTktList) {
 
-      OTProductTO otProduct = new OTProductTO();
+      HkdOTProductTO otProduct = new HkdOTProductTO();
 
       // Item
       otProduct.setItem(aDtiTicket.getTktItem());
@@ -556,11 +588,11 @@ public class HKDReservationRules {
       // Quantity
       otProduct.setQuantity(aDtiTicket.getProdQty());
 
-      // ProdDemoData (as of 2.9)
+      // ProdDemoData
       ArrayList<DemographicsTO> tktDemoList = aDtiTicket
           .getTicketDemoList();
       if (tktDemoList.size() > 0) {
-        OTDemographicInfo otDemoInfo = new OTDemographicInfo();
+        HkdOTDemographicInfo otDemoInfo = new HkdOTDemographicInfo();
         HKDBusinessRules.transformTicketDemoData(tktDemoList,
             otDemoInfo);
         otProduct.setDemographicInfo(otDemoInfo);
@@ -584,7 +616,7 @@ public class HKDReservationRules {
         endValidityDateSet = true;
       }
 
-      // Validity Start Date Validation/Auto-correction (as of 2.11)
+      // Validity Start Date Validation/Auto-correction 
       // Validity Start Date should be provided in all instances when end is, but there is no
       // XSD rule mandating the relationship. The choices are to error or default, and ticketing
       // is asking for a default to today's date for the start date if the end has been specified.
@@ -595,23 +627,6 @@ public class HKDReservationRules {
 
       // Price
       otProduct.setPrice(aDtiTicket.getProdPrice());
-
-      // EntitlementAccountId, list of id, one for each non-consumable
-      // ticket of this product tied to that account
-      if ((aDtiTicket.getTicketAssignmets().size() > 0) && (dtiPdt
-          .isConsumable() == false)) {
-
-        productsAssignAccounts = true;
-
-        for (/* each */TktAssignmentTO ticket : /* in */aDtiTicket
-            .getTicketAssignmets()) {
-          int qty = ticket.getProdQty().intValue();
-          for (int i = 0; i < qty; i++) {
-            otProduct.getEntitlementAccountId().add(
-                ticket.getAccountItem().toString());
-          }
-        }
-      }
 
       // Put product in the list.
       otManageRes.getProductList().add(otProduct);
@@ -629,9 +644,9 @@ public class HKDReservationRules {
    * @throws DTIException
    *             if unable to get the EligibilityAssocId
    */
-  private static OTAssociationInfoTO setAssociationInfo(
+  private static HkdOTAssociationInfoTO setAssociationInfo(
       ReservationRequestTO dtiResReq) throws DTIException {
-    OTAssociationInfoTO otAssocInfo = new OTAssociationInfoTO();
+    HkdOTAssociationInfoTO otAssocInfo = new HkdOTAssociationInfoTO();
 
     String eligGroup = dtiResReq.getEligibilityGroup();
     String eligMember = dtiResReq.getEligibilityMember();
@@ -658,7 +673,7 @@ public class HKDReservationRules {
       // Note: This is hard-coded to field number one because field number
       // one is the ONLY field ATS has enabled to search for existing
       // associations and add them dynamically.
-      OTFieldTO otField = new OTFieldTO(FIELD_NUMBER_ONE, eligMember);
+      HkdOTFieldTO otField = new HkdOTFieldTO(FIELD_NUMBER_ONE, eligMember);
       otAssocInfo.getDemographicData().add(otField);
 
     }
@@ -680,7 +695,7 @@ public class HKDReservationRules {
    * @param agencyTO
    *            The DTI travel agency information.
    */
-  private static void createOtDemographics(ArrayList<OTFieldTO> otFieldList,
+  private static void createOtDemographics(ArrayList<HkdOTFieldTO> otFieldList,
       DemographicsTO dtiBillInfo, DemographicsTO dtiShipInfo,
       AgencyTO agencyTO) {
 
@@ -688,126 +703,130 @@ public class HKDReservationRules {
     if (dtiBillInfo != null) {
 
       // Bill name
-      if (dtiBillInfo.getName() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_NAME, DTIFormatter.websafe(dtiBillInfo
+      if (dtiBillInfo.getName() != null) otFieldList.add(new HkdOTFieldTO(
+          HkdOTFieldTO.HKD_CLNT_BILL_NAME, DTIFormatter.websafe(dtiBillInfo
               .getName())));
 
       // Bill Last Name
       if (dtiBillInfo.getLastName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_LASTNAME,
+          .add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_LASTNAME,
               DTIFormatter.websafe(dtiBillInfo.getLastName())));
 
-      // Bill First Name
-      if (dtiBillInfo.getFirstName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_FIRSTNAME,
-              DTIFormatter.websafe(dtiBillInfo.getFirstName())));
+      // Bill First Name (Chinese) 
+      if (dtiBillInfo.getFirstNameChinese() != null) {
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_FIRSTNAME_CH, 
+              DTIFormatter.websafe(dtiShipInfo.getFirstNameChinese())));
+      }      
+            
+      // Bill First Name (English)
+      if (dtiBillInfo.getFirstName() != null) { 
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_FIRSTNAME_ENG,
+          DTIFormatter.websafe(dtiBillInfo.getFirstName())));
+      }
 
       // Bill Address 1
-      if (dtiBillInfo.getAddr1() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ADDR1, DTIFormatter.websafe(dtiBillInfo
-              .getAddr1())));
+//      if (dtiBillInfo.getAddr1() != null) otFieldList.add(new HkdOTFieldTO(
+//          HkdOTFieldTO.HKD_CLNT_BILL_ADDR1, DTIFormatter.websafe(dtiBillInfo
+//              .getAddr1())));
 
       // Bill Address 2
-      if (dtiBillInfo.getAddr2() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ADDR2, DTIFormatter.websafe(dtiBillInfo
-              .getAddr2())));
+//      if (dtiBillInfo.getAddr2() != null) otFieldList.add(new HkdOTFieldTO(
+//          HkdOTFieldTO.HKD_CLNT_BILL_ADDR2, DTIFormatter.websafe(dtiBillInfo
+//              .getAddr2())));
 
       // Bill City
-      if (dtiBillInfo.getCity() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_CITY, DTIFormatter.websafe(dtiBillInfo
-              .getCity())));
+//      if (dtiBillInfo.getCity() != null) otFieldList.add(new HkdOTFieldTO(
+//          HkdOTFieldTO.HKD_CLNT_BILL_CITY, DTIFormatter.websafe(dtiBillInfo
+//              .getCity())));
 
       // Bill State
-      if (dtiBillInfo.getState() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_STATE, DTIFormatter.websafe(dtiBillInfo
+      if (dtiBillInfo.getState() != null) otFieldList.add(new HkdOTFieldTO(
+          HkdOTFieldTO.HKD_CLNT_BILL_STATE, DTIFormatter.websafe(dtiBillInfo
               .getState())));
 
       // Bill ZIP
-      if (dtiBillInfo.getZip() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ZIP, DTIFormatter.websafe(dtiBillInfo
-              .getZip())));
+//      if (dtiBillInfo.getZip() != null) otFieldList.add(new HkdOTFieldTO(
+//          HkdOTFieldTO.HKD_CLNT_BILL_ZIP, DTIFormatter.websafe(dtiBillInfo
+//              .getZip())));
 
       // Bill Country
-      if (dtiBillInfo.getCountry() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_COUNTRY, DTIFormatter
-              .websafe(dtiBillInfo.getCountry())));
+      if (dtiBillInfo.getCountry() != null) { 
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_COUNTRY, 
+            DTIFormatter.websafe(dtiBillInfo.getCountry())));
+      }
 
       // Bill Telephone
-      if (dtiBillInfo.getTelephone() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_TELEPHONE,
+      if (dtiBillInfo.getTelephone() != null) { 
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_TELEPHONE,
               DTIFormatter.websafe(dtiBillInfo.getTelephone())));
+      }
 
-      // Bill E-mail
-      if (dtiBillInfo.getEmail() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_EMAIL, DTIFormatter.websafe(dtiBillInfo
-              .getEmail())));
+      // Bill E-mail (doesn't exist for HKDL)
 
-      // Bill SellerResNbr
-      if (dtiBillInfo.getSellerResNbr() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_SLR_RES_NBR,
-              DTIFormatter.websafe(dtiBillInfo.getSellerResNbr())));
+      // Bill SellerResNbr (doesn't exist for HKDL)
+
     }
 
     // Shipping Info
     if (dtiShipInfo != null) {
 
       // Ship name
-      if (dtiShipInfo.getName() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_NAME, DTIFormatter.websafe(dtiShipInfo
-              .getName())));
+//      if (dtiShipInfo.getName() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_NAME, 
+//            DTIFormatter.websafe(dtiShipInfo.getName())));
+//      }
 
       // Ship Last Name
-      if (dtiShipInfo.getLastName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_LASTNAME,
-              DTIFormatter.websafe(dtiShipInfo.getLastName())));
-
-      // Ship First Name
-      if (dtiShipInfo.getFirstName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_FIRSTNAME,
-              DTIFormatter.websafe(dtiShipInfo.getFirstName())));
+//      if (dtiShipInfo.getLastName() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_LASTNAME,
+//              DTIFormatter.websafe(dtiShipInfo.getLastName())));
+//      }
+      
+      // Ship First Name (English)
+//      if (dtiShipInfo.getFirstName() != null) otFieldList
+//          .add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_FIRSTNAME_ENG,
+//              DTIFormatter.websafe(dtiShipInfo.getFirstName())));
 
       // Ship Address 1
-      if (dtiShipInfo.getAddr1() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ADDR1, DTIFormatter.websafe(dtiShipInfo
-              .getAddr1())));
+//      if (dtiShipInfo.getAddr1() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_ADDR1, 
+//            DTIFormatter.websafe(dtiShipInfo.getAddr1())));
+//      }
 
       // Ship Address 2
-      if (dtiShipInfo.getAddr2() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ADDR2, DTIFormatter.websafe(dtiShipInfo
-              .getAddr2())));
+//      if (dtiShipInfo.getAddr2() != null) {
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_ADDR2, 
+//            DTIFormatter.websafe(dtiShipInfo.getAddr2())));
+//      }
 
       // Ship City
-      if (dtiShipInfo.getCity() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_CITY, DTIFormatter.websafe(dtiShipInfo
-              .getCity())));
+//      if (dtiShipInfo.getCity() != null) {
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_CITY, 
+//            DTIFormatter.websafe(dtiShipInfo.getCity())));
+//      }
 
       // Ship State
-      if (dtiShipInfo.getState() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_STATE, DTIFormatter.websafe(dtiShipInfo
-              .getState())));
+//      if (dtiShipInfo.getState() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_STATE, 
+//            DTIFormatter.websafe(dtiShipInfo.getState())));
+//      }
 
-      // Ship ZIP
-      if (dtiShipInfo.getZip() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ZIP, DTIFormatter.websafe(dtiShipInfo
-              .getZip())));
+      // Ship ZIP (doesn't exist for HKD)
 
       // Ship Country
-      if (dtiShipInfo.getCountry() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_COUNTRY, DTIFormatter
-              .websafe(dtiShipInfo.getCountry())));
+//      if (dtiShipInfo.getCountry() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_SHIP_COUNTRY, 
+//            DTIFormatter.websafe(dtiShipInfo.getCountry())));
+//      }
 
       // Ship Telephone
-      if (dtiShipInfo.getTelephone() != null) otFieldList
-          .add(new OTFieldTO(+OTFieldTO.RES_SHIP_TELEPHONE,
-              DTIFormatter.websafe(dtiShipInfo.getTelephone())));
+//      if (dtiShipInfo.getTelephone() != null) { 
+//        otFieldList.add(new HkdOTFieldTO(+HkdOTFieldTO.HKD_CLNT_SHIP_TELEPHONE,
+//              DTIFormatter.websafe(dtiShipInfo.getTelephone())));
+//      }
 
-      // Ship Agent
-      if (agencyTO != null) {
-        if (agencyTO.getAgent() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.RES_SHIP_AGENT,
-              DTIFormatter.websafe(agencyTO.getAgent())));
-        }
-      }
+      // Ship Agent (doesn't exist for HKD)
+
     }
 
     return;
@@ -1059,6 +1078,116 @@ public class HKDReservationRules {
 
     }
   }
-  
+
+  /**
+   * Transforms a reservation response string from the WDW provider and updates the DTITransactionTO object with the response information.
+   * 
+   * @param dtiTxn
+   *            The transaction object for this request.
+   * @param xmlResponse
+   *            The WDW provider's response in string format.
+   * @return The DTITransactionTO object, enriched with the response information.
+   * @throws DTIException
+   *             for any error. Contains enough detail to formulate an error response to the seller.
+   */
+  static void transformResponseBody(DTITransactionTO dtiTxn,
+      HkdOTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
+
+    ReservationResponseTO dtiResRespTO = new ReservationResponseTO();
+    HkdOTManageReservationTO otMngResTO = otCmdTO.getManageReservationTO();
+    dtiRespTO.setCommandBody(dtiResRespTO);
+
+    // Price mismatch warning
+    if (dtiTxn.isPriceMismatch()) {
+      DTIErrorTO mismatchWarn = ErrorKey
+          .getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
+      dtiRespTO.setDtiError(mismatchWarn);
+    }
+
+    // ResponseType
+    dtiResRespTO.setResponseType(otMngResTO.getCommandType());
+
+    // Ticket List
+    ArrayList<TicketTO> dtiTktList = dtiResRespTO.getTicketList();
+    ArrayList<HkdOTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
+    if ((otTicketList != null) && (otTicketList.size() > 0)) {
+
+      for /* each */(HkdOTTicketInfoTO otTicketInfo : /* in */otTicketList) {
+
+        TicketTO dtiTicketTO = new TicketTO();
+        HkdOTTicketTO otTicketTO = otTicketInfo.getTicket();
+
+        dtiTicketTO.setTktItem(otTicketInfo.getItem());
+
+        GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
+        String site = otTicketTO.getTdssnSite();
+        String station = otTicketTO.getTdssnStation();
+        String number = otTicketTO.getTdssnTicketId();
+        dtiTicketTO.setDssn(dssnDate, site, station, number);
+
+        dtiTicketTO.setTktNID(otTicketTO.getTCOD());
+        dtiTicketTO.setBarCode(otTicketTO.getBarCode());
+        dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
+        dtiTicketTO.setTktTax(otTicketInfo.getTax());
+
+        if (otTicketInfo.getValidityStartDate() != null) dtiTicketTO
+            .setTktValidityValidStart(otTicketInfo
+                .getValidityStartDate());
+
+        if (otTicketInfo.getValidityEndDate() != null) dtiTicketTO
+            .setTktValidityValidEnd(otTicketInfo
+                .getValidityEndDate());
+
+        dtiTktList.add(dtiTicketTO);
+      }
+    }
+
+    // Payment List
+    // Note: Carryover from old system. Payment type of "Voucher" cannot be
+    // returned on the response. Not supported in the XSD (RE: JTL
+    // 09/15/2008)
+    ArrayList<PaymentTO> dtiPmtList = dtiResRespTO.getPaymentList();
+    ArrayList<HkdOTPaymentTO> otPmtList = otMngResTO.getPaymentInfoList();
+    HKDBusinessRules.setDTIPaymentList(dtiPmtList, otPmtList);
+
+    // Receipt
+    Long entityId = new Long(dtiTxn.getEntityTO().getEntityId());
+    String receiptMessage = EntityKey.getEntityReceipt(entityId);
+    if (receiptMessage != null) {
+      dtiResRespTO.setReceiptMessage(receiptMessage);
+    }
+
+    // Reservation
+    String resCode = otMngResTO.getReservationCode();
+    if (resCode != null) {
+      ReservationTO dtiReservationTO = new ReservationTO();
+      dtiReservationTO.setResCode(resCode);
+
+      // Contract ID (lifted from payment section) 
+      for /* each */(PaymentTO aPaymentTO : /* in */dtiPmtList) {
+        if (aPaymentTO.getInstallment() != null) {
+          if (aPaymentTO.getInstallment().getContractId() != null) {
+            String contractId = aPaymentTO.getInstallment()
+                .getContractId();
+            dtiReservationTO.setContractId(contractId);
+            break; // Leave this loop when the condition is 1st satisfied.
+          }
+        }
+      }
+
+      dtiResRespTO.setReservation(dtiReservationTO);
+    }
+
+    // ClientData
+    ClientDataTO dtiClientDataTO = new ClientDataTO();
+    HkdOTClientDataTO otClientDataTO = otMngResTO.getClientData();
+    if (otClientDataTO != null) {
+      dtiClientDataTO.setClientId(otClientDataTO.getClientUniqueId()
+          .toString());
+      dtiResRespTO.setClientData(dtiClientDataTO);
+    }
+
+    return;
+  }  
   
 }

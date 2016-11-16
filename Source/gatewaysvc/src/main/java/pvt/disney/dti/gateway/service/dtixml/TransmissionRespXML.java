@@ -6,9 +6,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.AssociateMediaToAccountResponseTO;
 import pvt.disney.dti.gateway.data.CreateTicketResponseTO;
@@ -21,6 +18,7 @@ import pvt.disney.dti.gateway.data.TickerateEntitlementResponseTO;
 import pvt.disney.dti.gateway.data.UpdateTicketResponseTO;
 import pvt.disney.dti.gateway.data.UpgradeAlphaResponseTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementResponseTO;
+import pvt.disney.dti.gateway.data.VoidReservationResponseTO;
 import pvt.disney.dti.gateway.data.VoidTicketResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
@@ -38,11 +36,11 @@ import pvt.disney.dti.gateway.response.xsd.Transmission;
 import pvt.disney.dti.gateway.response.xsd.UpdateTicketResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeAlphaResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse;
+import pvt.disney.dti.gateway.response.xsd.VoidReservationResponse;
 import pvt.disney.dti.gateway.response.xsd.VoidTicketResponse;
 import pvt.disney.dti.gateway.response.xsd.QueryReservationResponse;
 import pvt.disney.dti.gateway.response.xsd.Transmission.Payload;
 import pvt.disney.dti.gateway.response.xsd.Transmission.Payload.Command;
-import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
 
 /**
  * This class is responsible for transformations between the DTI TiXML and the internal objects used by the DTI Application. This class manages the response version of the transmission clause.
@@ -50,15 +48,13 @@ import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
  * This class is separate from the RqstXML class because of the name collisions between request and response class names in the XSD's.
  * 
  * @author lewit019
+ * @since 2.16.3
  */
 public class TransmissionRespXML {
 
   // JAXBContext is thread-safe.
   private static JAXBContext jc;
   private static Object thisInstance = null;
-
-  private static final EventLogger logger = EventLogger
-      .getLogger(TransmissionRespXML.class.getCanonicalName());
 
   /**
    * 
@@ -172,17 +168,11 @@ public class TransmissionRespXML {
     Marshaller marshaller;
     marshaller = jc.createMarshaller();
     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
-    marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-    
-    //Commented out.  Tomcat is not crazy about this and throws a marshalling error. - BIEST001
-    //marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
-    
-    StringWriter objStringWriter = new StringWriter();
-    
-    logger.sendEvent("Before marshalling JaxBResp", EventType.DEBUG, TransmissionRespXML.class);
-    marshaller.marshal(jaxbResp, objStringWriter);
-    logger.sendEvent("After marshalling JaxBResp", EventType.DEBUG, TransmissionRespXML.class);
+    marshaller
+        .setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 
+    StringWriter objStringWriter = new StringWriter();
+    marshaller.marshal(jaxbResp, objStringWriter);
     xmlString = objStringWriter.toString();
 
     xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlString;
@@ -205,15 +195,15 @@ public class TransmissionRespXML {
       Command cmd, DTIErrorTO errorTO) throws JAXBException {
 
     TransactionType responseType = responseIn.getTransactionType();
-    
+
     switch (responseType) {
 
     case QUERYTICKET:
       QueryTicketResponseTO queryRespTO = (QueryTicketResponseTO) responseIn
           .getResponse().getCommandBody();
-      QueryTicketResponse queryResp = QueryTicketXML.getJaxb(queryRespTO, errorTO);
+      QueryTicketResponse queryResp = QueryTicketXML.getJaxb(queryRespTO,
+          errorTO);
       cmd.setQueryTicketResponse(queryResp);
-      
       break;
 
     case RESERVATION:
@@ -295,6 +285,14 @@ public class TransmissionRespXML {
           qRenewRespTO, errorTO);
       cmd.setRenewEntitlementResponse(qRenewResp);
       break;
+      
+    case VOIDRESERVATION: // As of 2.16.3, JTL
+      VoidReservationResponseTO vResRespTO = (VoidReservationResponseTO) responseIn
+          .getResponse().getCommandBody();
+      VoidReservationResponse vResResp = VoidReservationXML.getJaxb(
+          vResRespTO, errorTO);
+      cmd.setVoidReservationResponse(vResResp);
+      break;      
 
     default:
       break;

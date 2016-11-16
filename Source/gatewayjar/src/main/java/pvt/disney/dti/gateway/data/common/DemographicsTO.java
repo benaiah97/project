@@ -7,7 +7,7 @@ import java.util.GregorianCalendar;
  * This class represents guest demographic information.
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class DemographicsTO implements Serializable {
 
@@ -36,6 +36,9 @@ public class DemographicsTO implements Serializable {
   /** Guest first name. */
   private String firstName;
 
+  /** Guest first name (Chinese) as of 2.16.3, JTL. */
+  private String firstNameChinese;
+  
   /** Guest address line one. */
   private String addr1;
 
@@ -87,6 +90,12 @@ public class DemographicsTO implements Serializable {
 
   /** AltTelephone (as of 2.15, JTL) */
   private String altTelephone;
+  
+  /** Cell Phone */
+  private String cellPhone;
+  
+  /** Seller Ref */
+  private String sellerRef;
 
   /**
    * 
@@ -410,6 +419,48 @@ public class DemographicsTO implements Serializable {
    */
   public void setAltTelephone(String altTelephone) {
     this.altTelephone = altTelephone;
+  }
+
+  /**
+   * @return the cellPhone
+   */
+  public String getCellPhone() {
+    return cellPhone;
+  }
+
+  /**
+   * @param cellPhone the cellPhone to set
+   */
+  public void setCellPhone(String cellPhone) {
+    this.cellPhone = cellPhone;
+  }
+
+  /**
+   * @return the sellerRef
+   */
+  public String getSellerRef() {
+    return sellerRef;
+  }
+
+  /**
+   * @param sellerRef the sellerRef to set
+   */
+  public void setSellerRef(String sellerRef) {
+    this.sellerRef = sellerRef;
+  }
+
+  /**
+   * @return the firstNameChinese
+   */
+  public String getFirstNameChinese() {
+    return firstNameChinese;
+  }
+
+  /**
+   * @param firstNameChinese the firstNameChinese to set
+   */
+  public void setFirstNameChinese(String firstNameChinese) {
+    this.firstNameChinese = firstNameChinese;
   }
 
 }

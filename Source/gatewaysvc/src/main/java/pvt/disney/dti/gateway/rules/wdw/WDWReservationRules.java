@@ -74,7 +74,7 @@ import com.disney.util.PropertyHelper;
  * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class WDWReservationRules {
 
@@ -715,123 +715,145 @@ public class WDWReservationRules {
     if (dtiBillInfo != null) {
 
       // Bill name
-      if (dtiBillInfo.getName() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_NAME, DTIFormatter.websafe(dtiBillInfo
-              .getName())));
+      if (dtiBillInfo.getName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_NAME, 
+            DTIFormatter.websafe(dtiBillInfo.getName())));
+      }
 
       // Bill Last Name
-      if (dtiBillInfo.getLastName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_LASTNAME,
+      if (dtiBillInfo.getLastName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_LASTNAME,
               DTIFormatter.websafe(dtiBillInfo.getLastName())));
+      }
 
       // Bill First Name
-      if (dtiBillInfo.getFirstName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_FIRSTNAME,
+      if (dtiBillInfo.getFirstName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_FIRSTNAME,
               DTIFormatter.websafe(dtiBillInfo.getFirstName())));
+      }
 
       // Bill Address 1
-      if (dtiBillInfo.getAddr1() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ADDR1, DTIFormatter.websafe(dtiBillInfo
-              .getAddr1())));
+      if (dtiBillInfo.getAddr1() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR1, 
+            DTIFormatter.websafe(dtiBillInfo.getAddr1())));
+      }
 
       // Bill Address 2
-      if (dtiBillInfo.getAddr2() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ADDR2, DTIFormatter.websafe(dtiBillInfo
-              .getAddr2())));
+      if (dtiBillInfo.getAddr2() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR2, 
+            DTIFormatter.websafe(dtiBillInfo.getAddr2())));
+      }
 
       // Bill City
-      if (dtiBillInfo.getCity() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_CITY, DTIFormatter.websafe(dtiBillInfo
-              .getCity())));
+      if (dtiBillInfo.getCity() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_CITY, 
+            DTIFormatter.websafe(dtiBillInfo.getCity())));
+      }
 
       // Bill State
-      if (dtiBillInfo.getState() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_STATE, DTIFormatter.websafe(dtiBillInfo
-              .getState())));
+      if (dtiBillInfo.getState() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_STATE, 
+            DTIFormatter.websafe(dtiBillInfo.getState())));
+      }
 
       // Bill ZIP
-      if (dtiBillInfo.getZip() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_ZIP, DTIFormatter.websafe(dtiBillInfo
-              .getZip())));
+      if (dtiBillInfo.getZip() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ZIP, 
+            DTIFormatter.websafe(dtiBillInfo.getZip())));
+      }
 
       // Bill Country
-      if (dtiBillInfo.getCountry() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_COUNTRY, DTIFormatter
-              .websafe(dtiBillInfo.getCountry())));
+      if (dtiBillInfo.getCountry() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_COUNTRY, 
+            DTIFormatter.websafe(dtiBillInfo.getCountry())));
+      }
 
       // Bill Telephone
-      if (dtiBillInfo.getTelephone() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_TELEPHONE,
+      if (dtiBillInfo.getTelephone() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_TELEPHONE,
               DTIFormatter.websafe(dtiBillInfo.getTelephone())));
+      }
 
       // Bill E-mail
-      if (dtiBillInfo.getEmail() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_BILL_EMAIL, DTIFormatter.websafe(dtiBillInfo
-              .getEmail())));
+      if (dtiBillInfo.getEmail() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_EMAIL, 
+            DTIFormatter.websafe(dtiBillInfo.getEmail())));
+    }
 
       // Bill SellerResNbr
-      if (dtiBillInfo.getSellerResNbr() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_BILL_SLR_RES_NBR,
+      if (dtiBillInfo.getSellerResNbr() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_SLR_RES_NBR,
               DTIFormatter.websafe(dtiBillInfo.getSellerResNbr())));
+      }
     }
 
     // Shipping Info
     if (dtiShipInfo != null) {
 
       // Ship name
-      if (dtiShipInfo.getName() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_NAME, DTIFormatter.websafe(dtiShipInfo
-              .getName())));
+      if (dtiShipInfo.getName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_NAME, 
+            DTIFormatter.websafe(dtiShipInfo.getName())));
+      }
 
       // Ship Last Name
-      if (dtiShipInfo.getLastName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_LASTNAME,
+      if (dtiShipInfo.getLastName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_LASTNAME,
               DTIFormatter.websafe(dtiShipInfo.getLastName())));
+      }
 
       // Ship First Name
-      if (dtiShipInfo.getFirstName() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_FIRSTNAME,
+      if (dtiShipInfo.getFirstName() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_FIRSTNAME,
               DTIFormatter.websafe(dtiShipInfo.getFirstName())));
+      }
 
       // Ship Address 1
-      if (dtiShipInfo.getAddr1() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ADDR1, DTIFormatter.websafe(dtiShipInfo
-              .getAddr1())));
+      if (dtiShipInfo.getAddr1() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR1, 
+            DTIFormatter.websafe(dtiShipInfo.getAddr1())));
+      }
 
       // Ship Address 2
-      if (dtiShipInfo.getAddr2() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ADDR2, DTIFormatter.websafe(dtiShipInfo
-              .getAddr2())));
+      if (dtiShipInfo.getAddr2() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR2, 
+            DTIFormatter.websafe(dtiShipInfo.getAddr2())));
+      }
 
       // Ship City
-      if (dtiShipInfo.getCity() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_CITY, DTIFormatter.websafe(dtiShipInfo
-              .getCity())));
+      if (dtiShipInfo.getCity() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_CITY, 
+            DTIFormatter.websafe(dtiShipInfo.getCity())));
+      }
 
       // Ship State
-      if (dtiShipInfo.getState() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_STATE, DTIFormatter.websafe(dtiShipInfo
-              .getState())));
+      if (dtiShipInfo.getState() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_STATE, 
+            DTIFormatter.websafe(dtiShipInfo.getState())));
+      }
 
       // Ship ZIP
-      if (dtiShipInfo.getZip() != null) otFieldList.add(new OTFieldTO(
-          OTFieldTO.RES_SHIP_ZIP, DTIFormatter.websafe(dtiShipInfo
-              .getZip())));
+      if (dtiShipInfo.getZip() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ZIP, 
+            DTIFormatter.websafe(dtiShipInfo.getZip())));
+      }
 
       // Ship Country
-      if (dtiShipInfo.getCountry() != null) otFieldList
-          .add(new OTFieldTO(OTFieldTO.RES_SHIP_COUNTRY, DTIFormatter
-              .websafe(dtiShipInfo.getCountry())));
+      if (dtiShipInfo.getCountry() != null) { 
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_COUNTRY, 
+            DTIFormatter.websafe(dtiShipInfo.getCountry())));
+      }
 
       // Ship Telephone
-      if (dtiShipInfo.getTelephone() != null) otFieldList
-          .add(new OTFieldTO(+OTFieldTO.RES_SHIP_TELEPHONE,
+      if (dtiShipInfo.getTelephone() != null) { 
+        otFieldList.add(new OTFieldTO(+OTFieldTO.WDW_CLNT_SHIP_TELEPHONE,
               DTIFormatter.websafe(dtiShipInfo.getTelephone())));
+      }
 
       // Ship Agent
       if (agencyTO != null) {
         if (agencyTO.getAgent() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.RES_SHIP_AGENT,
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_AGENT,
               DTIFormatter.websafe(agencyTO.getAgent())));
         }
       }
@@ -891,13 +913,15 @@ public class WDWReservationRules {
         dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
         dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
-        if (otTicketInfo.getValidityStartDate() != null) dtiTicketTO
-            .setTktValidityValidStart(otTicketInfo
+        if (otTicketInfo.getValidityStartDate() != null) {
+          dtiTicketTO.setTktValidityValidStart(otTicketInfo
                 .getValidityStartDate());
+        }
 
-        if (otTicketInfo.getValidityEndDate() != null) dtiTicketTO
-            .setTktValidityValidEnd(otTicketInfo
+        if (otTicketInfo.getValidityEndDate() != null) { 
+          dtiTicketTO.setTktValidityValidEnd(otTicketInfo
                 .getValidityEndDate());
+        }
 
         dtiTktList.add(dtiTicketTO);
       }
@@ -999,7 +1023,7 @@ public class WDWReservationRules {
 
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
-    ProductRules.validateTelephoneOnWdwDemo(tktListTO);
+    ProductRules.validateWdwTicketDemo(tktListTO);
 
     // RULE: Validate that if the "installment" type of payment is present,
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
@@ -1143,7 +1167,7 @@ public class WDWReservationRules {
   }
 
   /**
-   * 
+   * Validates the WDW Client ID
    * @param dtiResReq
    * @throws DTIException
    */
@@ -1366,7 +1390,7 @@ public class WDWReservationRules {
         // Title
         if (dtiAcctDemo.getTitle() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_TITLE,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_TITLE,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getTitle())));
         }
@@ -1374,7 +1398,7 @@ public class WDWReservationRules {
         // FirstName
         if (dtiAcctDemo.getFirstName() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_FIRSTNAME,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_FIRSTNAME,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getFirstName())));
         }
@@ -1382,14 +1406,14 @@ public class WDWReservationRules {
         // MiddleName
         if (dtiAcctDemo.getMiddleName() != null) {
           otFieldList.add(new OTFieldTO(
-              OTFieldTO.ACCT_DEMO_MIDDLENAME,
+              OTFieldTO.WDW_ACCTDEMO_MIDDLENAME,
               DTIFormatter.websafeToUpper(dtiAcctDemo
                   .getMiddleName())));
         }
 
         // LastName
         if (dtiAcctDemo.getLastName() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.ACCT_DEMO_LASTNAME,
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_LASTNAME,
               DTIFormatter.websafeToUpper(dtiAcctDemo
                   .getLastName())));
         }
@@ -1397,7 +1421,7 @@ public class WDWReservationRules {
         // Suffix
         if (dtiAcctDemo.getSuffix() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_SUFFIX,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_SUFFIX,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getSuffix())));
         }
@@ -1407,14 +1431,14 @@ public class WDWReservationRules {
           SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
           String dobString = sdf.format(dtiAcctDemo.getDateOfBirth()
               .getTime());
-          otFieldList.add(new OTFieldTO(OTFieldTO.ACCT_DEMO_DOB,
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_DOB,
               dobString));
         }
 
         // Addr1
         if (dtiAcctDemo.getAddr1() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_ADDRESS1,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS1,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getAddr1())));
         }
@@ -1422,7 +1446,7 @@ public class WDWReservationRules {
         // Addr2
         if (dtiAcctDemo.getAddr2() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_ADDRESS2,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS2,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getAddr2())));
         }
@@ -1430,7 +1454,7 @@ public class WDWReservationRules {
         // City
         if (dtiAcctDemo.getCity() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_CITY,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_CITY,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getCity())));
         }
@@ -1438,20 +1462,20 @@ public class WDWReservationRules {
         // State
         if (dtiAcctDemo.getState() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_STATE,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_STATE,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getState())));
         }
 
         // ZIP
         if (dtiAcctDemo.getZip() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.ACCT_DEMO_ZIP,
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ZIP,
               DTIFormatter.websafeToUpper(dtiAcctDemo.getZip())));
         }
 
         // Country
         if (dtiAcctDemo.getCountry() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.ACCT_DEMO_COUNTRY,
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_COUNTRY,
               DTIFormatter.websafeToUpper(dtiAcctDemo
                   .getCountry())));
         }
@@ -1459,7 +1483,7 @@ public class WDWReservationRules {
         // Email
         if (dtiAcctDemo.getEmail() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.ACCT_DEMO_EMAIL,
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_EMAIL,
                   DTIFormatter.websafeToUpper(dtiAcctDemo
                       .getEmail())));
         }
@@ -1468,12 +1492,12 @@ public class WDWReservationRules {
         if (dtiAcctDemo.getOptInSolicit() != null) {
           if (dtiAcctDemo.getOptInSolicit().booleanValue() == true) {
             otFieldList.add(new OTFieldTO(
-                OTFieldTO.ACCT_DEMO_OKTOMAIL,
+                OTFieldTO.WDW_ACCTDEMO_OKTOMAIL,
                 WDWBusinessRules.YES));
           }
           else {
             otFieldList.add(new OTFieldTO(
-                OTFieldTO.ACCT_DEMO_OKTOMAIL,
+                OTFieldTO.WDW_ACCTDEMO_OKTOMAIL,
                 WDWBusinessRules.NO));
           }
         }

@@ -53,7 +53,7 @@ import pvt.disney.dti.gateway.rules.ProductRules;
  * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class WDWCreateTicketRules {
 
@@ -620,7 +620,7 @@ public class WDWCreateTicketRules {
 
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
-    ProductRules.validateTelephoneOnWdwDemo(tktListTO);
+    ProductRules.validateWdwTicketDemo(tktListTO);
 
     return;
   }

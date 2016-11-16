@@ -58,7 +58,7 @@ import com.disney.util.PropertyHelper;
  * Class WDWBusinessRules implements the WDW provider specific business rules.
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class WDWBusinessRules {
 
@@ -279,6 +279,10 @@ public class WDWBusinessRules {
     case QUERYRESERVATION: // As of 2.16.1 BIEST001
       xmlRequest = WDWQueryReservationRules.transformRequest(dtiTxn);
       break;
+      
+    case VOIDRESERVATION: // As of 2.16.3, JTL
+      xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
+      break;      
 
     default:
       throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
@@ -1446,64 +1450,64 @@ public class WDWBusinessRules {
       // Last/First
       String lastFirstString = DTIFormatter.websafe(aDtiTicket.getLastName().toUpperCase()) + "/"
           + DTIFormatter.websafe(aDtiTicket.getFirstName().toUpperCase());
-      OTFieldTO aField = new OTFieldTO(OTFieldTO.TKT_DEMO_LASTFIRST, lastFirstString);
+      OTFieldTO aField = new OTFieldTO(OTFieldTO.WDW_TKTDEMO_LASTFIRST, lastFirstString);
       otDemoData.addOTField(aField);
 
       // Date of Birth MM/DD/YY
       SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
       String dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_DATE_OF_BIRTH, dobString));
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_DTE_OF_BIRTH, dobString));
 
       // Gender
       if (aDtiTicket.getGenderType() == DemographicsTO.GenderType.UNSPECIFIED) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
       } else {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER, DTIFormatter.websafe(aDtiTicket.getGender()
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_GENDER, DTIFormatter.websafe(aDtiTicket.getGender()
             .toUpperCase())));
       }
 
       // Address 1
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ADDRESS_ONE, DTIFormatter.websafe(aDtiTicket.getAddr1()
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_ADDRESS_ONE, DTIFormatter.websafe(aDtiTicket.getAddr1()
           .toUpperCase())));
 
       // Address 2 (optional)
       if (aDtiTicket.getAddr2() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ADDRESS_TWO, DTIFormatter.websafe(aDtiTicket.getAddr2()
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_ADDRESS_TWO, DTIFormatter.websafe(aDtiTicket.getAddr2()
             .toUpperCase())));
       }
 
       // City
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_CITY, DTIFormatter.websafe(aDtiTicket.getCity()
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_CITY, DTIFormatter.websafe(aDtiTicket.getCity()
           .toUpperCase())));
 
       // State (optional)
       if (aDtiTicket.getState() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_STATE, DTIFormatter.websafe(aDtiTicket.getState()
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_STATE, DTIFormatter.websafe(aDtiTicket.getState()
             .toUpperCase())));
       }
 
       // ZIP
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ZIP, DTIFormatter.websafe(aDtiTicket.getZip())));
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_ZIP, DTIFormatter.websafe(aDtiTicket.getZip())));
 
       // Country
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_COUNTRY, DTIFormatter.websafe(aDtiTicket.getCountry()
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_COUNTRY, DTIFormatter.websafe(aDtiTicket.getCountry()
           .toUpperCase())));
 
       // Telephone
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_TELEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
+      otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_PHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
           .toUpperCase())));
 
       // Email (optional)
       if (aDtiTicket.getEmail() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_EMAIL, DTIFormatter.websafe(aDtiTicket.getEmail()
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_EMAIL, DTIFormatter.websafe(aDtiTicket.getEmail()
             .toUpperCase())));
       }
 
       // OptInSolicit (2.10)
       if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_OPTINSOLICIT, WDWBusinessRules.YES));
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_OPTINSOLICIT, WDWBusinessRules.YES));
       } else {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_OPTINSOLICIT, WDWBusinessRules.NO));
+        otDemoData.addOTField(new OTFieldTO(OTFieldTO.WDW_TKTDEMO_OPTINSOLICIT, WDWBusinessRules.NO));
       }
 
       otDemoInfo.addOTDemographicData(otDemoData);
@@ -1524,76 +1528,76 @@ public class WDWBusinessRules {
 
     // FirstName
     String firstNameString = installDemoTO.getFirstName();
-    OTFieldTO aField = new OTFieldTO(OTFieldTO.INST_DEMO_FIRSTNAME, firstNameString);
+    OTFieldTO aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_FIRSTNAME, firstNameString);
     otDemoList.add(aField);
 
     // MiddleName (opt)
     if (installDemoTO.getMiddleName() != null) {
       String middleNameString = installDemoTO.getMiddleName();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_MIDLNAME, middleNameString);
+      aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_MIDLNAME, middleNameString);
       otDemoList.add(aField);
     }
 
     // LastName
     String lastNameString = installDemoTO.getLastName();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_LASTNAME, lastNameString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_LASTNAME, lastNameString);
     otDemoList.add(aField);
 
     // DateOfBirth MM/DD/YY (opt)
     if (installDemoTO.getDateOfBirth() != null) {
       SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
       String dobString = sdf.format(installDemoTO.getDateOfBirth().getTime());
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_DOB, dobString);
+      aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_DOB, dobString);
       otDemoList.add(aField);
     }
 
     // Addr1
     String addr1String = installDemoTO.getAddr1();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_ADDR1, addr1String);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_ADDR1, addr1String);
     otDemoList.add(aField);
 
     // Addr2 (opt)
     if (installDemoTO.getAddr2() != null) {
       String addr2String = installDemoTO.getAddr2();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_ADDR2, addr2String);
+      aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_ADDR2, addr2String);
       otDemoList.add(aField);
     }
 
     // City
     String cityString = installDemoTO.getCity();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_CITY, cityString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_CITY, cityString);
     otDemoList.add(aField);
 
     // State
     String stateString = installDemoTO.getState();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_STATE, stateString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_STATE, stateString);
     otDemoList.add(aField);
 
     // ZIP
     String zipString = installDemoTO.getZip();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_ZIP, zipString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_ZIP, zipString);
     otDemoList.add(aField);
 
     // Country
     String countryString = installDemoTO.getCountry();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_COUNTRY, countryString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_COUNTRY, countryString);
     otDemoList.add(aField);
 
     // Telephone
     String telephoneString = installDemoTO.getTelephone();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_TELEPHONE, telephoneString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_TELEPHONE, telephoneString);
     otDemoList.add(aField);
 
     // AltTelephone (opt)
     if (installDemoTO.getAltTelephone() != null) {
       String altPhoneString = installDemoTO.getAltTelephone();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_ALTPHONE, altPhoneString);
+      aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_ALTPHONE, altPhoneString);
       otDemoList.add(aField);
     }
 
     // Email
     String emailString = installDemoTO.getEmail();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_EMAIL, emailString);
+    aField = new OTFieldTO(OTFieldTO.WDW_INSTDEMO_EMAIL, emailString);
     otDemoList.add(aField);
 
     return;

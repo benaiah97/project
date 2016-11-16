@@ -8,7 +8,7 @@ import pvt.disney.dti.gateway.data.common.CommandBodyTO;
  * Void Reservation Transfer Object
  * 
  * @author LEWIT019
- * @since 2.16.2
+ * @since 2.16.3
  * 
  */
 public class VoidReservationRequestTO extends CommandBodyTO implements Serializable {
@@ -26,6 +26,9 @@ public class VoidReservationRequestTO extends CommandBodyTO implements Serializa
 
   /** External Reservation Code */
   private String externalResCode;
+  
+  /** DTI Payload ID */
+  private String payloadID;
 
   /**
    * Gets the request type
@@ -89,6 +92,20 @@ public class VoidReservationRequestTO extends CommandBodyTO implements Serializa
    */
   public void setExternalResCode(String externalResCode) {
     this.externalResCode = externalResCode;
+  }
+
+  /**
+   * @return the payloadID
+   */
+  public String getPayloadID() {
+    return payloadID;
+  }
+
+  /**
+   * @param payloadID the payloadID to set
+   */
+  public void setPayloadID(String payloadID) {
+    this.payloadID = payloadID;
   }
 
 }

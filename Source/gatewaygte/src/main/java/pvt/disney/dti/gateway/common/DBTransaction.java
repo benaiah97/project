@@ -20,6 +20,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import oracle.sql.CLOB;
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.util.DTIFormatter;
@@ -28,7 +29,6 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
-import com.disney.util.AbstractInitializer;
 import com.disney.util.PropertyHelper;
 import com.ibm.websphere.ce.cm.StaleConnectionException;
 
@@ -49,7 +49,7 @@ import com.ibm.websphere.ce.cm.StaleConnectionException;
  * Cleaned up unused private instance variables.
  * 
  * @author Andy Anon
- * @version %version: % 
+ * @since 2.16.3
  */
 public class DBTransaction {
 
@@ -63,8 +63,6 @@ public class DBTransaction {
   /** JDBC connection object returned by the WebSphere EJB datasource. */
   private Connection conn = null;
 
-  /** Core properties management initializer. */
-  private AbstractInitializer abstrInit = null;
   /** Properties variable to store properties from AbstractInitializer. */
   private Properties props = null;
 
@@ -112,13 +110,8 @@ public class DBTransaction {
     try {
       // Create the initial naming context.
       Hashtable<String, String> parms = new Hashtable<String, String>();
-      
-      /*
       parms.put(Context.INITIAL_CONTEXT_FACTORY, "com.ibm.websphere.naming.WsnInitialContextFactory");
       InitialContext ctx = new InitialContext(parms);
-	  */
-      
-      InitialContext ctx = new InitialContext();
 
       /*
        * Perform a naming service lookup to get a DataSource object.
@@ -131,12 +124,7 @@ public class DBTransaction {
        * lookup and "sample" is the logicalname of the DataSource
        * object to be retrieved.
        */
-      
-      
       String dataSource = PropertyHelper.readPropsValue(PropertyName.DATA_SOURCE, props, null);
-      
-      eventLogger.sendEvent("DTI Datasource (from PropertyFile): " + dataSource, EventType.DEBUG, this);
-
       ds = (javax.sql.DataSource)ctx.lookup(dataSource);
 
     } catch (Exception e) {
@@ -146,7 +134,7 @@ public class DBTransaction {
         "initConnection()",
         DBTransaction.class,
         3,
-        PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+        DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
         "Exception in initilizing the connection to the Data Source",
         e);
     }
@@ -201,7 +189,7 @@ public class DBTransaction {
           "releaseConnection()",
           DBTransaction.class,
           3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+          DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
           "Exception in releasing the connection to the Data Source",
           e);
       }
@@ -209,6 +197,7 @@ public class DBTransaction {
 
     eventLogger.sendEvent("Did NOT close object DB connection.", EventType.WARN, this);
     return;
+
 
   }
 
@@ -259,7 +248,7 @@ public class DBTransaction {
             "getConnection()",
             DBTransaction.class,
             3,
-            PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+            DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
             "Exception in getting the connection from the connection pool",
             exc);
         }
@@ -268,7 +257,7 @@ public class DBTransaction {
           "getConnection()",
           DBTransaction.class,
           3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+          DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
           "Exception in getting the connection from the connection pool",
           exc);
       }
@@ -277,10 +266,11 @@ public class DBTransaction {
         "getConnection()",
         DBTransaction.class,
         3,
-        PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+        DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
         "Exception in getting the connection from the connection pool",
         exc);
     }
+    return;
   }
 
   /**
@@ -331,7 +321,7 @@ public class DBTransaction {
 
       clobConn.setAutoCommit(true);
 
-      //Set and Get Oracle CLOB object		
+      //Set and Get Oracle CLOB object    
       xmlClob = getXMLCLOB(newXMLString, clobConn);
 
       String statement =
@@ -395,7 +385,7 @@ public class DBTransaction {
           "logInbound(String, int, String)",
           DBTransaction.class,
           3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+          DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
           "Exception in the execution of query",
           exc);
       }
@@ -444,7 +434,7 @@ public class DBTransaction {
           "invoke()",
           DBTransaction.class,
           3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+          DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
           "Exception in the execution of query",
           exc);
       }
@@ -452,6 +442,7 @@ public class DBTransaction {
       // Release the connection
       releaseConnection();
     }
+    return;
   }
 
   /**
@@ -530,10 +521,11 @@ public class DBTransaction {
         "createResponse()",
         DBTransaction.class,
         3,
-        PropertyHelper.readPropsValue(PropertyName.ERROR_POS_DEFAULT_CODE, props, null),
+        DTIErrorCode.FAILED_DB_OPERATION_GATE.getErrorCode(),
         "Exception in populating the result set",
         exc);
     }
+    return;
   }
 
   /** Handles duplicates by selecting the completed response XML out of the database. 
@@ -562,12 +554,13 @@ public class DBTransaction {
         "handleDuplicate()",
         DBTransaction.class,
         3,
-        PropertyHelper.readPropsValue(PropertyName.ERROR_OUTBOUND_LOG, props, null),
+        DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_TB.getErrorCode(),
         "Exception in SQL Execution",
         e);
       // if there is an error code present then resubmit if not then
       // do nothing bucause the resultSet contains the file url
     }
+    return;
   }
 
   /**
@@ -583,67 +576,67 @@ public class DBTransaction {
    * @throws DTIException
    */
 private CLOB getXMLCLOB(String xmlData, java.sql.Connection c) throws DTIException {
-    CLOB tempClob = null;
-    Writer tempClobWriter = null;
+  CLOB tempClob = null;
+  Writer tempClobWriter = null;
 
-    eventLogger.sendEvent("Entering getXMLCLOB(String,Connection)", EventType.DEBUG, this);
+  eventLogger.sendEvent("Entering getXMLCLOB(String,Connection)", EventType.DEBUG, this);
 
+  try {
+    // If the temporary CLOB has not yet been created, create new
+    tempClob = CLOB.createTemporary(c, true, CLOB.DURATION_SESSION);
+
+    // Open the temporary CLOB in readwrite mode to enable writing
+    tempClob.open(CLOB.MODE_READWRITE);
+
+    // Get the output stream to write
+    //Per initial Java doc search for deprecation:
+    // Deprecated. This method is deprecated. Use setCharacterStream( 0L ).
+    tempClobWriter = tempClob.getCharacterOutputStream();
+    
+
+    // Write the data into the temporary CLOB
+    tempClobWriter.write(xmlData);
+
+  } catch (Exception exc) {
+    exc.printStackTrace();
+    throw new DTIException(
+      "getXMLCLOB()",
+      DBTransaction.class,
+      3,
+      DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+      "Exception in populating the CLOB",
+      exc);
+  } finally {
     try {
-      // If the temporary CLOB has not yet been created, create new
-      tempClob = CLOB.createTemporary(c, true, CLOB.DURATION_SESSION);
+      // Flush and close the stream
+      tempClobWriter.flush();
+      tempClobWriter.close();
 
-      // Open the temporary CLOB in readwrite mode to enable writing
-      tempClob.open(CLOB.MODE_READWRITE);
-
-      // Get the output stream to write
-      //Per initial Java doc search for deprecation:
-      // Deprecated. This method is deprecated. Use setCharacterStream( 0L ).
-      tempClobWriter = tempClob.getCharacterOutputStream();
-      
-
-      // Write the data into the temporary CLOB
-      tempClobWriter.write(xmlData);
-
-    } catch (Exception exc) {
-      exc.printStackTrace();
+      // Close the temporary CLOB 
+      tempClob.close();
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
       throw new DTIException(
         "getXMLCLOB()",
         DBTransaction.class,
         3,
-        PropertyHelper.readPropsValue(PropertyName.ERROR_INBOUND_LOG, props, null),
-        "Exception in populating the CLOB",
-        exc);
-    } finally {
-      try {
-        // Flush and close the stream
-        tempClobWriter.flush();
-        tempClobWriter.close();
-
-        // Close the temporary CLOB 
-        tempClob.close();
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-        throw new DTIException(
-          "getXMLCLOB()",
-          DBTransaction.class,
-          3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_INBOUND_LOG, props, null),
-          "Exception flushing Writer object.",
-          ioe);
-      } catch (SQLException sqe) {
-        sqe.printStackTrace();
-        throw new DTIException(
-          "getXMLCLOB()",
-          DBTransaction.class,
-          3,
-          PropertyHelper.readPropsValue(PropertyName.ERROR_INBOUND_LOG, props, null),
-          "Exception closing CLOB instance.",
-          sqe);
-      }
-
+        DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+        "Exception flushing Writer object.",
+        ioe);
+    } catch (SQLException sqe) {
+      sqe.printStackTrace();
+      throw new DTIException(
+        "getXMLCLOB()",
+        DBTransaction.class,
+        3,
+        DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(),
+        "Exception closing CLOB instance.",
+        sqe);
     }
 
-    return tempClob;
+  }
+
+  return tempClob;
   }
 
   // Accessors (Getters and Setters) -------------

@@ -2,14 +2,11 @@ package pvt.disney.dti.gateway.constants;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import pvt.disney.dti.gateway.data.AssociateMediaToAccountResponseTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
-import pvt.disney.dti.gateway.data.TickerateEntitlementResponseTO;
 import pvt.disney.dti.gateway.data.VoidTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -20,7 +17,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * appear at the same level in the XML.
  * 
  * @author lewit019
- * 
+ * @since 2.16.3
  */
 public class DTIErrorCode implements Serializable {
 
@@ -162,6 +159,8 @@ public class DTIErrorCode implements Serializable {
       "565", DTIErrorCode.ErrorScope.PAYLOAD, "Transaction Flood Block");
   public final static DTIErrorCode INVALID_SPECIFIED_ACCT = new DTIErrorCode(
       "570", DTIErrorCode.ErrorScope.COMMAND, "Invalid Specified Account"); // As of 2.10
+  public final static DTIErrorCode DTI_CANNOT_FIND_RESERVATION = new DTIErrorCode(
+      "583", DTIErrorCode.ErrorScope.COMMAND, "Cannot find Reservation."); // As of 2.16.3, JTL
   public final static DTIErrorCode DTI_CONFIG_ERROR = new DTIErrorCode("590",
       DTIErrorCode.ErrorScope.COMMAND, "DTI Config Error");
   public final static DTIErrorCode DTI_DATA_ERROR = new DTIErrorCode("591",
@@ -224,8 +223,14 @@ public class DTIErrorCode implements Serializable {
       "843", DTIErrorCode.ErrorScope.COMMAND,
       "Invalid account creation topology.");
   public final static DTIErrorCode INVALID_MIXED_ENTITLEMENTS = new DTIErrorCode(
-      "844", DTIErrorCode.ErrorScope.COMMAND,
+      "844", DTIErrorCode.ErrorScope.COMMAND,      
       "Invalid mixed entitlements."); // 2.10
+  public final static DTIErrorCode GROUP_CODE_QUOTA_ERR = new DTIErrorCode(
+      "846", DTIErrorCode.ErrorScope.COMMAND,
+      "Group code quota error."); // As of 2.16.3, JTL
+  public final static DTIErrorCode PERFORMANCE_NOT_FOUND = new DTIErrorCode(
+      "847", DTIErrorCode.ErrorScope.COMMAND,
+      "Performance not found."); // As of 2.16.3, JTL
   public final static DTIErrorCode TICKET_INVALID = new DTIErrorCode("850",
       DTIErrorCode.ErrorScope.TICKET, "Ticket Invalid");
   public final static DTIErrorCode TICKET_NOT_UPGRADEABLE = new DTIErrorCode(

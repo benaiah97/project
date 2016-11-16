@@ -24,13 +24,12 @@ import pvt.disney.dti.gateway.request.xsd.QueryReservationRequest;
 import pvt.disney.dti.gateway.request.xsd.QueryReservationRequest.QueriedReservation;
 import pvt.disney.dti.gateway.response.xsd.QueryReservationResponse;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
+/**
+ * 
+ * @author lewit019
+ *
+ */
 public abstract class QueryReservationXML {
-
-  private static final EventLogger logger = EventLogger
-      .getLogger(ReservationXML.class.getCanonicalName());
 
   /**
    * When passed the JAXB object, return the DTI application object.
@@ -40,6 +39,7 @@ public abstract class QueryReservationXML {
    * @return the DTI application object
    * @throws JAXBException
    *             should any parsing errors occur.
+   * @since 2.16.3         
    */
   public static QueryReservationRequestTO getTO(
       QueryReservationRequest queryResReq) throws JAXBException {
@@ -53,17 +53,15 @@ public abstract class QueryReservationXML {
     QueriedReservation reservation = queryResReq.getQueriedReservation();
 
     // Get key fields
+    
+    // ResCode
     if (reservation.getResCode() != null) {
-
       queryResReqTO.setResCode(reservation.getResCode());
     }
-
-    if (reservation.getResNumber() != null) {
-      queryResReqTO.setResNumber(reservation.getResNumber());
-    }
-
-    if (reservation.getExternalResCode() != null) {
-      queryResReqTO.setExternalResCode(reservation.getExternalResCode());
+    
+    // Payload ID
+    if (reservation.getPayloadID() != null) {
+      queryResReqTO.setPayloadID(reservation.getPayloadID());
     }
 
     return queryResReqTO;

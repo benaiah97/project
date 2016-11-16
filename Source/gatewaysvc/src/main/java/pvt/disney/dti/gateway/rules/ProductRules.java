@@ -21,6 +21,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
  * The class ProductRules is responsible for implementing the various product rules such as availability, correct shells, etc.
  * 
  * @author lewit019
+ * @since 2.16.3
  */
 public class ProductRules {
 
@@ -752,27 +753,252 @@ public class ProductRules {
    * @param tktListTO
    * @throws DTIException
    */
-  public static void validateTelephoneOnWdwDemo(ArrayList<TicketTO> tktListTO) throws DTIException {
+  public static void validateWdwTicketDemo(ArrayList<TicketTO> tktListTO) throws DTIException {
+    
     for (/* each */TicketTO aTicketTO : /* in */tktListTO) {
-
+      
+      // Telephone 
       if (aTicketTO.getTicketDemoList().size() != 0) {
-        for /* each */(DemographicsTO aDemoTO : /* in */aTicketTO
-            .getTicketDemoList()) {
+        
+        for /* each */(DemographicsTO aDemoTO : /* in */aTicketTO.getTicketDemoList()) {
+          
+          String park = "WDW"; 
+          boolean optional = false;
+          boolean required = true;
+          BigInteger itemNumber = aTicketTO.getTktItem();
 
-          if (aDemoTO.getDateOfBirth() != null) {
-            if (aDemoTO.getTelephone() == null) {
-              throw new DTIException(
-                  ProductRules.class,
-                  DTIErrorCode.INVALID_MSG_CONTENT,
-                  "For WDW, Telephone is a mandatory field for TktDemoData.  TktItem failing was " + aTicketTO
-                      .getTktItem() + ".");
-            }
+          // FirstName (XSD required, 1 - 15 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              20, true, itemNumber);
+
+          
+          // LastName (XSD required, 1 - 20 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              20, true, itemNumber);
+          
+          // DateOfBirth (required, date) 
+          if (aDemoTO.getDateOfBirth() == null) {
+            throwFieldMissExcpt(park,"DateOfBirth",aTicketTO.getTktItem());
           }
+          
+          // Gender (required, 1 char)
+          validateStringDemo( park, "Gender", aDemoTO.getGender(), 1, 1, required, itemNumber); 
+          
+          // Addr1 (required, 1 - 35 char)
+          validateStringDemo( park, "Addr1", aDemoTO.getAddr1(), 1, 35, required, itemNumber);
+          
+          // Addr2 (optional, 1 - 35 char)
+          validateStringDemo( park, "Addr2", aDemoTO.getAddr2(), 1, 35, optional, itemNumber);
+          
+          // City (required, 1 - 20 char)
+          validateStringDemo( park, "City", aDemoTO.getCity(), 1, 20, required, itemNumber);
+          
+          // State (optional, 2 char)
+          validateStringDemo( park, "State", aDemoTO.getState(), 2, 2, optional, itemNumber);          
+          
+          // Zip (required, 1 - 10 char)
+          validateStringDemo( park, "Zip", aDemoTO.getZip(), 1, 10, required, itemNumber);
+          
+          // Country (required, 1 - 20 char) 
+          validateStringDemo( park, "Country", aDemoTO.getCountry(), 1, 20, required, itemNumber);
+          
+          // Telephone (required, 1 - 14 char)
+          // Validate that if other ticket demographics have been provided, phone has been provided, as well.
+          // As of 2.16.1 APMP JTL          
+          validateStringDemo( park, "Telephone", aDemoTO.getTelephone(), 1, 14, required, itemNumber);
+          
+          // Email (optional, 1 - 50 char) 
+          validateStringDemo( park, "Email", aDemoTO.getEmail(), 1, 50, optional, itemNumber);
+          
+          // OptInSolicit (required, enum)
+          if (aDemoTO.getOptInSolicit() == null) {
+            throwFieldMissExcpt(park,"OptInSolicit",aTicketTO.getTktItem());
+          }
+          
         }
       }
     }
 
     return;
+  }
+  
+  /**
+   * Validate that the telephone is present on DLR Demo tickets.
+   * 
+   * @param tktListTO
+   * @throws DTIException
+   */
+  public static void validateDlrTicketDemo(ArrayList<TicketTO> tktListTO) throws DTIException {
+    
+    for (/* each */TicketTO aTicketTO : /* in */tktListTO) {
+      
+      // Telephone 
+      if (aTicketTO.getTicketDemoList().size() != 0) {
+        
+        for /* each */(DemographicsTO aDemoTO : /* in */aTicketTO.getTicketDemoList()) {
+          
+          String park = "DLR"; 
+          boolean optional = false;
+          boolean required = true;
+          BigInteger itemNumber = aTicketTO.getTktItem();
+
+          // FirstName (XSD required, 1 - 15 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              20, true, itemNumber);
+
+          
+          // LastName (XSD required, 1 - 20 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              20, true, itemNumber);
+          
+          // DateOfBirth (required, date) 
+          if (aDemoTO.getDateOfBirth() == null) {
+            throwFieldMissExcpt(park,"DateOfBirth",aTicketTO.getTktItem());
+          }
+          
+          // Gender (required, 1 char)
+          validateStringDemo( park, "Gender", aDemoTO.getGender(), 1, 1, required, itemNumber); 
+          
+          // Addr1 (required, 1 - 35 char)
+          validateStringDemo( park, "Addr1", aDemoTO.getAddr1(), 1, 35, required, itemNumber);
+          
+          // Addr2 (optional, 1 - 35 char)
+          validateStringDemo( park, "Addr2", aDemoTO.getAddr2(), 1, 35, optional, itemNumber);
+          
+          // City (required, 1 - 20 char)
+          validateStringDemo( park, "City", aDemoTO.getCity(), 1, 20, required, itemNumber);
+          
+          // State (optional, 2 char)
+          validateStringDemo( park, "State", aDemoTO.getState(), 2, 2, optional, itemNumber);          
+          
+          // Zip (required, 1 - 10 char)
+          validateStringDemo( park, "Zip", aDemoTO.getZip(), 1, 10, required, itemNumber);
+          
+          // Country (required, 2 char) 
+          // RULE: If tickets have demographics, the country code must be of
+          // length = 2. This is an oddity in the galaxy specification, but
+          // still compliant to the ISO codes.
+          validateStringDemo( park, "Country", aDemoTO.getCountry(), 2, 2, required, itemNumber);          
+          
+          // Telephone (required, 1 - 14 char)
+          validateStringDemo( park, "Telephone", aDemoTO.getTelephone(), 1, 14, optional, itemNumber);
+          
+          // Email (optional, 1 - 50 char) 
+          validateStringDemo( park, "Email", aDemoTO.getEmail(), 1, 50, optional, itemNumber);
+          
+          // OptInSolicit (required, enum)
+          if (aDemoTO.getOptInSolicit() == null) {
+            throwFieldMissExcpt(park,"OptInSolicit",aTicketTO.getTktItem());
+          }
+          
+        }
+      }
+    }
+
+    return;
+  }
+  
+  /**
+   * Validate that the telephone is present on HKDL Demo tickets.
+   * 
+   * @param tktListTO
+   * @throws DTIException
+   */
+  public static void validateHkdTicketDemo(ArrayList<TicketTO> tktListTO) throws DTIException {
+    
+    for (/* each */TicketTO aTicketTO : /* in */tktListTO) {
+      
+      // Telephone 
+      if (aTicketTO.getTicketDemoList().size() != 0) {
+        
+        for /* each */(DemographicsTO aDemoTO : /* in */aTicketTO.getTicketDemoList()) {
+          
+          String park = "HKD"; 
+          boolean optional = false;
+          boolean required = true;
+          BigInteger itemNumber = aTicketTO.getTktItem();
+
+          // FirstName (XSD required, 1 - 35 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              35, required, itemNumber);
+
+          
+          // LastName (XSD required, 1 - 35 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              35, required, itemNumber);
+          
+          // Gender (optional, 1 - 10 char)
+          validateStringDemo( park, "Gender", aDemoTO.getGender(), 1, 10, optional, itemNumber); 
+          
+          // Email (optional, 1 - 50 char) 
+          validateStringDemo( park, "Email", aDemoTO.getEmail(), 1, 50, optional, itemNumber);
+      
+          // DateOfBirth (optional, date) (Type-checked by XSD)
+          
+          // Cell Phone (optional, 1 - 35 char)
+          validateStringDemo( park, "CellPhone", aDemoTO.getCellPhone(), 1, 15, optional, itemNumber);
+          
+          // Telephone (optional, 1 - 50 char)
+          validateStringDemo( park, "Telephone", aDemoTO.getTelephone(), 1, 50, optional, itemNumber);
+          
+          // SellerRef (optional, 1 - 50 char)
+          validateStringDemo( park, "SellerRef", aDemoTO.getCellPhone(), 1, 50, optional, itemNumber);
+           
+        }
+      }
+    }
+
+    return;
+  }
+  
+  /**
+   * 
+   * @throws DTIException
+   */
+  private static void throwFieldMissExcpt(String park, String field, BigInteger item) throws DTIException {
+    
+    throw new DTIException(
+        ProductRules.class,
+        DTIErrorCode.INVALID_MSG_CONTENT,
+        "For " + park + ", " + field + " is a mandatory field for TktDemoData.  TktItem failing was " + item + ".");
+    
+  }
+  
+  /**
+   * 
+   * @param park
+   * @param fieldName
+   * @param fieldValue
+   * @param minLength
+   * @param maxLength
+   * @param isRequired
+   * @param item
+   * @throws DTIException
+   */
+  private static void validateStringDemo(String park, String fieldName, String fieldValue, int minLength, 
+      int maxLength, boolean isRequired, BigInteger item) throws DTIException {
+    
+    if ((isRequired) && (fieldValue == null)) {
+      throw new DTIException(
+          ProductRules.class,
+          DTIErrorCode.INVALID_MSG_CONTENT,
+          "For " + park + ", " + fieldName + " is a mandatory field for TktDemoData.  TktItem failing was " + item + ".");
+    } else if (!isRequired) {
+      return;
+    }
+    
+    int strLen = fieldValue.length();
+    
+    if ((strLen > maxLength) || (strLen < minLength)) {
+      throw new DTIException(
+          ProductRules.class,
+          DTIErrorCode.INVALID_MSG_CONTENT,
+          "For " + park + ", " + fieldName + " has invalid length for TktDemoData (expected "+ minLength +
+          " to " + maxLength + ", but found a length of " + strLen + ").");
+    }
+    
+    return;
+    
   }
 
 }

@@ -7,34 +7,40 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import com.disney.util.AbstractInitializer;
 import com.disney.util.PropertyHelper;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
+import pvt.disney.dti.gateway.dao.ErrorKey;
+import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
+import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
+import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.GiftCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
-import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
 import pvt.disney.dti.gateway.data.common.InstallmentTO;
+import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.VoucherTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO.CreditCardType;
 import pvt.disney.dti.gateway.data.common.EntityTO.DefaultPaymentType;
-import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTCreditCardTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicData;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTInstallmentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTVoucherTO;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO.OTTransactionType;
+import pvt.disney.dti.gateway.provider.hkd.data.HkdOTHeaderTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTCreditCardTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTDemographicData;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTDemographicInfo;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTFieldTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTInstallmentTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTPaymentTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTVoucherTO;
+import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
 import pvt.disney.dti.gateway.rules.TransformRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDBusinessRules;
 import pvt.disney.dti.gateway.util.DTIFormatter;
@@ -43,7 +49,7 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 /**
  * 
  * @author lewit019
- *
+ * @since 2.16.3
  */
 public class HKDBusinessRules {
 
@@ -55,6 +61,9 @@ public class HKDBusinessRules {
   
   /** Constant indicating the CAVV Format of Hex (Binary = 1 is not used). */
   private final static String CAVVFORMAT_HEX = "2";
+
+  /** Constant value for maximum description length. */
+  private final static int DESC_MAX_LENGTH = 25;
   
   /** Properties variable to store properties from AbstractInitializer. */
   private static Properties props = getProperties();
@@ -71,6 +80,9 @@ public class HKDBusinessRules {
   /** Indicates NO/false to solicit opt in (2.10) */
   public final static String NO = "NO";
   
+  /** Constant indicating no provider error. */
+  private final static String OT_NO_ERROR = "No error description.";
+  
   /**
    * Gets the properties for this application found in "dtiApp.properties"
    * 
@@ -78,7 +90,6 @@ public class HKDBusinessRules {
    */
   private static Properties getProperties() {
 
-    AbstractInitializer abstrInitl = null;
     Properties properties = null;
 
     // Get properties manager.
@@ -93,7 +104,6 @@ public class HKDBusinessRules {
 
     return properties;
   }
-  
   /**
    * For provider-centric rules only that are NOT transaction-centric.
    * This method is primarily for
@@ -157,11 +167,13 @@ public class HKDBusinessRules {
    * @throws DTIException
    *           for any error. Contains enough detail to formulate an error
    *           response to the seller.
-   * TODO
    */
   public static DTITransactionTO changeHKDProviderFormatToDti(
       DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
-    return null;
+    
+    transformResponse(dtiTxn, xmlResponse);
+
+    return dtiTxn;
   }
   
   /**
@@ -178,11 +190,11 @@ public class HKDBusinessRules {
    * @throws DTIException
    *           for any transformation error.
    */
-  static OTHeaderTO transformOTHeader(DTITransactionTO dtiTxn, String requestType, String requestSubType)
+  static HkdOTHeaderTO transformOTHeader(DTITransactionTO dtiTxn, String requestType, String requestSubType)
       throws DTIException {
 
-    OTHeaderTO hdr;
-    hdr = new OTHeaderTO();
+    HkdOTHeaderTO hdr;
+    hdr = new HkdOTHeaderTO();
 
     String referenceNumber = IAGO_PREFIX_VALUE + dtiTxn.getTpRefNum().toString();
     hdr.setReferenceNumber(referenceNumber);
@@ -243,10 +255,10 @@ public class HKDBusinessRules {
    * @param entityTO
    *          The entity transfer object.
    */
-  static void createOTPaymentList(ArrayList<OTPaymentTO> otPaymentList, ArrayList<PaymentTO> dtiPayList,
+  static void createOTPaymentList(ArrayList<HkdOTPaymentTO> otPaymentList, ArrayList<PaymentTO> dtiPayList,
       EntityTO entityTO) {
 
-    OTPaymentTO otPaymentTO = null;
+    HkdOTPaymentTO otPaymentTO = null;
 
     if ((dtiPayList == null) || (dtiPayList.size() == 0)) {
 
@@ -290,9 +302,9 @@ public class HKDBusinessRules {
    *          containing a voucher
    * @return a populated OTPaymentTO object populated for voucher.
    */
-  private static OTPaymentTO transformOTVoucherRequest(PaymentTO dtiPayment) {
+  private static HkdOTPaymentTO transformOTVoucherRequest(PaymentTO dtiPayment) {
 
-    OTPaymentTO otPaymentTO = new OTPaymentTO();
+    HkdOTPaymentTO otPaymentTO = new HkdOTPaymentTO();
     VoucherTO dtiVoucherTO = dtiPayment.getVoucher();
     String voucherNumber = dtiVoucherTO.getMainCode();
 
@@ -300,7 +312,7 @@ public class HKDBusinessRules {
     otPaymentTO.setPayItem(dtiPayment.getPayItem());
 
     // PayType
-    otPaymentTO.setPayType(OTPaymentTO.PaymentType.VOUCHER);
+    otPaymentTO.setPayType(HkdOTPaymentTO.PaymentType.VOUCHER);
 
     // PayAmount (if provided)
     if (dtiPayment.getPayAmount() != null) {
@@ -308,7 +320,7 @@ public class HKDBusinessRules {
     }
 
     // MasterCode for Voucher
-    OTVoucherTO otVoucherTO = new OTVoucherTO();
+    HkdOTVoucherTO otVoucherTO = new HkdOTVoucherTO();
     otVoucherTO.setMasterCode(voucherNumber);
 
     // UniqueCode for Voucher (if provided)
@@ -331,9 +343,9 @@ public class HKDBusinessRules {
    *          The DTI entity transfer object.
    * @return a populated OT Payment transfer object.
    */
-  private static OTPaymentTO transformOTPaymentRequest(PaymentTO dtiPaymentTO, EntityTO entityTO) {
+  private static HkdOTPaymentTO transformOTPaymentRequest(PaymentTO dtiPaymentTO, EntityTO entityTO) {
 
-    OTPaymentTO otPaymentTO = null;
+    HkdOTPaymentTO otPaymentTO = null;
 
     PaymentTO.PaymentType dtiPayType = dtiPaymentTO.getPayType();
 
@@ -371,21 +383,21 @@ public class HKDBusinessRules {
    *          The DTI entity transfer object.
    * @return a populated OT Payment transfer object.
    */
-  private static OTPaymentTO transformOTCreditCardRequest(PaymentTO dtiPayment, EntityTO entityTO) {
+  private static HkdOTPaymentTO transformOTCreditCardRequest(PaymentTO dtiPayment, EntityTO entityTO) {
 
-    OTPaymentTO otPaymentTO = new OTPaymentTO();
+    HkdOTPaymentTO otPaymentTO = new HkdOTPaymentTO();
 
     // PayItem
     otPaymentTO.setPayItem(dtiPayment.getPayItem());
 
     // PayType
-    otPaymentTO.setPayType(OTPaymentTO.PaymentType.CREDITCARD);
+    otPaymentTO.setPayType(HkdOTPaymentTO.PaymentType.CREDITCARD);
 
     // PayAmount
     otPaymentTO.setPayAmount(dtiPayment.getPayAmount());
 
     // Payment Details
-    OTCreditCardTO otCreditCard = new OTCreditCardTO();
+    HkdOTCreditCardTO otCreditCard = new HkdOTCreditCardTO();
     CreditCardTO dtiCreditCard = dtiPayment.getCreditCard();
 
     CreditCardTO.CreditCardType entryType = dtiCreditCard.getCcManualOrSwipe();
@@ -471,21 +483,21 @@ public class HKDBusinessRules {
    *          The DTI payment transfer object.
    * @return a populated OT Payment transfer object.
    */
-  private static OTPaymentTO transformOTGiftCardRequest(PaymentTO dtiPayment) {
+  private static HkdOTPaymentTO transformOTGiftCardRequest(PaymentTO dtiPayment) {
 
-    OTPaymentTO otPaymentTO = new OTPaymentTO();
+    HkdOTPaymentTO otPaymentTO = new HkdOTPaymentTO();
 
     // PayItem
     otPaymentTO.setPayItem(dtiPayment.getPayItem());
 
     // PayType
-    otPaymentTO.setPayType(OTPaymentTO.PaymentType.CREDITCARD);
+    otPaymentTO.setPayType(HkdOTPaymentTO.PaymentType.CREDITCARD);
 
     // PayAmount
     otPaymentTO.setPayAmount(dtiPayment.getPayAmount());
 
     // Payment Details
-    OTCreditCardTO otCreditCard = new OTCreditCardTO();
+    HkdOTCreditCardTO otCreditCard = new HkdOTCreditCardTO();
     GiftCardTO dtiGiftCard = dtiPayment.getGiftCard();
     GiftCardTO.GiftCardType entryType = dtiGiftCard.getGcManualOrSwipe();
 
@@ -514,22 +526,22 @@ public class HKDBusinessRules {
    *          containing a voucher
    * @return a populated OTPaymentTO object populated for voucher.
    */
-  private static OTPaymentTO transformOTInstallmentRequest(PaymentTO dtiPayment) {
+  private static HkdOTPaymentTO transformOTInstallmentRequest(PaymentTO dtiPayment) {
 
-    OTPaymentTO otPaymentTO = new OTPaymentTO();
+    HkdOTPaymentTO otPaymentTO = new HkdOTPaymentTO();
 
     // PayItem
     otPaymentTO.setPayItem(dtiPayment.getPayItem());
 
     // Installment Credit Card
-    OTInstallmentTO otInstallmentTO = new OTInstallmentTO();
+    HkdOTInstallmentTO otInstallmentTO = new HkdOTInstallmentTO();
     InstallmentTO dtiInstallTO = dtiPayment.getInstallment();
     
     // Determine the correct Contract Alpha Code (as of 2.16.2, JTL)
     if (dtiInstallTO.isForRenewal()) {
-      otInstallmentTO.setContractAlphaCode(OTInstallmentTO.CONTRACTALPHARENEWAL);
+      otInstallmentTO.setContractAlphaCode(HkdOTInstallmentTO.CONTRACTALPHARENEWAL);
     } else {
-      otInstallmentTO.setContractAlphaCode(OTInstallmentTO.CONTRACTALPHAPURCHASE);
+      otInstallmentTO.setContractAlphaCode(HkdOTInstallmentTO.CONTRACTALPHAPURCHASE);
     }
 
     CreditCardType cardType = dtiInstallTO.getCreditCard().getCcManualOrSwipe();
@@ -551,10 +563,7 @@ public class HKDBusinessRules {
       otInstallmentTO.setTrack2(creditCardTO.getCcTrack2());
     }
 
-    // InstallmentDemoData
-    ArrayList<OTFieldTO> otDemoList = otInstallmentTO.getDemographicData();
-    InstallmentDemographicsTO installDemoTO = dtiInstallTO.getInstllDemo();
-    transformInstallmentDemoData(installDemoTO, otDemoList);
+    // InstallmentDemoData (not used for HKDL)
 
     // PayAmount (if provided)
     if (dtiPayment.getPayAmount() != null) {
@@ -566,93 +575,6 @@ public class HKDBusinessRules {
     return otPaymentTO;
   }
 
-  /**
-   * Sets the installment demographics objects.
-   * 
-   * @since 2.15
-   * @param tktDemoList
-   * @param otDemoInfo
-   */
-  public static void transformInstallmentDemoData(InstallmentDemographicsTO installDemoTO,
-      ArrayList<OTFieldTO> otDemoList) {
-
-    // FirstName
-    String firstNameString = installDemoTO.getFirstName();
-    OTFieldTO aField = new OTFieldTO(OTFieldTO.INST_DEMO_FIRSTNAME, firstNameString);
-    otDemoList.add(aField);
-
-    // MiddleName (opt)
-    if (installDemoTO.getMiddleName() != null) {
-      String middleNameString = installDemoTO.getMiddleName();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_MIDLNAME, middleNameString);
-      otDemoList.add(aField);
-    }
-
-    // LastName
-    String lastNameString = installDemoTO.getLastName();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_LASTNAME, lastNameString);
-    otDemoList.add(aField);
-
-    // DateOfBirth MM/DD/YY (opt)
-    if (installDemoTO.getDateOfBirth() != null) {
-      SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-      String dobString = sdf.format(installDemoTO.getDateOfBirth().getTime());
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_DOB, dobString);
-      otDemoList.add(aField);
-    }
-
-    // Addr1
-    String addr1String = installDemoTO.getAddr1();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_ADDR1, addr1String);
-    otDemoList.add(aField);
-
-    // Addr2 (opt)
-    if (installDemoTO.getAddr2() != null) {
-      String addr2String = installDemoTO.getAddr2();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_ADDR2, addr2String);
-      otDemoList.add(aField);
-    }
-
-    // City
-    String cityString = installDemoTO.getCity();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_CITY, cityString);
-    otDemoList.add(aField);
-
-    // State
-    String stateString = installDemoTO.getState();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_STATE, stateString);
-    otDemoList.add(aField);
-
-    // ZIP
-    String zipString = installDemoTO.getZip();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_ZIP, zipString);
-    otDemoList.add(aField);
-
-    // Country
-    String countryString = installDemoTO.getCountry();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_COUNTRY, countryString);
-    otDemoList.add(aField);
-
-    // Telephone
-    String telephoneString = installDemoTO.getTelephone();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_TELEPHONE, telephoneString);
-    otDemoList.add(aField);
-
-    // AltTelephone (opt)
-    if (installDemoTO.getAltTelephone() != null) {
-      String altPhoneString = installDemoTO.getAltTelephone();
-      aField = new OTFieldTO(OTFieldTO.INST_DEMO_ALTPHONE, altPhoneString);
-      otDemoList.add(aField);
-    }
-
-    // Email
-    String emailString = installDemoTO.getEmail();
-    aField = new OTFieldTO(OTFieldTO.INST_DEMO_EMAIL, emailString);
-    otDemoList.add(aField);
-
-    return;
-  }
-  
   /**
    * Get the site number property used in OT transactions.
    * 
@@ -694,80 +616,313 @@ public class HKDBusinessRules {
    * @param tktDemoList
    * @param otDemoInfo
    */
-  public static void transformTicketDemoData(ArrayList<DemographicsTO> tktDemoList, OTDemographicInfo otDemoInfo) {
+  public static void transformTicketDemoData(ArrayList<DemographicsTO> tktDemoList, HkdOTDemographicInfo otDemoInfo) {
 
     for /* each */(DemographicsTO aDtiTicket : /* in */tktDemoList) {
 
-      OTDemographicData otDemoData = new OTDemographicData();
+      HkdOTDemographicData otDemoData = new HkdOTDemographicData();
 
-      // Last/First
-      String lastFirstString = DTIFormatter.websafe(aDtiTicket.getLastName().toUpperCase()) + "/"
-          + DTIFormatter.websafe(aDtiTicket.getFirstName().toUpperCase());
-      OTFieldTO aField = new OTFieldTO(OTFieldTO.TKT_DEMO_LASTFIRST, lastFirstString);
+      // Last Name
+      String lastNameString = DTIFormatter.websafe(aDtiTicket.getLastName().toUpperCase());
+      HkdOTFieldTO aField = new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_LASTNAME, lastNameString);
       otDemoData.addOTField(aField);
-
-      // Date of Birth MM/DD/YY
-      SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-      String dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_DATE_OF_BIRTH, dobString));
+      
+      // First Name
+      String firstNameString = DTIFormatter.websafe(DTIFormatter.websafe(aDtiTicket.getFirstName().toUpperCase()));
+      aField = new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_FIRSTNAME, firstNameString);
+      otDemoData.addOTField(aField);      
 
       // Gender
       if (aDtiTicket.getGenderType() == DemographicsTO.GenderType.UNSPECIFIED) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
       } else {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_GENDER, DTIFormatter.websafe(aDtiTicket.getGender()
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_GENDER, DTIFormatter.websafe(aDtiTicket.getGender()
+            .toUpperCase())));
+      }
+      
+      // Email (optional)
+      if (aDtiTicket.getEmail() != null) {
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_EMAIL, DTIFormatter.websafe(aDtiTicket.getEmail()
             .toUpperCase())));
       }
 
       // Address 1
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ADDRESS_ONE, DTIFormatter.websafe(aDtiTicket.getAddr1()
-          .toUpperCase())));
+//      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_ADDRESS_ONE, DTIFormatter.websafe(aDtiTicket.getAddr1()
+//          .toUpperCase())));
 
       // Address 2 (optional)
-      if (aDtiTicket.getAddr2() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ADDRESS_TWO, DTIFormatter.websafe(aDtiTicket.getAddr2()
-            .toUpperCase())));
+//      if (aDtiTicket.getAddr2() != null) {
+//        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_ADDRESS_TWO, DTIFormatter.websafe(aDtiTicket.getAddr2()
+//            .toUpperCase())));
+//      }
+      
+      // Date of Birth DD
+      SimpleDateFormat sdf = new SimpleDateFormat("dd");
+      String dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_DD, dobString));
+
+      // Date of Birth MM
+      sdf = new SimpleDateFormat("MM");
+      dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_MM, dobString));
+
+      // Date of Birth YYYY
+      sdf = new SimpleDateFormat("yyyy");
+      dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_YYYY, dobString));
+
+      
+      // Telephone (Mobile) 
+      if (aDtiTicket.getCellPhone() != null) {
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_MOBILEPHONE, DTIFormatter.websafe(aDtiTicket.getCellPhone())));
       }
 
       // City
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_CITY, DTIFormatter.websafe(aDtiTicket.getCity()
-          .toUpperCase())));
+//      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_CITY, DTIFormatter.websafe(aDtiTicket.getCity()
+//          .toUpperCase())));
 
       // State (optional)
-      if (aDtiTicket.getState() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_STATE, DTIFormatter.websafe(aDtiTicket.getState()
-            .toUpperCase())));
-      }
+//      if (aDtiTicket.getState() != null) {
+//        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_STATE, DTIFormatter.websafe(aDtiTicket.getState()
+//            .toUpperCase())));
+//      }
 
       // ZIP
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_ZIP, DTIFormatter.websafe(aDtiTicket.getZip())));
+//      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_ZIP, DTIFormatter.websafe(aDtiTicket.getZip())));
 
-      // Country
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_COUNTRY, DTIFormatter.websafe(aDtiTicket.getCountry()
+      // Country (not used for HKDL)
+
+      // Telephone (HOME)
+      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_HOMEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
           .toUpperCase())));
-
-      // Telephone
-      otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_TELEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
-          .toUpperCase())));
-
-      // Email (optional)
-      if (aDtiTicket.getEmail() != null) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_EMAIL, DTIFormatter.websafe(aDtiTicket.getEmail()
-            .toUpperCase())));
-      }
 
       // OptInSolicit (2.10)
-      if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_OPTINSOLICIT, HKDBusinessRules.YES));
-      } else {
-        otDemoData.addOTField(new OTFieldTO(OTFieldTO.TKT_DEMO_OPTINSOLICIT, HKDBusinessRules.NO));
+//      if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
+//        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_OKAYFORNEWS, HKDBusinessRules.YES));
+//      } else {
+//        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_OKAYFORNEWS, HKDBusinessRules.NO));
+//      }
+      
+      // Vendor Reference 
+      if (aDtiTicket.getSellerRef() != null) {
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_SELLERREF, 
+            DTIFormatter.websafe(aDtiTicket.getSellerRef())));
       }
-
+      
       otDemoInfo.addOTDemographicData(otDemoData);
 
     }
     return;
   }
 
+  /**
+   * Transforms a reservation response string from the WDW provider and updates
+   * the DTITransactionTO object with the response information.
+   * 
+   * @param dtiTxn
+   *          The transaction object for this request.
+   * @param xmlResponse
+   *          The WDW provider's response in string format.
+   * @return The DTITransactionTO object, enriched with the response
+   *         information.
+   * @throws DTIException
+   *           for any error. Contains enough detail to formulate an error
+   *           response to the seller.
+   */
+  private static DTIResponseTO transformResponse(DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
+
+    HkdOTCommandTO otCmdTO = HkdOTCommandXML.getTO(xmlResponse);
+
+    DTIResponseTO dtiRespTO = new DTIResponseTO();
+    dtiTxn.setResponse(dtiRespTO);
+
+    // Set up the Payload and Command Header Responses.
+    PayloadHeaderTO payloadHdrTO = TransformRules.createRespPayloadHdr(dtiTxn);
+    CommandHeaderTO commandHdrTO = TransformRules.createRespCmdHdr(dtiTxn);
+
+    dtiRespTO.setPayloadHeader(payloadHdrTO);
+    dtiRespTO.setCommandHeader(commandHdrTO);
+
+    // Check for blatant error
+    if (otCmdTO == null)
+      throw new DTIException(TransformRules.class, DTIErrorCode.UNDEFINED_FAILURE,
+          "Internal Error:  Omni XML translated into a response with null Command object.");
+    if (otCmdTO.getHeaderTO() == null)
+      throw new DTIException(TransformRules.class, DTIErrorCode.UNDEFINED_FAILURE,
+          "Internal Error:  Omni XML translated into a response with null Header object.");
+    if (otCmdTO.hasBodyObject() == false)
+      throw new DTIException(TransformRules.class, DTIErrorCode.UNDEFINED_FAILURE,
+          "Internal Error:  Omni XML translated into a response with null body object.");
+    if (otCmdTO.getErrorTO() == null)
+      throw new DTIException(TransformRules.class, DTIErrorCode.UNDEFINED_FAILURE,
+          "Internal Error:  Omni XML translated into a response with null Error object.");
+
+    String otRefNumString = otCmdTO.getHeaderTO().getReferenceNumber();
+    // Validate numeric reference number string
+    Integer.parseInt(otRefNumString.trim());
+
+    // Extract error code
+    Integer otErrorCode = otCmdTO.getErrorTO().getErrorCode();
+    dtiRespTO.setProviderErrCode(otErrorCode.toString());
+    if (otCmdTO.getErrorTO().getErrorDescription() != null) {
+      String errorString = otCmdTO.getErrorTO().getErrorDescription();
+      if (errorString.length() > DESC_MAX_LENGTH) {
+        errorString = errorString.substring(0, DESC_MAX_LENGTH);
+      }
+      dtiRespTO.setProviderErrName(errorString);
+    } else {
+      dtiRespTO.setProviderErrName(OT_NO_ERROR);
+    }
+
+    // If the provider had an error, map it and generate the response.
+    // Copy the ticket identity and default the TktStatus Voidable to No
+    // NOTE: Post error processing is only valid in the cases below - do not add.
+    if (otErrorCode.intValue() != 0) {
+
+      DTIErrorTO dtiErrorTO = ErrorKey.getTPErrorMap(otErrorCode.toString());
+
+      if (dtiErrorTO == null)
+        throw new DTIException(TransformRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+            "Internal Error:  Provider error code " + otErrorCode.toString()
+                + " does has have a translation in TP_ERROR table.");
+
+      DTIErrorCode.populateDTIErrorResponse(dtiErrorTO, dtiTxn, dtiRespTO);
+
+      /**
+       * Some transactions process the body portion translations or some
+       * contingency actions even if there is an error.
+       */
+      // Placeholder for QueryTicket, VoidTicket, UpgradeTicket
+      // when implemented for HKDL
+
+    } else {
+
+      // If the provider had no error, transform the response.
+      OTTransactionType requestType = otCmdTO.getTxnType();
+      TransactionType dtiTransType = dtiTxn.getTransactionType();
+
+      switch (requestType) {
+
+      case MANAGERESERVATION: // As of 2.16.1 BIEST001
+
+        switch (dtiTransType) {
+
+        case RESERVATION:
+          HKDReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+          break;
+
+        case QUERYRESERVATION:
+          HKDQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+          break;
+
+        default:
+          break;
+
+        }
+
+        break;
+
+      // ---------------------------------------------------------
+
+      default:
+        throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
+            "Invalid WDW transaction response sent to DTI Gateway.  Unsupported.");
+      }
+
+    }
+
+    return dtiRespTO;
+  }
+
+  /**
+   * Sets the DTI payment list transfer object list based upon the transfer
+   * objects created from the provider response.
+   * 
+   * @param dtiPmtList
+   *          The list of DTI payment transfer objects.
+   * @param otPmtList
+   *          The list of Omni Ticket Payment Transfer Objects.
+   */
+  static void setDTIPaymentList(ArrayList<PaymentTO> dtiPmtList, ArrayList<HkdOTPaymentTO> otPmtList) {
+
+    if ((otPmtList != null) && (otPmtList.size() > 0)) {
+
+      long counter = 0;
+      for /* each */(HkdOTPaymentTO otPaymentTO : /* in */otPmtList) {
+
+        if (otPaymentTO.getPayType() == HkdOTPaymentTO.PaymentType.VOUCHER) {
+          continue; // Nothing to do, here.
+        }
+
+        // Installment (as of 2.15, JTL)
+        if (otPaymentTO.getPayType() == HkdOTPaymentTO.PaymentType.INSTALLMENT) {
+          PaymentTO dtiPmtTO = new PaymentTO();
+          InstallmentTO installTO = new InstallmentTO();
+          HkdOTInstallmentTO OTinstall = otPaymentTO.getInstallment();
+
+          if (OTinstall.getContractId() != null) {
+            installTO.setContractId(OTinstall.getContractId());
+            dtiPmtTO.setInstallment(installTO);
+            dtiPmtList.add(dtiPmtTO);
+          } // Else do not add this to the response; it will cause NPEs.
+        }
+
+        if (otPaymentTO.getPayType() == HkdOTPaymentTO.PaymentType.CREDITCARD) {
+
+          PaymentTO dtiPmtTO = new PaymentTO();
+          dtiPmtTO.setPayItem(BigInteger.valueOf(++counter));
+
+          HkdOTCreditCardTO otCreditCardTO = otPaymentTO.getCreditCard();
+          if (otCreditCardTO.isGiftCardIndicator()) { // Gift Card
+
+            GiftCardTO dtiGiftCardTO = new GiftCardTO();
+            dtiGiftCardTO.setGcAuthCode(otCreditCardTO.getAuthErrorCode());
+            if (otCreditCardTO.getAuthNumber() != null)
+              dtiGiftCardTO.setGcAuthNumber(otCreditCardTO.getAuthNumber());
+
+            // AuthSystemResponse, as specified in the old gateway
+            // is
+            // not
+            // present in either the NeXML spec or in their normal
+            // responses.
+            // (omitted)
+            // dtiGiftCardTO.setGcAuthSysResponse(gcAuthSysResponse)
+
+            if (otCreditCardTO.getCcNumber() != null)
+              dtiGiftCardTO.setGcNumber(otCreditCardTO.getCcNumber());
+            if (otCreditCardTO.getRemainingBalance() != null)
+              dtiGiftCardTO.setGcRemainingBalance(otCreditCardTO.getRemainingBalance());
+            if (otCreditCardTO.getPromoExpDate() != null)
+              dtiGiftCardTO.setGcPromoExpDate(otCreditCardTO.getPromoExpDate());
+
+            dtiPmtTO.setGiftCard(dtiGiftCardTO);
+          } else { // Credit Card
+            CreditCardTO dtiCredCardTO = new CreditCardTO();
+            dtiCredCardTO.setCcAuthCode(otCreditCardTO.getAuthErrorCode());
+
+            if (otCreditCardTO.getAuthNumber() != null)
+              dtiCredCardTO.setCcAuthNumber(otCreditCardTO.getAuthNumber());
+
+            // AuthSystemResponse, as specified in the old gateway
+            // is not
+            // present in either the NeXML spec or in their normal
+            // responses. (omitted)
+            // dtiCredCardTO.setCcAuthSysResponse(ccAuthSysResponse);
+
+            if (otCreditCardTO.getCcNumber() != null)
+              dtiCredCardTO.setCcNumber(otCreditCardTO.getCcNumber());
+
+            dtiPmtTO.setCreditCard(dtiCredCardTO);
+
+          }
+
+          dtiPmtList.add(dtiPmtTO);
+        }
+
+      }
+
+    }
+    return;
+  }
   
  }
