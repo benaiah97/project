@@ -11,16 +11,16 @@ import java.util.TreeMap;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
 import com.disney.admin.util.ApplicationInfoUtility;
+
 import com.disney.graph.LineGraph;
 import com.disney.graph.MultiBarGraph;
 import com.disney.graph.PieChart;
+
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
+
 import com.disney.stats.StatsException;
-import com.disney.stats.StatsRecorder;
-import com.disney.stats.TransactionId;
-import com.disney.stats.TransactionStats;
 import com.disney.stats.report.ExternalSystemMessageReport;
 import com.disney.stats.report.ExternalSystemReport;
 import com.disney.stats.report.ExternalSystemsReport;
@@ -29,7 +29,13 @@ import com.disney.stats.report.MsgTypeReport;
 import com.disney.stats.report.MsgTypesReport;
 import com.disney.stats.report.StatsReport;
 import com.disney.stats.report.StatsType;
+
 import com.disney.util.Loader;
+
+import pvt.disney.dti.gateway.connection.StatsRecorder;
+import pvt.disney.dti.gateway.connection.TransactionId;
+import pvt.disney.dti.gateway.connection.TransactionStats;
+
 
 /**
  * Factory used for creating StatsReports from raw Statistics Data

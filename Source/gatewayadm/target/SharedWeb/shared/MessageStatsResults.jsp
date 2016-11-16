@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@ page import="com.disney.util.*,com.disney.xml.*,com.disney.admin.util.*,com.disney.msgstats.dao.*,com.disney.admin.statistics.*,com.disney.graph.*" errorPage="JSPError.jsp" %>
+<%@ page import="com.disney.util.*,com.disney.xml.*,com.disney.admin.util.*,pvt.disney.dti.gateway.connection.*,com.disney.admin.statistics.*,com.disney.graph.*" errorPage="JSPError.jsp" %>
 <HTML>
 <HEAD>
 <META name="GENERATOR" content="IBM WebSphere Studio">

@@ -2,7 +2,9 @@ package com.disney.admin.statistics;
 
 import java.util.List;
 
-import com.disney.msgstats.dao.MessageStats;
+//import com.disney.msgstats.dao.MessageStats;
+import pvt.disney.dti.gateway.connection.MessageStats;
+
 
 /**
  * @author FAV2

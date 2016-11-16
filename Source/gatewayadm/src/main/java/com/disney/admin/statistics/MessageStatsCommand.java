@@ -11,10 +11,15 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 import com.disney.admin.SharedAdminCommand;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
-import com.disney.msgstats.dao.MessageStats;
-import com.disney.msgstats.dao.MessageStatsKey;
 import com.disney.util.AbstractInitializer;
 import com.disney.util.PrintStack;
+
+//import com.disney.msgstats.dao.MessageStats;
+import pvt.disney.dti.gateway.connection.MessageStats;
+
+//import com.disney.msgstats.dao.MessageStatsKey;
+import pvt.disney.dti.gateway.connection.MessageStatsKey;
+
 
 /**
  * Message Statistics Admin Command

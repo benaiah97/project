@@ -12,9 +12,14 @@ import com.disney.graph.MultiBarGraph;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
-import com.disney.msgstats.dao.MessageStats;
-import com.disney.msgstats.dao.TimedEvent;
 import com.disney.util.Loader;
+
+//import com.disney.msgstats.dao.MessageStats;
+import pvt.disney.dti.gateway.connection.MessageStats;
+
+//import com.disney.msgstats.dao.TimedEvent;
+import pvt.disney.dti.gateway.connection.TimedEvent;
+
 
 /**
  * Factory used for providing Application Specific Logic and
