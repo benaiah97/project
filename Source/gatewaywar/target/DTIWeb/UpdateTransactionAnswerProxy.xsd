@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:updXactionAns="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTransactionAnswer"
-	targetNamespace="http://services.nexus.wdw.com/NexusTicketingService/types/UpdateTransactionAnswer" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xsd:include schemaLocation="UpdateTransactionAnswer.xsd" />
-</xsd:schema>

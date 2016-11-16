@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 (http://www.altova.com) by Shannon Moon(WALT DISNEY) -->
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:qEventsReq="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsRequest" targetNamespace="http://services.nexus.wdw.com/NexusTicketingService/types/QueryEventsRequest"
-	elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xsd:include schemaLocation="QueryEventsRequest.xsd" />
-</xsd:schema>
