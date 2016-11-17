@@ -54,6 +54,7 @@ import pvt.disney.dti.gateway.rules.dlr.DLRReservationRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeAlphaRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRVoidTicketRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDBusinessRules;
+import pvt.disney.dti.gateway.rules.hkd.HKDQueryReservationRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDReservationRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWAssociateMediaToAccountRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
@@ -795,7 +796,10 @@ public abstract class BusinessRules {
     }
 
     // Apply any rules unique to one provider.
-    // None at this time.
+    String tpiCode = dtiTxn.getTpiCode();
+    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_HKD) == 0) {
+      HKDQueryReservationRules.applyHKDQueryReservationRules(dtiTxn);
+    }
 
     return;
   }

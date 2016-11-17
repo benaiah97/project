@@ -10,6 +10,8 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.ErrorKey;
+import pvt.disney.dti.gateway.dao.TransidRescodeKey;
+import pvt.disney.dti.gateway.dao.data.TransidRescode;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -32,7 +34,7 @@ import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTProductTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketTO;
 import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
-//import pvt.disney.dti.gateway.rules.wdw.WDWReservationRules;
+import pvt.disney.dti.gateway.rules.BusinessRules;
 
 /**
  * 
@@ -41,8 +43,6 @@ import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
  */
 public class HKDQueryReservationRules {
 
-
-  //private static final Class<WDWQueryReservationRules> THISOBJECT = WDWQueryReservationRules.class;
 
   /** Request type header constant. */
   private final static String REQUEST_TYPE_MANAGE = "Manage";
@@ -280,18 +280,40 @@ public class HKDQueryReservationRules {
   }
 
   /**
-   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
+   * If a type of transaction has a specific number of provider centric rules, implement them here, 
+   * but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
    * Implements the following rules:<BR>
    * 
-   * - n/a
+   * If payload ID is provided 
    * 
    * @param dtiTxn
    *            The transaction object for this request.
    * @throws DTIException
    *             for any rules violation.
    */
-  public static void applyWDWQueryReservationRules(DTITransactionTO dtiTxn) throws DTIException {
+  public static void applyHKDQueryReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
+    DTIRequestTO dtiRequest = dtiTxn.getRequest();
+    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+    QueryReservationRequestTO dtiResReq = (QueryReservationRequestTO) dtiCmdBody;
+    
+    /** Recover reservation code here */
+    String resCode = null;
+    if (dtiResReq.getPayloadID() != null) {
+      String payloadId = dtiResReq.getPayloadID();
+      ArrayList<TransidRescode> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      
+      if (rescodeArray.size() == 0) {
+        throw new DTIException(
+            BusinessRules.class,
+            DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,
+            "Query Reservation attempted with payload ID which has not yet created a reservation code in DTI.");
+      }
+      TransidRescode rescodeTO = rescodeArray.get(0);
+      resCode = rescodeTO.getRescode();
+      dtiResReq.setResCode(resCode);        
+    }
+      
     return;
 
   }
