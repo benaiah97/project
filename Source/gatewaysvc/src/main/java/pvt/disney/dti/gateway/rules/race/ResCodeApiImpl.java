@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package pvt.disney.dti.gateway.rules.race;
 
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
@@ -6,9 +9,8 @@ import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
  * The Class ResCodeApi.
  *
  * @author MOONS012
- * @since 2.16.3
  */
-public class ResCodeApiImpl implements ResCodeApiI {
+public class ResCodeApiImpl implements ResCodeApi {
 
 	/** The instance. */
 	private static ResCodeApiImpl instance = new ResCodeApiImpl();

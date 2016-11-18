@@ -43,9 +43,16 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.11</version> <!-- should update to 4.12+ once we can update contiperf -->
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+            <groupId>org.databene</groupId>
+            <artifactId>contiperf</artifactId>
+            <version>2.3.4</version> <!-- should update to 2.4.3 once it is in a repo -->
+            <scope>test</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>javanettasks</groupId>
@@ -62,7 +69,29 @@
 			<version>1.2.16</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.7</version>
+		</dependency>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.21</version>
+		</dependency>
 
 		<!-- BEGIN XML -->
 		<!-- Sun jaxb, from ws dev pack -->

@@ -7,9 +7,8 @@ import java.util.Calendar;
  * A Value Object that holds results of algorithm calculations for Step One
  * 
  * @author moons012
- * @since 2.16.3
  */
-public class StepOneVO {
+public class StepOneVO extends ParentStepVO {
 
 	/** The date array. */
 	private int[][] dateArray;
@@ -27,6 +26,7 @@ public class StepOneVO {
 	 * Instantiates a new step one value object.
 	 */
 	public StepOneVO() {
+		super();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class StepOneVO {
 	 *
 	 * @param multipliedDateTimeArray the new multiplied date time array
 	 */
-	public void setMultipliedDateTimeArray(int[][] multipliedDateTimeArray) {
+	public void setResultMultipliedDateTimeArray(int[][] multipliedDateTimeArray) {
 		this.resultMultipliedDateTimeArray = multipliedDateTimeArray;
 	}
 
@@ -99,6 +99,34 @@ public class StepOneVO {
 	 */
 	public void setCalendar(Calendar calendar) {
 		this.calendar = calendar;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepOneVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("calendar=");
+		buff.append(calendar.getTime());
+		buff.append(System.lineSeparator());
+		buff.append("dateArray:");
+		buff.append(System.lineSeparator());
+		buff.append(this.convert2DIntArrayToString(dateArray));
+		buff.append(System.lineSeparator());
+		buff.append("timeArray:");
+		buff.append(System.lineSeparator());
+		buff.append(this.convert2DIntArrayToString(timeArray));
+		buff.append(System.lineSeparator());
+		buff.append("resultMultipliedDateTimeArray:");
+		buff.append(System.lineSeparator());
+		buff.append(this.convert2DIntArrayToString(resultMultipliedDateTimeArray));
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
 	}
 
 }

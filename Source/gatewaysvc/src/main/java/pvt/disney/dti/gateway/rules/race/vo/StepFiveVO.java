@@ -5,10 +5,9 @@ package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
  * @author MOONS012
- * @since 2.16.3
  *
  */
-public class StepFiveVO {
+public class StepFiveVO extends ParentStepVO {
 
 	/** The final alpha result for the suffix on the reservation code. */
 	private String finalAlphaResult;
@@ -17,6 +16,7 @@ public class StepFiveVO {
 	 * Default constructor
 	 */
 	public StepFiveVO() {
+		super();
 	}
 
 
@@ -32,5 +32,22 @@ public class StepFiveVO {
 	 */
 	public void setFinalAlphaResult(String finalAlphaValue) {
 		this.finalAlphaResult = finalAlphaValue;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepFiveVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("finalAlphaResult=");
+		buff.append(finalAlphaResult);
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
 	}
 }

@@ -4,9 +4,8 @@ package pvt.disney.dti.gateway.rules.race.vo;
  * The Class StepSevenVO.
  * 
  * @author MOONS012
- * @since 2.16.3
  */
-public class StepSevenVO {
+public class StepSevenVO extends ParentStepVO {
 
 	/** The draft code. */
 	private char[] draftCode;
@@ -15,6 +14,7 @@ public class StepSevenVO {
 	 * Instantiates a new step seven VO.
 	 */
 	public StepSevenVO() {
+		super();
 	}
 
 	/**
@@ -34,5 +34,20 @@ public class StepSevenVO {
 	public void setDraftCode(char[] draftCode) {
 		this.draftCode = draftCode;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepSevenVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("draftCode=");
+		buff.append(String.valueOf(draftCode));
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
+	}
 }

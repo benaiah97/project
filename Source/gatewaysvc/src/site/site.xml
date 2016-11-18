@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="RACE">
+  <bannerLeft>
+    <name>RACE</name>
+    <src>/images/race_logo_115x80.png</src>
+    <href>https://confluence.disney.com/display/SET/RACE</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>/images/eticketstudiologo_139x80.png</src>
+  </bannerRight>
+  
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.2.1</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <sideBarEnabled>true</sideBarEnabled>
+            <!--  
+            <googlePlusOne />
+            -->
+        </fluidoSkin>
+    </custom>
+  
+  <body>
+    <links>
+      <item name="Apache" href="http://www.apache.org/" />
+      <item name="Maven 3" href="http://maven.apache.org/"/>
+      <item name="RefDocs" href="https://dtidev.disney.pvt/refdocs/" />
+      <item name="Race Docs" href="https://confluence.disney.com/display/SET/RACE" />
+    </links>
+
+
+
+    <menu ref="reports"/>
+
+  </body>
+</project>

@@ -5,10 +5,9 @@ package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
  * @author MOONS012
- * @since 2.16.3
  *
  */
-public class StepFourVO {
+public class StepFourVO extends ParentStepVO {
 
 	/** The result matrix. */
 	private int[][] resultMatrix;
@@ -17,6 +16,7 @@ public class StepFourVO {
 	 * Default Constructor
 	 */
 	public StepFourVO() {
+		super();
 	}
 
 	/**
@@ -33,4 +33,21 @@ public class StepFourVO {
 		this.resultMatrix = resultMatrix;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepFourVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("resultMatrix:");
+		buff.append(System.lineSeparator());
+		buff.append(convert2DIntArrayToString(resultMatrix));
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
+	}
 }

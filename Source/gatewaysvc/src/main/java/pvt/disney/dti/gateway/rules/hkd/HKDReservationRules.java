@@ -57,7 +57,6 @@ import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
-import pvt.disney.dti.gateway.rules.race.ResCodeApiI;
 import pvt.disney.dti.gateway.rules.race.ResCodeApiImpl;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
@@ -193,7 +192,7 @@ public class HKDReservationRules {
       HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
       AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
       String sellerResPrefix = resPrefixAttr.getAttrValue();    
-      ResCodeApiI resCodeGenerator = ResCodeApiImpl.getInstance();
+      ResCodeApiImpl resCodeGenerator = ResCodeApiImpl.getInstance();
       resCode = resCodeGenerator.generateResCode(sellerResPrefix);
       TransidRescodeKey.insertTransIdRescode(payloadId, resCode);
       

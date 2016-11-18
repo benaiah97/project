@@ -1,7 +1,13 @@
+/**
+ * 
+ */
 package pvt.disney.dti.gateway.rules.race.utility;
+
+
 
 import static org.junit.Assert.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -10,6 +16,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.rules.race.vo.StepEightVO;
@@ -31,6 +39,9 @@ import pvt.disney.dti.gateway.rules.race.vo.StepTwoVO;
  */
 public class AlgorithmUtilityTest {
 
+	/** The Constant logger. */
+	private static final Logger logger = LoggerFactory.getLogger(AlgorithmUtilityTest.class);
+	
 	/** The util. */
 	private static AlgorithmUtility util;
 	
@@ -41,7 +52,7 @@ public class AlgorithmUtilityTest {
 	//DEFAULT TICKET SELLER IS EXPEDIA
 	final String DEFAULT_SELLER = "XP";
 	final int DEFAULT_YEAR = 2012;
-	final int DEFAULT_MONTH =3, SINGLE_DIGIT_MONTH = 3, DOUBLE_DIGIT_MONTH=10;
+	final int DEFAULT_MONTH = 3, SINGLE_DIGIT_MONTH = 3, DOUBLE_DIGIT_MONTH=10;
 	final int DEFAULT_DAY_OF_MONTH = 9, SINGLE_DIGIT_DAY_OF_MONTH = 9, DOUBLE_DIGIT_DAY_OF_MONTH = 10;
 	final int DEFAULT_HOUR = 14, SINGLE_DIGIT_HOUR = 1, DOUBLE_DIGIT_HOUR = 14;
 	final int DEFAULT_MINUTE = 50, SINGLE_DIGIT_MINUTE= 4, DOUBLE_DIGIT_MINUTE = 50;
@@ -190,9 +201,15 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test 
 	public void testStep1() {
+		//setup default calendar. when it generates it does not include milliseconds
+		//so we add our default millisecond value for testing the default seed
+		//from the algorithm doc
 		DEFAULT_CALENDAR.set(Calendar.MILLISECOND, DEFAULT_MILLIS);
 		
 		StepOneVO step1 = util.stepOne(DEFAULT_CALENDAR);
+		SimpleDateFormat format1 = new SimpleDateFormat("MM");
+		String formatted = format1.format(DEFAULT_CALENDAR.getTime());
+
 		//check date array
 		int[][] dateArray = step1.getDateArray();
 		
@@ -243,6 +260,8 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expected value for cell [1][1] was 12, but was found to be " + multipliedArray[1][1], multipliedArray[1][1] == 12);
 		
 		TEST_STEPONE = step1;
+
+		logger.debug("TEST_STEP_ONE:{}", step1);
 	}
 
 	/**
@@ -253,8 +272,10 @@ public class AlgorithmUtilityTest {
 		//get argument for step 2
 		//neeed to add milliseconds to calendar
 		DEFAULT_CALENDAR.set(Calendar.MILLISECOND, DEFAULT_MILLIS);
+		
 		StepOneVO step1 = util.stepOne(DEFAULT_CALENDAR);
 		int forcePrime = 41;
+		
 		//get the step 2 vo
 		StepTwoVO step2 = util.stepTwoSpecificPrime(step1, forcePrime);
 		
@@ -263,19 +284,31 @@ public class AlgorithmUtilityTest {
 		int determinantPlusSeed = step2.getResult();
 		int[][] seedArray = step2.getSeedArray();
 		
-		//check the seed array was built correctly
-		assertTrue("Expected seed [0] to be 7 but was " + seedArray[0][0], seedArray[0][0] == 7);
-		assertTrue("Expected seed[1] to be 1 but was " + seedArray[0][1],  seedArray[0][1] == 1);
-		assertTrue("Expected seed[2] to be 41 but was " + seedArray[0][2], seedArray[0][2] == 41);
+		//check 1st row built correctly
+		assertTrue("Expected seed[0][0] to be 1 but was " + seedArray[0][0], seedArray[0][0] == 1);
+		assertTrue("Expected seed[0][1] to be 5 but was " + seedArray[0][1], seedArray[0][1] == 5);
+		assertTrue("Expected seed[0][2] to be 5 but was " + seedArray[0][2], seedArray[0][2] == 5);
+		
+		//check 2nd row built correctly
+		assertTrue("Expected seedArray[1][0] to be 4 but was " + seedArray[1][0], seedArray[1][0] == 4);
+		assertTrue("Expected seedArray[1][1] to be 0 but was " + seedArray[1][1], seedArray[1][1] == 0);
+		assertTrue("Expected seedArray[1][2] to be 0 but was " + seedArray[1][2], seedArray[1][2] == 0);
+		
+		//check the 3rd row seed array was built correctly
+		assertTrue("Expected seed[2][0] to be 7 but was " + seedArray[2][0], seedArray[2][0] == 7);
+		assertTrue("Expected seed[2][1] to be 1 but was " + seedArray[2][1],  seedArray[2][1] == 1);
+		assertTrue("Expected seed[2][2] to be 41 but was " + seedArray[2][2], seedArray[2][2] == 41);
 		
 		
 		//check determinant is -800 per running test using example values in algorithm spec
 		assertTrue("Determinant should be -800 but was " + determinant, determinant == -800);
 		
-		//check that the result of adding the determinant and seed was correct, per spec should -793
+		//check that the result of adding the determinant and seed was corect, per spec should -793
 		assertTrue("Determinant plus seed1 should be -793 but was " + determinant, determinantPlusSeed == -793);
 		
 		TEST_STEPTWO = step2; //save for later tests
+		
+		logger.debug("TEST_STEPTWO:{}", step2);
 	}
 
 	/**
@@ -292,6 +325,8 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expeceted 27 but got " + result, result == 27);
 		//set for later tests
 		TEST_STEPTHREE = step3; //save for later tests 
+
+		logger.debug("TEST_STEPTHREE:{}", step3);
 	}
 
 	/**
@@ -310,6 +345,8 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expected cell [1][1] to be 15 but was " + resultMatrix[1][1], resultMatrix[1][1] == 15);
 		//set for later tests
 		TEST_STEPFOUR = step4;
+
+		logger.debug("TEST_STEPFOUR:{}", step4);
 	}
 
 	/**
@@ -322,6 +359,8 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expect the alphanumeric character 9, but got " + step5.getfinalAlphaResult(), step5.getfinalAlphaResult().equals("9") );
 		//set for later steps
 		TEST_STEPFIVE = step5;
+		
+		logger.debug("TEST_STEPFIVE:{}", step5);
 	}
 
 	/**
@@ -335,6 +374,8 @@ public class AlgorithmUtilityTest {
 		
 		//set for later tests
 		TEST_STEPSIX = step6;
+		
+		logger.debug("TEST_STEPSIX:{}", step6);
 	}
 
 	/**
@@ -359,6 +400,8 @@ public class AlgorithmUtilityTest {
 		
 		//save for later tests
 		TEST_STEPSEVEN = step7;
+
+		logger.debug("TEST_STEPSEVEN:{}", step7);
 	}
 
 	/**
@@ -381,6 +424,8 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expected V but got " + chars[1], chars[1] == 'V');
 		
 		TEST_STEPEIGHT = step8;
+		
+		logger.debug("TEST_STEPEIGHT:{}", step8);
 	}
 
 	/**
@@ -392,6 +437,9 @@ public class AlgorithmUtilityTest {
 		
 		String expectedCode = "XP229Y27MV31";
 		assertTrue("expected " + expectedCode + " but got " + step9.getFinalResCode(), step9.getFinalResCode().equals(expectedCode));
+	
+		
+		logger.debug("TEST_STEPNINE:{}", step9);
 	}
 
 	/**
@@ -417,6 +465,8 @@ public class AlgorithmUtilityTest {
 		//check year values - using some local named variables to make the assert logic more human readable
 		assertTrue("Expected 1st digit of year in element to be " + TEST_YEAR1_VALUE + " but was" + dateArray[YEAR1_ROW_INDEX][YEAR1_COLUMN_INDEX], dateArray[YEAR1_ROW_INDEX][YEAR1_COLUMN_INDEX] == TEST_YEAR1_VALUE);
 		assertTrue("Expected 2nd digit of year in element to be " + TEST_YEAR2_VALUE + " but was" + dateArray[YEAR2_ROW_INDEX][YEAR2_COLUMN_INDEX], dateArray[YEAR2_ROW_INDEX][YEAR2_COLUMN_INDEX] == TEST_YEAR2_VALUE);
+	
+	
 	}
 	
 	/**
@@ -499,7 +549,6 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expected 1st digit of the minute to be " + TEST_DOUBLE_DIGIT_MINUTE1_VALUE + " but was " + timeArray[MINUTE1_ROW_INDEX][MINUTE1_COLUMN_INDEX], timeArray[MINUTE1_ROW_INDEX][MINUTE1_COLUMN_INDEX] == TEST_DOUBLE_DIGIT_MINUTE1_VALUE);
 		assertTrue("Expected 2nd digit of the minute to be " + TEST_DOUBLE_DIGIT_MINUTE2_VALUE + " but was " + timeArray[MINUTE2_ROW_INDEX][MINUTE2_COLUMN_INDEX], timeArray[MINUTE2_ROW_INDEX][MINUTE2_COLUMN_INDEX] == TEST_DOUBLE_DIGIT_MINUTE2_VALUE);
 		
-		
 		//check the seconds columns
 		//check the minute columns
 		assertTrue("Expected 1st digit of the seconds to be " + TEST_DOUBLE_DIGIT_SECONDS1_VALUE + " but was " + timeArray[SECONDS1_ROW_INDEX][SECONDS1_COLUMN_INDEX], timeArray[SECONDS1_ROW_INDEX][SECONDS1_COLUMN_INDEX] == TEST_DOUBLE_DIGIT_SECONDS1_VALUE);
@@ -522,8 +571,8 @@ public class AlgorithmUtilityTest {
 			int[][] timeArray = util.buildTimeArray(THE_DATE);
 			
 			//now get the multipled array
-			int[][] multipliedArray = util.multiplyDateAndTimeArrays(dateArray, timeArray);
-			
+			int[][] multipliedArray = util.multiplyByMatrix(dateArray, timeArray);
+				
 			//now check for expected values
 			//multipliedArray[0][0] should = 5
 			assertTrue("Expected value for cell [0][0] was 5, but was found to be " + multipliedArray[0][0], multipliedArray[0][0] == 5);
@@ -553,14 +602,16 @@ public class AlgorithmUtilityTest {
 			//seedArray should be milliseconds, counter, prime
 			int[][] seedArray = util.buildSeedArray(date);
 			
-			//check first value at [0][0]
-			assertTrue("Expected seed [0][0] (milliseconds) to be " + TEST_MILLIS + " but was found to be " + seedArray[0][0],  TEST_MILLIS == seedArray[0][0]);
+			//TODO check row 1
+			//TODO Check row 2
 			
-			//check 2nd (counter) value at [0][1]
-			assertTrue("Expected milli [0][1] (counter) to be " + TEST_COUNTER + ", but was found to be " + seedArray[0][1],  TEST_COUNTER == seedArray[0][1] );
-			
+			//check row 3
+			//check first value at [2][0]
+			assertTrue("Expected seed [2][0] (milliseconds) to be " + TEST_MILLIS + " but was found to be " + seedArray[2][0],  TEST_MILLIS == seedArray[2][0]);		
+			//check 2nd (counter) value at [2][1]
+			assertTrue("Expected milli [2][1] (counter) to be " + TEST_COUNTER + ", but was found to be " + seedArray[2][1],  TEST_COUNTER == seedArray[2][1] );
 			//check 3rd value at [0][2]
-			assertTrue("Expected milli [0][2] to be PRIME, but was found to be not prime, " + seedArray[0][2],  true == isPrime(seedArray[0][2]));
+			assertTrue("Expected milli [2][2] to be PRIME, but was found to be not prime, " + seedArray[2][2],  true == isPrime(seedArray[2][2]));
 		}
 		
 		/**

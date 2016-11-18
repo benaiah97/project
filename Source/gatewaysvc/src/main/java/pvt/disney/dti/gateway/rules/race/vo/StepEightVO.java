@@ -4,9 +4,8 @@ package pvt.disney.dti.gateway.rules.race.vo;
  * The Class StepEightVO.
  * 
  * @author MOONS012
- * @since 2.16.3
  */
-public class StepEightVO {
+public class StepEightVO extends ParentStepVO {
 
 	/** The matrix. */
 	private int[][] matrix;
@@ -18,6 +17,7 @@ public class StepEightVO {
 	 * Instantiates a new step eight VO.
 	 */
 	public StepEightVO() {
+		super();
 	}
 
 	/**
@@ -52,5 +52,23 @@ public class StepEightVO {
 		this.finalChars = finalChars;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepEightVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("matrix:");
+		buff.append(System.lineSeparator());
+		buff.append(this.convert2DIntArrayToString(matrix));
+		buff.append(System.lineSeparator());
+		buff.append("finalChars=");
+		buff.append(String.valueOf(finalChars));
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
+	}
 }

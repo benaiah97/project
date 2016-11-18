@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package pvt.disney.dti.gateway.rules.race.utility;
 
 import java.math.BigInteger;
@@ -6,6 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pvt.disney.dti.gateway.rules.race.vo.StepEightVO;
 import pvt.disney.dti.gateway.rules.race.vo.StepFiveVO;
@@ -22,9 +28,11 @@ import pvt.disney.dti.gateway.rules.race.vo.StepTwoVO;
  * math calculations used by the RaceAPI.
  *
  * @author MOONS012
- * @since 2.16.3
  */
 public class AlgorithmUtility {
+	
+	/** The logger. */
+	private static final Logger logger = LoggerFactory.getLogger(AlgorithmUtility.class);
 	
 	/** The seed counter. Accessor methods are protected as we don't really won't them used outside of the race module.
 	 * Incrementation and reset to zer0 are handled by the buildCounter method. */
@@ -32,6 +40,8 @@ public class AlgorithmUtility {
 	
 	/** The Constant MOD_CONSTANT. */
 	private static final int MOD_CONSTANT=33;
+	
+	/** The last time
 	
 	/** CONSTANT array is used to translate a number to its equivalent alpha or numeric representation in several steps.
 	 * _ char is added at 0 index so we can start at one to more easily match algorithm spec document
@@ -50,9 +60,11 @@ public class AlgorithmUtility {
 		//VO for that step. This was done so that comprehensive unit tests could be written that would be
 		//able to test the calculations of each step and within each step.
 		StringBuffer resCode = new StringBuffer();
-
+		
 		// setup to get the date we will use for step one
 		Calendar theDate = new GregorianCalendar();
+	
+		logger.debug("Begin generateRescode:{}", theDate.getTime());
 	
 		// Algorithm Step 1. Perform   matrix multiplication (mm/dd/yy * hh:mm:ss) to derive a 2x2 matrix. 
 		StepOneVO stepOneVO = AlgorithmUtility.stepOne(theDate);
@@ -92,6 +104,18 @@ public class AlgorithmUtility {
 		//and finally return the created rescode
 		resCode.append(stepNineVO.getFinalResCode());
 		
+		//log each step
+		logger.debug("StepOne: {}", stepOneVO);
+		logger.debug("StepTwo: {}", stepTwoVO);
+		logger.debug("StepThree: {}", stepThreeVO);
+		logger.debug("StepFour: {}", stepFourVO);
+		logger.debug("StepFive: {}", stepFiveVO);
+		logger.debug("StepSix: {}", stepSixVO);
+		logger.debug("StepSeven: {}", stepSevenVO);
+		logger.debug("StepEight: {}", stepEightVO);
+		logger.debug("StepNine: {}", stepNineVO);
+		logger.debug("End generateRescode:{}", theDate.getTime());
+		
 		return resCode.toString();
 	}
 	
@@ -117,8 +141,9 @@ public class AlgorithmUtility {
 		stepOneVO.setTimeArray(timeArrayMatrix);
 		
 		//4 multiple date array by Times Array and set on vo
-		int[][] multipliedArray = multiplyDateAndTimeArrays(dateArrayMatrix, timeArrayMatrix);
-		stepOneVO.setMultipliedDateTimeArray(multipliedArray);
+		int [][] multipliedArray = multiplyByMatrix(dateArrayMatrix, timeArrayMatrix);
+		
+		stepOneVO.setResultMultipliedDateTimeArray(multipliedArray);
 		
 		return stepOneVO;
 	}
@@ -134,17 +159,17 @@ public class AlgorithmUtility {
 	 */
 	protected static StepTwoVO stepTwo(StepOneVO stepOne) {
 		StepTwoVO stepTwo = new StepTwoVO();
-		int MILLI_ROW = 0, MILLI_COL = 0;
+		int MILLI_ROW = 2, MILLI_COL = 0;
 		
-		//build the millisecond seed array and set it on step two vo
+		//build the millisecond seed array and set it on step two vo (overriding the prime)
 		int[][] seedArray = buildSeedArray(stepOne.getCalendar());
-
 		stepTwo.setSeedArray(seedArray);
 		
-		//compute the determinant using timeMatrix and milliMatrix
-		int determinant = computeStepTwoDeterminant(stepOne.getTimeArray(), seedArray);
+		//compute the determinant using seed matrix
+		int  milliSeedValue = seedArray[MILLI_ROW][MILLI_COL]; 
+		int determinant = computeStepTwoDeterminant(seedArray);
 		//add the determinant and the millisecond value from the seedArrray
-		int result = determinant + seedArray[MILLI_ROW][MILLI_COL]; 
+		int result = determinant + milliSeedValue;
 		
 		//set the computed values on the returned vo for this step
 		stepTwo.setDeterminant(determinant);
@@ -157,23 +182,23 @@ public class AlgorithmUtility {
 	 * Step two specific prime. - used for testing only
 	 *
 	 * @param stepOne the step one
-	 * @param prime the prime
+	 * @param breakPrimeDirective the prime
 	 * @return the step two VO
 	 */
-	protected static StepTwoVO stepTwoSpecificPrime(StepOneVO stepOne, int prime) {
+	protected static StepTwoVO stepTwoSpecificPrime(StepOneVO stepOne, int breakPrimeDirective) {
 		StepTwoVO stepTwo = new StepTwoVO();
-		int MILLI_ROW = 0, MILLI_COL = 0;
+		int MILLI_ROW = 2, MILLI_COL = 0;
 		
-		//build the millisecond seed array and set it on step two vo
+		//build the millisecond seed array and set it on step two vo (overriding the prime)
 		int[][] seedArray = buildSeedArray(stepOne.getCalendar());
-		seedArray[0][2]= prime; //override the prime with a specific prime value
+		seedArray[2][2] = breakPrimeDirective;
 		stepTwo.setSeedArray(seedArray);
 		
-		
-		//compute the determinant using timeMatrix and milliMatrix
-		int determinant = computeStepTwoDeterminant(stepOne.getTimeArray(), seedArray);
+		//compute the determinant using seed matrix
+		int  milliSeedValue = seedArray[MILLI_ROW][MILLI_COL]; 
+		int determinant = computeStepTwoDeterminant(seedArray);
 		//add the determinant and the millisecond value from the seedArrray
-		int result = determinant + seedArray[MILLI_ROW][MILLI_COL]; 
+		int result = determinant + milliSeedValue;
 		
 		//set the computed values on the returned vo for this step
 		stepTwo.setDeterminant(determinant);
@@ -186,30 +211,33 @@ public class AlgorithmUtility {
 	/**
 	 * Private helper method. Used in step two to compute step two determinant.
 	 *
-	 * @param timeArray the time array
 	 * @param seedArray the seed array
 	 * @return the int
 	 */
-	protected static int computeStepTwoDeterminant(int[][] timeArray, int[][] seedArray) {		
+	protected static int computeStepTwoDeterminant(int[][] seedArray) {		
 		//grab the values from the matrices to make this slightly more human readable
-		int hour1 = timeArray[0][0];
-		int hour2 = timeArray[0][1];
-		int min1 = timeArray[1][0];
-		int min2 = timeArray[1][1];
-		int sec1 = timeArray[2][0];
-		int sec2 = timeArray[2][1];
+		//row 1
+		int hourDigit1 = seedArray[0][0];
+		int minDigit1  = seedArray[0][1];
+		int secDigit1 = seedArray[0][2];
 		
-		int seed1 = seedArray[0][0]; //millisecond seed
-		int seed2 = seedArray[0][1];
-		int seed3 = seedArray[0][2];
+		//row 2
+		int hourDigit2 = seedArray[1][0];
+		int minDigit2 = seedArray[1][1];
+		int secDegit2 = seedArray[1][2];
+		
+		//row 3
+		int seed1Milli = seedArray[2][0]; //millisecond seed
+		int seed2Counter = seedArray[2][1]; //couu
+		int seed3Prime = seedArray[2][2];
 		
 		//check intermediate values
-		int val1 = hour1 * ( (min2 * seed3) - (seed2 * sec2) );
-		int val2 = (min1)*( (hour2 * seed3) - (seed1 * sec2));
-		int val3 = sec1 *( (hour2 * seed2) - (seed1 * min2) );
+		int val1 = hourDigit1 * ( (minDigit2 * seed3Prime) - (seed2Counter * secDegit2) );
+		int val2 = (minDigit1)*( (hourDigit2 * seed3Prime) - (seed1Milli * secDegit2));
+		int val3 = secDigit1 *( (hourDigit2 * seed2Counter) - (seed1Milli * secDegit2) );
 	
 		//calculate determinant
-		int determinant = hour1 * ( (min2 * seed3) - (seed2 * sec2) ) - (min1)*( (hour2 * seed3) - (seed1 * sec2)) + sec1 *( (hour2 * seed2) - (seed1 * min2) );
+		int determinant = hourDigit1 * ( (minDigit2 * seed3Prime) - (seed2Counter * secDegit2) ) - (minDigit1)*( (hourDigit2 * seed3Prime) - (seed1Milli * secDegit2)) + secDigit1 *( (hourDigit2 * seed2Counter) - (seed1Milli * minDigit2) );
 
 		return determinant;
 	}
@@ -226,11 +254,11 @@ public class AlgorithmUtility {
 	protected static StepThreeVO stepThree(StepTwoVO stepTwo) {
 		// create our return VO, calculation and result holders
 		StepThreeVO stepThree = new StepThreeVO();
-		int seed3 = stepTwo.getSeedArray()[0][2];
+		int seed3PrimeDirective = stepTwo.getSeedArray()[2][2];
 		int stepTwoResult = stepTwo.getResult();
 		
 		//make our calculation
-		int stepThreeResult = flooredModulo(stepTwoResult, seed3);
+		int stepThreeResult = flooredModulo(stepTwoResult, seed3PrimeDirective);
 		
 		//set the result on our vo
 		stepThree.setResult(stepThreeResult);
@@ -278,7 +306,8 @@ public class AlgorithmUtility {
 		StepFiveVO stepFive = new StepFiveVO();
 
 		//calculate the final alpha value
-		int numericValue  =flooredModulo(stepTwo.getResult(), MOD_CONSTANT);//stepTwo.getResult() % MOD_CONSTANT;	
+		int numericValue  =flooredModulo(stepTwo.getResult(), MOD_CONSTANT);
+		//int numericValue  =flooredModulo(stepTwo.getResult(), buildRandomPrime());
 		
 		//convert to alphanumeric
 		String finalAlphaValue = String.valueOf(ALPHA_ARRAY[numericValue]);
@@ -307,7 +336,8 @@ public class AlgorithmUtility {
 		int determinant = value1 - value2;
 		
 		//mod with mod constant
-		int numericValue = flooredModulo(determinant, MOD_CONSTANT);//determinant % MOD_CONSTANT;
+		int numericValue = flooredModulo(determinant, MOD_CONSTANT);
+		//int numericValue = flooredModulo(determinant, buildRandomPrime());
 		
 		//convert to alphanumeric
 		String finaNumericlAlphaValue = String.valueOf(ALPHA_ARRAY[numericValue]);
@@ -390,15 +420,15 @@ public class AlgorithmUtility {
 		StepEightVO step8 = new StepEightVO();
 		
 		int[][] matrix = step4.getResultMatrix();
-		int seed3 = step2.getSeedArray()[0][2];
+		int seed3PrimeDirective = step2.getSeedArray()[2][2];
 		char[] finalChars = new char[2];
 		
 		//loop through matrix and multiply eache element by seed and mod by 33
 		for (int row = 0; row < matrix.length; row++) {
 			for (int col = 0; col < matrix[row].length; col++) 
 			{ 	
-				matrix[row][col] =  flooredModulo((matrix[row][col] * seed3), MOD_CONSTANT);// ( (matrix[row][col] * seed3) % MOD_CONSTANT);
 				
+				matrix[row][col] =  flooredModulo((matrix[row][col] * seed3PrimeDirective), MOD_CONSTANT);				
 			} 
 		}	
 		//set it on the vo
@@ -482,7 +512,7 @@ public class AlgorithmUtility {
 		
 		int[][] timeArray = new int[NBR_ROWS][NBR_COLUMNS]; 
 		//this format
-		// h1 h2
+		// h1 h2 
 		// m1 m2
 		// s1 s2
 
@@ -498,7 +528,7 @@ public class AlgorithmUtility {
 		
 		//setup second row
 		timeArray[2][0] = AlgorithmUtility.buildSecondsDigit1(calendar);
-		timeArray[2][1] = AlgorithmUtility .buildSecondsDigit2(calendar);
+		timeArray[2][1] = AlgorithmUtility.buildSecondsDigit2(calendar);
 		
 		return timeArray;
 	}
@@ -511,24 +541,23 @@ public class AlgorithmUtility {
 	 * @return the int[][]
 	 */
 	protected static int[][] buildSeedArray(Calendar calendar) {
-		int[][] seedArray = new int[1][3];
-		
-		seedArray [0][0] = AlgorithmUtility.buildMilliSeconds(calendar);
-		seedArray [0][1] = AlgorithmUtility.buildCounter();
-		seedArray [0][2] = AlgorithmUtility.buildRandomPrime();
-		
+		int[][] seedArray = new int[3][3];
+	
+		//row 1: hour digit 1, minute digit 1, sec digit 1
+		seedArray[0][0] = AlgorithmUtility.buildHourDigit1(calendar) ; //hour 1
+		seedArray[0][1] = AlgorithmUtility.buildMinuteDigit1(calendar) ; //min 1
+		seedArray[0][2]	= AlgorithmUtility.buildSecondsDigit1(calendar) ; //sec 1
+		//row 2: hour digit 2, minute digit 2, seconds digit 2		
+		seedArray[1][0] = AlgorithmUtility.buildHourDigit2(calendar);
+		seedArray[1][1] = AlgorithmUtility.buildMinuteDigit2(calendar);
+		seedArray[1][2] = AlgorithmUtility.buildSecondsDigit2(calendar);
+		//row 3: seed 1 millis, seed2 counter, seed3 random primve				
+		seedArray[2][0] =  AlgorithmUtility.buildMilliSeconds(calendar);
+		seedArray[2][1] = AlgorithmUtility.buildCounter();
+		seedArray[2][2] = AlgorithmUtility.buildRandomPrime();
+				
 		return seedArray;
 	}
-	
-//	protected static int[][] buildSeedArray(Calendar calendar, int primeTest) {
-//		int[][] seedArray = new int[1][3];
-//		
-//		seedArray [0][0] = AlgorithmUtility.buildMilliSeconds(calendar);
-//		seedArray [0][1] = AlgorithmUtility.buildCounter();
-//		seedArray [0][2] = primeTest;//AlgorithmUtility.buildRandomPrime();
-//		
-//		return seedArray;
-///	}
 	
 	/**
 	 * Private helper method. Gets the first digit of a 2 digit month from a calendar object. 
@@ -803,50 +832,42 @@ public class AlgorithmUtility {
         
 		return randomPrime;		
 	}
-	
+
 	/**
-	 * Multiply date and time arrays.
+	 * Multiply by matrix.
 	 *
-	 * @param dateArray the date array
-	 * @param timeArray the time array
+	 * @param matrix1 the matrix 1
+	 * @param matrix2 the matrix 2
 	 * @return the int[][]
 	 */
-	protected static int[][] multiplyDateAndTimeArrays(int[][] dateArray, int[][] timeArray) {
-		int[][] multipliedArray = new int[2][2];
-		
-		//declare all the elements we will multiply
-		int month1, month2, day1, day2, year1, year2, hour1, hour2, minute1, minute2, second1, second2;
-		
-		//set the element values we will multiple
-		month1 = dateArray[0][0];
-		month2 = dateArray[1][0];
-		
-		day1 = dateArray[0][1];
-		day2 = dateArray[1][1];
-		
-		year1 = dateArray[0][2];
-		year2 = dateArray[1][2];
-		
-		hour1 = timeArray[0][0];
-		hour2 = timeArray[0][1];
-		
-		minute1 = timeArray[1][0];
-		minute2 = timeArray[1][1];
-		
-		second1 = timeArray[2][0];
-		second2 = timeArray[2][1];
-		
-		//now multiple and set each value in the multiplied array we return
-		//0, 0  0,1
-		//1, 1  1,1
-		multipliedArray[0][0] = (month1 * hour1) + (day1 * minute1) + (year1 * second1);
-		multipliedArray[0][1] = (month1 * hour2) + (day1 * minute2) + (year1 * second2);
-		multipliedArray[1][0] = (month2 * hour1) + (day2 * minute1) + (year2 * second1);
-		multipliedArray[1][1] = (month2 * hour2) + (day2 * minute2) + (year2 * second2);
+	protected static int[][] multiplyByMatrix(int[][] matrix1, int[][] matrix2) {
+    	logger.debug("entering multiplyMatrix");
+		int[][] matrixResult = new int[matrix1.length][matrix2[0].length];
 
-		return multipliedArray;
+		Integer matrix1Rows; // rows in matrix1
+		Integer matrix1Cols; // cols in matrix1
+		Integer matrix2Cols; // cols in matrix2
+
+		for (matrix2Cols = 0; matrix2Cols <= matrix2[0].length - 1; matrix2Cols++) {
+			for (matrix1Rows = 0; matrix1Rows <= matrix1.length - 1; matrix1Rows++) {
+				for (matrix1Cols = 0; matrix1Cols <= matrix1[0].length - 1; matrix1Cols++) {
+
+					logger.debug("matrix1[" + matrix1Rows + "][" + matrix1Cols + "]: " + matrix1[matrix1Rows][matrix1Cols]);
+					logger.debug("matrix2[" + matrix1Cols + "][" + matrix2Cols + "]: " + matrix2[matrix1Cols][matrix2Cols]);
+					
+					matrixResult[matrix1Rows][matrix2Cols] += matrix1[matrix1Rows][matrix1Cols]
+							* matrix2[matrix1Cols][matrix2Cols];
+					
+					logger.debug("iteration  " + matrix1Cols.toString() + ": " + matrix1[matrix1Rows][matrix1Cols] * matrix2[matrix1Cols][matrix2Cols]);
+					logger.debug("aggregated value: " + matrixResult[matrix1Rows][matrix2Cols]);
+				}
+				logger.debug("  *** matrixResult[" + matrix1Rows + "][" + matrix2Cols + "]: " + matrixResult[matrix1Rows][matrix2Cols]);
+
+			}
+		}
+    	logger.debug("exiting multiplyMatrix");
+		return matrixResult;
 	}
-	
 	
 	/** Returns the internal seedCounter. Intentionally protected instead of private for testability.
 	 * @return the seedCounter
@@ -871,7 +892,7 @@ public class AlgorithmUtility {
 	 * @return the int
 	 */
 	private static int flooredModulo(int a, int n){
-		  return n<0 ? -flooredModulo(-a, -n) : mod(a, n);
+		  return  n<0 ? -flooredModulo(-a, -n) : mod(a, n);
 		}
 	
 	/**

@@ -5,10 +5,9 @@ package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
  * @author MOONS012
- * @since 2.16.3
  *
  */
-public class StepThreeVO {
+public class StepThreeVO extends ParentStepVO {
 
 	/** The result. */
 	private int result;
@@ -17,6 +16,7 @@ public class StepThreeVO {
 	 * Default Constructor
 	 */
 	public StepThreeVO() {
+		super();
 	}
 
 	/**
@@ -34,4 +34,20 @@ public class StepThreeVO {
 	}
 	
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepThreeVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("result=");
+		buff.append(result);
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
+	}
 }

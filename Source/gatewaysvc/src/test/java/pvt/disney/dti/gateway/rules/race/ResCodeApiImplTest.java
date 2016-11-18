@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package pvt.disney.dti.gateway.rules.race;
 
 import static org.junit.Assert.*;

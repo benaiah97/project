@@ -4,9 +4,8 @@ package pvt.disney.dti.gateway.rules.race.vo;
  * The Class StepSixVO.
  * 
  * @author MOONS012
- * @since 2.16.3
  */
-public class StepSixVO {
+public class StepSixVO extends ParentStepVO {
 
 	/** The result alpha numeric. */
 	private String resultAlphaNumeric;
@@ -15,6 +14,7 @@ public class StepSixVO {
 	 * Instantiates a new step six VO.
 	 */
 	public StepSixVO() {
+		super();
 	}
 
 	/**
@@ -33,6 +33,22 @@ public class StepSixVO {
 	 */
 	public void setResultAlphaNumeric(String resultAlphaNumeric) {
 		this.resultAlphaNumeric = resultAlphaNumeric;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append(System.lineSeparator());
+		buff.append("StepSixVO: { ");
+		buff.append(System.lineSeparator());
+		buff.append("resultAlphaNumeric=");
+		buff.append(this.resultAlphaNumeric);
+		buff.append(System.lineSeparator());
+		buff.append(" }");
+		
+		return buff.toString();
 	}
 
 }
