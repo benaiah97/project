@@ -380,7 +380,7 @@ public class TiXMLHandler extends DefaultHandler {
 
       StringBuffer mediaVisualIds = new StringBuffer();
 
-      // Get all the RESCODE
+      // Get all the Visual IDs
       valueList = getValueByTagName(doc, VISUALMEDIAID);
       if (valueList.size() != 0) {
         for (int h = 0; h < valueList.size(); h++) {
