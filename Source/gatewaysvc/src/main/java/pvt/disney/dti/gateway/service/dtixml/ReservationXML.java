@@ -30,6 +30,7 @@ import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO.PaymentType;
 import pvt.disney.dti.gateway.data.common.ProductTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
+import pvt.disney.dti.gateway.data.common.ShowTO;
 import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
 import pvt.disney.dti.gateway.data.common.TicketIdTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -45,6 +46,7 @@ import pvt.disney.dti.gateway.request.xsd.ReservationRequest.EntitlementAccount.
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.EntitlementAccount.SpecifiedAccount.ExistingAccount.TktID;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.EntitlementAccount.SpecifiedAccount.NewMediaData;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.ExtTxnIdentifier;
+import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Show;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.ProdDemoData;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.ProdDemoData.TktDemoData;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.TktAssignment;
@@ -237,6 +239,31 @@ public abstract class ReservationXML {
         extTxnIdTO.setIsSHA1Encrypted(extTxnId.isSHA1Encrypted());
       }
       resReqTO.setExtTxnIdentifier(extTxnIdTO);
+    }
+    
+    // Show (as of 2.16.3, JTL)
+    if (resReq.getShow() != null) {
+      ShowTO showTO = new ShowTO();
+      
+      Show show = resReq.getShow();
+      
+      // Show Group
+      if (show.getShowGroup() != null) {
+        showTO.setShowGroup(show.getShowGroup());
+      }
+      
+      // Show Performance
+      if (show.getShowPerformance() != null) {
+        showTO.setShowPerformance(show.getShowPerformance());
+      }
+      
+      // Show Quota
+      if (show.getShowQuota() != null) {
+        showTO.setShowQuota(show.getShowQuota());
+      }
+
+      resReqTO.setShow(showTO);
+      
     }
 
     return resReqTO;

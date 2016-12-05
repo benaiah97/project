@@ -182,7 +182,6 @@ public class WDWBusinessRules {
    */
   private static Properties getProperties() {
 
-    AbstractInitializer abstrInitl = null;
     Properties properties = null;
 
     // Get properties manager.
@@ -1276,6 +1275,10 @@ public class WDWBusinessRules {
         case QUERYRESERVATION:
           WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
           break;
+          
+        case VOIDRESERVATION:
+          WDWVoidReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+          break;          
 
         default:
           break;

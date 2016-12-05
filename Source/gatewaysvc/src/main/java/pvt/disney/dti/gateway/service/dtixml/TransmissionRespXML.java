@@ -135,10 +135,7 @@ public class TransmissionRespXML {
     if ((dtiErrorTO != null) && ((dtiErrorTO.getErrorScope() != DTIErrorCode.ErrorScope.TICKET) && (dtiErrorTO
         .getErrorScope() != DTIErrorCode.ErrorScope.MEDIA))) {
 
-      if ((dtiErrorTO
-          .getErrorCode()
-          .toString()
-          .compareTo(
+      if ((dtiErrorTO.getErrorCode().toString().compareTo(
               DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode()) == 0) && (responseIn
           .getResponse().getCommandBody() != null)) {
         setCommandBodyXML(responseIn, cmd, dtiErrorTO);
@@ -164,12 +161,13 @@ public class TransmissionRespXML {
 
     // Create the XML from the jaxbResp
     // NOTE: Marshaler is NOT thread-safe and cannot be shared. It must be
-    // recreated for each operation.
+    // recreated for each operation. 
     Marshaller marshaller;
     marshaller = jc.createMarshaller();
     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
-    marshaller
-        .setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
+    marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+//    marshaller
+//        .setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 
     StringWriter objStringWriter = new StringWriter();
     marshaller.marshal(jaxbResp, objStringWriter);

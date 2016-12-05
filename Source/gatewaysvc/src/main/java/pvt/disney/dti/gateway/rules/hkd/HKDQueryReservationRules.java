@@ -11,7 +11,6 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.TransidRescodeKey;
-import pvt.disney.dti.gateway.dao.data.TransidRescode;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -25,6 +24,7 @@ import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ProductTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTHeaderTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTManageReservationTO;
@@ -34,7 +34,6 @@ import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTProductTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketTO;
 import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
-import pvt.disney.dti.gateway.rules.BusinessRules;
 
 /**
  * 
@@ -43,6 +42,8 @@ import pvt.disney.dti.gateway.rules.BusinessRules;
  */
 public class HKDQueryReservationRules {
 
+
+  //private static final Class<WDWQueryReservationRules> THISOBJECT = WDWQueryReservationRules.class;
 
   /** Request type header constant. */
   private final static String REQUEST_TYPE_MANAGE = "Manage";
@@ -280,11 +281,10 @@ public class HKDQueryReservationRules {
   }
 
   /**
-   * If a type of transaction has a specific number of provider centric rules, implement them here, 
-   * but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
+   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
    * Implements the following rules:<BR>
    * 
-   * If payload ID is provided 
+   * - n/a
    * 
    * @param dtiTxn
    *            The transaction object for this request.
@@ -292,28 +292,30 @@ public class HKDQueryReservationRules {
    *             for any rules violation.
    */
   public static void applyHKDQueryReservationRules(DTITransactionTO dtiTxn) throws DTIException {
-
-    DTIRequestTO dtiRequest = dtiTxn.getRequest();
-    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
-    QueryReservationRequestTO dtiResReq = (QueryReservationRequestTO) dtiCmdBody;
     
-    /** Recover reservation code here */
-    String resCode = null;
-    if (dtiResReq.getPayloadID() != null) {
-      String payloadId = dtiResReq.getPayloadID();
-      ArrayList<TransidRescode> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+    // Get the reservation code array (there should only be one)
+    QueryReservationRequestTO queryResReqTO = (QueryReservationRequestTO) dtiTxn
+        .getRequest().getCommandBody();
+    
+    String payloadId = null;
+    if (queryResReqTO.getPayloadID() != null) {
+
+      payloadId = queryResReqTO.getPayloadID() ;
+      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
       
       if (rescodeArray.size() == 0) {
         throw new DTIException(
-            BusinessRules.class,
+            HKDQueryReservationRules.class,
             DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,
-            "Query Reservation attempted with payload ID which has not yet created a reservation code in DTI.");
+            "Unable to find reservation for supplied payload ID: " + payloadId); 
       }
-      TransidRescode rescodeTO = rescodeArray.get(0);
-      resCode = rescodeTO.getRescode();
-      dtiResReq.setResCode(resCode);        
-    }
       
+      TransidRescodeTO rescodeTO = rescodeArray.get(0);
+      String resCode = rescodeTO.getRescode();
+      queryResReqTO.setResCode(resCode);
+      
+    }
+    
     return;
 
   }

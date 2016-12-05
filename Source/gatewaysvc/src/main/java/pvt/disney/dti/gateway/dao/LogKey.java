@@ -31,8 +31,7 @@ public class LogKey {
   private static final LogKey THISINSTANCE = new LogKey();
 
   /** Event logger. */
-  private static final EventLogger logger = EventLogger
-      .getLogger(LogKey.class.getCanonicalName());
+  private static final EventLogger logger = EventLogger.getLogger(LogKey.class.getCanonicalName());
 
   /** Constant value representing the get inbound ticket provider log query. */
   private static final String GET_ITP_LOG = "GET_ITP_LOG";
@@ -43,7 +42,9 @@ public class LogKey {
   /** Constant value representing the input ticket seller log insert statement. */
   private static final String INSERT_ITS_LOG = "INSERT_ITS_LOG";
 
-  /** Constant value representing the input ticket provider log insert statement. */
+  /**
+   * Constant value representing the input ticket provider log insert statement.
+   */
   private static final String INSERT_ITP_LOG = "INSERT_ITP_LOG";
 
   /** Constant value representing the insert DTI transaction log statement. */
@@ -88,10 +89,15 @@ public class LogKey {
   private static final Integer CMD_RESERVATION = new Integer(9);
   private static final Integer CMD_QUERY_RESERVATION = new Integer(10);
   private static final Integer CMD_UPGRADE_ENTITLEMENT = new Integer(11); // 2.10
-  private static final Integer CMD_RENEW_ENTITLEMENT = new Integer(12); // as of 2.16.1, JTL
-  private static final Integer CMD_ASSOCIATE_MEDIA_TO_ACCOUNT = new Integer(
-      13); // 2.16.1 BIEST001
-  private static final Integer CMD_TICKERATE_ENTITLEMENT = new Integer(14); // 2.16.1 BIEST001
+  private static final Integer CMD_RENEW_ENTITLEMENT = new Integer(12); // as of
+                                                                        // 2.16.1,
+                                                                        // JTL
+  private static final Integer CMD_ASSOCIATE_MEDIA_TO_ACCOUNT = new Integer(13); // 2.16.1
+                                                                                 // BIEST001
+  private static final Integer CMD_TICKERATE_ENTITLEMENT = new Integer(14); // 2.16.1
+                                                                            // BIEST001
+  private static final Integer CMD_VOID_RESERVATION = new Integer(15); // 2.16.3,
+                                                                       // JTL
 
   /**
    * Constructor for LogKey
@@ -101,27 +107,25 @@ public class LogKey {
   }
 
   /**
-   * Returns the ITPLogEntry filled with appropriate values when provided the primary key of the INBOUND_TP_LOG tables.
+   * Returns the ITPLogEntry filled with appropriate values when provided the
+   * primary key of the INBOUND_TP_LOG tables.
    * 
    * @param tpTransId
-   *            The primary key value in the INBOUND_TP_LOG table.
+   *          The primary key value in the INBOUND_TP_LOG table.
    * @return ITPLogEntry filled with appropriate values.
    * @throws DTIException
-   *             on a DB or DAO problem.
+   *           on a DB or DAO problem.
    */
   // @SuppressWarnings("unchecked")
   public static final ITPLogEntry getITPLogEntry(long tpTransId) throws DTIException {
 
-    logger.sendEvent("Entering getITPLogEntry()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering getITPLogEntry()", EventType.DEBUG, THISINSTANCE);
 
     ITPLogEntry result = null;
 
     // Retrieve and validate the parameters
     if ((tpTransId <= 0)) {
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.UNDEFINED_FAILURE,
-          "Invalid tpTransId passed to getITPLogEntry");
+      throw new DTIException(LogKey.class, DTIErrorCode.UNDEFINED_FAILURE, "Invalid tpTransId passed to getITPLogEntry");
     }
 
     // Retrieve and validate the parameters
@@ -131,54 +135,45 @@ public class LogKey {
     try {
 
       // Prepare query
-      logger.sendEvent("About to getInstance from DAOHelper",
-          EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("About to getInstance from DAOHelper", EventType.DEBUG, THISINSTANCE);
       DAOHelper helper = DAOHelper.getInstance(GET_ITP_LOG);
 
       // Run the SQL
-      logger.sendEvent("About to processQuery:  GET_ITP_LOG",
-          EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("About to processQuery:  GET_ITP_LOG", EventType.DEBUG, THISINSTANCE);
       result = (ITPLogEntry) helper.processQuery(values);
 
       // Debug
-      logger.sendEvent("getITPLogEntry successful.", EventType.DEBUG,
-          THISINSTANCE, result, null);
+      logger.sendEvent("getITPLogEntry successful.", EventType.DEBUG, THISINSTANCE, result, null);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing getITPLogEntry: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
-          "Exception executing getITPLogEntry", e);
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing getITPLogEntry: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing getITPLogEntry",
+          e);
     }
 
     return result;
   }
 
   /**
-   * Returns the primary key field value of a row in the INBOUND_TS_LOG table when provided with a value payloadId.
+   * Returns the primary key field value of a row in the INBOUND_TS_LOG table
+   * when provided with a value payloadId.
    * 
    * @param payloadId
-   *            The client-chosen unique identifier of a DTI transaction.
+   *          The client-chosen unique identifier of a DTI transaction.
    * @return Long value of the primary key of the INBOUND_TS_LOG table.
    * @throws DTIException
-   *             on a DB or DAO problem.
+   *           on a DB or DAO problem.
    */
   // @SuppressWarnings("unchecked")
   public static final Integer getITSLogTransId(String payloadId) throws DTIException {
 
-    logger.sendEvent("Entering getITSLogEntry()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering getITSLogEntry()", EventType.DEBUG, THISINSTANCE);
 
     Integer result = null;
 
     // Retrieve and validate the parameters
     if ((payloadId == null)) {
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.UNDEFINED_FAILURE,
-          "Null payloadId passed to getITSLogTransId");
+      throw new DTIException(LogKey.class, DTIErrorCode.UNDEFINED_FAILURE, "Null payloadId passed to getITSLogTransId");
     }
 
     // Retrieve and validate the parameters
@@ -187,26 +182,19 @@ public class LogKey {
     try {
 
       // Prepare query
-      logger.sendEvent("About to getInstance from DAOHelper",
-          EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("About to getInstance from DAOHelper", EventType.DEBUG, THISINSTANCE);
       DAOHelper helper = DAOHelper.getInstance(GET_ITS_LOG);
 
       // Run the SQL
-      logger.sendEvent("About to processQuery:  GET_ITS_LOG",
-          EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("About to processQuery:  GET_ITS_LOG", EventType.DEBUG, THISINSTANCE);
       result = (Integer) helper.processQuery(values);
 
       // Debug
-      logger.sendEvent("getITSLogTransId successful.", EventType.DEBUG,
-          THISINSTANCE, result, null);
+      logger.sendEvent("getITSLogTransId successful.", EventType.DEBUG, THISINSTANCE, result, null);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing getITSLogTransId: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing getITSLogTransId: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing getITSLogTransId", e);
     }
 
@@ -215,21 +203,19 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static boolean insertITSLog(String payloadId, EntityTO entityTO,
-      Integer transIdITS, String inXMLString) throws DTIException {
+  public static boolean insertITSLog(String payloadId, EntityTO entityTO, Integer transIdITS, String inXMLString)
+      throws DTIException {
 
-    logger.sendEvent("Entering insertITSLog() via DAO", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering insertITSLog() via DAO", EventType.DEBUG, THISINSTANCE);
 
     String pciSafeXMLString = new String("");
     int entityId = entityTO.getEntityId();
 
     if (inXMLString.length() > MAX_XML_SIZE) {
       LogTransaction logTxn = new LogTransaction();
-      return logTxn.insertITSLog(payloadId, entityId, inXMLString,
-          transIdITS);
+      return logTxn.insertITSLog(payloadId, entityId, inXMLString, transIdITS);
     }
 
     try {
@@ -239,66 +225,46 @@ public class LogKey {
       // Prepare values for insert
       Integer entityIdInt = new Integer(entityId);
 
-      Object[] values = { transIdITS,
-          payloadId,
-          pciSafeXMLString,
-          entityIdInt };
+      Object[] values = { transIdITS, payloadId, pciSafeXMLString, entityIdInt };
 
       DAOHelper helper = DAOHelper.getInstance(INSERT_ITS_LOG);
       helper.processInsert(values);
 
-      logger.sendEvent("INSERT_ITS_LOG inserted row.", EventType.DEBUG,
-          THISINSTANCE);
+      logger.sendEvent("INSERT_ITS_LOG inserted row.", EventType.DEBUG, THISINSTANCE);
 
-    }
-    catch (WrappedException we) {
+    } catch (WrappedException we) {
 
       if (we.getWrappedException() instanceof SQLException) {
 
         SQLException sqle = (SQLException) we.getWrappedException();
-        logger.sendEvent(
-            "LogKey:  SQLException error code is " + sqle
-                .getErrorCode(), EventType.INFO, THISINSTANCE);
+        logger.sendEvent("LogKey:  SQLException error code is " + sqle.getErrorCode(), EventType.INFO, THISINSTANCE);
 
         if (sqle.getErrorCode() == 1) {
-          logger.sendEvent(
-              "Recognized a duplicate request, did not insert to INBOUND_TS_LOG.",
-              EventType.INFO, THISINSTANCE);
+          logger.sendEvent("Recognized a duplicate request, did not insert to INBOUND_TS_LOG.", EventType.INFO,
+              THISINSTANCE);
           return false; // I was NOT able to insert this record (duplicate)
-        }
-        else {
-          logger.sendEvent(
-              "SQL Exception executing insertITSLog: " + sqle,
-              EventType.WARN, THISINSTANCE);
-          throw new DTIException(LogKey.class,
-              DTIErrorCode.FAILED_DB_OPERATION_SVC,
+        } else {
+          logger.sendEvent("SQL Exception executing insertITSLog: " + sqle, EventType.WARN, THISINSTANCE);
+          throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
               "Exception executing insertITSLog", we);
         }
-      }
-      else {
-        logger.sendEvent(
-            "Exception executing insertITSLog: " + we.toString(),
-            EventType.WARN, THISINSTANCE);
-        throw new DTIException(LogKey.class,
-            DTIErrorCode.FAILED_DB_OPERATION_SVC,
-            "Exception executing insertITSLog", we);
+      } else {
+        logger.sendEvent("Exception executing insertITSLog: " + we.toString(), EventType.WARN, THISINSTANCE);
+        throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertITSLog",
+            we);
       }
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing insertITSLog: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
-          "Exception executing insertITSLog", e);
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertITSLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertITSLog", e);
     }
 
     return true;
   }
 
   /**
-   * Get the log table keys needed for inserting records into the Inbound Ticket Provider, Outbound Ticket Provider, and Outbound Ticket Seller logs.
+   * Get the log table keys needed for inserting records into the Inbound Ticket
+   * Provider, Outbound Ticket Provider, and Outbound Ticket Seller logs.
    * 
    * @param dtiTxn
    * @throws DTIException
@@ -320,25 +286,21 @@ public class LogKey {
    * Inserts values into the ITP Log.
    * 
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
   public static void insertITPLog(DTITransactionTO dtiTxn, String inXMLString) throws DTIException {
 
-    logger.sendEvent("Entering insertITPLog() via DAO", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering insertITPLog() via DAO", EventType.DEBUG, THISINSTANCE);
 
     String pciSafeXMLString = new String("");
 
     // Update the consolidated table.
     Integer tpRefNumber = dtiTxn.getTpRefNum();
     Integer transIdITP = dtiTxn.getTransIdITP();
-    Date trans_date = dtiTxn.getRequest().getPayloadHeader()
-        .getTransmitDateTime().getTime();
+    Date trans_date = dtiTxn.getRequest().getPayloadHeader().getTransmitDateTime().getTime();
     Integer cmdid = getCommandID(dtiTxn);
-    String cmdInvoice = dtiTxn.getRequest().getCommandHeader()
-        .getCmdInvoice();
-    LogKey.updateDTITransLogITP(tpRefNumber, trans_date, cmdid, cmdInvoice,
-        transIdITP);
+    String cmdInvoice = dtiTxn.getRequest().getCommandHeader().getCmdInvoice();
+    LogKey.updateDTITransLogITP(tpRefNumber, trans_date, cmdid, cmdInvoice, transIdITP);
 
     // Divert to slower CLOB logging routine if size of request dictates.
     if (inXMLString.length() > MAX_XML_SIZE) {
@@ -351,52 +313,35 @@ public class LogKey {
       // PCI Control: DO NOT REMOVE
       pciSafeXMLString = PCIControl.overwritePciDataInXML(inXMLString);
 
-      logger.sendEvent("LogKey:insertITPLog(): " + pciSafeXMLString,
-          EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("LogKey:insertITPLog(): " + pciSafeXMLString, EventType.DEBUG, THISINSTANCE);
 
       // Prepare values for insert
       String tpRefNum = dtiTxn.getTpRefNum().toString();
       String errorCode;
-      if (dtiTxn.isPriceMismatch()) errorCode = DTIErrorCode.PRICE_MISMATCH_WARNING
-          .getErrorCode();
-      else errorCode = " ";
+      if (dtiTxn.isPriceMismatch())
+        errorCode = DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode();
+      else
+        errorCode = " ";
 
-      String payloadId = dtiTxn.getRequest().getPayloadHeader()
-          .getPayloadID();
+      String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
       String target = dtiTxn.getRequest().getPayloadHeader().getTarget();
-      String xmlVersion = dtiTxn.getRequest().getPayloadHeader()
-          .getVersion();
-      String commProtocol = dtiTxn.getRequest().getPayloadHeader()
-          .getCommProtocol();
-      String commMethod = dtiTxn.getRequest().getPayloadHeader()
-          .getCommMethod();
+      String xmlVersion = dtiTxn.getRequest().getPayloadHeader().getVersion();
+      String commProtocol = dtiTxn.getRequest().getPayloadHeader().getCommProtocol();
+      String commMethod = dtiTxn.getRequest().getPayloadHeader().getCommMethod();
       Integer transIdITS = dtiTxn.getTransIdITS();
 
       // Order of values: TRANS_ID, TP_TRANSID, ERR_RETURN_CODE, PAYLOAD_ID,
       // TARG_SYS,
       // XML_VERSION, COMM_PROTOCOL, COMM_METHOD, XML_DOC, INBOUND_TS_ID)
-      Object[] values = { transIdITP,
-          tpRefNum,
-          errorCode,
-          payloadId,
-          target,
-          xmlVersion,
-          commProtocol,
-          commMethod,
-          pciSafeXMLString,
-          transIdITS };
+      Object[] values = { transIdITP, tpRefNum, errorCode, payloadId, target, xmlVersion, commProtocol, commMethod,
+          pciSafeXMLString, transIdITS };
 
       DAOHelper helper = DAOHelper.getInstance(INSERT_ITP_LOG);
       helper.processInsert(values);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing insertITPLog: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
-          "Exception executing insertITPLog", e);
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertITPLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertITPLog", e);
     }
 
     return;
@@ -404,12 +349,11 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
   public static void insertOTPLog(DTITransactionTO dtiTxn, String inXMLString) throws DTIException {
 
-    logger.sendEvent("Entering insertOTPLog() via DAO", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering insertOTPLog() via DAO", EventType.DEBUG, THISINSTANCE);
 
     String pciSafeXMLString = new String("");
 
@@ -418,8 +362,7 @@ public class LogKey {
     if (dtiTxn.getTransIdOTP() == null) {
       otpLogTransId = SequenceKey.getOTPTransId();
       dtiTxn.setTransIdOTP(otpLogTransId);
-    }
-    else {
+    } else {
       otpLogTransId = dtiTxn.getTransIdOTP();
     }
 
@@ -445,10 +388,7 @@ public class LogKey {
       Integer inboundTPId = dtiTxn.getTransIdITP();
 
       // Order of values: (TRANS_ID, TP_TRANSID, XML_DOC, INBOUND_TP_ID)
-      Object[] values = { transIdOTP,
-          tpRefNum,
-          pciSafeXMLString,
-          inboundTPId };
+      Object[] values = { transIdOTP, tpRefNum, pciSafeXMLString, inboundTPId };
 
       DAOHelper helper = DAOHelper.getInstance(INSERT_OTP_LOG);
       helper.processInsert(values);
@@ -456,14 +396,9 @@ public class LogKey {
       // JTL: Required to avoid an FK constraint violation later.
       dtiTxn.setLoggedOTP(true);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing insertOTPLog: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
-          "Exception executing insertOTPLog", e);
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertOTPLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertOTPLog", e);
     }
 
     return;
@@ -471,12 +406,11 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
   public static void insertOTSLog(DTITransactionTO dtiTxn, String inXMLString) throws DTIException {
 
-    logger.sendEvent("Entering insertOTSLog() via DAO", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering insertOTSLog() via DAO", EventType.DEBUG, THISINSTANCE);
 
     String pciSafeXMLString = new String("");
 
@@ -485,32 +419,28 @@ public class LogKey {
     if (dtiTxn.getTransIdOTS() == null) {
       transIdOTS = SequenceKey.getOTSTransId();
       dtiTxn.setTransIdOTS(transIdOTS);
-    }
-    else {
+    } else {
       transIdOTS = dtiTxn.getTransIdOTS();
     }
 
     // Update the consolidated table.
     Integer tpRefNumber = dtiTxn.getTpRefNum();
-    Date trans_date = dtiTxn.getRequest().getPayloadHeader()
-        .getTransmitDateTime().getTime();
+    Date trans_date = dtiTxn.getRequest().getPayloadHeader().getTransmitDateTime().getTime();
     Integer cmdid = getCommandID(dtiTxn);
-    String cmdInvoice = dtiTxn.getRequest().getCommandHeader()
-        .getCmdInvoice();
+    String cmdInvoice = dtiTxn.getRequest().getCommandHeader().getCmdInvoice();
     DTIErrorTO dtiErrorTO = dtiTxn.getResponse().getDtiError();
     String errReturnCode = "0";
     String errName = "No error.";
+
     if (dtiErrorTO != null) {
-      errReturnCode = dtiTxn.getResponse().getDtiError().getErrorCode()
-          .toString();
+      errReturnCode = dtiTxn.getResponse().getDtiError().getErrorCode().toString();
       errName = dtiTxn.getResponse().getDtiError().getErrorText();
     }
     String providerErrCode = dtiTxn.getResponse().getProviderErrCode();
     String providerErrName = dtiTxn.getResponse().getProviderErrName();
 
-    LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTS, errReturnCode,
-        errName, providerErrCode, providerErrName, trans_date, cmdid,
-        cmdInvoice);
+    LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTS, errReturnCode, errName, providerErrCode, providerErrName,
+        trans_date, cmdid, cmdInvoice);
 
     Integer transIdITP = dtiTxn.getTransIdITP();
     Integer transIdOTP = dtiTxn.getTransIdOTP();
@@ -536,134 +466,97 @@ public class LogKey {
 
     try {
 
+      System.out.println("LogKey XML String is: " + inXMLString); // TODO JTL REMOVE
+      
       // PCI Control: DO NOT REMOVE
-      logger.sendEvent("Executing PCIControls", EventType.DEBUG,
-          THISINSTANCE);
+      logger.sendEvent("Executing PCIControls", EventType.DEBUG, THISINSTANCE);
       pciSafeXMLString = PCIControl.overwritePciDataInXML(inXMLString);
 
       // Prepare values for insert
-      String tsPayloadId = dtiTxn.getResponse().getPayloadHeader()
-          .getTsPayloadID();
+      String tsPayloadId = dtiTxn.getResponse().getPayloadHeader().getTsPayloadID();
       Integer transIdITS = dtiTxn.getTransIdITS();
 
       if (transIdITS == null) {
-        logger.sendEvent("LogKey:  transIdITS was NULL!?!?",
-            EventType.WARN, THISINSTANCE);
+        logger.sendEvent("LogKey:  transIdITS was NULL!?!?", EventType.WARN, THISINSTANCE);
       }
 
       // Is an error present?
       if (dtiError != null) {
-        logger.sendEvent("DTIError present", EventType.DEBUG,
-            THISINSTANCE);
+        logger.sendEvent("DTIError present", EventType.DEBUG, THISINSTANCE);
 
         // If ITP and OTP are both null, then DTI must be responsible.
         if ((transIdITP == null) && (transIdOTP == null)) {
-          logger.sendEvent("IPT and OTP null", EventType.DEBUG,
-              THISINSTANCE);
-          String errorCode = dtiTxn.getResponse().getDtiError()
-              .getErrorCode().toString();
-          Object[] values = { transIdOTS,
-              tsPayloadId,
-              errorCode,
-              transIdITS,
-              pciSafeXMLString };
-          DAOHelper helper = DAOHelper
-              .getInstance(INSERT_OTS_LOG_DTI_ERR);
-          logger.sendEvent(
-              "1) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ",
-              EventType.DEBUG, THISINSTANCE);
+          logger.sendEvent("IPT and OTP null", EventType.DEBUG, THISINSTANCE);
+          String errorCode = dtiTxn.getResponse().getDtiError().getErrorCode().toString();
+          Object[] values = { transIdOTS, tsPayloadId, errorCode, transIdITS, pciSafeXMLString };
+          DAOHelper helper = DAOHelper.getInstance(INSERT_OTS_LOG_DTI_ERR);
+          logger.sendEvent("1) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:"
+              + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] "
+              + "[pciSafeXMLString:" + pciSafeXMLString + "] ", EventType.DEBUG, THISINSTANCE);
           helper.processInsert(values);
 
-        }
-        else {
+        } else {
 
-          logger.sendEvent("Provider Error", EventType.DEBUG,
-              THISINSTANCE);
+          logger.sendEvent("Provider Error", EventType.DEBUG, THISINSTANCE);
           // It's a provider error (but cover missing log files, just in case,
           // with zeroes).
-          String errorCode = dtiTxn.getResponse().getDtiError()
-              .getErrorCode().toString();
+          String errorCode = dtiTxn.getResponse().getDtiError().getErrorCode().toString();
 
           if (dtiTxn.isLoggedOTP() == false) {
 
-            Object[] values = { transIdOTS,
-                tsPayloadId,
-                errorCode,
-                pciSafeXMLString,
-                transIdITS,
-                transIdITP };
-            DAOHelper helper = DAOHelper
-                .getInstance(INSERT_OTS_LOG_PRV_FAIL);
-            logger.sendEvent(
-                "transIdOTP: helper about to process inserts",
-                EventType.DEBUG, THISINSTANCE);
-            logger.sendEvent(
-                "2) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] " + "[transIdITP:" + transIdITP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ",
-                EventType.DEBUG, THISINSTANCE);
+            Object[] values = { transIdOTS, tsPayloadId, errorCode, pciSafeXMLString, transIdITS, transIdITP };
+            DAOHelper helper = DAOHelper.getInstance(INSERT_OTS_LOG_PRV_FAIL);
+
+            logger.sendEvent("transIdOTP: helper about to process inserts", EventType.DEBUG, THISINSTANCE);
+
+            logger.sendEvent("2) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:"
+                + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] "
+                + "[transIdITP:" + transIdITP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ", EventType.DEBUG,
+                THISINSTANCE);
+
             helper.processInsert(values);
 
-          }
-          else {
+          } else {
 
-            Object[] values = { transIdOTS,
-                tsPayloadId,
-                errorCode,
-                pciSafeXMLString,
-                transIdITS,
-                transIdITP,
+            Object[] values = { transIdOTS, tsPayloadId, errorCode, pciSafeXMLString, transIdITS, transIdITP,
                 transIdOTP };
-            DAOHelper helper = DAOHelper
-                .getInstance(INSERT_OTS_LOG_PRV_ERR);
-            logger.sendEvent("helper about to process inserts",
-                EventType.DEBUG, THISINSTANCE);
-            logger.sendEvent(
-                "3) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] " + "[transIdITP:" + transIdITP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ",
-                EventType.DEBUG, THISINSTANCE);
+            DAOHelper helper = DAOHelper.getInstance(INSERT_OTS_LOG_PRV_ERR);
+            logger.sendEvent("helper about to process inserts", EventType.DEBUG, THISINSTANCE);
+            logger.sendEvent("3) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:"
+                + tsPayloadId + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] "
+                + "[transIdITP:" + transIdITP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ", EventType.DEBUG,
+                THISINSTANCE);
 
             helper.processInsert(values);
           }
         }
-      }
-      else { // no error present
+      } else { // no error present
 
         if (transIdITP == null) {
-          throw new DTIException(LogKey.class,
-              DTIErrorCode.UNDEFINED_FAILURE,
+          throw new DTIException(LogKey.class, DTIErrorCode.UNDEFINED_FAILURE,
               "Exception executing insertOTSLog:  ITP log value was missing.");
         }
 
         if (transIdOTP == null) {
-          throw new DTIException(LogKey.class,
-              DTIErrorCode.UNDEFINED_FAILURE,
+          throw new DTIException(LogKey.class, DTIErrorCode.UNDEFINED_FAILURE,
               "Exception executing insertOTSLog:  OTP log value was missing.");
         }
 
-        Object[] values = { transIdOTS,
-            tsPayloadId,
-            pciSafeXMLString,
-            transIdITS,
-            transIdITP,
-            transIdOTP };
-        logger.sendEvent(
-            "4) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId + "] " + "[transIdITS:" + transIdITS + "] " + "[transIdITP:" + transIdITP + "] " + "[transIdOTP:" + transIdOTP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ",
-            EventType.DEBUG, THISINSTANCE);
+        Object[] values = { transIdOTS, tsPayloadId, pciSafeXMLString, transIdITS, transIdITP, transIdOTP };
+        logger.sendEvent("4) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId
+            + "] " + "[transIdITS:" + transIdITS + "] " + "[transIdITP:" + transIdITP + "] " + "[transIdOTP:"
+            + transIdOTP + "] " + "[pciSafeXMLString:" + pciSafeXMLString + "] ", EventType.DEBUG, THISINSTANCE);
         DAOHelper helper = DAOHelper.getInstance(INSERT_OTS_LOG_NOERR);
-        logger.sendEvent(
-            "No error present: helper about to process inserts",
-            EventType.DEBUG, THISINSTANCE);
+        logger.sendEvent("No error present: helper about to process inserts", EventType.DEBUG, THISINSTANCE);
 
         helper.processInsert(values);
 
       }
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing insertOTSLog: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
-          "Exception executing insertOTSLog", e);
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertOTSLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      e.printStackTrace();
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertOTSLog", e);
     }
 
     return;
@@ -671,14 +564,12 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static void insertDTITransLog(Integer tpRefNumber, String payloadId,
-      EntityTO entityTO, String target, String broker,
-      Integer transIdITS, boolean isFirstAttempt) throws DTIException {
+  public static void insertDTITransLog(Integer tpRefNumber, String payloadId, EntityTO entityTO, String target,
+      String broker, Integer transIdITS, boolean isFirstAttempt) throws DTIException {
 
-    logger.sendEvent("Entering insertDTITransLog()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering insertDTITransLog()", EventType.DEBUG, THISINSTANCE);
 
     try {
 
@@ -687,8 +578,7 @@ public class LogKey {
       // Prepare values for insert
       if (isFirstAttempt) {
         rework = "F";
-      }
-      else {
+      } else {
         rework = "T";
       }
       Integer tsLocation = entityTO.getEntityId();
@@ -697,25 +587,14 @@ public class LogKey {
       // Order of values: Integer tpRefNumber, String payloadId,
       // EntityTO entityTO, String target, String broker, Integer transIdITS,
       // boolean isFirstAttempt)
-      Object[] values = { tpRefNumber,
-          payloadId,
-          tsLocation,
-          tsMac,
-          target,
-          broker,
-          transIdITS,
-          rework };
+      Object[] values = { tpRefNumber, payloadId, tsLocation, tsMac, target, broker, transIdITS, rework };
 
       DAOHelper helper = DAOHelper.getInstance(INSERT_DTI_LOG);
       helper.processInsert(values);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing insertDTITransLog: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertDTITransLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing insertDTITransLog", e);
     }
 
@@ -724,14 +603,12 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static void updateDTITransLogITP(Integer tpRefNumber,
-      Date trans_date, Integer cmdid, String cmdInvoice,
+  public static void updateDTITransLogITP(Integer tpRefNumber, Date trans_date, Integer cmdid, String cmdInvoice,
       Integer transIdITP) throws DTIException {
 
-    logger.sendEvent("Entering updateDTITransLogITP()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering updateDTITransLogITP()", EventType.DEBUG, THISINSTANCE);
 
     try {
 
@@ -739,22 +616,14 @@ public class LogKey {
       // correctly
       Timestamp transDateTimeStamp = new Timestamp(trans_date.getTime());
 
-      Object[] values = { transDateTimeStamp,
-          cmdid,
-          cmdInvoice,
-          transIdITP,
-          tpRefNumber };
+      Object[] values = { transDateTimeStamp, cmdid, cmdInvoice, transIdITP, tpRefNumber };
 
       DAOHelper helper = DAOHelper.getInstance(UPD_DTI_LOG_ITP);
       helper.processUpdate(values);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing updateDTITransLogITP: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing updateDTITransLogITP: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing updateDTITransLogITP", e);
     }
 
@@ -763,13 +632,11 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static void updateDTITransLogOTP(Integer tpRefNumber,
-      Integer transIdOTP) throws DTIException {
+  public static void updateDTITransLogOTP(Integer tpRefNumber, Integer transIdOTP) throws DTIException {
 
-    logger.sendEvent("Entering updateDTITransLogOTP()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering updateDTITransLogOTP()", EventType.DEBUG, THISINSTANCE);
 
     try {
 
@@ -778,13 +645,9 @@ public class LogKey {
       DAOHelper helper = DAOHelper.getInstance(UPD_DTI_LOG_OTP);
       helper.processUpdate(values);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing updateDTITransLogOTP: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing updateDTITransLogOTP: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing updateDTITransLogOTP", e);
     }
 
@@ -793,35 +656,31 @@ public class LogKey {
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static void updateDTITransLogOTS(Integer tpRefNumber,
-      Integer transIdOTS, String errReturnCode, String errName,
-      String providerErrCode, String providerErrName, Date trans_date,
-      TransactionType txnType, String cmdInvoice) throws DTIException {
+  public static void updateDTITransLogOTS(Integer tpRefNumber, Integer transIdOTS, String errReturnCode,
+      String errName, String providerErrCode, String providerErrName, Date trans_date, TransactionType txnType,
+      String cmdInvoice) throws DTIException {
 
-    logger.sendEvent("Entering updateDTITransLogOTS()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering updateDTITransLogOTS()", EventType.DEBUG, THISINSTANCE);
 
     Integer cmdid = getCommandID(txnType);
 
-    updateDTITransLogOTS(tpRefNumber, transIdOTS, errReturnCode, errName,
-        providerErrCode, providerErrName, trans_date, cmdid, cmdInvoice);
+    updateDTITransLogOTS(tpRefNumber, transIdOTS, errReturnCode, errName, providerErrCode, providerErrName, trans_date,
+        cmdid, cmdInvoice);
 
     return;
   }
 
   /**
    * @throws DTIException
-   *             on any DB or DAO failure.
+   *           on any DB or DAO failure.
    */
-  public static void updateDTITransLogOTS(Integer tpRefNumber,
-      Integer transIdOTS, String errReturnCode, String errName,
-      String providerErrCode, String providerErrName, Date trans_date,
-      Integer cmdid, String cmdInvoice) throws DTIException {
+  public static void updateDTITransLogOTS(Integer tpRefNumber, Integer transIdOTS, String errReturnCode,
+      String errName, String providerErrCode, String providerErrName, Date trans_date, Integer cmdid, String cmdInvoice)
+      throws DTIException {
 
-    logger.sendEvent("Entering updateDTITransLogOTS()", EventType.DEBUG,
-        THISINSTANCE);
+    logger.sendEvent("Entering updateDTITransLogOTS()", EventType.DEBUG, THISINSTANCE);
 
     try {
 
@@ -833,26 +692,15 @@ public class LogKey {
         providerErrName = "None available";
       }
 
-      Object[] values = { transIdOTS,
-          errReturnCode,
-          errName,
-          providerErrCode,
-          providerErrName,
-          trans_date,
-          cmdid,
-          cmdInvoice,
-          tpRefNumber };
+      Object[] values = { transIdOTS, errReturnCode, errName, providerErrCode, providerErrName, trans_date, cmdid,
+          cmdInvoice, tpRefNumber };
 
       DAOHelper helper = DAOHelper.getInstance(UPD_DTI_LOG_OTS);
       helper.processUpdate(values);
 
-    }
-    catch (Exception e) {
-      logger.sendEvent(
-          "Exception executing updateDTITransLogOTS: " + e.toString(),
-          EventType.WARN, THISINSTANCE);
-      throw new DTIException(LogKey.class,
-          DTIErrorCode.FAILED_DB_OPERATION_SVC,
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing updateDTITransLogOTS: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing updateDTITransLogOTS", e);
     }
 
@@ -860,10 +708,48 @@ public class LogKey {
   }
 
   /**
+   * 
+   * @param otsLogKey
+   * @param payloadId
+   * @param inXMLString
+   * @param error
+   * @param inbound_transid
+   * @throws DTIException
+   */
+  public static void insertOTSLogError(Integer otsLogKey, String tsPayloadId, String inXMLString, String errorCode,
+      Integer transIdITS) throws DTIException {
+
+    String pciSafeXMLString;
+
+    try {
+
+      // PCI Control: DO NOT REMOVE
+      logger.sendEvent("Executing PCIControls", EventType.DEBUG, THISINSTANCE);
+      pciSafeXMLString = PCIControl.overwritePciDataInXML(inXMLString);
+
+      // Prepare values for insert
+
+      Object[] values = { otsLogKey, tsPayloadId, errorCode, transIdITS, pciSafeXMLString };
+      DAOHelper helper = DAOHelper.getInstance(INSERT_OTS_LOG_DTI_ERR);
+      logger.sendEvent("1) Values to be inserted: [tsPayloadId:" + tsPayloadId + "] " + "[tsPayloadId:" + tsPayloadId
+          + "] " + "[errorCode:" + errorCode + "] " + "[transIdITS:" + transIdITS + "] " + "[pciSafeXMLString:"
+          + pciSafeXMLString + "] ", EventType.DEBUG, THISINSTANCE);
+      helper.processInsert(values);
+
+    } catch (Exception e) {
+      logger.sendEvent("Exception executing insertOTSLog: " + e.toString(), EventType.WARN, THISINSTANCE);
+      throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing insertOTSLog", e);
+    }
+
+    return;
+
+  }
+
+  /**
    * Determines the correct DBString to use for a particular query.
    * 
    * @param dtiTxn
-   *            The DTI Transaction Transfer Object
+   *          The DTI Transaction Transfer Object
    * @return the command code string
    */
   private static Integer getCommandID(DTITransactionTO dtiTxn) {
@@ -878,7 +764,7 @@ public class LogKey {
    * Determines the correct DBString to use for a particular query.
    * 
    * @param dtiTxn
-   *            The DTI Transaction Transfer Object
+   *          The DTI Transaction Transfer Object
    * @return the command code string
    */
   private static Integer getCommandID(TransactionType requestType) {
@@ -935,7 +821,11 @@ public class LogKey {
       commandCode = CMD_TICKERATE_ENTITLEMENT;
       break;
 
-    case UNDEFINED:
+    case VOIDRESERVATION: // 2.16.3, JTL
+      commandCode = CMD_VOID_RESERVATION;
+      break;
+
+    default:
       commandCode = 0;
 
     }

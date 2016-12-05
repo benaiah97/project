@@ -9,8 +9,7 @@ import java.util.GregorianCalendar;
 import com.disney.exception.WrappedException;
 
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
-import pvt.disney.dti.gateway.dao.data.TransidRescode;
-
+import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
 
 /**
  * The Class TransidRescodeResult.
@@ -21,7 +20,7 @@ import pvt.disney.dti.gateway.dao.data.TransidRescode;
 public class TransidRescodeResult implements ResultSetProcessor {
 
 	/** The results. */
-	private ArrayList<TransidRescode> results = new ArrayList<TransidRescode>();
+	private ArrayList<TransidRescodeTO> results = new ArrayList<TransidRescodeTO>();
 
 	/** The number of records processed by this result set processor. */
 	//private int recordsProcessed = 0;
@@ -38,7 +37,7 @@ public class TransidRescodeResult implements ResultSetProcessor {
 	 */
 	@Override
 	public void processNextResultSet(ResultSet rs) throws SQLException, WrappedException {
-		TransidRescode transidRescodeTO = new TransidRescode();
+	  TransidRescodeTO transidRescodeTO = new TransidRescodeTO();
 		
 		//TSTRANSID
 		transidRescodeTO.setTsTransid( rs.getString("TS_TRANSID") );

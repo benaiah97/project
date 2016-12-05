@@ -10,7 +10,7 @@ import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
  *
  * @author MOONS012
  */
-public class ResCodeApiImpl implements ResCodeApi {
+public class ResCodeApiImpl implements ResCodeApiI {
 
 	/** The instance. */
 	private static ResCodeApiImpl instance = new ResCodeApiImpl();

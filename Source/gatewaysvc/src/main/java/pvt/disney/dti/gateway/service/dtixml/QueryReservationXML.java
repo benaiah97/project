@@ -15,6 +15,7 @@ import pvt.disney.dti.gateway.data.QueryReservationRequestTO;
 import pvt.disney.dti.gateway.data.QueryReservationResponseTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.GiftCardTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ProductTO;
@@ -39,7 +40,6 @@ public abstract class QueryReservationXML {
    * @return the DTI application object
    * @throws JAXBException
    *             should any parsing errors occur.
-   * @since 2.16.3         
    */
   public static QueryReservationRequestTO getTO(
       QueryReservationRequest queryResReq) throws JAXBException {
@@ -62,6 +62,13 @@ public abstract class QueryReservationXML {
     // Payload ID
     if (reservation.getPayloadID() != null) {
       queryResReqTO.setPayloadID(reservation.getPayloadID());
+    }
+    
+    // Include Res Demographics (as of 2.16.3, JTL)
+    if (queryResReq.isIncludeResDemographics() != null) {
+      if (queryResReq.isIncludeResDemographics()) {
+        queryResReqTO.setIncludeResDemographics(true);
+      }
     }
 
     return queryResReqTO;
@@ -181,10 +188,152 @@ public abstract class QueryReservationXML {
 
       QueryReservationResponse.ClientData clientData = new QueryReservationResponse.ClientData();
 
-      // Optional field
-      if (qryResRespTO.getClientData().getClientId() != null) clientData
-          .setClientId(qryResRespTO.getClientData().getClientId());
+      // ClientId
+      if (qryResRespTO.getClientData().getClientId() != null) {
+        clientData.setClientId(qryResRespTO.getClientData().getClientId());
+      }
+        
+      // Has any demographic data been provided?
+      QueryReservationResponse.ClientData.DemoData demoData = null;
+      if ((qryResRespTO.getClientData().getBillingInfo() != null) ||
+          (qryResRespTO.getClientData().getShippingInfo() != null)) {
+        demoData = new QueryReservationResponse.ClientData.DemoData();
+        clientData.setDemoData(demoData);
+      }
+            
+      // Populate Billing demo, if present.
+      if (qryResRespTO.getClientData().getBillingInfo() != null) {
 
+        QueryReservationResponse.ClientData.DemoData.Bill billData = new QueryReservationResponse.ClientData.DemoData.Bill(); 
+        
+        DemographicsTO billDemoTO = qryResRespTO.getClientData().getBillingInfo();
+        
+        // Name
+        if (billDemoTO.getName() != null) {
+          billData.setName(billDemoTO.getName());
+        }
+        
+        // LastName
+        if (billDemoTO.getLastName() != null) {
+          billData.setLastName(billDemoTO.getLastName());  
+        }
+        
+        // FirstName
+        if (billDemoTO.getFirstName() != null) {
+          billData.setFirstName(billDemoTO.getFirstName());
+        }
+        
+        // Addr1
+        if (billDemoTO.getAddr1() != null) {
+          billData.setAddr1(billDemoTO.getAddr1());
+        }
+        
+        // Addr2
+        if (billDemoTO.getAddr2() != null) {
+          billData.setAddr2(billDemoTO.getAddr2());
+        }
+        
+        // City
+        if (billDemoTO.getCity() != null) {
+          billData.setCity(billDemoTO.getCity());
+        }
+        
+        // State
+        if (billDemoTO.getState() != null) {
+          billData.setState(billDemoTO.getState());
+        }
+        
+        // ZIP
+        if (billDemoTO.getZip() != null) {
+          billData.setZip(billDemoTO.getZip());
+        }
+        
+        // Country
+        if (billDemoTO.getCountry() != null) {
+          billData.setCountry(billDemoTO.getCountry());
+        }
+        
+        // Telephone
+        if (billDemoTO.getTelephone() != null) {
+          billData.setTelephone(billDemoTO.getTelephone());
+        }
+        
+        // E-mail
+        if (billDemoTO.getEmail() != null) {
+          billData.setEmail(billDemoTO.getEmail());
+        }        
+        
+        // Seller Res Number
+        if (billDemoTO.getSellerResNbr() != null) {
+          billData.setSellerResNbr(billDemoTO.getSellerResNbr());
+        }
+
+        demoData.getBillAndShip().add(billData);
+        
+      }
+      
+      // Populate Shipping demo, if present.   
+      if (qryResRespTO.getClientData().getShippingInfo() != null) {
+
+        QueryReservationResponse.ClientData.DemoData.Ship shipData = new QueryReservationResponse.ClientData.DemoData.Ship(); 
+        
+        DemographicsTO shipDemoTO = qryResRespTO.getClientData().getShippingInfo();
+        
+        // Name
+        if (shipDemoTO.getName() != null) {
+          shipData.setName(shipDemoTO.getName());
+        }
+        
+        // LastName
+        if (shipDemoTO.getLastName() != null) {
+          shipData.setLastName(shipDemoTO.getLastName());  
+        }
+        
+        // FirstName
+        if (shipDemoTO.getFirstName() != null) {
+          shipData.setFirstName(shipDemoTO.getFirstName());
+        }
+        
+        // Addr1
+        if (shipDemoTO.getAddr1() != null) {
+          shipData.setAddr1(shipDemoTO.getAddr1());
+        }
+        
+        // Addr2
+        if (shipDemoTO.getAddr2() != null) {
+          shipData.setAddr2(shipDemoTO.getAddr2());
+        }
+        
+        // City
+        if (shipDemoTO.getCity() != null) {
+          shipData.setCity(shipDemoTO.getCity());
+        }
+        
+        // State
+        if (shipDemoTO.getState() != null) {
+          shipData.setState(shipDemoTO.getState());
+        }
+        
+        // ZIP
+        if (shipDemoTO.getZip() != null) {
+          shipData.setZip(shipDemoTO.getZip());
+        }
+        
+        // Country
+        if (shipDemoTO.getCountry() != null) {
+          shipData.setCountry(shipDemoTO.getCountry());
+        }
+        
+        // Telephone
+        if (shipDemoTO.getTelephone() != null) {
+          shipData.setTelephone(shipDemoTO.getTelephone());
+        }
+
+        demoData.getBillAndShip().add(shipData);
+        //clientData.getDemoData().getBillAndShip().add(shipData);
+        
+      }
+      
       resResp.setClientData(clientData);
     }
 

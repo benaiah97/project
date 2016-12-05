@@ -1608,9 +1608,6 @@
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="DemoData" minOccurs="0">
-								<xs:annotation>
-									<xs:documentation>Not supported by DTI</xs:documentation>
-								</xs:annotation>
 								<xs:complexType>
 									<xs:sequence maxOccurs="30">
 										<xs:element name="Bill" minOccurs="0">
@@ -1618,6 +1615,7 @@
 												<xs:attribute name="Name" type="xs:string" use="optional"/>
 												<xs:attribute name="LastName" type="xs:string" use="optional"/>
 												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstNameCH" type="xs:string" use="optional"/>
 												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
 												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
 												<xs:attribute name="City" type="xs:string" use="optional"/>
@@ -1625,6 +1623,8 @@
 												<xs:attribute name="Zip" type="xs:string" use="optional"/>
 												<xs:attribute name="Country" type="xs:string" use="optional"/>
 												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:anySimpleType" use="optional"/>
+												<xs:attribute name="SellerResNbr" type="xs:string" use="optional"/>
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="Ship" minOccurs="0">
@@ -1632,6 +1632,7 @@
 												<xs:attribute name="Name" type="xs:string" use="optional"/>
 												<xs:attribute name="LastName" type="xs:string" use="optional"/>
 												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstNameCH" type="xs:string" use="optional"/>
 												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
 												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
 												<xs:attribute name="City" type="xs:string" use="optional"/>

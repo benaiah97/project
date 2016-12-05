@@ -27,7 +27,7 @@ import pvt.disney.dti.gateway.response.xsd.VoidReservationResponse;
 /**
  * 
  * @author lewit019
- * @since 2.16.3
+ *
  */
 public abstract class VoidReservationXML {
 
@@ -44,9 +44,9 @@ public abstract class VoidReservationXML {
       VoidReservationRequest voidResReq) throws JAXBException {
 
     // Create the void reservation request transfer object and set request type.
-    VoidReservationRequestTO voidResReqTO = new VoidReservationRequestTO();
+    VoidReservationRequestTO queryResReqTO = new VoidReservationRequestTO();
 
-    voidResReqTO.setRequestType(voidResReq.getRequestType());
+    queryResReqTO.setRequestType(voidResReq.getRequestType());
 
     // Get JAXB parsed object.
     VoidedReservation reservation = voidResReq.getVoidedReservation();
@@ -55,15 +55,15 @@ public abstract class VoidReservationXML {
     
     // ResCode
     if (reservation.getResCode() != null) {
-      voidResReqTO.setResCode(reservation.getResCode());
+      queryResReqTO.setResCode(reservation.getResCode());
     }
     
     // Payload ID
     if (reservation.getPayloadID() != null) {
-      voidResReqTO.setPayloadID(reservation.getPayloadID());
+      queryResReqTO.setPayloadID(reservation.getPayloadID());
     }
 
-    return voidResReqTO;
+    return queryResReqTO;
 
   }
 
@@ -85,7 +85,7 @@ public abstract class VoidReservationXML {
     VoidReservationResponse resResp = new VoidReservationResponse();
 
     // Response Type
-    resResp.setResponseType(voidResRespTO.getResponseType());
+    resResp.setResponseType(voidResRespTO.getResponseType()); // TODO NPE!!!!
 
     // Ticket
     if (voidResRespTO.getTicketList() != null) {

@@ -292,12 +292,15 @@ public abstract class BusinessRules {
     }
 
     // Apply only provider-centric, not transaction-centric rules
-    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) dtiTxn = DLRBusinessRules
-        .applyBusinessRules(dtiTxn);
-    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) dtiTxn = WDWBusinessRules
-        .applyBusinessRules(dtiTxn);
-    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) dtiTxn = HKDBusinessRules
-        .applyBusinessRules(dtiTxn);
+    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) { 
+      dtiTxn = DLRBusinessRules.applyBusinessRules(dtiTxn); 
+    }
+    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) { 
+      dtiTxn = WDWBusinessRules.applyBusinessRules(dtiTxn);
+    } 
+    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
+      dtiTxn = HKDBusinessRules.applyBusinessRules(dtiTxn);
+    }
 
     return dtiTxn;
 
@@ -797,6 +800,8 @@ public abstract class BusinessRules {
 
     // Apply any rules unique to one provider.
     String tpiCode = dtiTxn.getTpiCode();
+    
+    // The only rule, at present, is the payload ID for res code swap
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_HKD) == 0) {
       HKDQueryReservationRules.applyHKDQueryReservationRules(dtiTxn);
     }

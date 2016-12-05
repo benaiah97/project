@@ -2228,6 +2228,11 @@
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="IncludeResDemographics" type="xs:boolean" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Defaults to false</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

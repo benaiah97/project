@@ -69,12 +69,15 @@ public class AttributeKey {
 
   /** Constant value indicating query reservation XML text. */
   private static final String QR_DBSTRING = "QueryReservation";
-
+  
   /** Constant value indicating associate media XML text. */
   private static final String AM_DBSTRING = "AssocMediaToAccount"; // 2.16.1 BIEST001 (Charles defined this as AssocMediaToAccount in database)
 
   /** Constant value indicating tickerate entitlement XML text. */
   private static final String TE_DBSTRING = "TickerateEntitlement"; // 2.16.1 BIEST001
+  
+  /** Constant value indicating void reservation XML text. */
+  private static final String VR_DBSTRING = "VoidReservation"; // 2.16.3, JTL
 
   /**
    * Constructor for AttributeKey
@@ -277,8 +280,12 @@ public class AttributeKey {
     case RENEWENTITLEMENT: // as of 2.16.1, JTL
       commandCode = RENT_DBSTRING;
       break;
+      
+    case VOIDRESERVATION: // as of 2.16.3, JTL
+      commandCode = VR_DBSTRING;
+      break;
 
-    case UNDEFINED:
+    default:
       commandCode = new String("");
 
     }

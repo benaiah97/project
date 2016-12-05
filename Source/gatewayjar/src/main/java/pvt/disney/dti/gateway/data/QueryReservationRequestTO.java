@@ -24,6 +24,12 @@ public class QueryReservationRequestTO extends CommandBodyTO implements Serializ
   private String payloadID;
 
   /**
+   * An optional value that determines if reservation demographics should be returned in the response.
+   * As of 2.16.3, JTL
+   */
+  private boolean includeResDemographics = false;
+  
+  /**
    * @return the requestType
    */
   public String getRequestType() {
@@ -91,6 +97,20 @@ public class QueryReservationRequestTO extends CommandBodyTO implements Serializ
    */
   public void setPayloadID(String payloadID) {
     this.payloadID = payloadID;
+  }
+
+  /**
+   * @return the includeResDemographics
+   */
+  public boolean isIncludeResDemographics() {
+    return includeResDemographics;
+  }
+
+  /**
+   * @param includeResDemographics the includeResDemographics to set
+   */
+  public void setIncludeResDemographics(boolean includeResDemographics) {
+    this.includeResDemographics = includeResDemographics;
   }
 
 }

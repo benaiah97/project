@@ -17,6 +17,7 @@ import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ProductTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
@@ -25,6 +26,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTClientDataTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
@@ -272,11 +274,162 @@ public class WDWQueryReservationRules {
     ClientDataTO dtiClientDataTO = new ClientDataTO();
     OTClientDataTO otClientDataTO = otMngResTO.getClientData();
     if (otClientDataTO != null) {
+    
+      // Client Id
       dtiClientDataTO.setClientId(otClientDataTO.getClientUniqueId()
           .toString());
       dtiResRespTO.setClientData(dtiClientDataTO);
-    }
 
+      // Demo Data
+      if ((otClientDataTO.getDemographicData() != null) ||
+          (otClientDataTO.getDemographicData().size() != 0)) {
+        
+        boolean hasShipDemo = false;
+        boolean hasBillDemo = false;
+        DemographicsTO billDemo = new DemographicsTO();
+        DemographicsTO shipDemo = new DemographicsTO();
+        ArrayList<OTFieldTO> otDemoList = otClientDataTO.getDemographicData();
+        
+        for (/*each*/ OTFieldTO aField: /*in*/ otDemoList ) {
+          
+          switch (aField.getFieldIndex()) {
+          
+          case OTFieldTO.WDW_CLNT_BILL_NAME:  
+            hasBillDemo = true;
+            billDemo.setName(aField.getFieldValue());
+            break;
+          
+          case OTFieldTO.WDW_CLNT_BILL_LASTNAME :  
+            hasBillDemo = true;
+            billDemo.setLastName(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_FIRSTNAME :  
+            hasBillDemo = true;
+            billDemo.setFirstName(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_ADDR1:  
+            hasBillDemo = true;
+            billDemo.setAddr1(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_ADDR2:  
+            hasBillDemo = true;
+            billDemo.setAddr2(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_CITY:  
+            hasBillDemo = true;
+            billDemo.setCity(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_STATE:  
+            hasBillDemo = true;
+            billDemo.setState(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_ZIP:  
+            hasBillDemo = true;
+            billDemo.setZip(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_COUNTRY:  
+            hasBillDemo = true;
+            billDemo.setCountry(aField.getFieldValue());
+            break;
+
+          case OTFieldTO.WDW_CLNT_BILL_TELEPHONE:  
+            hasBillDemo = true;
+            billDemo.setTelephone(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_EMAIL :  
+            hasShipDemo = true;
+            billDemo.setEmail(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_BILL_SLR_RES_NBR :  
+            hasShipDemo = true;
+            billDemo.setSellerResNbr(aField.getFieldValue());
+            break;            
+            
+          case OTFieldTO.WDW_CLNT_SHIP_NAME:  
+            hasShipDemo = true;
+            shipDemo.setName(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_LASTNAME:  
+            hasShipDemo = true;
+            shipDemo.setLastName(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_FIRSTNAME:  
+            hasShipDemo = true;
+            shipDemo.setFirstName(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_ADDR1:  
+            hasShipDemo = true;
+            shipDemo.setAddr1(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_ADDR2:  
+            hasShipDemo = true;
+            shipDemo.setAddr2(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_CITY:  
+            hasShipDemo = true;
+            shipDemo.setCity(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_STATE:  
+            hasShipDemo = true;
+            shipDemo.setState(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_ZIP:  
+            hasShipDemo = true;
+            shipDemo.setZip(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_COUNTRY:  
+            hasShipDemo = true;
+            shipDemo.setCountry(aField.getFieldValue());
+            break;
+            
+          case OTFieldTO.WDW_CLNT_SHIP_TELEPHONE:  
+            hasShipDemo = true;
+            shipDemo.setTelephone(aField.getFieldValue());
+            break;
+                      
+          default:
+            break;
+          
+          }
+          
+        } // loop
+        
+        DTIRequestTO dtiRequest = dtiTxn.getRequest();
+        CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+        QueryReservationRequestTO dtiResReq = (QueryReservationRequestTO) dtiCmdBody;
+
+        if (dtiResReq.isIncludeResDemographics()) {
+        
+          if (hasBillDemo) {
+             dtiClientDataTO.setBillingInfo(billDemo);
+          }
+          if (hasShipDemo) {
+             dtiClientDataTO.setShippingInfo(shipDemo);
+          }
+        
+        }
+        
+      }
+    
+    } // if otClientDataTO != null
+    
     return;
   }
 

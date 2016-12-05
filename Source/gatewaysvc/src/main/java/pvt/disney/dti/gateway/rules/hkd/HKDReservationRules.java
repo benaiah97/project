@@ -37,9 +37,10 @@ import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.ExtTxnIdentifierTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
+import pvt.disney.dti.gateway.data.common.ShowTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.dao.data.TransidRescode;
+import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTHeaderTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTManageReservationTO;
@@ -51,12 +52,14 @@ import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTFieldTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTPaymentTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTProductTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTReservationDataTO;
+import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTShowDataTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketTO;
 import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
+import pvt.disney.dti.gateway.rules.race.ResCodeApiI;
 import pvt.disney.dti.gateway.rules.race.ResCodeApiImpl;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
@@ -174,14 +177,13 @@ public class HKDReservationRules {
     ArrayList<TicketTO> tktListTO = dtiResReq.getTktList();
     
     /** TODO:  Assign or recover reservation code here */
-    // get res code prefix
     String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
     String resCode = null;
     
     if (dtiTxn.isRework()) {
       // Get the reservation code array (there should only be one)
-      ArrayList<TransidRescode> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-      TransidRescode rescodeTO = rescodeArray.get(0);
+      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      TransidRescodeTO rescodeTO = rescodeArray.get(0);
       resCode = rescodeTO.getRescode();
       
       // TODO: What if we don't find it?
@@ -192,7 +194,7 @@ public class HKDReservationRules {
       HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
       AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
       String sellerResPrefix = resPrefixAttr.getAttrValue();    
-      ResCodeApiImpl resCodeGenerator = ResCodeApiImpl.getInstance();
+      ResCodeApiI resCodeGenerator = ResCodeApiImpl.getInstance();
       resCode = resCodeGenerator.generateResCode(sellerResPrefix);
       TransidRescodeKey.insertTransIdRescode(payloadId, resCode);
       
@@ -403,22 +405,29 @@ public class HKDReservationRules {
     try {
       TPLookupTO aTPLookupTO = tpLookupMap
           .get(TPLookupTO.TPLookupType.SALES_TYPE);
-      if (aTPLookupTO == null) throw new DTIException(
+      if (aTPLookupTO == null) {   
+        throw new DTIException(
           HKDReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
           "TPLookup for SalesType is missing in the database.");
+      }
       otRes.setSalesType(Integer.parseInt(aTPLookupTO.getLookupValue()));
 
       aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.PICKUP_AREA);
-      if (aTPLookupTO == null) throw new DTIException(
+      if (aTPLookupTO == null) { 
+        throw new DTIException(
           HKDReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
           "TPLookup for ResPickupArea is missing in the database.");
+      }
+      
       otRes.setResPickupArea(Integer.parseInt(aTPLookupTO
           .getLookupValue()));
 
       aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.PICKUP_TYPE);
-      if (aTPLookupTO == null) throw new DTIException(
+      if (aTPLookupTO == null) { 
+        throw new DTIException(
           HKDReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
           "TPLookup for ResPickupType is missing in the database.");
+      }
       otRes.setResPickupType(Integer.parseInt(aTPLookupTO
           .getLookupValue()));
 
@@ -473,17 +482,21 @@ public class HKDReservationRules {
     TPLookupTO aTPLookupTO = tpLookupMap
         .get(TPLookupTO.TPLookupType.CLIENT_TYPE);
 
-    if (aTPLookupTO == null) throw new DTIException(
+    if (aTPLookupTO == null) { 
+      throw new DTIException(
         HKDReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
         "TPLookup for ClientType is missing in the database.");
+    }
     otClientData.setClientType(aTPLookupTO.getLookupValue());
     otClientData.setClientCategory(dtiClientData.getClientCategory() + " ");
 
     aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.LANGUAGE);
     try {
-      if (aTPLookupTO == null) throw new DTIException(
+      if (aTPLookupTO == null) { 
+        throw new DTIException(
           HKDReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
           "TPLookup for Language is missing in the database.");
+      }
       int intValue = Integer.parseInt(aTPLookupTO.getLookupValue());
       otClientData.setClientLanguage(new Integer(intValue));
     }
@@ -529,6 +542,27 @@ public class HKDReservationRules {
     // Set Transaction note 
     otManageRes.setTransactionNote(dtiRequest.getPayloadHeader()
         .getPayloadID());
+    
+    // Set ShowData (optional) (as of 2.16.3, JTL)
+    if (dtiResReq.getShow() != null) {
+      HkdOTShowDataTO otShowTO = new HkdOTShowDataTO();      
+      ShowTO showTO = dtiResReq.getShow();
+      
+      if (showTO.getShowGroup() != null) {
+        otShowTO.setGroupCode(showTO.getShowGroup());
+      }
+      
+      if (showTO.getShowPerformance() != null) {
+        otShowTO.setPerformanceId(showTO.getShowPerformance());
+      }
+      
+      if (showTO.getShowQuota() != null) {
+        otShowTO.setQuota(showTO.getShowQuota());
+      }
+      
+      otManageRes.setShowData(otShowTO);
+      
+    }
     
     // Set ExternalTransactionID (optional) 
     if (dtiResReq.getExtTxnIdentifier() != null) {

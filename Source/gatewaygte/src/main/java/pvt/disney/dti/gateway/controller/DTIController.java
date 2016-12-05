@@ -16,15 +16,17 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
-import pvt.disney.dti.gateway.common.DBTransaction;
 import pvt.disney.dti.gateway.common.TiXMLHandler;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.EntityKey;
+import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LogKey;
+import pvt.disney.dti.gateway.dao.LogTransaction;
 import pvt.disney.dti.gateway.dao.SequenceKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.service.DTIService;
 import pvt.disney.dti.gateway.util.DTIFormatter;
@@ -112,24 +114,22 @@ public class DTIController {
   }
 
   /**
-   * It gets the XML from the in-bound message, performs some basic validation,
-   * logs the request, and determines if an answer from this XML request is
-   * already on file (rework). Then, it determines the correct path for the
-   * request, returns the response string to the caller.
+   * It gets the XML from the in-bound message, performs some basic validation, logs the request, and determines if an answer from this XML request is already on file (rework). Then, it determines the correct path for the request, returns
+   * the response string to the caller.
    * 
-   * Note: There is a PCI control in this method to obliterate the credit card
-   * information prior to logging the request.
+   * Note: There is a PCI control in this method to obliterate the credit card information prior to logging the request.
    * 
    * @param inStream
-   *          the XML request
+   *            the XML request
    * @return An XML Document response
    * @throws IOException
-   *           in case of communications issues.
+   *             in case of communications issues.
    */
   @SuppressWarnings("rawtypes")
   public Document processRequest(InputStream inStream) throws IOException {
 
-    eventLogger.sendEvent("Entering processRequest(InputStream) ", EventType.DEBUG, this);
+    eventLogger.sendEvent("Entering processRequest(InputStream) ",
+        EventType.DEBUG, this);
 
     String strInputFile = null;
     Document docIn = null;
@@ -139,7 +139,7 @@ public class DTIController {
     String tsLocation = null;
     boolean blockedTransaction = false;
     XMLSerializer strser = null;
-    DBTransaction dbTran = null;
+    //DBTransaction dbTran = null;
     String target = null;
     Integer transIdITS = null;
     Integer tpRefNumber = null;
@@ -150,17 +150,25 @@ public class DTIController {
       // get the XML from the in-bound message
       try {
 
-        docIn = org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder()
+        docIn = org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
+            .newInstance().newDocumentBuilder()
             .parse(new InputSource(inStream));
 
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         // If we fail here, there's nothing to log, simply return bad XML.
-        eventLogger.sendEvent("Error in incoming XML: " + e, EventType.WARN, this);
-        DTIException dtie = new DTIException("Error in XML from ticket seller.", getClass(), 3,
-            DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(), "XML is not well formed", null);
+        eventLogger.sendEvent("Error in incoming XML: " + e,
+            EventType.WARN, this);
+        DTIException dtie = new DTIException(
+            "Error in XML from ticket seller.",
+            getClass(),
+            3,
+            DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(),
+            "XML is not well formed", null);
         docOut = buildErrorXMLForPOS((DTIException) dtie, payloadId);
         return docOut;
-      } finally {
+      }
+      finally {
         inStream.close();
       }
 
@@ -175,12 +183,14 @@ public class DTIController {
 
       // PCI Control - DO NOT REMOVE!!!
       maskedXMLRequest = PCIControl.overwritePciDataInXML(strInputFile);
-      eventLogger.sendEvent("Ticket seller request is: " + maskedXMLRequest, EventType.INFO, this);
+      eventLogger.sendEvent("Ticket seller request is: " + maskedXMLRequest,
+          EventType.INFO, this);
 
       // get the payLoad ID, entity Name, StoreId, and other key fields
       // from the XML
       if (docIn != null) {
-        eventLogger.sendEvent("Calling parseDoc() to extract key fields from XML.", EventType.DEBUG, this);
+        eventLogger.sendEvent("Calling parseDoc() to extract key fields from XML.",
+            EventType.DEBUG, this);
         HashMap parsedDoc = TiXMLHandler.parseDoc(docIn);
         payloadId = (String) parsedDoc.get(TiXMLHandler.PAYLOAD_ID);
         tsMac = (String) parsedDoc.get(TiXMLHandler.TS_MAC);
@@ -194,7 +204,8 @@ public class DTIController {
         BaseContext bctx = new BaseContext(dtitr);
         ContextManager.getInstance().storeContext(bctx);
 
-        eventLogger.sendEvent("Key fields extracted from inbound XML.", EventType.DEBUG, this);
+        eventLogger.sendEvent("Key fields extracted from inbound XML.",
+            EventType.DEBUG, this);
 
         // FLOOD CONTROL BEGINS ********************************************
         // Flood control works by deriving a key from components of the
@@ -213,24 +224,36 @@ public class DTIController {
 
             floodControl.evaluateTransaction(parsedDoc);
 
-          } catch (KeyBlockException kbe) {
+          }
+          catch (KeyBlockException kbe) {
 
             if (FLOODCONTROLDENY) {
               blockedTransaction = true;
-            } else {
-              eventLogger.sendEvent("FLOOD CONTROL - THIS TRANSACTION WOULD HAVE BEEN BLOCKED.", EventType.INFO, this);
+            }
+            else {
+              eventLogger
+                  .sendEvent(
+                      "FLOOD CONTROL - THIS TRANSACTION WOULD HAVE BEEN BLOCKED.",
+                      EventType.INFO, this);
             }
 
-          } catch (KeySuppressException kse) {
+          }
+          catch (KeySuppressException kse) {
 
             if (FLOODCONTROLDENY) {
               return null; // This forces an HTTP error.
-            } else {
-              eventLogger.sendEvent("FLOOD CONTROL - THIS TRANSACTION WOULD HAVE BEEN SUPPRESSED.", EventType.INFO,
-                  this);
             }
-          } catch (Exception e) {
-            eventLogger.sendEvent("FLOOD CONTROL FAILED: " + e.toString(), EventType.EXCEPTION, this);
+            else {
+              eventLogger
+                  .sendEvent(
+                      "FLOOD CONTROL - THIS TRANSACTION WOULD HAVE BEEN SUPPRESSED.",
+                      EventType.INFO, this);
+            }
+          }
+          catch (Exception e) {
+            eventLogger.sendEvent(
+                "FLOOD CONTROL FAILED: " + e.toString(),
+                EventType.EXCEPTION, this);
           }
 
         }
@@ -243,8 +266,10 @@ public class DTIController {
         try {
           transIdITS = SequenceKey.getITSTransId();
           tpRefNumber = SequenceKey.getTpRefNum();
-        } catch (DTIException dtie) {
-          eventLogger.sendEvent("EXCEPTION getting sequence numbers: " + dtie.toString(), EventType.FATAL, this);
+        }
+        catch (DTIException dtie) {
+          eventLogger.sendEvent("EXCEPTION getting sequence numbers: " + dtie
+                  .toString(), EventType.FATAL, this);
           throw dtie;
         }
 
@@ -256,8 +281,10 @@ public class DTIController {
         EntityTO entityTO = null;
         try {
           entityTO = EntityKey.getEntity(tsMac, tsLocation);
-        } catch (DTIException dtie) {
-          eventLogger.sendEvent("EXCEPTION getting entity lookup: " + dtie.toString(), EventType.EXCEPTION, this);
+        }
+        catch (DTIException dtie) {
+          eventLogger.sendEvent("EXCEPTION getting entity lookup: " + dtie
+                  .toString(), EventType.EXCEPTION, this);
           throw dtie;
         }
 
@@ -273,14 +300,19 @@ public class DTIController {
           // If it fails, log & keep going. The key business processes do not
           // rely on this table.
           try {
-            LogKey.insertDTITransLog(tpRefNumber, payloadId, entityTO, target, tktBroker, transIdITS, isFirstAttempt);
-          } catch (DTIException dtie) {
-            eventLogger.sendEvent("Unable to log ITS info into consolidated table:  " + dtie.toString(),
-                EventType.WARN, this);
+            LogKey.insertDTITransLog(tpRefNumber, payloadId,entityTO, target, tktBroker, transIdITS,
+                isFirstAttempt);
+          }
+          catch (DTIException dtie) {
+            eventLogger
+                .sendEvent("Unable to log ITS info into consolidated table:  " + dtie
+                        .toString(), EventType.WARN,this);
           }
 
-        } catch (DTIException dtie) {
-          eventLogger.sendEvent("EXCEPTION writing to INBOUND_TS_LOG: " + dtie.toString(), EventType.WARN, this);
+        }
+        catch (DTIException dtie) {
+          eventLogger.sendEvent("EXCEPTION writing to INBOUND_TS_LOG: " + dtie
+                  .toString(), EventType.WARN, this);
           throw dtie;
         }
 
@@ -288,27 +320,34 @@ public class DTIController {
 
         if (blockedTransaction) {
           DTIErrorCode dtiErrorCode = DTIErrorCode.TRANSACTION_FLOOD_BLOCKED;
-          DTIException dtie = new DTIException(getClass(), dtiErrorCode, "Flood-blocked transaction");
+          DTIException dtie = new DTIException(getClass(),
+              dtiErrorCode, "Flood-blocked transaction");
 
           throw dtie;
         }
 
         // Handle rework.
         if (isFirstAttempt) { // it's not a duplicate
-          eventLogger.sendEvent("Determined it's a new request.  Sending through DTI.", EventType.INFO, this);
-        } else { // it was a duplicate
+          eventLogger
+              .sendEvent(
+                  "Determined it's a new request.  Sending through DTI.",
+                  EventType.INFO, this);
+        }
+        else { // it was a duplicate 
+          
           // return the completed XML file if one exists.
-          dbTran = new DBTransaction();
-          dbTran.handleDuplicate(payloadId);
-          if ((dbTran.getResponseData() != null) && (dbTran.getResponseData().size() > 0)) {
-            docOut = getDocFromResultSet(dbTran, payloadId);
-            dbTran = null;
+          LogTransaction logTxn = new LogTransaction();
+          String xmlString = logTxn.selectOTSLog(payloadId);
+          if (xmlString != null) {
+            docOut = getDocFromXMLString(xmlString,payloadId);
             addReworkText(docOut, payloadId);
-            eventLogger.sendEvent("Rework response ready for ticket seller.", EventType.INFO, this);
+            eventLogger.sendEvent("Rework response ready for ticket seller.", EventType.INFO, this);            
             return docOut;
           } else {
             eventLogger
-                .sendEvent("No rework response found for duplicate.  Sending through DTI.", EventType.INFO, this);
+                .sendEvent(
+                    "No rework response found for duplicate.  Sending through DTI.",
+                    EventType.INFO, this);
             // Replace "new" ITSLogTransId with one logged prior.
             transIdITS = LogKey.getITSLogTransId(payloadId);
           }
@@ -318,32 +357,50 @@ public class DTIController {
         String xmlResponseMasked;
         String xmlRqstString = getDocumentToString(docIn);
         boolean isRework = !isFirstAttempt;
-        String xmlResponse = DTIService.submitRequest(xmlRqstString, entityTO, transIdITS, tpRefNumber, isRework);
+        String xmlResponse = DTIService.submitRequest(xmlRqstString,
+            entityTO, transIdITS, tpRefNumber, isRework);
 
         // PCI Control - DO NOT REMOVE!!!
-        xmlResponseMasked = PCIControl.overwritePciDataInXML(xmlResponse);
+        xmlResponseMasked = PCIControl
+            .overwritePciDataInXML(xmlResponse);
 
-        eventLogger.sendEvent("About to create XML Document from response string.", EventType.DEBUG, this);
+        eventLogger.sendEvent(
+            "About to create XML Document from response string.",
+            EventType.DEBUG, this);
 
         try {
-          docOut = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder()
-              .parse(new InputSource(DTIFormatter.getStringToInputStream(xmlResponseMasked)));
-        } catch (Exception e) {
-          throw new DTIException("doPost()...error in XML from DTI", getClass(), tpRefNumber,
-              DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(), e.getMessage(), e);
+          docOut = DocumentBuilderFactoryImpl
+              .newInstance()
+              .newDocumentBuilder()
+              .parse(new InputSource(DTIFormatter
+                  .getStringToInputStream(xmlResponseMasked)));
+        }
+        catch (Exception e) {
+          throw new DTIException(
+              "doPost()...error in XML from DTI",
+              getClass(),
+              tpRefNumber,
+              DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(),
+              e.getMessage(), e);
         }
 
-        eventLogger.sendEvent("XML response to seller: " + xmlResponseMasked, EventType.INFO, this);
+        eventLogger.sendEvent(
+            "XML response to seller: " + xmlResponseMasked,
+            EventType.INFO, this);
 
       }
 
-    } catch (Exception ee) {
+    }
+    catch (Exception ee) {
 
-      eventLogger.sendEvent("EXCEPTION processing request " + ee.toString(), EventType.EXCEPTION, this);
+      eventLogger.sendEvent(
+          "EXCEPTION processing request " + ee.toString(),
+          EventType.EXCEPTION, this);
       ee.printStackTrace();
 
       if (!(ee instanceof DTIException)) {
-        ee = new DTIException("processRequest", getClass(), 3, DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode(),
+        ee = new DTIException("processRequest", getClass(), 3,
+            DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode(),
             ee.getMessage(), ee);
       }
 
@@ -356,8 +413,9 @@ public class DTIController {
 
         try {
           transIdOTS = SequenceKey.getOTSTransId();
-          logOutbound(getDocumentToString(docOut), dtie, payloadId, transIdOTS);
-        } catch (DTIException ef) {
+          logOutbound(getDocumentToString(docOut), dtie, payloadId,transIdOTS);
+        }
+        catch (DTIException ef) {
           ef.printStackTrace();
           docOut = buildErrorXMLForPOS((DTIException) ef, payloadId);
         }
@@ -369,20 +427,26 @@ public class DTIController {
           // Update in DTI Common Trans Log
           if (tpRefNumber != null) {
 
-            TransactionType requestType = DTIService.findRequestType(maskedXMLRequest);
+            TransactionType requestType = DTIService
+                .findRequestType(maskedXMLRequest);
 
-            LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTS, dtiErrorCode.getErrorCode(),
-                dtiErrorCode.getErrorName(), null, null, new java.util.Date(), requestType, "Unknown");
+            LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTS,
+                dtiErrorCode.getErrorCode(),
+                dtiErrorCode.getErrorName(), null, null,
+                new java.util.Date(), requestType, "Unknown");
           }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           e.printStackTrace();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
           t.printStackTrace();
         }
 
       }
-    } finally {
+    }
+    finally {
       // Get rid of logging context (prevents an object leak).
       ContextManager.getInstance().removeContext();
     }
@@ -404,19 +468,16 @@ public class DTIController {
     // was performed then write the file to disk
     Document returnData = null;
     StringBuffer sb = null;
-    DBTransaction dbTransaction = new DBTransaction();
     dt = new DateTime();
 
     try {
       // Retrieve error info from DB
       eventLogger.sendEvent("Building error XML for ticket seller because: " + e + " Using PayloadID: " + newPayloadId,
           EventType.WARN, this);
-      dbTransaction.setSqlStatement("SELECT ERR_NBR, CRITICALITY, ERR_CLASS, ERR_NAME FROM DTI_ERROR WHERE ERR_NBR ='"
-          + e.getCode() + "'");
+      DTIErrorTO dtiErrorTO = ErrorKey.getErrorDetail(e.getDtiErrorCode());
       eventLogger.sendEvent("Getting error text from database for ERROR: " + e.getCode(), EventType.INFO, this);
-      dbTransaction.invoke();
 
-      if (dbTransaction.getResponseData().size() > 0) {
+      if (dtiErrorTO != null) {
         eventLogger.sendEvent("Got error data from DB...populating XML", EventType.DEBUG, this);
         sb = new StringBuffer(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Transmission><Payload><PayloadHeader><PayloadID>"
@@ -430,10 +491,10 @@ public class DTIController {
                 + dt.getHour() + ":" + dt.getMinute() + ":" + dt.getSecond() + "." + dt.getMilli().substring(0, 2)
                 + "</TransmitTime><TktBroker>" + getProperty(PropertyName.POS_TKT_BROKER)
                 + "</TktBroker><CommandCount>0</CommandCount><PayloadError><HdrErrorCode>"
-                + (String) dbTransaction.getResponseData().get("0") + "</HdrErrorCode><HdrErrorType>"
-                + (String) dbTransaction.getResponseData().get("1") + "</HdrErrorType><HdrErrorClass>"
-                + (String) dbTransaction.getResponseData().get("2") + "</HdrErrorClass><HdrErrorText>"
-                + (String) dbTransaction.getResponseData().get("3")
+                + (String) dtiErrorTO.getErrorCode().toString() + "</HdrErrorCode><HdrErrorType>"
+                + (String) dtiErrorTO.getErrorType() + "</HdrErrorType><HdrErrorClass>"
+                + (String) dtiErrorTO.getErrorClass() + "</HdrErrorClass><HdrErrorText>"
+                + (String) dtiErrorTO.getErrorText()
                 + "</HdrErrorText></PayloadError></PayloadHeader></Payload></Transmission>");
 
         // check to see if it is supposed to be sent back to POS
@@ -486,60 +547,36 @@ public class DTIController {
    * Logs an error to the out-bound error log.
    * 
    * @param xml
-   *          The XML error being returned.
+   *            The XML error being returned.
    * @param e
-   *          The DTIException encountered.
-   * @param newPayloadId
+   *            The DTIException encountered.
+   * @param payloadId
    * @throws DTIException
    */
-  private void logOutbound(String xml, DTIException e, String newPayloadId, Integer otsLogKey) throws DTIException {
+  private void logOutbound(String xml, DTIException e, String payloadId,
+      Integer otsLogKey) throws DTIException {
 
     eventLogger.sendEvent("Entering logOutbound(,,)", EventType.DEBUG, this);
 
-    int inbound_transid = 0;
-    DBTransaction dbTransaction = new DBTransaction();
+    Integer transIdITS = LogKey.getITSLogTransId(payloadId);
+    // Since 2.9 - JTL
+    // If there is no inbound_transid, then don't put the output in the database
+    // table (as we haven't put the request in there, either).
+    if (transIdITS == null) {
+      return;
+    }
 
-    try {
-      dbTransaction.setSqlStatement("SELECT TRANS_ID FROM INBOUND_TS_LOG WHERE TS_TRANSID ='" + newPayloadId + "'");
-      dbTransaction.invoke();
-      if (dbTransaction.getResponseData().size() > 0) {
-        inbound_transid = DTIFormatter.toInt((String) dbTransaction.getResponseData().get("0"));
-      }
-      String error = null;
-      if (e != null) {
-        if (e.getCode().length() > 2) {
-          error = "'" + e.getCode() + "'";
-        }
-      }
-
-      // Since 2.9 - JTL
-      // If there is no inbound_transid, then don't put the output in the
-      // database
-      // table (as we haven't put the request in there, either).
-      if (inbound_transid <= 0) {
-        return;
-      }
-
-      dbTransaction.setSqlStatement("SELECT TRANS_ID FROM OUTBOUND_TS_LOG WHERE TS_TRANSID ='" + newPayloadId
-          + "' AND ERR_RETURN_CODE IS NULL");
-      dbTransaction.invoke();
-
-      if (dbTransaction.getResponseData().size() == 0) {
-        dbTransaction.setSqlStatement("INSERT INTO OUTBOUND_TS_LOG (TRANS_ID, TRANS_DATE, TS_TRANSID, "
-            + "ERR_RETURN_CODE, XML_DOC, INBOUND_TS_ID) VALUES (" + otsLogKey + ", SYSDATE, '" + newPayloadId + "',"
-            + error + ",'" + xml + "'," + inbound_transid + ")");
-        dbTransaction.invoke();
-      }
-    } catch (Exception ex) {
-      if (e instanceof DTIException) {
-        eventLogger.sendEvent("EXCEPTION writing to OUTBOUND_TS_LOG: " + ex.toString(), EventType.WARN, this);
-        throw (DTIException) ex;
-      } else {
-        eventLogger.sendEvent("EXCEPTION invoking DBTransaction: " + ex.toString(), EventType.DEBUG, this);
-        throw new DTIException("DBTransaction()", DBTransaction.class, 3,
-            DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_TB.getErrorCode(), "Exception in SQL Execution", ex);
+    // Get Error code
+    String errorCode = null;
+    if (e != null) {
+      if (e.getCode().length() > 2) {
+        errorCode = e.getCode();
       }
     }
+
+    LogKey.insertOTSLogError(otsLogKey,  payloadId,  xml,  errorCode, transIdITS);
+    
+    return;
   }
 
   /**
@@ -550,7 +587,8 @@ public class DTIController {
    */
   private String getDocumentToString(Document doc) {
 
-    eventLogger.sendEvent("Entering getDocumentToString(Document)", EventType.DEBUG, this);
+    eventLogger.sendEvent("Entering getDocumentToString(Document)",
+        EventType.DEBUG, this);
 
     // given a string write to file and instantiate
     String returnData = null;
@@ -562,9 +600,12 @@ public class DTIController {
         ser.serialize(doc);
         sw.flush();
         sw.close();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         eventLogger
-            .sendEvent("EXCEPTION converting response Document to String: " + e.toString(), EventType.WARN, this);
+            .sendEvent(
+                "EXCEPTION converting response Document to String: " + e
+                    .toString(), EventType.WARN, this);
       }
     }
     returnData = sw.getBuffer().toString();
@@ -585,35 +626,32 @@ public class DTIController {
     NodeList nl = doc.getElementsByTagName(TiXMLHandler.PAYLOAD_HEADER);
     Node n = nl.item(0);
     n.appendChild(payloadNote);
-    return;
+
   }
 
-  /**
+
+   /**
    * Retrieves XML response for a rework that is complete.
    * 
    * @param dbTransaction
-   *          A connection object.
+   *            A connection object.
    * @param newPayloadId
    * @return An XML document.
    * @throws DTIException
-   *           for any problem creating response XML.
+   *             for any problem creating response XML.
    */
-  private Document getDocFromResultSet(DBTransaction dbTransaction, String newPayloadId) throws DTIException {
+  private Document getDocFromXMLString(String completeXML, String payloadId) throws DTIException {
 
-    eventLogger.sendEvent("Entering getDocFromResultSet(,)",
-        EventType.DEBUG, this);
+    eventLogger.sendEvent("Entering getDocFromResultSet(,)",EventType.DEBUG, this);
 
     Document returnDoc = null;
-    String completeXML = (String) dbTransaction.getResponseData().get("0");
     eventLogger.sendEvent(
-        "Retrieved original response for rework: " + completeXML,
-        EventType.INFO, this);
-    eventLogger
-        .sendEvent(
-            "About to Instantiate XML from OutBound TS LOG for payloadId: " + newPayloadId,
+        "Retrieved original response for rework: " + completeXML, EventType.INFO, this);
+    eventLogger.sendEvent(
+            "About to Instantiate XML from OutBound TS LOG for payloadId: " + payloadId,
             EventType.DEBUG, this);
+    
     try {
-
       InputStream istr = DTIFormatter.getStringToInputStream(completeXML);
       InputSource isrc = new InputSource(istr);
       returnDoc = DocumentBuilderFactoryImpl.newInstance()
@@ -621,45 +659,36 @@ public class DTIController {
 
       eventLogger
           .sendEvent(
-              "Finished Instantiation XML from OutBound TS LOG for payloadId: " + newPayloadId,
+              "Finished Instantiation XML from OutBound TS LOG for payloadId: " + payloadId,
               EventType.DEBUG, this);
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       eventLogger
           .sendEvent(
-              "EXCEPTION creating XML from OutBound TS LOG for payloadId " + newPayloadId + ":  " + e
+              "EXCEPTION creating XML from OutBound TS LOG for payloadId " + payloadId + ":  " + e
                   .toString(), EventType.WARN, this);
-      eventLogger.sendEvent(
-          "EXCEPTION instantiating XML was: " + e.toString(),
+      eventLogger.sendEvent("EXCEPTION instantiating XML was: " + e.toString(),
           EventType.WARN, this);
-      throw new DTIException(
-          "EXCEPTION in XML from OUTBOUND_TS_LOG",
-          getClass(),
-          3,
-          DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(),
-          "XML is not Well Formed", null);
+      throw new DTIException("EXCEPTION in XML from OUTBOUND_TS_LOG", getClass(), 3,
+          DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(), "XML is not Well Formed", null);
     }
 
     if (returnDoc == null) {
       throw new DTIException(
           "EXCPETION in XML from OUTBOUND_TS_LOG (returnDoc is null)",
-          getClass(),
-          3,
-          DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(),
+          getClass(), 3, DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode(),
           "XML is not Well Formed", null);
     }
+    
     return returnDoc;
   }
-
+  
+  
   /**
-   * Returns properties loaded at runtime. Normally, you wouldn't incur the
-   * penalty of a second stack call here, but the properties are scattered
-   * throughout the XML. In those difficult areas, this call allows for cleaner
-   * code.
+   * Returns properties loaded at runtime. Normally, you wouldn't incur the penalty of a second stack call here, but the properties are scattered throughout the XML. In those difficult areas, this call allows for cleaner code.
    * 
    * @param key
-   *          java.lang.String
+   *            java.lang.String
    */
   private String getProperty(String key) {
 

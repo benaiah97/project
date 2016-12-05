@@ -5,7 +5,7 @@ package pvt.disney.dti.gateway.rules.race;
  * 
  * @author MOONS012
  */
-public interface ResCodeApi {
+public interface ResCodeApiI {
 	
 	/**
 	 * Creates the res code for payload id.

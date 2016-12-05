@@ -89,52 +89,51 @@ public class DTIService {
   }
 
   /**
-   * Implements the singleton pattern. If needed, method creates the instance of DTIService. Calls the service "makeServiceRequest" method.
+   * Implements the singleton pattern. If needed, method creates the instance of
+   * DTIService. Calls the service "makeServiceRequest" method.
    * 
    * @param request
    * @return XML response of type string.
    */
-  public static String submitRequest(String request, EntityTO entityTO,
-      Integer transIdITS, Integer tpRefNumber, boolean isRework) {
+  public static String submitRequest(String request, EntityTO entityTO, Integer transIdITS, Integer tpRefNumber,
+      boolean isRework) {
 
     String response = null;
 
     if (dtiServ == null) {
       try {
         dtiServ = new DTIService();
-      }
-      catch (DTIException dtie) {
-        return DTIService.generateGenericError(
-            DTIErrorCode.DTI_PROCESS_ERROR, request);
+      } catch (DTIException dtie) {
+        return DTIService.generateGenericError(DTIErrorCode.DTI_PROCESS_ERROR, request);
       }
     }
 
-    response = dtiServ.makeServiceRequest(request, entityTO, transIdITS,
-        tpRefNumber, isRework);
+    response = dtiServ.makeServiceRequest(request, entityTO, transIdITS, tpRefNumber, isRework);
 
     return response;
 
   }
 
   /**
-   * The primary driver method used by the DTIService. It takes the string version of the XML request, creates a domain object (dtiTxn), and then passes through business rules, transformations, and logging to complete the transaction.
+   * The primary driver method used by the DTIService. It takes the string
+   * version of the XML request, creates a domain object (dtiTxn), and then
+   * passes through business rules, transformations, and logging to complete the
+   * transaction.
    * 
    * @param requestXML
-   *            The XML request in string format.
+   *          The XML request in string format.
    * @return XML response of type string.
    */
-  private String makeServiceRequest(String requestXML, EntityTO entityTO,
-      Integer transIdITS, Integer tpRefNumber, boolean isRework) {
+  private String makeServiceRequest(String requestXML, EntityTO entityTO, Integer transIdITS, Integer tpRefNumber,
+      boolean isRework) {
 
     String responseXML;
     DTITransactionTO dtiTxn;
 
-    logger.sendEvent("Entering makeServiceRequest().", EventType.DEBUG,
-        this);
+    logger.sendEvent("Entering makeServiceRequest().", EventType.DEBUG, this);
 
     if (requestXML == null) {
-      return generateGenericError(DTIErrorCode.INVALID_MSG_ELEMENT,
-          requestXML);
+      return generateGenericError(DTIErrorCode.INVALID_MSG_ELEMENT, requestXML);
     }
 
     // Using core logging, establish a way to track this
@@ -145,10 +144,8 @@ public class DTIService {
       dtitr.setPayloadId(payloadId);
       BaseContext bctx = new BaseContext(dtitr);
       ContextManager.getInstance().storeContext(bctx);
-    }
-    else {
-      return DTIService.generateGenericError(
-          DTIErrorCode.INVALID_MSG_ELEMENT, requestXML);
+    } else {
+      return DTIService.generateGenericError(DTIErrorCode.INVALID_MSG_ELEMENT, requestXML);
     }
 
     //
@@ -156,15 +153,11 @@ public class DTIService {
     //
     TransactionType requestType = findRequestType(requestXML);
     if (requestType == TransactionType.UNDEFINED) {
-      logger.sendEvent("Unable to determine request type from XML.",
-          EventType.WARN, this);
+      logger.sendEvent("Unable to determine request type from XML.", EventType.WARN, this);
       ContextManager.getInstance().removeContext();
-      return generateGenericError(DTIErrorCode.INVALID_COMMAND,
-          requestXML);
+      return generateGenericError(DTIErrorCode.INVALID_COMMAND, requestXML);
     }
-    logger.sendEvent(
-        "DTIService determined type of request is " + requestType,
-        EventType.INFO, this);
+    logger.sendEvent("DTIService determined type of request is " + requestType, EventType.INFO, this);
 
     //
     // Unmarshal the request
@@ -174,8 +167,8 @@ public class DTIService {
     try {
 
       dtiTxn = TransmissionRqstXML.getTO(requestXML, requestType, tktBroker);
-      if (dtiTxn == null) throw new DTIException(
-          "Null request transfer object returned from parser.");
+      if (dtiTxn == null)
+        throw new DTIException("Null request transfer object returned from parser.");
 
       dtiTxn.setEntityTO(entityTO);
       dtiTxn.setTransIdITS(transIdITS);
@@ -184,21 +177,13 @@ public class DTIService {
       dtiTxn.setTpRefNum(tpRefNumber);
       dtiTxn.setRework(isRework); // As of 2.16.3 (JTL)
       logger.sendEvent("Request unmarshalled.", EventType.DEBUG, this);
-    }
-    catch (JAXBException je) {
-      logger.sendEvent(
-          "Exception parsing request xml:  " + je.toString(),
-          EventType.WARN, this);
-      return generateGenericError(DTIErrorCode.INVALID_MSG_CONTENT,
-          requestXML);
-    }
-    catch (DTIException qe) {
-      logger.sendEvent(
-          "Exception parsing request xml:  " + qe.toString(),
-          EventType.WARN, this);
+    } catch (JAXBException je) {
+      logger.sendEvent("Exception parsing request xml:  " + je.toString(), EventType.WARN, this);
+      return generateGenericError(DTIErrorCode.INVALID_MSG_CONTENT, requestXML);
+    } catch (DTIException qe) {
+      logger.sendEvent("Exception parsing request xml:  " + qe.toString(), EventType.WARN, this);
       ContextManager.getInstance().removeContext();
-      return generateGenericError(DTIErrorCode.INVALID_MSG_ELEMENT,
-          requestXML);
+      return generateGenericError(DTIErrorCode.INVALID_MSG_ELEMENT, requestXML);
     }
 
     //
@@ -216,8 +201,7 @@ public class DTIService {
 
       // Apply the transform rules
       String xmlRequest = TransformRules.changeToProviderFormat(dtiTxn);
-      logger.sendEvent("Applied transform rules (DTI to Provider).",
-          EventType.INFO, this);
+      logger.sendEvent("Applied transform rules (DTI to Provider).", EventType.INFO, this);
 
       // Acquire all log table key values
       LogKey.getLogTableKeys(dtiTxn);
@@ -228,63 +212,47 @@ public class DTIService {
 
       // Log the Product Detail
       ProductKey.insertProductDetail(dtiTxn);
-      logger.sendEvent("Logged the product detail.", EventType.DEBUG,
-          this);
+      logger.sendEvent("Logged the product detail.", EventType.DEBUG, this);
 
       // Send to Provider
-      String xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn,
-          xmlRequest);
+      String xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
       logger.sendEvent("Sent message to provider.", EventType.DEBUG, this);
 
       // Log the Out-bound TP Message
       LogKey.insertOTPLog(dtiTxn, xmlResponse);
-      logger.sendEvent("Logged outbound TP message.", EventType.INFO,
-          this);
+      logger.sendEvent("Logged outbound TP message.", EventType.INFO, this);
 
       // Parse Response into DTITransactionTO object
       dtiTxn = TransformRules.changeToDtiFormat(dtiTxn, xmlResponse);
-      logger.sendEvent("Applied transform rules (Provider to DTI).",
-          EventType.INFO, this);
+      logger.sendEvent("Applied transform rules (Provider to DTI).", EventType.INFO, this);
 
-    }
-    catch (DTIException dtie) {
+    } catch (DTIException dtie) {
 
-      logger.sendEvent("DTI ERROR CODE: " + dtie.getDtiErrorCode()
-          .getErrorCode() + " - " + dtie.getLogMessage(),
+      logger.sendEvent("DTI ERROR CODE: " + dtie.getDtiErrorCode().getErrorCode() + " - " + dtie.getLogMessage(),
           EventType.WARN, this);
-      logger.sendEvent("DTI application class: " + dtie.getClassName()
-          .toString(), EventType.WARN, this);
+      logger.sendEvent("DTI application class: " + dtie.getClassName().toString(), EventType.WARN, this);
 
       // Format error transfer object response
       DTIErrorTO errorTO;
       if (dtie.getDtiErrorCode() != null) {
         errorTO = ErrorKey.getErrorDetail(dtie.getDtiErrorCode());
+      } else {
+        errorTO = ErrorKey.getErrorDetail(DTIErrorCode.UNDEFINED_FAILURE);
       }
-      else {
-        errorTO = ErrorKey
-            .getErrorDetail(DTIErrorCode.UNDEFINED_FAILURE);
-      }
-      dtiTxn.setResponse(DTIErrorCode.populateDTIErrorResponse(errorTO,
-          dtiTxn));
+      dtiTxn.setResponse(DTIErrorCode.populateDTIErrorResponse(errorTO, dtiTxn));
 
-    }
-    catch (DTICalmException dtice) {
+    } catch (DTICalmException dtice) {
 
       dtiTxn = dtice.getDtiTxn();
-      logger.sendEvent(
-          "Warning: CALM Override for provider " + dtiTxn
-              .getTpiCode(), EventType.WARN, this);
+      logger.sendEvent("Warning: CALM Override for provider " + dtiTxn.getTpiCode(), EventType.WARN, this);
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       logger.sendEvent("Exception: " + e.toString(), EventType.WARN, this);
-      logger.sendException(EventType.EXCEPTION,
-          ErrorCode.APPLICATION_EXCEPTION, e, this);
+      logger.sendException(EventType.EXCEPTION, ErrorCode.APPLICATION_EXCEPTION, e, this);
       DTIErrorTO errorTO;
       errorTO = ErrorKey.getErrorDetail(DTIErrorCode.UNDEFINED_FAILURE);
-      dtiTxn.setResponse(DTIErrorCode.populateDTIErrorResponse(errorTO,
-          dtiTxn));
+      dtiTxn.setResponse(DTIErrorCode.populateDTIErrorResponse(errorTO, dtiTxn));
     }
 
     //
@@ -297,9 +265,9 @@ public class DTIService {
     //
     try {
       responseXML = TransmissionRespXML.getXML(dtiTxn);
-      if (responseXML == null) throw new DTIException(DTIService.class,
-          DTIErrorCode.UNDEFINED_FAILURE,
-          "Unable to marshall XML from the objects passed as response");
+      if (responseXML == null)
+        throw new DTIException(DTIService.class, DTIErrorCode.UNDEFINED_FAILURE,
+            "Unable to marshall XML from the objects passed as response");
 
       logger.sendEvent("Marshalled the response.", EventType.DEBUG, this);
 
@@ -307,31 +275,21 @@ public class DTIService {
       // Log the Output Ticket Seller XML
       //
       LogKey.insertOTSLog(dtiTxn, responseXML);
-      logger.sendEvent("Logged outbound TS message.", EventType.INFO,
+      logger.sendEvent("Logged outbound TS message.", EventType.INFO, this);
+
+    } catch (JAXBException je) {
+
+      logger.sendEvent("Exception parsing resp object:  " + je.toString(), EventType.EXCEPTION, this);
+      logger.sendEvent("Error code was: " + je.getErrorCode() + ":  " + je.getLocalizedMessage(), EventType.EXCEPTION,
           this);
+      je.printStackTrace();
+      return generateGenericError(DTIErrorCode.TP_INTERFACE_FAILURE, requestXML);
 
-    }
-    catch (JAXBException je) {
+    } catch (DTIException qe) {
+      logger.sendEvent("Exception retrieving resp xml:  " + qe.toString(), EventType.EXCEPTION, this);
+      return generateGenericError(DTIErrorCode.TP_INTERFACE_FAILURE, requestXML);
 
-      logger.sendEvent(
-          "Exception parsing resp object:  " + je.toString(),
-          EventType.EXCEPTION, this);
-      logger.sendEvent(
-          "Error code was: " + je.getErrorCode() + ":  " + je
-              .getLocalizedMessage(), EventType.EXCEPTION, this);
-      return generateGenericError(DTIErrorCode.TP_INTERFACE_FAILURE,
-          requestXML);
-
-    }
-    catch (DTIException qe) {
-      logger.sendEvent(
-          "Exception retrieving resp xml:  " + qe.toString(),
-          EventType.EXCEPTION, this);
-      return generateGenericError(DTIErrorCode.TP_INTERFACE_FAILURE,
-          requestXML);
-
-    }
-    finally {
+    } finally {
       // Get rid of logging context (prevents an object leak).
       ContextManager.getInstance().removeContext();
     }
@@ -340,13 +298,16 @@ public class DTIService {
   }
 
   /**
-   * A simple routine to locate the value of a unique XML tag in an XML string. returns empty string if tag is empty.
+   * A simple routine to locate the value of a unique XML tag in an XML string.
+   * returns empty string if tag is empty.
    * 
    * @param xml
-   *            All of the XML to be searched as one string.
+   *          All of the XML to be searched as one string.
    * @param tagName
-   *            Name of the tag being searched. Don't include greater than, less than, or slash.
-   * @return the String value of the desired tag (empty string is returned for an empty XML tag or null if not present).
+   *          Name of the tag being searched. Don't include greater than, less
+   *          than, or slash.
+   * @return the String value of the desired tag (empty string is returned for
+   *         an empty XML tag or null if not present).
    */
   private String findTag(String xml, String tagName) {
 
@@ -355,8 +316,10 @@ public class DTIService {
     int endErrorTag = xml.indexOf("</" + tagName + ">");
 
     if ((startErrorTag == -1) || (endErrorTag == -1)) {
-      if (xml.indexOf("<" + tagName + "/>") != -1) return "";
-      else return null;
+      if (xml.indexOf("<" + tagName + "/>") != -1)
+        return "";
+      else
+        return null;
     }
 
     startErrorTag += tagName.length() + 2; // Move pointer to start of the
@@ -372,7 +335,8 @@ public class DTIService {
   }
 
   /**
-   * This pulls the request type from the request XML (if it exists) and returns a constant value indicating which type of request was found.
+   * This pulls the request type from the request XML (if it exists) and returns
+   * a constant value indicating which type of request was found.
    * 
    * @param xmlRequest
    * @return TransactionType an enumeration identifying the transaction type.
@@ -383,8 +347,7 @@ public class DTIService {
     int indexOfKeyTag = xmlRequest.indexOf("<", indexOfXMLTag + 1);
     int indexOfKeyEndGthan = xmlRequest.indexOf(">", indexOfKeyTag);
 
-    String compare = xmlRequest.substring(indexOfKeyTag + 1,
-        indexOfKeyEndGthan).trim();
+    String compare = xmlRequest.substring(indexOfKeyTag + 1, indexOfKeyEndGthan).trim();
 
     if (compare.equals("QueryTicketRequest")) {
       return TransactionType.QUERYTICKET;
@@ -430,12 +393,13 @@ public class DTIService {
   }
 
   /**
-   * This method returns an XML response when there is insufficient information available in the request to determine what the request type is or parse the request appropriately.
+   * This method returns an XML response when there is insufficient information
+   * available in the request to determine what the request type is or parse the
+   * request appropriately.
    * 
    * @return
    */
-  public static String generateGenericError(DTIErrorCode dtiError,
-      String requestXML) {
+  public static String generateGenericError(DTIErrorCode dtiError, String requestXML) {
 
     DTIErrorTO errorTO = ErrorKey.getErrorDetail(dtiError);
     Date today = new Date();
@@ -481,14 +445,12 @@ public class DTIService {
     // acceptable.
     sdf = new SimpleDateFormat("HH:mm:ss.SSS");
     String tempTimeString = sdf.format(today);
-    String timeString = tempTimeString.substring(0,
-        (tempTimeString.length() - 1));
+    String timeString = tempTimeString.substring(0, (tempTimeString.length() - 1));
 
     resp.append(timeString);
     resp.append("</TransmitTime><TktBroker>" + tktBroker + "</TktBroker><CommandCount>0</CommandCount>");
 
-    resp.append("<PayloadError><HdrErrorCode>" + errorTO.getErrorCode()
-        .toString() + "</HdrErrorCode>");
+    resp.append("<PayloadError><HdrErrorCode>" + errorTO.getErrorCode().toString() + "</HdrErrorCode>");
     resp.append("<HdrErrorType>" + errorTO.getErrorClass() + "</HdrErrorType>");
     resp.append("<HdrErrorClass>" + errorTO.getErrorType() + "</HdrErrorClass>");
     resp.append("<HdrErrorText>" + errorTO.getErrorText() + "</HdrErrorText></PayloadError>");

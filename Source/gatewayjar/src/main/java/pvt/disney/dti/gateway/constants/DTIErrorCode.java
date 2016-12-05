@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.HashMap;
 
+import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
+import pvt.disney.dti.gateway.data.ReservationRequestTO;
+import pvt.disney.dti.gateway.data.ReservationResponseTO;
 import pvt.disney.dti.gateway.data.VoidTicketResponseTO;
+import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
+import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
@@ -17,7 +22,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * appear at the same level in the XML.
  * 
  * @author lewit019
- * @since 2.16.3
+ * 
  */
 public class DTIErrorCode implements Serializable {
 
@@ -262,6 +267,8 @@ public class DTIErrorCode implements Serializable {
       "882", DTIErrorCode.ErrorScope.COMMAND, "Invalid Reservation Num");
   public final static DTIErrorCode CANNOT_FIND_RESERVATION = new DTIErrorCode(
       "883", DTIErrorCode.ErrorScope.COMMAND, "Cannot find Reservation");
+  public final static DTIErrorCode CANNOT_VOID_RESERVATION = new DTIErrorCode(
+      "884", DTIErrorCode.ErrorScope.COMMAND, "Cannot void Reservation");  // As of 2.16.3, JTL
   public final static DTIErrorCode PARTIAL_FAILURE = new DTIErrorCode("898",
       DTIErrorCode.ErrorScope.COMMAND, "Partial Failure");
   public final static DTIErrorCode UNDEFINED_FAILURE = new DTIErrorCode(
@@ -378,6 +385,29 @@ public class DTIErrorCode implements Serializable {
 
         dtiResp.setCommandBody(vtRespTO);
 
+      }
+    }
+
+    // If HKDL and Reservation, supply the reservation code back if DTI knows it
+    // from the request. (As of 2.16.3, JTL)
+    String tpiCode = dtiTxn.getTpiCode();
+    if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.RESERVATION) {
+      
+      if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
+
+        DTIRequestTO dtiRequest = dtiTxn.getRequest();
+        CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+        ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
+        String resCode = dtiResReq.getReservation().getResCode();
+
+        if (resCode != null) {
+          ReservationResponseTO resRespTO = new ReservationResponseTO();
+          ReservationTO resTO = new ReservationTO();
+          resTO.setResCode(resCode);
+          resRespTO.setReservation(resTO);
+          dtiResp.setCommandBody(dtiResReq);
+        }
+        
       }
     }
 
