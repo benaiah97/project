@@ -108,7 +108,7 @@ public class LogTransaction {
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
 
-      String statement = "INSERT INTO INBOUND_TS_LOG (TRANS_ID, TRANS_DATE, TS_TRANSID, XML_DOC, ENTITYID) "
+      String statement = "INSERT INTO DTI.INBOUND_TS_LOG (TRANS_ID, TRANS_DATE, TS_TRANSID, XML_DOC, ENTITYID) "
           + "VALUES (" + transIdITS.longValue() + ", SYSDATE, '" + payloadId + "', ? ," + entityId + ")";
 
       // Create the prepared statement with a SQL that doesn't contain any
@@ -209,7 +209,7 @@ public class LogTransaction {
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
 
-      String statement = "INSERT INTO INBOUND_TP_LOG (TRANS_ID, TRANS_DATE, TP_TRANSID, ERR_RETURN_CODE, "
+      String statement = "INSERT INTO DTI.INBOUND_TP_LOG (TRANS_ID, TRANS_DATE, TP_TRANSID, ERR_RETURN_CODE, "
           + "MQ_MSGID, REPLYTOQ, REPLYTOQMGR, PAYLOAD_ID, TARG_SYS, XML_VERSION, "
           + "COMM_PROTOCOL, COMM_METHOD, XML_DOC, INBOUND_TS_ID) " + "values (" + dtiTxn.getTransIdITP()
           + ", SYSDATE, " + dtiTxn.getTpRefNum().longValue() + ", '" + errorCode
@@ -311,7 +311,7 @@ public class LogTransaction {
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
 
-      String statement = "INSERT INTO OUTBOUND_TP_LOG (TRANS_ID, TRANS_DATE, "
+      String statement = "INSERT INTO DTI.OUTBOUND_TP_LOG (TRANS_ID, TRANS_DATE, "
           + "TP_TRANSID, ERR_RETURN_CODE, XML_DOC, INBOUND_TP_ID)" + " values(" + otpLogTransId + ", SYSDATE, '"
           + tpRefNum + "', ' ', ?, " + itpLogTransId + ")";
 
@@ -430,7 +430,7 @@ public class LogTransaction {
         valuesBuffer.append(", " + dtiTxn.getTransIdOTP().longValue());
       }
 
-      String statement = "INSERT INTO OUTBOUND_TS_LOG (" + fieldsBuffer.toString() + ") values("
+      String statement = "INSERT INTO DTI.OUTBOUND_TS_LOG (" + fieldsBuffer.toString() + ") values("
           + valuesBuffer.toString() + ")";
 
       // Create the prepared statement with a SQL that doesn't contain any
@@ -510,7 +510,7 @@ public class LogTransaction {
       dbConnection.setAutoCommit(true);
 
       // Create the SQL
-      String statement = "SELECT XML_DOC FROM OUTBOUND_TS_LOG WHERE TS_TRANSID='" + tstransId
+      String statement = "SELECT XML_DOC FROM DTI.OUTBOUND_TS_LOG WHERE TS_TRANSID='" + tstransId
           + "' AND ERR_RETURN_CODE IS NULL";
 
       // Create the prepared statement with a SQL that doesn't contain any
@@ -614,7 +614,7 @@ public class LogTransaction {
       // If the temporary CLOB has not yet been created, create new
       tempClob = CLOB.createTemporary(c, true, CLOB.DURATION_SESSION);
 
-      // Open the temporary CLOB in read write mode to enable writing
+      // Open the temporary CLOB in readwrite mode to enable writing
       tempClob.open(CLOB.MODE_READWRITE);
 
       // Get the output stream to write

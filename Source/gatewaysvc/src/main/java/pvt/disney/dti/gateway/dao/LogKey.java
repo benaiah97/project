@@ -465,8 +465,6 @@ public class LogKey {
     }
 
     try {
-
-      System.out.println("LogKey XML String is: " + inXMLString); // TODO JTL REMOVE
       
       // PCI Control: DO NOT REMOVE
       logger.sendEvent("Executing PCIControls", EventType.DEBUG, THISINSTANCE);

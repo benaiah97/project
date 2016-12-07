@@ -196,7 +196,7 @@ public class HKDReservationRules {
       String sellerResPrefix = resPrefixAttr.getAttrValue();    
       ResCodeApiI resCodeGenerator = ResCodeApiImpl.getInstance();
       resCode = resCodeGenerator.generateResCode(sellerResPrefix);
-      TransidRescodeKey.insertTransIdRescode(payloadId, resCode);
+      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
       
       // TODO:  What if we do find it/can't insert?
       // If I can know which index failed, then that determines remediation.

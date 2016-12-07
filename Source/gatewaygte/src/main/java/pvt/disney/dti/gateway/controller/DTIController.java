@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xml.serialize.XMLSerializer;
@@ -197,6 +198,20 @@ public class DTIController {
         tsLocation = (String) parsedDoc.get(TiXMLHandler.TS_LOCATION);
         target = (String) parsedDoc.get(TiXMLHandler.TS_ENVIRONMENT);
 
+        // Required edit (new as of 2.16.3, JTL)
+        // Ensure that they payload ID is present and is between the 
+        // standard 12 and 20 digits, numeric.
+        if ((payloadId == null) || 
+            (payloadId.length() < 12) || 
+            (payloadId.length() > 20) ||
+            (Pattern.matches("[a-zA-Z]+", payloadId))) {
+          
+          throw new DTIException(DTIController.class,
+              DTIErrorCode.INVALID_MSG_CONTENT,
+              "PayloadID was of invalid length or composition.");
+          
+        }
+        
         // Using core logging, establish a way to track this
         // transaction by payloadID
         DTITracker dtitr = new DTITracker();
