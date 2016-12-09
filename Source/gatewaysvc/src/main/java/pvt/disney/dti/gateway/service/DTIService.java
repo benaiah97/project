@@ -179,6 +179,7 @@ public class DTIService {
       logger.sendEvent("Request unmarshalled.", EventType.DEBUG, this);
     } catch (JAXBException je) {
       logger.sendEvent("Exception parsing request xml:  " + je.toString(), EventType.WARN, this);
+      je.printStackTrace();
       return generateGenericError(DTIErrorCode.INVALID_MSG_CONTENT, requestXML);
     } catch (DTIException qe) {
       logger.sendEvent("Exception parsing request xml:  " + qe.toString(), EventType.WARN, this);
