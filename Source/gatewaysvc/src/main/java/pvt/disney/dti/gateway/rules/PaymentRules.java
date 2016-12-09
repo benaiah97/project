@@ -38,7 +38,9 @@ public class PaymentRules {
   private static final int WDW_MAX_NUMBER_OF_PAYMENTS = 3;
   private static final int DLR_MAX_NUMBER_OF_CC_OR_GC = 5;
   private static final int DLR_MAX_NUMBER_OF_PAYMENTS = 5;
-
+  private static final int HKD_MAX_NUMBER_OF_CC_OR_GC = 2;
+  private static final int HKD_MAX_NUMBER_OF_PAYMENTS = 3;
+  
   /** The maximum CVV length (8). */
   public final static int MAX_WDW_CVV_LENGTH = 8;
 
@@ -381,6 +383,9 @@ public class PaymentRules {
     } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       maxNumberOfCCGC = PaymentRules.WDW_MAX_NUMBER_OF_CC_OR_GC;
       maxNumberOfPayments = PaymentRules.WDW_MAX_NUMBER_OF_PAYMENTS;
+    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_HKD) == 0) {
+      maxNumberOfCCGC = PaymentRules.HKD_MAX_NUMBER_OF_CC_OR_GC ;
+      maxNumberOfPayments = PaymentRules.HKD_MAX_NUMBER_OF_PAYMENTS ;
     }
 
     // Evaluate the number of payments

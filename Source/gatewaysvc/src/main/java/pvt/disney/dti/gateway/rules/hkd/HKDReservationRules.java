@@ -488,7 +488,7 @@ public class HKDReservationRules {
         "TPLookup for ClientType is missing in the database.");
     }
     otClientData.setClientType(aTPLookupTO.getLookupValue());
-    otClientData.setClientCategory(dtiClientData.getClientCategory() + " ");
+    otClientData.setClientCategory(dtiClientData.getClientCategory());
 
     aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.LANGUAGE);
     try {

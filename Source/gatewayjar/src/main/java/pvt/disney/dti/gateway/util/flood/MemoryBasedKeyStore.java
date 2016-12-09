@@ -72,7 +72,7 @@ public class MemoryBasedKeyStore implements FloodControlKeyStore {
 
 		// int maxConcurrentKeys
 		String maxConcurrentKeysString = props
-				.getProperty("FloodControl.MaxConcurrentKeys");
+				.getProperty("FloodControl.MaxConcurrentKeys", "1500");
 		try {
 			setMaxConcurrentKeys(Integer.parseInt(maxConcurrentKeysString));
 		}

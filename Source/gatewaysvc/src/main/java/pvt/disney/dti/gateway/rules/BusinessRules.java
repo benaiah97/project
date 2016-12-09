@@ -489,13 +489,16 @@ public abstract class BusinessRules {
     ReservationRequestTO resReqTO = (ReservationRequestTO) dtiTxn
         .getRequest().getCommandBody();
     if ((resReqTO.getRequestType() == null) || (resReqTO.getRequestType()
-        .length() == 0)) throw new DTIException(BusinessRules.class,
-        DTIErrorCode.INVALID_MSG_ELEMENT,
+        .length() == 0)) { 
+      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_ELEMENT,
         "No RequestType on reservation.");
-    if (resReqTO.getRequestType().compareTo(CREATETAG) != 0) throw new DTIException(
+    }
+    if (resReqTO.getRequestType().compareTo(CREATETAG) != 0) { 
+      throw new DTIException(
         BusinessRules.class, DTIErrorCode.INVALID_MSG_ELEMENT,
         "Invalid RequestType on reservation:" + resReqTO
             .getRequestType());
+    }
 
     // Get database information for all products on the order
     ArrayList<TicketTO> tktListTO = resReqTO.getTktList();

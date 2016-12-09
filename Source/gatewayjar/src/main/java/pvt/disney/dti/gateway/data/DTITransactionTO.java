@@ -341,8 +341,13 @@ public class DTITransactionTO implements Serializable {
    */
   public void setProvider(ProviderType provider) {
     this.provider = provider;
-    if (provider == ProviderType.DLRGATEWAY) this.tpiCode = DTITransactionTO.TPI_CODE_DLR;
-    else if (provider == ProviderType.WDWNEXUS) this.tpiCode = DTITransactionTO.TPI_CODE_WDW;
+    if (provider == ProviderType.DLRGATEWAY) { 
+      this.tpiCode = DTITransactionTO.TPI_CODE_DLR;
+    } else if (provider == ProviderType.WDWNEXUS) {
+      this.tpiCode = DTITransactionTO.TPI_CODE_WDW;
+    } else if (provider == ProviderType.HKDNEXUS) {
+      this.tpiCode = DTITransactionTO.TPI_CODE_HKD;
+    }
   }
 
   /**
