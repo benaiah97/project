@@ -591,8 +591,10 @@ public class OTManageReservationXML {
 
     // TicketInfo List
     List<Node> ticketInfoNodeList = manageResNode.selectNodes("TicketInfo");
-    if ((ticketInfoNodeList != null) && (ticketInfoNodeList.size() > 0)) setOTTicketInfoTOList(
+    if ((ticketInfoNodeList != null) && (ticketInfoNodeList.size() > 0)) {
+      setOTTicketInfoTOList(
         otMngResTO.getTicketInfoList(), ticketInfoNodeList);
+    }
 
     // ProductInfo List
     List<Node> productInfoNodeList = manageResNode
@@ -710,18 +712,37 @@ public class OTManageReservationXML {
 
       // ItemStatus
       Node itemStatusNode = aNode.selectSingleNode("ItemStatus");
-      if (itemStatusNode == null) throw new DTIException(
-          OTManageReservationXML.class,
-          DTIErrorCode.TP_INTERFACE_FAILURE,
+      if (itemStatusNode == null) { 
+        throw new DTIException(OTManageReservationXML.class,DTIErrorCode.TP_INTERFACE_FAILURE,
           "Ticket provider returned XML without a TicketInfo,ItemStatus element.");
-      else {
+      } else {
         String inText = itemStatusNode.getText();
         otTktTO.setItemStatus(new Integer(inText));
       }
 
       // ItemType (ignored)
-      // ItemAlphaCode (ignored)
-      // ItemNumCode (ignored)
+      
+      // ItemAlphaCode (As of 2.16.3, JTL)
+      Node itemAlphaCodeNode = aNode.selectSingleNode("ItemAlphaCode");
+      if (itemAlphaCodeNode == null) {
+        throw new DTIException(OTManageReservationXML.class,DTIErrorCode.TP_INTERFACE_FAILURE,
+            "Ticket provider returned XML without a TicketInfo,ItemAlphaCode element.");        
+      } else {
+        String inText = itemAlphaCodeNode.getText();
+        otTktTO.setItemAlphaCode(inText);
+      }
+      
+      
+      // ItemNumCode  (As of 2.16.3, JTL)
+      Node itemNumCodeNode = aNode.selectSingleNode("ItemNumCode");
+      if (itemNumCodeNode == null) {
+        throw new DTIException(OTManageReservationXML.class,DTIErrorCode.TP_INTERFACE_FAILURE,
+            "Ticket provider returned XML without a TicketInfo,ItemNumCode element.");        
+      } else {
+        String inText = itemNumCodeNode.getText();
+        otTktTO.setItemNumCode(new BigInteger(inText));
+      }
+      
       // TicketName (ignored)
       // Description (ignored)
       // PrintedPrice (ignored)

@@ -32,6 +32,12 @@ public class OTTicketInfoTO implements Serializable {
   /** The ticket type. */
   private BigInteger ticketType;
 
+  /** The item alpha code (as of 2.16.3, JTL) */
+  private String itemAlphaCode;
+  
+  /** The item num code (as of 2.16.3, JTL) */
+  private BigInteger itemNumCode;
+
   /** The ticket price. */
   private BigDecimal price;
 
@@ -539,4 +545,33 @@ public class OTTicketInfoTO implements Serializable {
   public void setSeasonPassDemo(OTDemographicData seasonPassDemo) {
     this.seasonPassDemo = seasonPassDemo;
   }
+  
+  /**
+   * @return the itemNumCode
+   */
+  public BigInteger getItemNumCode() {
+    return itemNumCode;
+  }
+
+  /**
+   * @param itemNumCode the itemNumCode to set
+   */
+  public void setItemNumCode(BigInteger itemNumCode) {
+    this.itemNumCode = itemNumCode;
+  }
+
+  /**
+   * @return the itemAlphaCode
+   */
+  public String getItemAlphaCode() {
+    return itemAlphaCode;
+  }
+
+  /**
+   * @param itemAlphaCode the itemAlphaCode to set
+   */
+  public void setItemAlphaCode(String itemAlphaCode) {
+    this.itemAlphaCode = itemAlphaCode;
+  }
+  
 }

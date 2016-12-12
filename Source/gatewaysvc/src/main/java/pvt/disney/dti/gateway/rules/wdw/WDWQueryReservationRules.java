@@ -8,6 +8,7 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.ErrorKey;
+import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -16,6 +17,7 @@ import pvt.disney.dti.gateway.data.QueryReservationResponseTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
+import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
@@ -199,19 +201,28 @@ public class WDWQueryReservationRules {
         dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
         dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
-        if (otTicketInfo.getValidityStartDate() != null) dtiTicketTO
-            .setTktValidityValidStart(otTicketInfo
-                .getValidityStartDate());
+        if (otTicketInfo.getValidityStartDate() != null) {
+          dtiTicketTO.setTktValidityValidStart(otTicketInfo.getValidityStartDate());
+        }
 
-        if (otTicketInfo.getValidityEndDate() != null) dtiTicketTO
-            .setTktValidityValidEnd(otTicketInfo
-                .getValidityEndDate());
+        if (otTicketInfo.getValidityEndDate() != null) {
+          dtiTicketTO.setTktValidityValidEnd(otTicketInfo.getValidityEndDate());
+        }  
+        
+        // Get product code if available (as of 2.16.3, JTL)
+        ArrayList<DBProductTO> dbProdArray = ProductKey.getProductCodeFromTktNbr(otTicketInfo.getItemNumCode());
+        if (dbProdArray.size() > 0) {
+          dtiTicketTO.setProdCode(dbProdArray.get(0).getPdtCode());
+        } else {
+          dtiTicketTO.setProdCode(otTicketInfo.getItemAlphaCode());
+        }
 
         // AccountId
         dtiTicketTO.setAccountId(otTicketInfo.getAccountId());
 
         dtiTktList.add(dtiTicketTO);
-      }
+      } // for each OTTicketInfoTO
+      
       dtiResRespTO.setTicketList(dtiTktList);
     }
 
