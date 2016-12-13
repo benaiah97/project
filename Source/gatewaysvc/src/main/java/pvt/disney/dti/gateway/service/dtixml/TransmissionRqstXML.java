@@ -55,6 +55,9 @@ public class TransmissionRqstXML {
   /** Event logger. */
   private static final EventLogger logger = EventLogger
       .getLogger("pvt.disney.dti.gateway.service.dtixml.TransmissionRqstXML");
+  
+  private static final String PRE_CICD_NAMESPACE = "/var/opt/apps/RT/schemas/";
+  private static final String POST_CICD_NAMESPACE = "/var/opt/apps/WDPRApps/RT/schemas/";
 
   /**
    * 
@@ -233,7 +236,7 @@ public class TransmissionRqstXML {
    */
   private static String updateSchemaLocations(String inXML) {
     
-    String returnString = inXML.replaceAll("/var/opt/apps/RT/schemas/", "/var/opt/apps/WDPRApps/RT/schemas/");
+    String returnString = inXML.replaceAll(PRE_CICD_NAMESPACE, POST_CICD_NAMESPACE);
     
     return returnString;
   }
