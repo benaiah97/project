@@ -93,7 +93,7 @@ public class TransmissionRqstXML {
    * @throws JAXBException
    *             should any parsing errors occur.
    */
-  public static DTITransactionTO getTO(String requestXMLin,
+  public static DTITransactionTO getTO(String requestXML,
       TransactionType requestType, String tktBroker) throws JAXBException {
 
     if (thisInstance == null) {
@@ -101,6 +101,9 @@ public class TransmissionRqstXML {
     }
 
     DTITransactionTO dtiTransTO;
+    
+    // Pre-processing step because schemas moved in CICD (As of 2.16.3, JTL)
+    String requestXMLin = updateSchemaLocations(requestXML);
 
     // NOTE: Unmarshaller does not appear to be thread-safe. It must be recreated
     // for each use.
@@ -221,4 +224,19 @@ public class TransmissionRqstXML {
     return dtiTransTO;
 
   }
+  
+  
+  /**
+   * Update required for CICD
+   * @param inXML
+   * @return
+   */
+  private static String updateSchemaLocations(String inXML) {
+    
+    String returnString = inXML.replaceAll("/var/opt/apps/RT/schemas/", "/var/opt/apps/WDPRApps/RT/schemas/");
+    
+    return returnString;
+  }
+  
+  
 }
