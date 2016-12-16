@@ -1511,6 +1511,7 @@
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>
+							<xs:element name="PayAmount" type="xs:double" minOccurs="0"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

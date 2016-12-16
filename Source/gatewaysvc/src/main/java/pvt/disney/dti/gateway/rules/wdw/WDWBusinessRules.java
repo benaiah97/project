@@ -51,7 +51,6 @@ import pvt.disney.dti.gateway.rules.TransformRules;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
-import com.disney.util.AbstractInitializer;
 import com.disney.util.PropertyHelper;
 
 /**
@@ -1361,7 +1360,7 @@ public class WDWBusinessRules {
 
       long counter = 0;
       for /* each */(OTPaymentTO otPaymentTO : /* in */otPmtList) {
-
+        
         if (otPaymentTO.getPayType() == OTPaymentTO.PaymentType.VOUCHER) {
           continue; // Nothing to do, here.
         }
@@ -1382,9 +1381,14 @@ public class WDWBusinessRules {
         if (otPaymentTO.getPayType() == OTPaymentTO.PaymentType.CREDITCARD) {
 
           PaymentTO dtiPmtTO = new PaymentTO();
+          
           dtiPmtTO.setPayItem(BigInteger.valueOf(++counter));
+          
+          // Add payment amount to query reservation payments 
+          dtiPmtTO.setPayAmount(otPaymentTO.getPayAmount());
 
           OTCreditCardTO otCreditCardTO = otPaymentTO.getCreditCard();
+
           if (otCreditCardTO.isGiftCardIndicator()) { // Gift Card
 
             GiftCardTO dtiGiftCardTO = new GiftCardTO();
@@ -1393,11 +1397,8 @@ public class WDWBusinessRules {
               dtiGiftCardTO.setGcAuthNumber(otCreditCardTO.getAuthNumber());
 
             // AuthSystemResponse, as specified in the old gateway
-            // is
-            // not
-            // present in either the NeXML spec or in their normal
-            // responses.
-            // (omitted)
+            // is not present in either the NeXML spec or in their normal
+            // responses. (omitted)
             // dtiGiftCardTO.setGcAuthSysResponse(gcAuthSysResponse)
 
             if (otCreditCardTO.getCcNumber() != null)
@@ -1408,6 +1409,7 @@ public class WDWBusinessRules {
               dtiGiftCardTO.setGcPromoExpDate(otCreditCardTO.getPromoExpDate());
 
             dtiPmtTO.setGiftCard(dtiGiftCardTO);
+            
           } else { // Credit Card
             CreditCardTO dtiCredCardTO = new CreditCardTO();
             dtiCredCardTO.setCcAuthCode(otCreditCardTO.getAuthErrorCode());
