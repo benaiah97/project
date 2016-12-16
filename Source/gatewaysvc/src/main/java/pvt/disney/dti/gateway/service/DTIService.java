@@ -2,6 +2,7 @@ package pvt.disney.dti.gateway.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -76,11 +77,12 @@ public class DTIService {
       throw new DTIException();
     }
 
-    tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER,
-        props, null);
-    if (tktBroker == null) {
-      tktBroker = "DTIUNK";
-    }
+//    tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
+//    if (tktBroker == null) {
+//      tktBroker = "DTIUNK";
+//    }
+    
+    tktBroker = getBrokerName();
 
     /** Initiate Business Rules */
     BusinessRules.initBusinessRules(props);
@@ -462,4 +464,43 @@ public class DTIService {
     return response;
   }
 
+  /**
+   * Get the broker name from the environment. 
+   * @return
+   */
+  private String getBrokerName()  {
+      Map<String, String> env = System.getenv();
+      
+      String computerName = "DTIUNK";
+      
+      if (env.containsKey("COMPUTERNAME")) {
+        computerName = env.get("COMPUTERNAME");
+      } else if (env.containsKey("HOSTNAME")) {
+        computerName = env.get("HOSTNAME");
+      } else {
+        return computerName;
+      }
+      
+      char[] nameArray = computerName.toCharArray();
+      StringBuffer suffixArray = new StringBuffer();
+      boolean foundDigit = false;
+        
+      // Get only the numeric portion of the value...
+      for (/*each*/ char aChar: /*in*/ nameArray) {
+          
+          if (Character.isDigit(aChar)) {
+            foundDigit = true;  
+          }
+          
+          if (foundDigit == true) {
+            suffixArray.append(Character.toUpperCase(aChar));
+          }
+        
+      }
+
+      computerName = "DTI" + suffixArray.toString();
+
+      return computerName;
+  }
+  
 }
