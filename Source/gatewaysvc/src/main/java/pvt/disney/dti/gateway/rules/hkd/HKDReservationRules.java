@@ -16,7 +16,6 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
-import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
@@ -31,7 +30,6 @@ import pvt.disney.dti.gateway.data.common.AttributeTO.CmdAttrCodeType;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
-import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.ExtTxnIdentifierTO;
@@ -796,7 +794,11 @@ public class HKDReservationRules {
 
       // Bill E-mail (doesn't exist for HKDL)
 
-      // Bill SellerResNbr (doesn't exist for HKDL)
+      // Bill SellerResNbr (also known as HKDL's TRANSACTION NO.)
+      if (dtiBillInfo.getSellerResNbr() != null) {
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_TRANSACTION_NO,
+            DTIFormatter.websafe(dtiBillInfo.getSellerResNbr())));
+      }
 
     }
 
@@ -1130,12 +1132,14 @@ public class HKDReservationRules {
     HkdOTManageReservationTO otMngResTO = otCmdTO.getManageReservationTO();
     dtiRespTO.setCommandBody(dtiResRespTO);
 
-    // Price mismatch warning
-    if (dtiTxn.isPriceMismatch()) {
-      DTIErrorTO mismatchWarn = ErrorKey
-          .getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
-      dtiRespTO.setDtiError(mismatchWarn);
-    }
+    // Price mismatch warning (Commented out as of 2.16.3, JTL)
+    // HKDL plans to make extensive use of price mismatch, and the
+    // warnings, likewise, would be excessive.
+//    if (dtiTxn.isPriceMismatch()) {
+//      DTIErrorTO mismatchWarn = ErrorKey
+//          .getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
+//      dtiRespTO.setDtiError(mismatchWarn);
+//    }
 
     // ResponseType
     dtiResRespTO.setResponseType(otMngResTO.getCommandType());
