@@ -17,7 +17,8 @@
 			<excludes>
         			<exclude>pom.xml</exclude>
         			<exclude>assembly.xml</exclude>
-      			</excludes>
+        			<exclude>./target/dti-gateway-config-*.zip</exclude>
+      		</excludes>
 		</fileSet>	
 	</fileSets>
 </assembly>

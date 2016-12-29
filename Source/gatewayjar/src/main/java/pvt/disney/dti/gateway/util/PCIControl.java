@@ -23,6 +23,7 @@ import pvt.disney.dti.gateway.constants.DTIException;
  * 2. Version 1.1 - Todd Lewis - Clean-up and documentation - 7/2/2009 <BR>
  * 3. Version 1.2 - Todd Lewis - Import clean-up - 8/4/2009 <BR>
  * 4. Version 1.3 - Todd Lewis - Handle situations with null or empty or short CC strings. <BR>
+ * 5. Version 1.4 - Todd Lewis - Handle situations with SHA-1 hashing - 12/29/2016 <BR>
  * 
  * @author lewit019
  * @version 1.3
@@ -112,6 +113,12 @@ public class PCIControl {
 	public final static PCIControl CAVVVALUE = new PCIControl("CAVVValue",
 			OverwriteStyle.FULL);
 
+	/** CCSHA-1 is fully obliterated to prevent any possible discovery of the PAN. (as of 2.16.3, JTL) */
+  public final static PCIControl CCSHA1 = new PCIControl("CCSHA-1", OverwriteStyle.FULL);
+
+  /** SHA-1 is fully obliterated to prevent any possible discovery of the PAN. (as of 2.16.3, JTL) */
+  public final static PCIControl SHA1 = new PCIControl("SHA-1", OverwriteStyle.FULL);
+	
 	/** Overwritten digits are replaced with "Z" */
 	public final static String REPLACECHAR = "Z";
 
@@ -171,7 +178,9 @@ public class PCIControl {
 			// 1. Select the tag(s)
 			List<Node> nodeList = (List<Node>) document
 					.selectNodes("//" + aControl.getFieldName());
-			if ((nodeList == null) || (nodeList.size() == 0)) continue;
+			if ((nodeList == null) || (nodeList.size() == 0)) {
+			  continue;
+			}
 
 			// 2. Extract the text value, modify it
 			for /* each */(Node aNode : /* in */nodeList) {
