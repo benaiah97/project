@@ -12,7 +12,6 @@ import pvt.disney.dti.gateway.client.ProviderClient;
 import pvt.disney.dti.gateway.constants.DTICalmException;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LogKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
@@ -34,7 +33,6 @@ import com.disney.context.ContextManager;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
-import com.disney.util.PropertyHelper;
 
 /**
  * This class is the primary driver for transactions in the Java version of the DTI Gateway. Note: Since all class variables are just for configuration, then the class can operate as a singleton.

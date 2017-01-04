@@ -48,7 +48,7 @@ public class HkdOTFieldTO implements Serializable {
   /** Value for HKD_CLNT_BILL_TELEPHONE (11). */
   public static Integer HKD_CLNT_BILL_TELEPHONE = 11;
   
-  /** Value for HKD_CLNT_BILL_TELEPHONE (30). */
+  /** Value for HKD_CLNT_TRANSACTION_NO (30). */
   public static Integer HKD_CLNT_TRANSACTION_NO = 30;
 
   /** Value for HKD_CLNT_SHIP_NAME (12). */
