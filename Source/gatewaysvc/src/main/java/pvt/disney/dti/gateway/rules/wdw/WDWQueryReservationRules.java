@@ -178,6 +178,7 @@ public class WDWQueryReservationRules {
     // Ticket List
     ArrayList<TicketTO> dtiTktList = dtiResRespTO.getTicketList();
     ArrayList<OTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
+    HashMap<Long,String> productList = new HashMap<Long,String>();
     if ((otTicketList != null) && (otTicketList.size() > 0)) {
 
       for (OTTicketInfoTO otTicketInfo : otTicketList) {
@@ -211,10 +212,13 @@ public class WDWQueryReservationRules {
         
         // Get product code if available (as of 2.16.3, JTL)
         ArrayList<DBProductTO> dbProdArray = ProductKey.getProductCodeFromTktNbr(otTicketInfo.getItemNumCode());
+        Long key = otTicketInfo.getItemNumCode().longValue();
         if (dbProdArray.size() > 0) {
           dtiTicketTO.setProdCode(dbProdArray.get(0).getPdtCode());
+          productList.put(key, dtiTicketTO.getProdCode());
         } else {
           dtiTicketTO.setProdCode(otTicketInfo.getItemAlphaCode());
+          productList.put(key, otTicketInfo.getItemAlphaCode());
         }
 
         // AccountId
@@ -234,7 +238,8 @@ public class WDWQueryReservationRules {
       for (OTProductTO otProduct : otProductList) {
         ProductTO dtiProduct = new ProductTO();
         dtiProduct.setProdItem(otProduct.getItem());
-        dtiProduct.setProdCode(otProduct.getItemAlphaCode());
+        String productCode = productList.get(otProduct.getTicketType().longValue());
+        dtiProduct.setProdCode(productCode);
         dtiProduct.setProdQty(otProduct.getQuantity());
         dtiProduct.setProdPrice(otProduct.getPrice());
         dtiProduct.setProdTax1(otProduct.getTax());
