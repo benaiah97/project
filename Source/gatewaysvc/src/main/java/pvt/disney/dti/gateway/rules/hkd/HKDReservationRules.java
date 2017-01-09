@@ -327,73 +327,11 @@ public class HKDReservationRules {
         otRes.setValidated(new Boolean(false));
       }
       else {
-        otRes.setPrinted(new Boolean(true));
-        otRes.setValidated(new Boolean(true));
+        otRes.setPrinted(new Boolean(false));
+        otRes.setValidated(new Boolean(false));
       }
 
     }
-
-    // ******************************************************************
-    // Encode Everything Override 
-    // DTI Gateway is to encode and electronically entitle all
-    // orders that are paid and are under a set quantity of tickets.
-    boolean executeOverride = true;
-
-    // Add up all of the tickets, either actual or those listed as quantity.
-    ArrayList<TicketTO> tktList = dtiResReq.getTktList();
-    int numberOfTickets = 0;
-    for /* each */(TicketTO aTicketTO : /* in */tktList) {
-      numberOfTickets += aTicketTO.getProdQty().intValue();
-    }
-
-    // Is the rule active (atsMaxEncodeAllCnt > 0)
-    if (atsMaxEncodeAllCnt <= 0) {
-      executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because rule is turned off.",
-          EventType.WARN, THISOBJECT);
-    }
-
-    // Is the rule active for this seller?
-    anAttributeTO = aMap.get(AttributeTO.CmdAttrCodeType.DEFAULT_ELECT_ENC);
-    if (anAttributeTO != null) {
-      if (anAttributeTO.getAttrValue().compareToIgnoreCase("T") == 0) {
-        executeOverride = false;
-        logger.sendEvent(
-            "Encode everything overriden because seller override is set.",
-            EventType.WARN, THISOBJECT);
-      }
-    }
-
-    // Is the order paid?
-    if (otPaymentList.size() == 0) {
-      executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because order is not paid.",
-          EventType.WARN, THISOBJECT);
-    }
-
-    // Does the rule exceed atsMaxEncodeAllCnt?
-    if (numberOfTickets > atsMaxEncodeAllCnt) {
-      executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because number of tickets (" + numberOfTickets + ") is greater than " + atsMaxEncodeAllCnt + ".",
-          EventType.WARN, THISOBJECT);
-    }
-    else {
-      logger.sendEvent(
-          "Number of Tickets (" + numberOfTickets + ") is less than or equal to " + "ATSMaxEncodeAllCnt (" + atsMaxEncodeAllCnt + ")",
-          EventType.DEBUG, THISOBJECT);
-    }
-
-    if (executeOverride) {
-      otRes.setPrinted(new Boolean(true));
-      otRes.setValidated(new Boolean(true));
-
-    }
-
-    // End of Encode Everything Override
-    // ******************************************************************
 
     otManageRes.setReservationData(otRes);
 
