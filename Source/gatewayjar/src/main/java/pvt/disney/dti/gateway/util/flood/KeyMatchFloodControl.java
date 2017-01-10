@@ -60,9 +60,14 @@ public abstract class KeyMatchFloodControl {
 			// available.
 		}
 
+    // boolean keyBlockException
+    String keyBlockExceptionString = props.getProperty(
+        "FloodControl.KeyBlockException", "true");
+    setKeyBlockException(Boolean.parseBoolean(keyBlockExceptionString));
+		
 		// integer keyFrequencyWindow
 		String keyFrequencyWindowString = props.getProperty(
-				"FloodControl.KeyFrequencyWindow", "180");
+				"FloodControl.KeyFrequencyWindow", "60");
 		try {
 			setKeyFrequencyWindow(Integer.parseInt(keyFrequencyWindowString));
 		}
@@ -73,7 +78,7 @@ public abstract class KeyMatchFloodControl {
 
 		// integer keyFrequencyLimit
 		String keyFrequencyLimitString = props.getProperty(
-				"FloodControl.KeyFrequencyLimit", "5");
+				"FloodControl.KeyFrequencyLimit", "6");
 		try {
 			setKeyFrequencyLimit(Integer.parseInt(keyFrequencyLimitString));
 		}
@@ -82,14 +87,9 @@ public abstract class KeyMatchFloodControl {
 					"FloodControl.KeyFrequencyLimit property value non-integer.");
 		}
 
-		// boolean keyBlockException
-		String keyBlockExceptionString = props.getProperty(
-				"FloodControl.KeyBlockException", "true");
-		setKeyBlockException(Boolean.parseBoolean(keyBlockExceptionString));
-
 		// integer keySuppressInterval
 		String keySuppressIntervalString = props.getProperty(
-				"FloodControl.KeySuppressInterval", "1800");
+				"FloodControl.KeySuppressInterval", "90");
 		try {
 			setKeySuppressInterval(Integer.parseInt(keySuppressIntervalString));
 		}
@@ -100,7 +100,7 @@ public abstract class KeyMatchFloodControl {
 
 		// integer maxConcurrentKeys
 		String maxConcurrentKeysString = props.getProperty(
-				"FloodControl.MaxConcurrentKeys", "250");
+				"FloodControl.MaxConcurrentKeys", "1500");
 		try {
 			setMaxConcurrentKeys(Integer.parseInt(maxConcurrentKeysString));
 		}
@@ -111,7 +111,7 @@ public abstract class KeyMatchFloodControl {
 
 		// integer cacheRefreshInterval
 		String cacheRefreshIntervalString = props.getProperty(
-				"FloodControl.CacheRefreshInterval", "30");
+				"FloodControl.CacheRefreshInterval", "5");
 		try {
 			setCacheRefreshInterval(Integer
 					.parseInt(cacheRefreshIntervalString));
