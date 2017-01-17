@@ -596,6 +596,11 @@ public class HKDReservationRules {
 
       // Price
       otProduct.setPrice(aDtiTicket.getProdPrice());
+      
+      // Group Code (Optional, as of 2.17.1, JTL)
+      if (aDtiTicket.getShowGroup() != null) {
+        otProduct.setGroupCode(aDtiTicket.getShowGroup());
+      }
 
       // Put product in the list.
       otManageRes.getProductList().add(otProduct);

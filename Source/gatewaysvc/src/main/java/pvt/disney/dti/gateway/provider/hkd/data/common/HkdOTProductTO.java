@@ -64,8 +64,25 @@ public class HkdOTProductTO implements Serializable {
 
 	/** The Demographics. */
 	private HkdOTDemographicInfo demographicInfo;
+	
+	/** Group Code (as of 2.17.1, JTL) */
+	private String groupCode; 
 
 	/**
+   * @return the groupCode
+   */
+  public String getGroupCode() {
+    return groupCode;
+  }
+
+  /**
+   * @param groupCode the groupCode to set
+   */
+  public void setGroupCode(String groupCode) {
+    this.groupCode = groupCode;
+  }
+
+  /**
 	 * 
 	 * @return the ticket attribute value.
 	 */

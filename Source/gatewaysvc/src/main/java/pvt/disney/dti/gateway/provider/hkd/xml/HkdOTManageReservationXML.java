@@ -476,7 +476,12 @@ public class HkdOTManageReservationXML {
       // TicketAttribute (omitted)
       // GroupTicket (omitted)
       // BiometricLevel (omitted)
-      // GroupCode (omitted)
+
+      // GroupCode (optional as of 2.17.1, JTL)
+      if (aProductTO.getGroupCode() != null) {
+        pdtStanza.addElement("GroupCode").addText(aProductTO.getGroupCode());
+      }
+      
       // PriceTableIndex (omitted)
 
       // Ticket DemographicInfo (As of 2.9, JTL)

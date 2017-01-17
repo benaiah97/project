@@ -1572,6 +1572,11 @@ public abstract class ReservationXML {
         aTicketTO.getTicketAssignmets().add(assignTO);
       }
     }
+    
+    // ShowGroup
+    if (aTicket.getShowGroup() != null) {
+      aTicketTO.setShowGroup(aTicket.getShowGroup());
+    }
 
     ticketListTO.add(aTicketTO);
   }

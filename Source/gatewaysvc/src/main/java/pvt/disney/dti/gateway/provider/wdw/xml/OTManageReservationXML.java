@@ -167,7 +167,7 @@ public class OTManageReservationXML {
     // RegistrantInfo (currently in WDW XSD)
 
     // ShowData (omitted)
-    // VoidToOriginalMeansOfPaym (as of 2.16.3, JTL) TODO EXP
+    // VoidToOriginalMeansOfPaym (as of 2.16.3, JTL) 
     if ((otMngResTO.getVoidToOrigPayment() != null) && 
         (otMngResTO.getVoidToOrigPayment().booleanValue() == true)) {
       mngResStanza.addElement("VoidToOriginalMeansOfPaym").addText("true");
@@ -723,11 +723,10 @@ public class OTManageReservationXML {
       // ItemType (ignored)
       
       // ItemAlphaCode (As of 2.16.3, JTL)
+      // As of 2.17.1, JTL - ATS doesn't reliably provide this value on void reservation.
+      // making optional.
       Node itemAlphaCodeNode = aNode.selectSingleNode("ItemAlphaCode");
-      if (itemAlphaCodeNode == null) {
-        throw new DTIException(OTManageReservationXML.class,DTIErrorCode.TP_INTERFACE_FAILURE,
-            "Ticket provider returned XML without a TicketInfo,ItemAlphaCode element.");        
-      } else {
+      if (itemAlphaCodeNode != null) {
         String inText = itemAlphaCodeNode.getText();
         otTktTO.setItemAlphaCode(inText);
       }

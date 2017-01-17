@@ -322,6 +322,23 @@ public class TicketTO implements Serializable, Cloneable {
 
   /** If this pass has been replaced, then what pass replaced it. */
   private String replacedByPass;
+  
+  /**
+   * @return the showGroup
+   */
+  public String getShowGroup() {
+    return showGroup;
+  }
+
+  /**
+   * @param showGroup the showGroup to set
+   */
+  public void setShowGroup(String showGroup) {
+    this.showGroup = showGroup;
+  }
+
+  /** Show group.  As of 2.17.1, JTL */
+  private String showGroup; 
 
   /** The ticket transaction object. */
   private TicketTransactionTO tktTran;

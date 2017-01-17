@@ -286,7 +286,7 @@ public class WDWVoidReservationRules {
    * @throws DTIException
    *             for any rules violation.
    */
-  public static void applyWDWQueryReservationRules(DTITransactionTO dtiTxn) throws DTIException {
+  public static void applyWDWVoidReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
     return;
 
