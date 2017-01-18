@@ -75,11 +75,6 @@ public class DTIService {
       throw new DTIException();
     }
 
-//    tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
-//    if (tktBroker == null) {
-//      tktBroker = "DTIUNK";
-//    }
-    
     tktBroker = getBrokerName();
 
     /** Initiate Business Rules */

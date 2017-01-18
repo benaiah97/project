@@ -16,14 +16,24 @@
         <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
         <appender-ref ref="GATE_FILE"/>
     </appender>
-    <appender class="org.apache.log4j.FileAppender" name="GATE_FILE">
+    <!-- appender class="org.apache.log4j.FileAppender" name="GATE_FILE">
         <param name="File" value="${Gateway_Logs}/DTIGATEWAY.log"/>
         <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
-    </appender>
+    </appender> -->
+    
+	<appender name="GATE_FILE"
+		class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${Gateway_Logs}/DTIGATEWAY.log" />
+		<param name="MaxFileSize" value="5MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+	</appender>
+    
     <appender class="org.apache.log4j.FileAppender" name="DEVNULL">
         <param name="File" value="/dev/null"/>
         <layout class="com.disney.log4j.EventTextLayout"/>
-    </appender>
+    </appender>    
+    
     <appender class="org.apache.log4j.ConsoleAppender" name="STDOUT">
         <layout class="com.disney.log4j.EventTextLayout"/>
     </appender>
