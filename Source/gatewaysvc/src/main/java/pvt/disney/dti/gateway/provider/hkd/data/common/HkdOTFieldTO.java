@@ -87,11 +87,8 @@ public class HkdOTFieldTO implements Serializable {
   /** Value for HKD_CLNT_SHIP_CREDIT_INFO (23). */
   public static Integer HKD_CLNT_SHIP_CREDIT_INFO = 23;
   
-  /** Value for HKD_CLNT_SHIP_SALES (24). */
-  public static Integer HKD_CLNT_BILL_EMAIL = 24;
-  
-  /** Value for HKD_CLNT_SHIP_EMAIL (25). */
-  public static Integer HKD_CLNT_SHIP_EMAIL = 25;
+  /** Value for HKD_CLNT_BILL_EMAIL (25). */
+  public static Integer HKD_CLNT_BILL_EMAIL = 25;
   
   /** Value for HKD_CLNT_SHIP_NOTE (26). */
   public static Integer HKD_CLNT_SHIP_NOTE = 26;

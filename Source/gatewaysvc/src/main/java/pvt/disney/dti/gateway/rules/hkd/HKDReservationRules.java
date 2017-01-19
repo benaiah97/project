@@ -735,7 +735,11 @@ public class HKDReservationRules {
               DTIFormatter.websafe(dtiBillInfo.getTelephone())));
       }
 
-      // Bill E-mail (doesn't exist for HKDL)
+      // Bill E-mail 
+      if (dtiBillInfo.getEmail() != null) { 
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_EMAIL,
+              DTIFormatter.websafe(dtiBillInfo.getEmail())));
+      }
 
       // Bill SellerResNbr (also known as HKDL's TRANSACTION NO.)
       if (dtiBillInfo.getSellerResNbr() != null) {
