@@ -3,7 +3,7 @@
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0-35.0.0.0</version>
+		<version>1.0.0-83.0.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
@@ -86,6 +86,7 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 
