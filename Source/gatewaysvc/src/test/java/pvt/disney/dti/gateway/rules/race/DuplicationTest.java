@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pvt.disney.dti.gateway.rules.race;
 
@@ -32,44 +32,41 @@ import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 //@PerfTest(invocations = 10, threads = 1)
 //@Required(max = 1800, average = 850)
 public class DuplicationTest {
-	
+
 
 	/** The rule. */
 	@Rule
 	public ContiPerfRule i = new ContiPerfRule();
-	
-	/** The api. */
-	private static ResCodeApiImpl util = ResCodeApiImpl.getInstance(); 
-	
+
 	/** The shoud I run. */
 	private static boolean shoudIRun = false;
-	
+
 	/** The rescode map. */
 	private static HashMap<String,String> rescodeMap = new HashMap<String,String>();
-	
+
 	/** The duplicatefound. */
 	private static boolean duplicatefound = false;
-	
+
 	private static int iterationsToRun;
-	
+
 	/** The nbr duplicates. */
 	private static int nbrDuplicates = 0;
-	
+
 	/** The test results file. */
 	private static String testResultsFile;
-	
+
 	private static String tsprefix;
-	
+
 	/** The should output duplicates. */
 	private static boolean shouldOutputDuplicates;
-	
-	
+
+
 	public void DuplicationTest() {
-	
+
 
 	}
 
-	
+
 	/**
 	 * Sets the up before class.
 	 *
@@ -80,12 +77,12 @@ public class DuplicationTest {
 		ResourceBundle rb = ResourceBundle.getBundle("testData");
 		shoudIRun = Boolean.getBoolean( rb.getString("test.run.duplication") );
 		iterationsToRun= Integer.valueOf( rb.getString("test.run.duplication.iterations") ) ;
-		tsprefix = rb.getString("test.run.duplication.tsprefix");		
-		
+		tsprefix = rb.getString("test.run.duplication.tsprefix");
+
 		shouldOutputDuplicates = Boolean.getBoolean(rb.getString("test.run.duplication.outputresult") ) ;
 		testResultsFile = rb.getString("test.run.results.filename");
 		PrintWriter writer = new PrintWriter(testResultsFile, "UTF-8");
-		 
+
 		writer.println("===============================================================");
 		writer.println("RESULTS FOR " + iterationsToRun + " ITERATIONS");
 		writer.println("===============================================================");
@@ -130,15 +127,15 @@ public class DuplicationTest {
 	public void testDuplication() throws Exception {
 		if ( !(shoudIRun) ) {
 			System.out.println("Running test for duplication " + iterationsToRun + ". This could take awhile.");
-			
+
 			FileWriter fw = new FileWriter(testResultsFile, true);
 		    BufferedWriter bw = new BufferedWriter(fw);
-		    PrintWriter out = new PrintWriter(bw);          
+		    PrintWriter out = new PrintWriter(bw);
 
-			
+
 			for(int i=0; i < iterationsToRun ;i++) {
 				Thread.sleep(600);
-				String rescode = util.generateResCode(tsprefix);
+				String rescode = AlgorithmUtility.generateResCode(tsprefix);
 				if (rescodeMap.containsKey(rescode)) {
 					duplicatefound = true;
 					nbrDuplicates++;
@@ -146,11 +143,11 @@ public class DuplicationTest {
 					out.println(rescode);
 					System.out.println("Duplicate rescode " + rescode +" created on iteration " + i);
 				}
-				rescodeMap.put(rescode, rescode);				
+				rescodeMap.put(rescode, rescode);
 		    }
 			ResourceBundle rb = ResourceBundle.getBundle("testData");
 			testResultsFile = rb.getString("test.run.results.filename");
-			 
+
 			String testResultsString = iterationsToRun + " iterations run. " + nbrDuplicates + " duplicates generated";
 			System.out.println(testResultsString);
 			out.println(testResultsString);
@@ -162,7 +159,7 @@ public class DuplicationTest {
 			System.out.println("Skipping duplication test.");
 		}
 	}
-	
+
 	/**
 	 * Prints the rescode map.
 	 *
