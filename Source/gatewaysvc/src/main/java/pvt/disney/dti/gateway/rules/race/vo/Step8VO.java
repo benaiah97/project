@@ -1,22 +1,22 @@
 package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
- * The Class StepEightVO.
+ * The Class Step8VO.
  * 
  * @author MOONS012
  */
-public class StepEightVO extends ParentStepVO {
+public class Step8VO extends ParentStepVO {
 
 	/** The matrix. */
 	private int[][] matrix;
 	
 	/** The final chars. */
-	private char[] finalChars;
+	private char[] draftChars;
 	
 	/**
 	 * Instantiates a new step eight VO.
 	 */
-	public StepEightVO() {
+	public Step8VO() {
 		super();
 	}
 
@@ -39,17 +39,17 @@ public class StepEightVO extends ParentStepVO {
 	}
 
 	/**
-	 * @return the finalChars
+	 * @return the draftChars
 	 */
-	public char[] getFinalChars() {
-		return finalChars;
+	public char[] getDraftChars() {
+		return draftChars;
 	}
 
 	/**
-	 * @param finalChars the finalChars to set
+	 * @param draftChars the draftChars to set
 	 */
-	public void setFinalChars(char[] finalChars) {
-		this.finalChars = finalChars;
+	public void setDraftChars(char[] finalChars) {
+		this.draftChars = finalChars;
 	}
 
 	/* (non-Javadoc)
@@ -58,14 +58,14 @@ public class StepEightVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepEightVO: { ");
+		buff.append("Step8VO: { ");
 		buff.append(System.lineSeparator());
 		buff.append("matrix:");
 		buff.append(System.lineSeparator());
 		buff.append(this.convert2DIntArrayToString(matrix));
 		buff.append(System.lineSeparator());
-		buff.append("finalChars=");
-		buff.append(String.valueOf(finalChars));
+		buff.append("draftChars=");
+		buff.append(String.valueOf(draftChars));
 		buff.append(System.lineSeparator());
 		buff.append(" }");
 		

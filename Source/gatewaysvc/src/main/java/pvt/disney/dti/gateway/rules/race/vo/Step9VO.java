@@ -1,37 +1,37 @@
 package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
- * The Class StepNineVO.
+ * The Class Step9VO.
  * 
  * @author MOONS012
  */
-public class StepNineVO extends ParentStepVO {
+public class Step9VO extends ParentStepVO {
 
-	/** The final res code. */
-	private String finalResCode;
-	
+	/** The (partial) rescode as calculated for step9. */
+	private char[] step9ResCode; 
+
 	/**
 	 * Instantiates a new step nine VO.
 	 */
-	public StepNineVO() {
+	public Step9VO() {
 	}
 
 	/**
 	 * Gets the final res code.
 	 *
-	 * @return the finalResCode
+	 * @return the step9ResCode
 	 */
-	public String getFinalResCode() {
-		return finalResCode;
+	public char[] getStep9ResCode() {
+		return step9ResCode;
 	}
 
 	/**
 	 * Sets the final res code.
 	 *
-	 * @param finalResCode the finalResCode to set
+	 * @param step9ResCode the step9ResCode to set
 	 */
-	public void setFinalResCode(String finalResCode) {
-		this.finalResCode = finalResCode;
+	public void setStep9ResCode(char[] resCode) {
+		this.step9ResCode = resCode;
 	}
 	
 	/* (non-Javadoc)
@@ -40,10 +40,10 @@ public class StepNineVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("SteNineVO: { ");
+		buff.append("Step9VO: { ");
 		buff.append(System.lineSeparator());
-		buff.append("finalResCode=");
-		buff.append(finalResCode);
+		buff.append("step9ResCode=");
+		buff.append(step9ResCode);
 		buff.append(System.lineSeparator());
 		buff.append(" }");
 		

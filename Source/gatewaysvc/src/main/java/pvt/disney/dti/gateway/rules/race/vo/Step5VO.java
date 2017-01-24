@@ -7,15 +7,15 @@ package pvt.disney.dti.gateway.rules.race.vo;
  * @author MOONS012
  *
  */
-public class StepFiveVO extends ParentStepVO {
+public class Step5VO extends ParentStepVO {
 
 	/** The final alpha result for the suffix on the reservation code. */
-	private String finalAlphaResult;
+	private String step5AlphaResult;
 	
 	/**
 	 * Default constructor
 	 */
-	public StepFiveVO() {
+	public Step5VO() {
 		super();
 	}
 
@@ -23,15 +23,15 @@ public class StepFiveVO extends ParentStepVO {
 	/**
 	 * @return the result
 	 */
-	public String getfinalAlphaResult() {
-		return finalAlphaResult;
+	public String getStep5AlphaResult() {
+		return step5AlphaResult;
 	}
 
 	/**
 	 * @param finalAlphaValue the result to set
 	 */
-	public void setFinalAlphaResult(String finalAlphaValue) {
-		this.finalAlphaResult = finalAlphaValue;
+	public void setStep5AlphaResult(String finalAlphaValue) {
+		this.step5AlphaResult = finalAlphaValue;
 	}
 	
 	
@@ -41,10 +41,10 @@ public class StepFiveVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepFiveVO: { ");
+		buff.append("Step5VO: { ");
 		buff.append(System.lineSeparator());
-		buff.append("finalAlphaResult=");
-		buff.append(finalAlphaResult);
+		buff.append("step5AlphaResult=");
+		buff.append(step5AlphaResult);
 		buff.append(System.lineSeparator());
 		buff.append(" }");
 		

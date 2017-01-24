@@ -976,9 +976,13 @@ public class WDWReservationRules {
   }
 
   /**
-   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
+   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to 
+
+both providers, implement in the BusinessRules in the parent package.<BR>
    * Implements the following rules:<BR>
-   * 1. For OMNI, ClientId must be numeric. 2. Validate max number of reservation line items. 3. Validate major client demographics. 4. Validate maximum sizes on CVV & AVS data, if present. RULE: Validate that if the "installment" type of
+   * 1. For OMNI, ClientId must be numeric. 2. Validate max number of reservation line items. 3. Validate major client demographics. 4. Validate maximum sizes on 
+
+CVV & AVS data, if present. RULE: Validate that if the "installment" type of
    * payment is present,
    * 
    * @param dtiTxn
@@ -1029,6 +1033,8 @@ public class WDWReservationRules {
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
+    //TODO - assignReservationCode, move hkdl down and put it in
+    
     return;
 
   }
@@ -1234,7 +1240,9 @@ public class WDWReservationRules {
   }
 
   /**
-   * Format a note with the appropriate information needed for fulfillment when handling private and major clients. If no special delivery fields supplied, then return an empty ArrayList
+   * Format a note with the appropriate information needed for fulfillment when handling private and major clients. If no special delivery fields supplied, then 
+
+return an empty ArrayList
    * 
    * @param dtiTxn
    *            the DTITransactionTO for this transaction.

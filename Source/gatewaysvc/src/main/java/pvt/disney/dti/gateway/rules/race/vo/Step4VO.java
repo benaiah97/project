@@ -7,7 +7,7 @@ package pvt.disney.dti.gateway.rules.race.vo;
  * @author MOONS012
  *
  */
-public class StepFourVO extends ParentStepVO {
+public class Step4VO extends ParentStepVO {
 
 	/** The result matrix. */
 	private int[][] resultMatrix;
@@ -15,7 +15,7 @@ public class StepFourVO extends ParentStepVO {
 	/**
 	 * Default Constructor
 	 */
-	public StepFourVO() {
+	public Step4VO() {
 		super();
 	}
 
@@ -40,7 +40,7 @@ public class StepFourVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepFourVO: { ");
+		buff.append("Step4VO: { ");
 		buff.append(System.lineSeparator());
 		buff.append("resultMatrix:");
 		buff.append(System.lineSeparator());

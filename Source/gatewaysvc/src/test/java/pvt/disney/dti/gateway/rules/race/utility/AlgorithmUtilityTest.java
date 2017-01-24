@@ -20,15 +20,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
-import pvt.disney.dti.gateway.rules.race.vo.StepEightVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepFiveVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepFourVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepNineVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepOneVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepSevenVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepSixVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepThreeVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepTwoVO;
+import pvt.disney.dti.gateway.rules.race.vo.Step8VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step5VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step4VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step9VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step1VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step7VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step6VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step3VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step2VO;
 
 /**
  * Unit test for algorithm utility. Tests each step and final outcome. Test calculations are derived directly
@@ -145,14 +145,14 @@ public class AlgorithmUtilityTest {
 	final int TEST_COUNTER = 1;
 	
 	//test VO holders
-	private static StepOneVO TEST_STEPONE;
-	private static StepTwoVO TEST_STEPTWO;
-	private static StepThreeVO TEST_STEPTHREE;
-	private static StepFourVO TEST_STEPFOUR;
-	private static StepFiveVO TEST_STEPFIVE;
-	private static StepSixVO TEST_STEPSIX;
-	private static StepSevenVO TEST_STEPSEVEN;
-	private static StepEightVO TEST_STEPEIGHT;
+	private static Step1VO TEST_STEPONE;
+	private static Step2VO TEST_STEPTWO;
+	private static Step3VO TEST_STEPTHREE;
+	private static Step4VO TEST_STEPFOUR;
+	private static Step5VO TEST_STEPFIVE;
+	private static Step6VO TEST_STEPSIX;
+	private static Step7VO TEST_STEPSEVEN;
+	private static Step8VO TEST_STEPEIGHT;
 
 	
 	/**
@@ -165,7 +165,7 @@ public class AlgorithmUtilityTest {
 		util = new AlgorithmUtility();
 		//cobertura has a bug where two char[] getters in the same class aren't testing if called sequentially
 		//this is just to fix that issue
-		StepEightVO cover = new StepEightVO();
+		Step8VO cover = new Step8VO();
 		cover.getMatrix();
 	}
 
@@ -206,7 +206,7 @@ public class AlgorithmUtilityTest {
 		//from the algorithm doc
 		DEFAULT_CALENDAR.set(Calendar.MILLISECOND, DEFAULT_MILLIS);
 		
-		StepOneVO step1 = util.stepOne(DEFAULT_CALENDAR);
+		Step1VO step1 = util.stepOne(DEFAULT_CALENDAR);
 		SimpleDateFormat format1 = new SimpleDateFormat("MM");
 		String formatted = format1.format(DEFAULT_CALENDAR.getTime());
 
@@ -273,11 +273,11 @@ public class AlgorithmUtilityTest {
 		//neeed to add milliseconds to calendar
 		DEFAULT_CALENDAR.set(Calendar.MILLISECOND, DEFAULT_MILLIS);
 		
-		StepOneVO step1 = util.stepOne(DEFAULT_CALENDAR);
+		Step1VO step1 = util.stepOne(DEFAULT_CALENDAR);
 		int forcePrime = 41;
 		
 		//get the step 2 vo
-		StepTwoVO step2 = util.stepTwoSpecificPrime(step1, forcePrime);
+		Step2VO step2 = util.stepTwoSpecificPrime(step1, forcePrime);
 		
 		//grab the values to check
 		int determinant = step2.getDeterminant();
@@ -317,7 +317,7 @@ public class AlgorithmUtilityTest {
 	@Test //@Ignore
 	public void testStep3() {
 		System.out.println("testing 3");
-		StepThreeVO step3 = util.stepThree(TEST_STEPTWO);
+		Step3VO step3 = util.stepThree(TEST_STEPTWO);
 		
 		//get things to test
 		int result = step3.getResult();
@@ -334,7 +334,7 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test
 	public void testStep4() {
-		StepFourVO step4 = util.stepFour(TEST_STEPONE, TEST_STEPTHREE);
+		Step4VO step4 = util.stepFour(TEST_STEPONE, TEST_STEPTHREE);
 		//expect matrix this result 
 		// 22 27
 		// 31 15
@@ -354,9 +354,9 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test
 	public void testStep5() {
-		StepFiveVO step5 = util.stepFive(TEST_STEPTWO);
+		Step5VO step5 = util.stepFive(TEST_STEPTWO, AlgorithmUtility.ALPHANUMERIC_MOD_CONSTANT, AlgorithmUtility.ALPHANUMERIC_ARRAY);
 		//expect this result: alphanumeric of 9
-		assertTrue("Expect the alphanumeric character 9, but got " + step5.getfinalAlphaResult(), step5.getfinalAlphaResult().equals("9") );
+		assertTrue("Expect the alphanumeric character 9, but got " + step5.getStep5AlphaResult(), step5.getStep5AlphaResult().equals("9") );
 		//set for later steps
 		TEST_STEPFIVE = step5;
 		
@@ -368,9 +368,9 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test 
 	public void testStep6() {
-		StepSixVO step6 = util.stepSix(TEST_STEPFOUR);
+		Step6VO step6 = util.stepSix(TEST_STEPFOUR, AlgorithmUtility.ALPHANUMERIC_MOD_CONSTANT, AlgorithmUtility.ALPHANUMERIC_ARRAY);
 		//expect this result: alphanumeric of Y
-		assertTrue("Expect the alphanumeric character of Y but got " + step6.getResultAlphaNumeric(), step6.getResultAlphaNumeric().equals("Y"));
+		assertTrue("Expect the alphanumeric character of Y but got " + step6.getStep6Result(), step6.getStep6Result().equals("Y"));
 		
 		//set for later tests
 		TEST_STEPSIX = step6;
@@ -383,7 +383,7 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test
 	public void testStep7() {
-		StepSevenVO step7 = util.stepSeven(TEST_STEPFOUR, TEST_STEPFIVE, TEST_STEPSIX, DEFAULT_SELLER);
+		Step7VO step7 = util.stepSeven(TEST_STEPFOUR, TEST_STEPFIVE, TEST_STEPSIX, DEFAULT_SELLER);
 		char[] draftCode = step7.getDraftCode();
 		assertTrue("expected X", draftCode[0] == ('X') );
 		assertTrue("expected P", draftCode[1] == ('P') );
@@ -409,7 +409,7 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test 
 	public void testStep8() {
-		StepEightVO step8 = util.stepEight(TEST_STEPTWO, TEST_STEPFOUR);
+		Step8VO step8 = util.stepEight(TEST_STEPTWO, TEST_STEPFOUR,AlgorithmUtility.ALPHANUMERIC_MOD_CONSTANT);
 		//expect these values
 		//11  18
 		//17  21
@@ -419,7 +419,7 @@ public class AlgorithmUtilityTest {
 		assertTrue("Expected 17 but got " + thematrix[1][0], thematrix[1][0] == 17);
 		assertTrue("Expected 21 but got " + thematrix[1][1], thematrix[1][1] == 21);
 		//M V
-		char[] chars = step8.getFinalChars();
+		char[] chars = step8.getDraftChars();
 		assertTrue("Expected M but got " + chars[0], chars[0] == 'M');
 		assertTrue("Expected V but got " + chars[1], chars[1] == 'V');
 		
@@ -433,10 +433,12 @@ public class AlgorithmUtilityTest {
 	 */
 	@Test 
 	public void testStepNine() {
-		StepNineVO step9 = util.stepNine(TEST_STEPSEVEN, TEST_STEPEIGHT);
+		Step9VO step9 = util.stepNine(TEST_STEPSEVEN, TEST_STEPEIGHT);
 		
 		String expectedCode = "XP229Y27MV31";
-		assertTrue("expected " + expectedCode + " but got " + step9.getFinalResCode(), step9.getFinalResCode().equals(expectedCode));
+		StringBuffer actualCode = new StringBuffer();
+		actualCode.append(step9.getStep9ResCode());
+		assertTrue("expected '" + expectedCode + "' but got '" + actualCode.toString() + "'", actualCode.toString().equals(expectedCode));
 	
 		
 		logger.debug("TEST_STEPNINE:{}", step9);
@@ -602,8 +604,8 @@ public class AlgorithmUtilityTest {
 			//seedArray should be milliseconds, counter, prime
 			int[][] seedArray = util.buildSeedArray(date);
 			
-			//TODO check row 1
-			//TODO Check row 2
+			// check row 1
+			// Check row 2
 			
 			//check row 3
 			//check first value at [2][0]

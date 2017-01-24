@@ -1,38 +1,38 @@
 package pvt.disney.dti.gateway.rules.race.vo;
 
 /**
- * The Class StepSixVO.
+ * The Class Step6VO.
  * 
  * @author MOONS012
  */
-public class StepSixVO extends ParentStepVO {
+public class Step6VO extends ParentStepVO {
 
 	/** The result alpha numeric. */
-	private String resultAlphaNumeric;
+	private String step6Result;
 	
 	/**
 	 * Instantiates a new step six VO.
 	 */
-	public StepSixVO() {
+	public Step6VO() {
 		super();
 	}
 
 	/**
 	 * Gets the result alpha numeric.
 	 *
-	 * @return the resultAlphaNumeric
+	 * @return the step6Result
 	 */
-	public String getResultAlphaNumeric() {
-		return resultAlphaNumeric;
+	public String getStep6Result() {
+		return step6Result;
 	}
 
 	/**
 	 * Sets the result alpha numeric.
 	 *
-	 * @param resultAlphaNumeric the resultAlphaNumeric to set
+	 * @param step6Result the step6Result to set
 	 */
-	public void setResultAlphaNumeric(String resultAlphaNumeric) {
-		this.resultAlphaNumeric = resultAlphaNumeric;
+	public void setStep6Result(String resultAlphaNumeric) {
+		this.step6Result = resultAlphaNumeric;
 	}
 	
 	/* (non-Javadoc)
@@ -41,10 +41,10 @@ public class StepSixVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepSixVO: { ");
+		buff.append("Step6VO: { ");
 		buff.append(System.lineSeparator());
-		buff.append("resultAlphaNumeric=");
-		buff.append(this.resultAlphaNumeric);
+		buff.append("step6Result=");
+		buff.append(this.step6Result);
 		buff.append(System.lineSeparator());
 		buff.append(" }");
 		

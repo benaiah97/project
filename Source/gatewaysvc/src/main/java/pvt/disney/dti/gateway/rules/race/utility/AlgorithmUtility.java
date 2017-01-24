@@ -13,15 +13,15 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pvt.disney.dti.gateway.rules.race.vo.StepEightVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepFiveVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepFourVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepNineVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepOneVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepSevenVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepSixVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepThreeVO;
-import pvt.disney.dti.gateway.rules.race.vo.StepTwoVO;
+import pvt.disney.dti.gateway.rules.race.vo.Step8VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step5VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step4VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step9VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step1VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step7VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step6VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step3VO;
+import pvt.disney.dti.gateway.rules.race.vo.Step2VO;
 
 /**
  * The Class AlgorithmUtility. Contains all the matrix &amp;
@@ -38,18 +38,31 @@ public class AlgorithmUtility {
 	 * Incrementation and reset to zer0 are handled by the buildCounter method. */
 	protected static int seedCounter = 0;
 	
-	/** The Constant MOD_CONSTANT. */
-	private static final int MOD_CONSTANT=33;
-	
-	/** The last time
+	/** The Constant ALPHANUMERIC_MOD_CONSTANT, works with ALPHANUMERIC ARRAY. */
+	protected static final int ALPHANUMERIC_MOD_CONSTANT=33;
 	
 	/** CONSTANT array is used to translate a number to its equivalent alpha or numeric representation in several steps.
 	 * _ char is added at 0 index so we can start at one to more easily match algorithm spec document
 	 * */
-	protected static final char[] ALPHA_ARRAY = "ABCDEFGHJKLMNPQRTUVWXYZ0123456789".toCharArray(); 
+	protected static final char[] ALPHANUMERIC_ARRAY = "ABCDEFGHJKLMNPQRTUVWXYZ0123456789".toCharArray(); 
 
+	/** The Constant ALPHA_MOD_CONSTANT, works with ALPHA_ARRAY. */
+	protected static final int ALPHA_MOD_CONSTANT=20;
+	
+	/** The Constant NUMERIC_MOD_CONSTANT, works with NUMERIC_ARRAY. */
+	protected static final int NUMERIC_MOD_CONSTANT=10;
+	
+	/** The Constant LEGACY_NUMERIC_MOD_CONSTANT, works with LEGACY_NUMERIC_ARRAY . */
+	protected static final int LEGACY_NUMERIC_MOD_CONSTANT=5;
+
+	/** The Constant ALPHA_ARRAY. */
+	protected static final char[] ALPHA_ARRAY = "ABCDEFGHJKLMNPQRTUVWXYZ".toCharArray(); 
+	
+	/** The Constant NUMERIC_ARRAY. */
+	protected static final char[] NUMERIC_ARRAY = "0123456789".toCharArray(); 
+ 
 	/**
-	 * Generate res code.
+	 * Generate res code for HKDL
 	 *
 	 * @param tktSellerPrefix the ticket seller prefix
 	 * @return the string
@@ -64,45 +77,46 @@ public class AlgorithmUtility {
 		// setup to get the date we will use for step one
 		Calendar theDate = new GregorianCalendar();
 	
-		logger.debug("Begin generateRescode:{}", theDate.getTime());
+		logger.debug("Begin HKDL generateRescode:{}", theDate.getTime());
 	
 		// Algorithm Step 1. Perform   matrix multiplication (mm/dd/yy * hh:mm:ss) to derive a 2x2 matrix. 
-		StepOneVO stepOneVO = AlgorithmUtility.stepOne(theDate);
+		Step1VO stepOneVO = AlgorithmUtility.stepOne(theDate);
+		//append the ticketsellerprefix to alphanumeric array
+		stepOneVO.appendAlphaNumericString(tktSellerPrefix);
 	
 		// Algorithm Step 2. Compute the determinant of the 3x3 matrix consisting of the hh:mm:ss
-		StepTwoVO stepTwoVO = AlgorithmUtility.stepTwo(stepOneVO);
+		Step2VO stepTwoVO = AlgorithmUtility.stepTwo(stepOneVO);
 
 		// 3.	Compute the following:   (“Step 2 Determinant” + Seed 1) MOD prime number.  
 		// Adding the “seed” value slightly skews the determinant, and MODing by the prime will limit
 		// our results to one and two digit numbers.
-		StepThreeVO stepThreeVO = AlgorithmUtility.stepThree(stepTwoVO);
+		Step3VO stepThreeVO = AlgorithmUtility.stepThree(stepTwoVO);
 
 		// 4.	Subtract the value (deteriminant) from Step 3 from each element of our date/time matrix (from Step 1), and apply
 		//an absolute value over each difference (no negative numbers can be in our reservation code)
-		StepFourVO stepFourVO  = AlgorithmUtility.stepFour(stepOneVO, stepThreeVO);
+		Step4VO stepFourVO  = AlgorithmUtility.stepFour(stepOneVO, stepThreeVO);
 		
-		// 5.	Compute the following: “Step 2 Determinant” MOD 33
-		StepFiveVO stepFiveVO = AlgorithmUtility.stepFive(stepTwoVO);
+		// 5.	Compute the following: “Step 2 Determinant” using MOD
+		Step5VO stepFiveVO = AlgorithmUtility.stepFive(stepTwoVO, ALPHANUMERIC_MOD_CONSTANT, ALPHANUMERIC_ARRAY);
 		
 		// 6. Compute the determinate of the “result” matrix from Step 4.  
-		StepSixVO stepSixVO = AlgorithmUtility.stepSix(stepFourVO);
+		Step6VO stepSixVO = AlgorithmUtility.stepSix(stepFourVO, ALPHANUMERIC_MOD_CONSTANT, ALPHANUMERIC_ARRAY);
 				
 		// 7. Appending:  (1) the Ticket Seller prefix, (2) the “result” matrix elements, and (3) the two “tag” values, 
 		// will yield our “draft” reservation code. At a minimum, there will be two remaining alphanumeric values left
 		// to fill.  
-		StepSevenVO stepSevenVO = AlgorithmUtility.stepSeven(stepFourVO, stepFiveVO, stepSixVO, tktSellerPrefix);
+		Step7VO stepSevenVO = AlgorithmUtility.stepSeven(stepFourVO, stepFiveVO, stepSixVO, tktSellerPrefix);
 
 		// 8. Take each matrix element (from the “result” matrix), ADD the third “seed” value (prime) to the element’s 
-		// MOD the result by 33.  Translate L and U to the ALPHA_ARRAY   
-		StepEightVO stepEightVO = AlgorithmUtility.stepEight(stepTwoVO, stepFourVO);
+		// MOD the result by 33.  Translate L and U to the ALPHANUMERIC_ARRAY   
+		Step8VO stepEightVO = AlgorithmUtility.stepEight(stepTwoVO, stepFourVO, ALPHANUMERIC_MOD_CONSTANT);
 		
 		// 9. The remaining array elements (from Step 8) will be used to fill in any empty numeric in the reservation 
 		//code.
-		StepNineVO stepNineVO = AlgorithmUtility.stepNine(stepSevenVO, stepEightVO);
-		//get the rescode from the last step
+		Step9VO stepNineVO = AlgorithmUtility.stepNine(stepSevenVO, stepEightVO);
 		
-		//and finally return the created rescode
-		resCode.append(stepNineVO.getFinalResCode());
+		//get the rescode from the last step and finish the rescode to return
+		resCode.append(stepNineVO.getStep9ResCode());
 		
 		//log each step
 		logger.debug("StepOne: {}", stepOneVO);
@@ -126,8 +140,8 @@ public class AlgorithmUtility {
 	 * @param startDateTime the start date time
 	 * @return the object
 	 */
-	protected static StepOneVO  stepOne(Calendar startDateTime) {
-		StepOneVO stepOneVO = new StepOneVO();
+	protected static Step1VO  stepOne(Calendar startDateTime) {
+		Step1VO stepOneVO = new Step1VO();
 
 		//1) set the date on the vo
 		stepOneVO.setCalendar(startDateTime);
@@ -157,8 +171,8 @@ public class AlgorithmUtility {
 	 * @param stepOne the step one
 	 * @return the object
 	 */
-	protected static StepTwoVO stepTwo(StepOneVO stepOne) {
-		StepTwoVO stepTwo = new StepTwoVO();
+	protected static Step2VO stepTwo(Step1VO stepOne) {
+		Step2VO stepTwo = new Step2VO();
 		int MILLI_ROW = 2, MILLI_COL = 0;
 		
 		//build the millisecond seed array and set it on step two vo (overriding the prime)
@@ -185,8 +199,8 @@ public class AlgorithmUtility {
 	 * @param breakPrimeDirective the prime
 	 * @return the step two VO
 	 */
-	protected static StepTwoVO stepTwoSpecificPrime(StepOneVO stepOne, int breakPrimeDirective) {
-		StepTwoVO stepTwo = new StepTwoVO();
+	protected static Step2VO stepTwoSpecificPrime(Step1VO stepOne, int breakPrimeDirective) {
+		Step2VO stepTwo = new Step2VO();
 		int MILLI_ROW = 2, MILLI_COL = 0;
 		
 		//build the millisecond seed array and set it on step two vo (overriding the prime)
@@ -251,9 +265,9 @@ public class AlgorithmUtility {
 	 * @param stepTwo the step two
 	 * @return the object
 	 */
-	protected static StepThreeVO stepThree(StepTwoVO stepTwo) {
+	protected static Step3VO stepThree(Step2VO stepTwo) {
 		// create our return VO, calculation and result holders
-		StepThreeVO stepThree = new StepThreeVO();
+		Step3VO stepThree = new Step3VO();
 		int seed3PrimeDirective = stepTwo.getSeedArray()[2][2];
 		int stepTwoResult = stepTwo.getResult();
 		
@@ -273,10 +287,10 @@ public class AlgorithmUtility {
 	 *
 	 * @param stepOne the step one
 	 * @param stepThree the step three
-	 * @return the StepFourVO
+	 * @return the Step4VO
 	 */
-	protected static StepFourVO stepFour(StepOneVO stepOne, StepThreeVO stepThree) {
-		StepFourVO stepFour = new StepFourVO();
+	protected static Step4VO stepFour(Step1VO stepOne, Step3VO stepThree) {
+		Step4VO stepFour = new Step4VO();
 
 		int[][] resultMatrix = stepOne.getResultMultipliedDateTimeArray();
 		// let's loop through array to subtract the step 3 results
@@ -294,26 +308,27 @@ public class AlgorithmUtility {
 	}	
 	
 	/**
-	 * Step five. Compute the following: “Step 2 Determinant” MOD 33 (we’ll translate this last number into its 
-	 * 	   equivalent alpha or numeric representation from this array:  ABCDEFGHJKLMNPQRTUVWXYZ0123456789). 
-	 * 	   We’ll append this “tag” value as an alphanumeric in the “draft” reservation code.
+	 * Step five. Compute the following: “Step 2 Determinant” MOD by a constant (differs for WDW vs HKDL so it is passed in)
+	 *  (we’ll translate this last number into its 
+	 * 	   equivalent alpha or alphanumeric representation from the passed in array/
+	 * 	   We’ll inject the results as portion of “draft” reservation code.
 	 *
 	 * @param stepTwo the step two
 	 * @return the object
 	 */
-	protected static StepFiveVO stepFive(StepTwoVO stepTwo) {
+	protected static Step5VO stepFive(Step2VO stepTwo, int MOD, char[] CHAR_ARRAY) {
 		//create our return vo
-		StepFiveVO stepFive = new StepFiveVO();
-
+		Step5VO stepFive = new Step5VO();
+		
 		//calculate the final alpha value
-		int numericValue  =flooredModulo(stepTwo.getResult(), MOD_CONSTANT);
+		int numericValue  =flooredModulo(stepTwo.getResult(), MOD);
 		//int numericValue  =flooredModulo(stepTwo.getResult(), buildRandomPrime());
 		
 		//convert to alphanumeric
-		String finalAlphaValue = String.valueOf(ALPHA_ARRAY[numericValue]);
+		String finalAlphaValue = String.valueOf(CHAR_ARRAY[numericValue]);
 		
 		//set on vo
-		stepFive.setFinalAlphaResult(finalAlphaValue);
+		stepFive.setStep5AlphaResult(finalAlphaValue);
 		
 		//and return
 		return stepFive;
@@ -326,10 +341,10 @@ public class AlgorithmUtility {
 	 * @param stepFour the step four
 	 * @return the object
 	 */
-	protected static StepSixVO stepSix(StepFourVO stepFour) {
+	protected static Step6VO stepSix(Step4VO stepFour, int MOD_CONSTANT, char[] ARRAY_CONSTANT) {
 		//create our return object
-		StepSixVO stepSix = new StepSixVO();
-		
+		Step6VO stepSix = new Step6VO();
+
 		//compute intermediate values, then determinant
 		int value1 = stepFour.getResultMatrix()[0][0] * stepFour.getResultMatrix()[1][1];
 		int value2 = stepFour.getResultMatrix()[1][0] * stepFour.getResultMatrix()[0][1];
@@ -339,11 +354,17 @@ public class AlgorithmUtility {
 		int numericValue = flooredModulo(determinant, MOD_CONSTANT);
 		//int numericValue = flooredModulo(determinant, buildRandomPrime());
 		
-		//convert to alphanumeric
-		String finaNumericlAlphaValue = String.valueOf(ALPHA_ARRAY[numericValue]);
 		
-		//set for return
-		stepSix.setResultAlphaNumeric(finaNumericlAlphaValue);
+		//conver to a value from the specified array and return resutls
+		//TODO remove me
+		stepSix.setStep6Result(String.valueOf(ARRAY_CONSTANT[numericValue]));
+		
+		//convert to a value from the specified array and add result to appropriate arrays
+		if (MOD_CONSTANT == ALPHANUMERIC_MOD_CONSTANT) {
+			stepSix.appendAlphaNumericString(String.valueOf(ARRAY_CONSTANT[numericValue]));
+		} else if (MOD_CONSTANT == ALPHA_MOD_CONSTANT){
+			stepSix.appendAlphaNumericString(String.valueOf(ARRAY_CONSTANT[numericValue]));
+		}
 		
 		//and return it
 		return stepSix  ;
@@ -360,9 +381,9 @@ public class AlgorithmUtility {
 	 * @param tktSellerPrefix the tkt seller prefix
 	 * @return the object
 	 */
-	protected static StepSevenVO stepSeven(StepFourVO stepFourVO, StepFiveVO stepFive, StepSixVO stepSix, String tktSellerPrefix) {
+	protected static Step7VO stepSeven(Step4VO stepFourVO, Step5VO stepFive, Step6VO stepSix, String tktSellerPrefix) {
 		//create the vo we will return
-		StepSevenVO stepSeven = new StepSevenVO();
+		Step7VO stepSeven = new Step7VO();
 		
 		//create the draft code we will add to the vo
 		char[] draftCode = new char[12];
@@ -379,10 +400,10 @@ public class AlgorithmUtility {
 		
 	
 		//set the next value from the step 5 alpha numeric translation
-		draftCode[4] = stepFive.getfinalAlphaResult().charAt(0);
+		draftCode[4] = stepFive.getStep5AlphaResult().charAt(0);
 		
 		//set the next char from the step 6 alpha numeric translation
-		draftCode[5] = stepSix.getResultAlphaNumeric().charAt(0);
+		draftCode[5] = stepSix.getStep6Result().charAt(0);
 		
 		//set the next 2 char from the step 4 matrix cell [0][1], again format for leading zeros
 		String val6And7 = String.format("%02d",stepFourVO.getResultMatrix()[0][1]);
@@ -408,22 +429,22 @@ public class AlgorithmUtility {
 	 * Step eight. Take each matrix element (from the “result” matrix), multiply by the third “seed” value (prime)
 	 *  to the element’s value (in order to skew the element slightly), MOD the result by 33.  
 	 *  We’ll translate the first row’s elements into their equivalent alpha or numeric representation from
-	 *  this array:  AlgorithmUtility.ALPHA_ARRAY ABCDEFGHJKLMNPQRTUVWXYZ0123456789.    
+	 *  this array:  AlgorithmUtility.ALPHANUMERIC_ARRAY ABCDEFGHJKLMNPQRTUVWXYZ0123456789.    
 	 *  
 	 *
 	 * @param step2 the step 2
 	 * @param step4 the step 4
 	 * @return the object
 	 */
-	protected static StepEightVO stepEight(StepTwoVO step2, StepFourVO step4) {
+	protected static Step8VO stepEight(Step2VO step2, Step4VO step4, int MOD_CONSTANT) {
 		//create our vo to return
-		StepEightVO step8 = new StepEightVO();
+		Step8VO step8 = new Step8VO();
 		
 		int[][] matrix = step4.getResultMatrix();
 		int seed3PrimeDirective = step2.getSeedArray()[2][2];
-		char[] finalChars = new char[2];
+		char[] stepEightChars = new char[2];
 		
-		//loop through matrix and multiply eache element by seed and mod by 33
+		//loop through matrix and multiply eache element by seed and mod by MOD
 		for (int row = 0; row < matrix.length; row++) {
 			for (int col = 0; col < matrix[row].length; col++) 
 			{ 	
@@ -431,12 +452,27 @@ public class AlgorithmUtility {
 				matrix[row][col] =  flooredModulo((matrix[row][col] * seed3PrimeDirective), MOD_CONSTANT);				
 			} 
 		}	
-		//set it on the vo
+		//set the matrix on the vo
 		step8.setMatrix(matrix);
+		//NOTE: Remove when we refactor to built off parentvo char[]s
+		step8.setDraftChars(stepEightChars);
+		
 		//translate value from matrix to characters and set that on the VO too
-		finalChars[0] = ALPHA_ARRAY[ matrix[0][0] ];
-		finalChars[1] = ALPHA_ARRAY[ matrix[0][1] ];
-		step8.setFinalChars(finalChars);
+		if (MOD_CONSTANT == ALPHANUMERIC_MOD_CONSTANT) {
+			stepEightChars[0] = ALPHANUMERIC_ARRAY[ matrix[0][0] ];
+			stepEightChars[1] = ALPHANUMERIC_ARRAY[ matrix[0][1] ];
+			
+			step8.appendAlphaNumericChars(stepEightChars);
+			
+			//NOTE remove later 
+			step8.setDraftChars(stepEightChars);
+		} else if (MOD_CONSTANT == ALPHA_MOD_CONSTANT) {
+			stepEightChars[0] = ALPHA_ARRAY[ matrix[0][0] ];
+			stepEightChars[1] = ALPHA_ARRAY[ matrix[0][1] ];
+			
+			step8.appendAlphaChars(stepEightChars);
+		}
+		
 		//and return
 		return step8;
 	}
@@ -449,19 +485,19 @@ public class AlgorithmUtility {
 	 * @param stepEightVO the step eight VO
 	 * @return the object
 	 */
-	protected static StepNineVO stepNine(StepSevenVO stepSevenVO, StepEightVO stepEightVO) {
+	protected static Step9VO stepNine(Step7VO stepSevenVO, Step8VO stepEightVO) {
 		//create our vo to return
-		StepNineVO step9 = new StepNineVO();
+		Step9VO step9 = new Step9VO();
 		
 		//start building our final rescode from the draft code
-		char[] finalResCode = stepSevenVO.getDraftCode();
+		char[] step9ResCode = stepSevenVO.getDraftCode();
 		
 		//finalResCode[8] and [9] are blanke, set them using char translation from step eightVO
-		finalResCode[8] = stepEightVO.getFinalChars()[0];
-		finalResCode[9] = stepEightVO.getFinalChars()[1];
+		step9ResCode[8] = stepEightVO.getDraftChars()[0];
+		step9ResCode[9] = stepEightVO.getDraftChars()[1];
 		
 		//convert to string and set on our vo
-		step9.setFinalResCode(new String(finalResCode));
+		step9.setStep9ResCode(step9ResCode);
 
 		return step9;
 	}
@@ -825,7 +861,8 @@ public class AlgorithmUtility {
 	 */
 	protected static int buildRandomPrime() {
 		int randomPrime;
-		final int  BIT_LENGTH = 5; //arbitrary choise for getting probably prime
+		
+		final int  BIT_LENGTH = 5; //arbitrary choice for getting probably prime
 		
 		Random rnd = new SecureRandom(); 
         randomPrime = (BigInteger.probablePrime(BIT_LENGTH, rnd)).intValue();
@@ -891,9 +928,9 @@ public class AlgorithmUtility {
 	 * @param n the n
 	 * @return the int
 	 */
-	private static int flooredModulo(int a, int n){
+	protected static int flooredModulo(int a, int n){
 		  return  n<0 ? -flooredModulo(-a, -n) : mod(a, n);
-		}
+	}
 	
 	/**
 	 * Mod. Adding to support floored Modulo
@@ -904,5 +941,7 @@ public class AlgorithmUtility {
 	 */
 	static int mod(int a, int n){    
 		  return a<0 ? (a%n + n)%n : a%n;
-		}
+	}
+	
+
 }

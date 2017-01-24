@@ -3,12 +3,12 @@ package pvt.disney.dti.gateway.rules.race.vo;
 import java.util.Calendar;
 
 /**
- * The Class StepOneVO.
+ * The Class Step1VO.
  * A Value Object that holds results of algorithm calculations for Step One
  * 
  * @author moons012
  */
-public class StepOneVO extends ParentStepVO {
+public class Step1VO extends ParentStepVO {
 
 	/** The date array. */
 	private int[][] dateArray;
@@ -25,7 +25,7 @@ public class StepOneVO extends ParentStepVO {
 	/**
 	 * Instantiates a new step one value object.
 	 */
-	public StepOneVO() {
+	public Step1VO() {
 		super();
 	}
 
@@ -107,7 +107,7 @@ public class StepOneVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepOneVO: { ");
+		buff.append("Step1VO: { ");
 		buff.append(System.lineSeparator());
 		buff.append("calendar=");
 		buff.append(calendar.getTime());

@@ -2,11 +2,11 @@ package pvt.disney.dti.gateway.rules.race.vo;
 
 
 /**
- * The Class StepTwoVO.
+ * The Class Step2VO.
  *  A Value Object that holds results of algorithm calculations for Step Two 
  * @author MOONS012
  */
-public class StepTwoVO extends ParentStepVO {
+public class Step2VO extends ParentStepVO {
 	
 	/** The seed array used for seed in step 2. */
 	private int[][] seedArray = new int[1][3];
@@ -20,7 +20,7 @@ public class StepTwoVO extends ParentStepVO {
 	/**
 	 * Instantiates a new step two VO.
 	 */
-	public StepTwoVO() {
+	public Step2VO() {
 		super();
 	}
 	
@@ -71,7 +71,7 @@ public class StepTwoVO extends ParentStepVO {
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append(System.lineSeparator());
-		buff.append("StepTwoVO: { ");
+		buff.append("Step2VO: { ");
 		buff.append(System.lineSeparator());
 		buff.append("seedArray:");
 		buff.append(System.lineSeparator());
