@@ -38,9 +38,6 @@ public class DuplicationTest {
 	@Rule
 	public ContiPerfRule i = new ContiPerfRule();
 	
-	/** The api. */
-	private static ResCodeApiImpl util = ResCodeApiImpl.getInstance(); 
-	
 	/** The shoud I run. */
 	private static boolean shoudIRun = false;
 	
@@ -138,7 +135,7 @@ public class DuplicationTest {
 			
 			for(int i=0; i < iterationsToRun ;i++) {
 				Thread.sleep(600);
-				String rescode = util.generateResCode(tsprefix);
+				String rescode = AlgorithmUtility.generateResCode(tsprefix);
 				if (rescodeMap.containsKey(rescode)) {
 					duplicatefound = true;
 					nbrDuplicates++;

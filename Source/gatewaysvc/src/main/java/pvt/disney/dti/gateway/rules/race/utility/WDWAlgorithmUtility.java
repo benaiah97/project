@@ -22,7 +22,7 @@ import pvt.disney.dti.gateway.rules.race.vo.Step9VO;
 public class WDWAlgorithmUtility extends AlgorithmUtility {
 
 	/** The logger. */
-	private static final Logger logger = LoggerFactory.getLogger(WDWAlgorithmUtilityTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(WDWAlgorithmUtility.class);
 	
 	
 

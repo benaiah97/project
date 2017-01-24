@@ -15,6 +15,7 @@ import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
+import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -37,6 +38,8 @@ import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketIdTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
+import pvt.disney.dti.gateway.data.common.AttributeTO.CmdAttrCodeType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
@@ -60,6 +63,8 @@ import pvt.disney.dti.gateway.rules.ElectronicEntitlementRules;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
+import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
+import pvt.disney.dti.gateway.rules.race.utility.WDWAlgorithmUtility;
 import pvt.disney.dti.gateway.service.dtixml.ReservationXML;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
@@ -1033,10 +1038,44 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    //TODO - assignReservationCode, move hkdl down and put it in
+    //RULE: Apply reservateCode rules - if command/entity/attribute specify, use RACE for rescode generation
+    String resCode = assignResCode(dtiTxn,dtiResReq);
+    dtiResReq.getReservation().setResCode(resCode);
     
-    return;
-
+    return ;
+  }
+  
+  /**
+   * Assign a reservation code based on reservation code rules.
+   * If it is not a rework, and the attribute is not set to not use
+   * race rescode generation, then create a new rescode and insert it
+   * into the the transaction id rescode xref table.
+   *
+   * @param dtiTxn the dti txn
+   * @param dtiResReq the dti res req
+   * @throws DTIException the DTI exception
+   */
+  private static String assignResCode(DTITransactionTO dtiTxn,
+      ReservationRequestTO dtiResReq) throws DTIException {
+	  String resCode = null;
+	  
+	  String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+	  HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+	  //TODO GET CREATE THE ETNRY ATTRIBUTE AND ACT ON IT
+	  AttributeTO resAlgorithmAttr = null; //attribMap.get(CmdAttrCodeType.SELLER_RACE_OVERRIDE);
+	
+	  if (dtiTxn.isRework()) {
+		// Get the reservation code array (there should only be one)
+	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
+	      resCode = rescodeTO.getRescode(); 
+	  } else {
+	      //generate the rescode and insert it into the database payload/rescode ref table
+	      resCode = WDWAlgorithmUtility.generateResCode(); 
+	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+	  }
+	  
+	  return resCode;
   }
 
   /**
