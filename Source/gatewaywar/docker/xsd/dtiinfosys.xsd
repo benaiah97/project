@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD RESORT) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="PayloadHeader">
+		<xs:annotation>
+			<xs:documentation>This is the payload header common to all DTI InfoSys	requests.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PayloadID" type="xs:string"/>
+				<xs:element name="Target" type="xs:string"/>
+				<xs:element name="Version" type="xs:string"/>
+				<xs:element name="Comm">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Protocol" type="xs:string"/>
+							<xs:element name="Method" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TransmitDate" type="xs:date"/>
+				<xs:element name="TransmitTime" type="xs:time"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CommandHeader">
+		<xs:annotation>
+			<xs:documentation>This is the common structure for all commands.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CmdTimeout" type="xs:integer">
+					<xs:annotation>
+						<xs:documentation>
+							Max seconds client will wait.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="CmdDuration" type="xs:integer" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Used only on responses. Seconds to complete
+							request.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="CmdRequestor">
+					<xs:annotation>
+						<xs:documentation>
+							These are the requestor's credentials.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string"/>
+							<xs:element name="CmdOperator" type="xs:string"/>
+							<xs:element name="CmdActor" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>
+										Valid values are "ORG", "LOC",
+										or "USR."
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CmdError" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Used only on responses.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CmdErrorCode" type="xs:integer"/>
+							<xs:element name="CmdErrorType" type="xs:string"/>
+							<xs:element name="CmdErrorClass" type="xs:string"/>
+							<xs:element name="CmdErrorText" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PriceList">
+		<xs:annotation>
+			<xs:documentation>This is a price list for products
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SellerPrice" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="ProdCode" type="xs:string" use="required"/>
+						<xs:attribute name="ProdDesc" type="xs:string" use="optional"/>
+						<xs:attribute name="ProdPrice" type="xs:string" use="required"/>
+						<xs:attribute name="PriceVariance" type="xs:boolean" use="optional"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LocationList">
+		<xs:annotation>
+			<xs:documentation>This is a list of locations for a ticket seller.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Location" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="TSLocation" type="xs:string" use="required"/>
+						<xs:attribute name="TSLocationDesc" type="xs:string" use="required"/>
+						<xs:attribute name="PriceVariances" type="xs:boolean" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TktID">
+		<xs:annotation>
+			<xs:documentation>This identifies a particular instance of a ticket uniquely.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Mag">
+					<xs:annotation>
+						<xs:documentation>
+							Not supported in version 1.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="MagTrack1" type="xs:string"/>
+							<xs:element name="MagTrack2" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Barcode" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>
+							Not supported in version 1.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TktDSSN">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TktDate" type="xs:string"/>
+							<xs:element name="TktSite" type="xs:string"/>
+							<xs:element name="TktStation" type="xs:string"/>
+							<xs:element name="TktNbr" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TktNID" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>
+							Not supported in version 1.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="External" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>
+							Not supported in version 1.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SalesSummary">
+		<xs:annotation>
+			<xs:documentation>This structure holds the summary sales data.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ProdCode" type="xs:string"/>
+				<xs:element name="ProdDesc" type="xs:string"/>
+				<xs:element name="SellerProdPrice" type="xs:string"/>
+				<xs:element name="DTIProdPrice" type="xs:string"/>
+				<xs:element name="ProdQty" type="xs:integer"/>
+				<xs:element name="SellerPriceTotal" type="xs:string"/>
+				<xs:element name="DTIPriceTotal" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrgPriceQueryRQ">
+		<xs:annotation>
+			<xs:documentation>Requests organizational pricing information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrgPriceQueryRS">
+		<xs:annotation>
+			<xs:documentation>Returns organizational pricing and seller locations.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element ref="PriceList"/>
+							<xs:element ref="LocationList"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LocationPriceQueryRQ">
+		<xs:annotation>
+			<xs:documentation>Requests location level prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LocationPriceQueryRS">
+		<xs:annotation>
+			<xs:documentation>Returns location level prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string"/>
+							<xs:element name="TSLocationDesc" type="xs:string"/>
+							<xs:element name="TSMACPrices">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PriceList"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TSLocationPrices">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PriceList"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateOrgPriceRQ">
+		<xs:annotation>
+			<xs:documentation>Requests updates to organization prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element ref="PriceList"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateOrgPriceRS">
+		<xs:annotation>
+			<xs:documentation>Returns with confirmation of updates to organization prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element ref="PriceList"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateLocationPriceRQ">
+		<xs:annotation>
+			<xs:documentation>Requests location overrides to organization prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string"/>
+							<xs:element ref="PriceList"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateLocationPriceRS">
+		<xs:annotation>
+			<xs:documentation>Returns location level prices.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string"/>
+							<xs:element name="TSLocationDesc" type="xs:string"/>
+							<xs:element name="TSMACPrices">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PriceList"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TSLocationPrices">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PriceList"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentDaySalesRQ">
+		<xs:annotation>
+			<xs:documentation>Requests all locations (or users) with sales for today.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentDaySalesRS">
+		<xs:annotation>
+			<xs:documentation>Returns all locations (or users) with sales for today.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+							<xs:element name="TSLocationDesc" type="xs:string" minOccurs="0"/>
+							<xs:element ref="LocationList"/>
+							<xs:element name="UserList">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="User" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CmdOperator" type="xs:string"/>
+													<xs:element name="TSLocation" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentSalesSummaryRQ">
+		<xs:annotation>
+			<xs:documentation>Requests summary level sales information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+							<xs:element name="CmdOperator" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentSalesSummaryRS">
+		<xs:annotation>
+			<xs:documentation>Returns summary level sales information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSMACDesc" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+							<xs:element name="TSLocationDesc" type="xs:string" minOccurs="0"/>
+							<xs:element name="CmdOperator" type="xs:string" minOccurs="0"/>
+							<xs:element name="Date" type="xs:date"/>
+							<xs:element name="AsOfTime" type="xs:time"/>
+							<xs:element name="Summary" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="SalesSummary" minOccurs="0" maxOccurs="unbounded"/>
+										<xs:element name="TSMAC" type="xs:string"/>
+										<xs:element name="TSMACDesc" type="xs:string"/>
+										<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+										<xs:element name="TSLocationDesc" type="xs:string" minOccurs="0"/>
+										<xs:element name="ProdQtyTotal" type="xs:integer"/>
+										<xs:element name="DTITotalSalesDollars" type="xs:string"/>
+										<xs:element name="SellerTotalSalesDollars" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentSalesDetailRQ">
+		<xs:annotation>
+			<xs:documentation>Requests detail level sales information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TSMAC" type="xs:string"/>
+							<xs:element name="TSLocation" type="xs:string" minOccurs="0"/>
+							<xs:element name="CmdOperator" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CurrentSalesDetailRS">
+		<xs:annotation>
+			<xs:documentation>Returns detail level sales information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Date" type="xs:string"/>
+							<xs:element name="AsOfTime" type="xs:string"/>
+							<xs:element name="Sales" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="TranNID" type="xs:string"/>
+										<xs:element name="TSMAC" type="xs:string"/>
+										<xs:element name="TSMACDesc" type="xs:string"/>
+										<xs:element name="TSLocation" type="xs:string"/>
+										<xs:element name="TSLocationDesc" type="xs:string"/>
+										<xs:element name="CmdOperator" type="xs:string"/>
+										<xs:element name="SalesDate" type="xs:string"/>
+										<xs:element name="SalesTime" type="xs:string"/>
+										<xs:element ref="TktID"/>
+										<xs:element name="ProdCode" type="xs:string"/>
+										<xs:element name="ProdDesc" type="xs:string"/>
+										<xs:element name="DTIProdPrice" type="xs:string"/>
+										<xs:element name="SellerProdPrice" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductCatalogRQ">
+		<xs:annotation>
+			<xs:documentation>Requests for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProviderType">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Walt Disney World"/>
+										<xs:enumeration value="Disneyland California"/>
+										<xs:enumeration value="All"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TSMAC">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TSLocation" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="IncludeSoldOut" type="xs:boolean"/>
+							<xs:element name="ProdGroupCode" minOccurs="0" maxOccurs="unbounded">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="10"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="OnSaleStartDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="SkipResponses" type="xs:int" minOccurs="0"/>
+							<xs:element name="IncludeCalendarDetail" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Defaults to "false"</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductCatalogRS">
+		<xs:annotation>
+			<xs:documentation>Response for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AsOfDate" type="xs:date"/>
+							<xs:element name="AsOfTime" type="xs:time"/>
+							<xs:element name="Product" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ProdCode">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="12"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ProdName">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="25"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ProdDesc">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="40"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ProdGroupCode">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="10"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ProdGroupName">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="25"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ProdPricing">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ProdNetPrice" type="xs:decimal"/>
+													<xs:element name="ProdRetailPrice" type="xs:decimal" minOccurs="0"/>
+													<xs:element name="Tax" type="xs:decimal"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ProdDetails">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ProdDayCount" type="xs:int"/>
+													<xs:element name="ProdGuestType">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="Adult"/>
+																<xs:enumeration value="Child"/>
+																<xs:enumeration value="Any"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ProdDayClass">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="8"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Comp" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Consumable" type="xs:boolean"/>
+													<xs:element name="Demographics" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Expiry" type="xs:int" minOccurs="0"/>
+													<xs:element name="ProdAttribute" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="40"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ProviderTicketType" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="20"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ProdCalendarId" type="xs:int" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ProdDates">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ValidityDatesRequired" type="xs:boolean"/>
+													<xs:element name="StartSaleDate" type="xs:date" minOccurs="0"/>
+													<xs:element name="EndSaleDate" type="xs:date" minOccurs="0"/>
+													<xs:element name="StartValidityDate" type="xs:date" minOccurs="0"/>
+													<xs:element name="EndValidityDate" type="xs:date" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SoldOut" type="xs:boolean"/>
+										<xs:element name="ProdUpsell" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="UpsellSequenceNumber" type="xs:long"/>
+													<xs:element name="UpsellProdCode">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="12"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ProdShells" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ShellNbr" type="xs:long"/>
+													<xs:element name="ShellType">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="10"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="ShellDesc">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="40"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Barcode" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="MagneticStripe" type="xs:boolean" minOccurs="0"/>
+													<xs:element name="Scored" type="xs:boolean" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalResponseCount" type="xs:int"/>
+							<xs:element name="ResponsesReturned" type="xs:int"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductCalendarRQ">
+		<xs:annotation>
+			<xs:documentation>Requests for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProviderType">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Walt Disney World"/>
+										<xs:enumeration value="Disneyland California"/>
+										<xs:enumeration value="All"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ProdCalendarId" type="xs:int" minOccurs="0"/>
+							<xs:element name="CalendarEffectiveDate" type="xs:date" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductCalendarRS">
+		<xs:annotation>
+			<xs:documentation>Response for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AsOfDate" type="xs:date"/>
+							<xs:element name="AsOfTime" type="xs:time"/>
+							<xs:element name="ProductCalendar" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CalendarId" type="xs:int"/>
+										<xs:element name="CalendarName">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="25"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="CalendarCategory" type="xs:string"/>
+										<xs:element name="CalendarStartDate" type="xs:date"/>
+										<xs:element name="CalendarEndDate" type="xs:date"/>
+										<xs:element name="CalendarBlockoutDates">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="BlockoutDate" type="xs:date" minOccurs="0" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductAvailabilityRQ">
+		<xs:annotation>
+			<xs:documentation>Requests for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProdCode" maxOccurs="unbounded">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="10"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductAvailabilityRS">
+		<xs:annotation>
+			<xs:documentation>Response for a product catalog.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AsOfDate" type="xs:date"/>
+							<xs:element name="AsOfTime" type="xs:time"/>
+							<xs:element name="Product" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ProdCode">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="12"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SoldOut" type="xs:boolean"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AvailToken" type="xs:long"/>
+							<xs:element name="AvailTokenExpires" type="xs:time"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MediaMfrRfidLookupRQ">
+		<xs:annotation>
+			<xs:documentation>
+Request for Mfr Rfid Lookup to get the Secure and Visual ID's
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="MediaMfrId" maxOccurs="250">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="20"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MediaMfrRfidLookupRS">
+		<xs:annotation>
+			<xs:documentation>Response for Mfr Rfid Lookup to get the Secure and Visual ID's</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="MediaData" minOccurs="0" maxOccurs="250">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="MediaSecureId" type="xs:string"/>
+										<xs:element name="MediaMfrId" type="xs:string"/>
+										<xs:element name="MediaVisualId" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RfidManifestRQ">
+		<xs:annotation>
+			<xs:documentation>Requests for creating manifest information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ManifestEntry" maxOccurs="1000">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="MediaSecureId" type="xs:string"/>
+										<xs:element name="MediaMfrId" type="xs:string"/>
+										<xs:element name="MediaVisualId" type="xs:string"/>
+										<xs:element name="Barcode" type="xs:string"/>
+										<xs:element name="ResNumber" type="xs:string"/>
+										<xs:element name="AccountId" type="xs:integer"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RfidManifestRS">
+		<xs:annotation>
+			<xs:documentation>Response for creating manifest information.		</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PayloadHeader"/>
+				<xs:element ref="CommandHeader"/>
+				<xs:element name="CommandBody" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RowsInserted" type="xs:integer"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

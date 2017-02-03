@@ -172,39 +172,7 @@ public class HKDReservationRules {
     CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
     ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
     ArrayList<TicketTO> tktListTO = dtiResReq.getTktList();
-    
-    /** TODO:  Assign or recover reservation code here */
-    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
-    String resCode = null;
-    
-    if (dtiTxn.isRework()) {
-      // Get the reservation code array (there should only be one)
-      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-      TransidRescodeTO rescodeTO = rescodeArray.get(0);
-      resCode = rescodeTO.getRescode();
-      
-      // TODO: What if we don't find it?
-      // If you can't find it, create it.  If it dupes when creating, re-create (X# of times)
-      
-    } else {
-      // if new, get res code from payload ID
-      HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
-      AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-      String sellerResPrefix = resPrefixAttr.getAttrValue();    
-      AlgorithmUtility resCodeGenerator = new AlgorithmUtility();
-      resCode = resCodeGenerator.generateResCode(sellerResPrefix);
-      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-      
-      // TODO:  What if we do find it/can't insert?
-      // If I can know which index failed, then that determines remediation.
-      // If I can't...
-      // (1) getTransidRescodeFromDB (if not null, then it was already created)
-      // (2) getTransidRescodeFromDB (if null, then recreate (x# of times).
-      
-    }
-    dtiResReq.getReservation().setResCode(resCode);
-    
-    
+ 
     // Validate that the client ID is numeric and correct.
     validateHKDClientId(dtiResReq);
 
@@ -225,8 +193,52 @@ public class HKDReservationRules {
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
     
+    //RULE: assignResCode
+    String resCode = assignResCode( dtiTxn, dtiResReq);     
+    dtiResReq.getReservation().setResCode(resCode);
+    
     return;    
   }
+  
+  /**
+   * Assign a reservation code based on reservation code rules.
+   * If it is not a rework, and the attribute is not set to not use
+   * race rescode generation, then create a new rescode and insert it
+   * into the the transaction id rescode xref table.
+   * 
+   * TODO:  What if we do find it/can't insert?
+   * If I can know which index failed, then that determines remediation.
+   * If I can't...
+   * (1) getTransidRescodeFromDB (if not null, then it was already created)
+   * (2) getTransidRescodeFromDB (if null, then recreate (x# of times).
+   *
+   * @param dtiTxn the dti txn
+   * @param dtiResReq the dti res req
+   * @return the string
+   * @throws DTIException the DTI exception
+   */
+  private static String assignResCode(DTITransactionTO dtiTxn,
+      ReservationRequestTO dtiResReq) throws DTIException {
+    	 String resCode = null;
+    	 
+    	 String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+    	 HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+    	 
+    	 //if this is a re-work, a reservation code should exist
+    	 if (dtiTxn.isRework()) {
+    	      // Get the reservation code array (there should only be one)
+    	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+    	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
+    	      resCode = rescodeTO.getRescode();
+    	    } else { //other it is not a rework so generate rescode from R.A.C.E. utility    
+    	      AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+    	      String sellerResPrefix = resPrefixAttr.getAttrValue();
+    	      //generate the rescode and insert it into the database payload/rescode ref table
+    	      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+    	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+    	    }  
+    	 return resCode;
+      }
   
   
   /**

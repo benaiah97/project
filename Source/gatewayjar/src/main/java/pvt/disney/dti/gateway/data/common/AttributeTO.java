@@ -25,6 +25,7 @@ public class AttributeTO implements Serializable {
     SITE_NUMBER,
     DEFAULT_ELECT_ENC,
     SELLER_RES_PREFIX,
+    RACE_RES_OVERRIDE,
     UNDEFINED
   };
 
