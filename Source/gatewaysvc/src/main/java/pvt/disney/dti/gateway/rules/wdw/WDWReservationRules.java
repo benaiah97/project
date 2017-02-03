@@ -1038,7 +1038,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    //RULE: Apply reservateCode rules - if command/entity/attribute specify, use RACE for rescode generation
+    //RULE: Apply reservateCode rules - if command/entity/attribute doesn't specify an override, use RACE for rescode generation
     String resCode = assignResCode(dtiTxn,dtiResReq);
     dtiResReq.getReservation().setResCode(resCode);
     
@@ -1047,9 +1047,10 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
   
   /**
    * Assign a reservation code based on reservation code rules.
-   * If it is not a rework, and the attribute is not set to not use
-   * race rescode generation, then create a new rescode and insert it
-   * into the the transaction id rescode xref table.
+   * If it is not a rework, and the attribute is not set to override
+   *  the use of race rescode generation, then create a new rescode and insert it
+   * into the the transaction id rescode xref table. Otherwise rescode is not generated
+   * and is null.
    *
    * @param dtiTxn the dti txn
    * @param dtiResReq the dti res req
@@ -1061,18 +1062,24 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 	  
 	  String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
 	  HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
-	  //TODO GET CREATE THE ETNRY ATTRIBUTE AND ACT ON IT
-	  AttributeTO resAlgorithmAttr = null; //attribMap.get(CmdAttrCodeType.SELLER_RACE_OVERRIDE);
+
+	  boolean isRework = dtiTxn.isRework();
+	  AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
 	
-	  if (dtiTxn.isRework()) {
+	  if (isRework) {
 		// Get the reservation code array (there should only be one)
 	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
 	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
 	      resCode = rescodeTO.getRescode(); 
-	  } else {
-	      //generate the rescode and insert it into the database payload/rescode ref table
+	  } else if ( !isRework && resOverrideAttr == null) { //not rework, and no race override	  
+	      //generate the rescode using wdw race algorithm utility
 	      resCode = WDWAlgorithmUtility.generateResCode(); 
+	      // and insert it into the database payload/rescode ref table	      
 	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+	  } else {
+		  logger.sendEvent(
+		            "WDW RACE_RES_OVERRIDE present for reservation code generation.",
+		            EventType.INFO, THISOBJECT);
 	  }
 	  
 	  return resCode;

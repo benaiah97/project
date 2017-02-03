@@ -1,0 +1,38 @@
+
+How to use the docker image and cd to the gatewaywar folder
+
+Open a Docker shell
+
+Build the image locally or get it from the dti docker repository
+
+docker build -t dtigateway:latest .
+
+or 
+
+#TODO insert commadn to get from dti docker repository
+#docker pull reponame/dtigateway:latest
+
+
+
+Run the container and start the default Tomcat server (CMD ["catalina.sh", "run"]):
+(assumes port 8080 and 8000 are free on your box)
+
+$ docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:latest
+
+
+Find the IP of your docker machine 
+$ docker-machine ip
+
+You can then go to http://<ip>:8080 
+
+The Tomcat manager gui and admin gui are enabled.
+user: tomcat pw: dti
+
+To open a bash shell on a running container
+
+get the list of running containers so you can grab an id or name
+docker ps
+
+docker exec -i -t <insert container id> /bin/bash #by ID
+or
+ docker exec -i -t <insert container name> /bin/bash #by Name

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--TiXML 1.0  12/17/02  Copyright The Walt Disney Company-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
+	<xs:element name="Transmission">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Payload">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="PayloadHeader"/>
+							<xs:element name="Command" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="CommandHeader"/>
+										<xs:element ref="UpdateTransactionResponse"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PayloadHeader">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PayloadID" type="xs:string"/>
+				<xs:element name="TSPayloadID" type="xs:string"/>
+				<xs:element name="Target" type="xs:string"/>
+				<xs:element name="Version" type="xs:string"/>
+				<xs:element name="Priority" type="xs:string" minOccurs="0"/>
+				<xs:element name="ProcMethod" type="xs:string" minOccurs="0"/>
+				<xs:element name="Comm">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Protocol" type="xs:string"/>
+							<xs:element name="Method" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TransmitDate" type="xs:date"/>
+				<xs:element name="TransmitTime" type="xs:time"/>
+				<xs:element name="TktBroker" type="xs:string"/>
+				<xs:element name="CommandCount" type="xs:integer"/>
+				<xs:element name="PayloadNote" type="xs:string" minOccurs="0"/>
+				<xs:element name="PayloadError" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="HdrErrorCode" type="xs:integer"/>
+							<xs:element name="HdrErrorType" type="xs:string"/>
+							<xs:element name="HdrErrorClass" type="xs:string"/>
+							<xs:element name="HdrErrorText" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CommandHeader">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CmdItem" type="xs:integer"/>
+				<xs:element name="CmdDuration" type="xs:decimal"/>
+				<xs:element name="CmdDate" type="xs:date"/>
+				<xs:element name="CmdTime" type="xs:time"/>
+				<xs:element name="CmdNote" type="xs:string" minOccurs="0"/>
+				<xs:element name="CmdError" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CmdErrorCode" type="xs:integer"/>
+							<xs:element name="CmdErrorType" type="xs:string"/>
+							<xs:element name="CmdErrorClass" type="xs:string"/>
+							<xs:element name="CmdErrorText" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateTransactionResponse" type="xs:string"/>
+</xs:schema>

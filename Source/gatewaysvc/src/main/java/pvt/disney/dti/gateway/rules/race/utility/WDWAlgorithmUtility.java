@@ -23,8 +23,6 @@ public class WDWAlgorithmUtility extends AlgorithmUtility {
 
 	/** The logger. */
 	private static final Logger logger = LoggerFactory.getLogger(WDWAlgorithmUtility.class);
-	
-	
 
 	/**
 	 * Generate res code for WDW
@@ -180,13 +178,9 @@ public class WDWAlgorithmUtility extends AlgorithmUtility {
 		step9DraftResCode[4] = ' ';
 		step9DraftResCode[5] = ' ';
 		
-		System.out.println("checking step8vo:" + stepEightVO);
-		
 		//from step 8
 		step9DraftResCode[2] = stepEightVO.getDraftChars()[0];
-		step9DraftResCode[3] = stepEightVO.getDraftChars()[1];
-		
-		
+		step9DraftResCode[3] = stepEightVO.getDraftChars()[1];	
 		
 		//convert to string and set on our vo
 		step9.setStep9ResCode(step9DraftResCode);
