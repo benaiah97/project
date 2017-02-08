@@ -1,5 +1,7 @@
 ###############################################################################
 # tomcat-dtigateway
+  Note: This Dockerfile is not intended as an example of best practices,
+  it is only just good enough for local development deployment/debugging.
 ###############################################################################
 
 FROM tomcat:7.0
@@ -12,7 +14,7 @@ MAINTAINER moons012 <shan.m.moon@disney.com>
 
 RUN echo "Adding config directory so required properties are present."
 ADD docker/dti-config/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
-RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/CONFIG
+RUN chmod -R 775 /var/opt/apps/WDPRApps/DTI/CONFIG
 
 RUN echo "Creating log directory"
 RUN mkdir -p /var/opt/apps/WDPRApps/DTI/LOGS/Gateway
