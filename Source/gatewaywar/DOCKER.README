@@ -36,3 +36,5 @@ docker ps
 docker exec -i -t <insert container id> /bin/bash #by ID
 or
  docker exec -i -t <insert container name> /bin/bash #by Name
+ 
+  docker exec -i -t gateway /bin/bash

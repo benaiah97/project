@@ -1,7 +1,7 @@
 ###############################################################################
 # tomcat-dtigateway
-  Note: This Dockerfile is not intended as an example of best practices,
-  it is only just good enough for local development deployment/debugging.
+#  Note: This Dockerfile is not intended as an example of best practices,
+#  it is only just good enough for local development deployment/debugging.
 ###############################################################################
 
 FROM tomcat:7.0
