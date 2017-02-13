@@ -1,17 +1,18 @@
 
-How to use the docker image and cd to the gatewaywar folder
+This assumes you have already built the war and it is in the gatewaywar/target folder.
+
 
 Open a Docker shell
 
 Build the image locally or get it from the dti docker repository
 
+if building locally and not pulling from a repo,cd to DTIGateway/Source folder.
+
 docker build -t dtigateway:latest .
 
 or 
 
-#TODO insert commadn to get from dti docker repository
-#docker pull reponame/dtigateway:latest
-
+#NOTE: No image checked into a repo at this time.
 
 
 Run the container and start the default Tomcat server (CMD ["catalina.sh", "run"]):
