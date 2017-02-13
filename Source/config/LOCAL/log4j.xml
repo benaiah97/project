@@ -24,9 +24,6 @@
 	<appender name="GATE_FILE"
 		class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="${Gateway_Logs}/DTIGATEWAY.log" />
-		<!-- 
-		<param name="File" value="/opt/apps/DTI/LOGS/Gateway/DTIGATEWAY.log" />
-		-->
 		<param name="MaxFileSize" value="5MB" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="pvt.disney.dti.gateway.util.FileLayout"/>

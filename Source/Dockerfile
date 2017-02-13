@@ -13,7 +13,7 @@ MAINTAINER moons012 <shan.m.moon@disney.com>
 ###############################################################################
 
 RUN echo "Adding config directory so required properties are present."
-ADD docker/dti-config/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
+ADD config/LOCAL/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
 RUN chmod -R 775 /var/opt/apps/WDPRApps/DTI/CONFIG
 
 RUN echo "Creating log directory"
@@ -35,14 +35,6 @@ RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/app
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-1.cer -alias wm-flor-dv078.wdw.disney.com-1 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-2.cer -alias wm-flor-dv078.wdw.disney.com-2 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-3.cer -alias wm-flor-dv078.wdw.disney.com-3 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
-
-
-###############################################################################
-# OVERRIDE THE NEED FOR CERTS
-###############################################################################
-RUN echo "overriding security manager"
-ADD docker/policy /var/opt/apps/WDPRApps/DTI/policy/ 
-RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/policy/ 
 
 ###############################################################################
 # COPY DTI SCHEMAS
@@ -89,6 +81,8 @@ ADD docker/tomcat/context.xml /usr/local/tomcat/conf/context.xml
 
 ###############################################################################
 # PUT DTI WAR IN TOMCAT WEBAPPS
+# Assumes you have already built the war and it is present in the 
+# gatewaywar/target directory
 ###############################################################################
 RUN echo "PUTTING GATEWAY WAR INTO WEBAPPS."
-ADD target/DTIWeb.war /usr/local/tomcat/webapps
+ADD gatewaywar/target/DTIWeb.war /usr/local/tomcat/webapps
