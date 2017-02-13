@@ -1071,12 +1071,14 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
 	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
 	      resCode = rescodeTO.getRescode(); 
-	  } else if ( !isRework && resOverrideAttr == null) { //not rework, and no race override	  
+	  } else if ( (!isRework) && resOverrideAttr == null) { //not rework, and no race override	  
 	      //generate the rescode using wdw race algorithm utility
 	      resCode = WDWAlgorithmUtility.generateResCode(); 
 	      // and insert it into the database payload/rescode ref table	      
 	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
 	  } else {
+		  // and insert it into the database payload/rescode ref table	      
+	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
 		  logger.sendEvent(
 		            "WDW RACE_RES_OVERRIDE present for reservation code generation.",
 		            EventType.INFO, THISOBJECT);
