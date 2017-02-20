@@ -66,6 +66,9 @@ public class DemographicsTO implements Serializable {
   /** Guest seller res nbr */
   private String sellerResNbr;
 
+  /** Shipping Note */
+  private String note;  
+  
   // Below added for Ticket Level Demographics
 
   /** Date of Birth. */
@@ -462,5 +465,18 @@ public class DemographicsTO implements Serializable {
   public void setFirstNameChinese(String firstNameChinese) {
     this.firstNameChinese = firstNameChinese;
   }
+  
+  /**
+   * @return the note
+   */
+  public String getNote() {
+    return note;
+  }
 
+  /**
+   * @param note the note to set
+   */
+  public void setNote(String note) {
+    this.note = note;
+  }
 }

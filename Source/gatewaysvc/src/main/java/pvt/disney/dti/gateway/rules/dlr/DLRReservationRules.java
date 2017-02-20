@@ -1047,8 +1047,7 @@ public class DLRReservationRules implements TransformConstants {
       GWPaymentContractTO payContract = new GWPaymentContractTO();
 
       // RecurrenceType
-      payContract
-          .setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
+      payContract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
 
       // DayOfMonth (Set to today's day).
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
@@ -1073,10 +1072,9 @@ public class DLRReservationRules implements TransformConstants {
       String paymentPlan = null;
       if (resReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
         paymentPlan = instTPLookupMap.get(GW_ORDERS_SOCAPURCHPLAN);
-      }
-      else {
+      } else {
         paymentPlan = instTPLookupMap.get(GW_ORDERS_CAPURCHPLAN);
-      }
+      } 
       if (paymentPlan == null) {
         throw new DTIException(
             DLRReservationRules.class,
@@ -1204,9 +1202,7 @@ public class DLRReservationRules implements TransformConstants {
             "GWTPLookup for ShipMethod is missing in the database.");
       }
       else {
-        orderTO.setShipDeliveryMethod(shipMethodlookupTO
-            .getLookupValue());
-
+        orderTO.setShipDeliveryMethod(shipMethodlookupTO.getLookupValue());
       }
 
       String resPickup = UtilityXML.getEGalaxyDateFromGCalNoTime(resReq

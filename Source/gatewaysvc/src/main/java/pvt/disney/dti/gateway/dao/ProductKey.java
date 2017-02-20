@@ -102,14 +102,16 @@ public class ProductKey {
     HashSet<String> productCodeSet = new HashSet<String>();
     for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
 
-      if (typeCode.equals(ValueConstants.TYPE_CODE_SELL))
-        if (aTicketTO.getProdCode() != null)
+      if (typeCode.equals(ValueConstants.TYPE_CODE_SELL)) {
+        if (aTicketTO.getProdCode() != null) {
           productCodeSet.add(aTicketTO.getProdCode());
-
-      if (typeCode.equals(ValueConstants.TYPE_CODE_UPGRADE))
-        if (aTicketTO.getFromProdCode() != null)
+        }
+      } 
+      if (typeCode.equals(ValueConstants.TYPE_CODE_UPGRADE)) {
+        if (aTicketTO.getFromProdCode() != null) {
           productCodeSet.add(aTicketTO.getFromProdCode());
-
+        }
+      }
     }
 
     Object[] queryParms = { DBUtil.createSQLInList(productCodeSet) };
@@ -152,11 +154,11 @@ public class ProductKey {
           if (aTicket.getProdCode() != null) {
 
             if (aTicket.getProdCode().compareToIgnoreCase(matchProduct) == 0) {
-              if (aTicket.getProdQty() == null) // 2.10, implied quantity is 1
-                                                // on upgrade
+              if (aTicket.getProdQty() == null) { // 2.10, implied quantity is 1 on upgrade
                 quantity = quantity + 1;
-              else
+              } else {
                 quantity = aTicket.getProdQty().intValue() + quantity;
+              }
             }
 
           }
@@ -193,7 +195,7 @@ public class ProductKey {
   public static final ArrayList<DBProductTO> getProductTicketTypes(ArrayList<DBProductTO> dbProdList)
       throws DTIException {
 
-    logger.sendEvent("Entering getOrderProducts()", EventType.DEBUG, THISINSTANCE);
+    logger.sendEvent("Entering getProductTicketTypes()", EventType.DEBUG, THISINSTANCE);
 
     ArrayList<DBProductTO> resultList = null;
 
@@ -387,9 +389,10 @@ public class ProductKey {
 
     ArrayList<DBProductTO> prodList = dtiTxn.getDbProdList();
 
-    if ((prodList == null) || (prodList.size() == 0))
+    if ((prodList == null) || (prodList.size() == 0)) {
       return;
-
+    }
+    
     /*
      * In the old gateway, although code was present to log reservation and
      * create ticket information in the product detail table, it never

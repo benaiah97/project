@@ -318,8 +318,7 @@ public class DTIService {
         return null;
     }
 
-    startErrorTag += tagName.length() + 2; // Move pointer to start of the
-    // value.
+    startErrorTag += tagName.length() + 2; // Move pointer to start of the value.
 
     if (startErrorTag == endErrorTag) {
       return "";

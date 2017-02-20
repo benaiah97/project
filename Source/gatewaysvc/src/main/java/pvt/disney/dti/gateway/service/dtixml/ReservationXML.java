@@ -170,9 +170,10 @@ public abstract class ReservationXML {
       ArrayList<String> noteListTO = new ArrayList<String>();
       List<String> noteList = resReq.getNote();
 
-      for /* each */(String aNoteEntry : /* in */noteList)
+      for /* each */(String aNoteEntry : /* in */noteList) {
         noteListTO.add(aNoteEntry);
-
+      } 
+      
       resReqTO.setNoteList(noteListTO);
     }
 
@@ -318,11 +319,13 @@ public abstract class ReservationXML {
           aProduct.setProdTax2(aProductTO.getProdTax2());
         }
 
-        if (aProductTO.getProdDescription() != null)
+        if (aProductTO.getProdDescription() != null) {
           aProduct.setProdDescription(aProductTO.getProdDescription());
+        }
 
-        if (aProductTO.getProdReceiptMsg() != null)
+        if (aProductTO.getProdReceiptMsg() != null) {
           aProduct.setProdReceiptMsg(aProductTO.getProdReceiptMsg());
+        }
 
         productList.add(aProduct);
       }
@@ -354,18 +357,24 @@ public abstract class ReservationXML {
       ReservationTO reservationTO = resRespTO.getReservation();
 
       // Optional fields
-      if (reservationTO.getResCode() != null)
+      if (reservationTO.getResCode() != null) {
         reservation.setResCode(reservationTO.getResCode());
-      if (reservationTO.getResNumber() != null)
+      }
+      if (reservationTO.getResNumber() != null) {
         reservation.setResNumber(reservationTO.getResNumber());
-      if (reservationTO.getResCreateDate() != null)
+      }
+      if (reservationTO.getResCreateDate() != null) {
         reservation.setResCreateDate(UtilXML.convertToXML(reservationTO.getResCreateDate()));
-      if (reservationTO.getResPickupDate() != null)
+      }
+      if (reservationTO.getResPickupDate() != null) {
         reservation.setResPickupDate(UtilXML.convertToXML(reservationTO.getResPickupDate()));
-      if (reservationTO.getResPickupArea() != null)
+      }
+      if (reservationTO.getResPickupArea() != null) {
         reservation.setResPickupArea(reservationTO.getResPickupArea());
-      if (reservationTO.getResSalesType() != null)
+      }
+      if (reservationTO.getResSalesType() != null) {
         reservation.setResSalesType(reservationTO.getResSalesType());
+      }
 
       // Contract ID (As of 2.15, JTL)
       if (reservationTO.getContractId() != null) {
@@ -380,8 +389,9 @@ public abstract class ReservationXML {
       ReservationResponse.ClientData clientData = new ReservationResponse.ClientData();
 
       // Optional field
-      if (resRespTO.getClientData().getClientId() != null)
+      if (resRespTO.getClientData().getClientId() != null) {
         clientData.setClientId(resRespTO.getClientData().getClientId());
+      }
 
       resResp.setClientData(clientData);
     }
@@ -424,10 +434,12 @@ public abstract class ReservationXML {
         aCreditCard.setCCAuthCode(aCreditCardTO.getCcAuthCode());
 
         // Optional fields
-        if (aCreditCardTO.getCcAuthNumber() != null)
+        if (aCreditCardTO.getCcAuthNumber() != null) {
           aCreditCard.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
-        if (aCreditCardTO.getCcAuthSysResponse() != null)
+        }
+        if (aCreditCardTO.getCcAuthSysResponse() != null) {
           aCreditCard.setCCAuthSysResponse(aCreditCardTO.getCcAuthSysResponse());
+        }
         if (aCreditCardTO.getCcNumber() != null) {
           aCreditCard.setCCNumber(aCreditCardTO.getCcNumber());
         }
@@ -443,14 +455,18 @@ public abstract class ReservationXML {
         aGiftCard.setGCAuthCode(aGiftCardTO.getGcAuthCode());
 
         // Optional fields
-        if (aGiftCardTO.getGcAuthNumber() != null)
+        if (aGiftCardTO.getGcAuthNumber() != null) {
           aGiftCard.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
-        if (aGiftCardTO.getGcAuthSysResponse() != null)
+        }
+        if (aGiftCardTO.getGcAuthSysResponse() != null) {
           aGiftCard.setGCAuthSysResponse(aGiftCardTO.getGcAuthSysResponse());
-        if (aGiftCardTO.getGcNumber() != null)
+        }
+        if (aGiftCardTO.getGcNumber() != null) {
           aGiftCard.setGCNumber(aGiftCardTO.getGcNumber());
-        if (aGiftCardTO.getGcRemainingBalance() != null)
+        }
+        if (aGiftCardTO.getGcRemainingBalance() != null) {
           aGiftCard.setGCRemainingBalance(aGiftCardTO.getGcRemainingBalance());
+        }
         if (aGiftCardTO.getGcPromoExpDate() != null) {
           aGiftCard.setGCPromoExpDate(UtilXML.convertToXML(aGiftCardTO.getGcPromoExpDate()));
         }
@@ -556,8 +572,9 @@ public abstract class ReservationXML {
         TicketTransactionTO tktTranTO = aTicketTO.getTktTran();
 
         // TktProvider
-        if (tktTranTO.getTktProvider() != null)
+        if (tktTranTO.getTktProvider() != null) {
           tktTran.setTktProvider(tktTranTO.getTktProvider());
+        }
 
         // TranDSSN
         if (tktTranTO.getDssnDate() != null) {
@@ -574,8 +591,9 @@ public abstract class ReservationXML {
         }
 
         // TranNID
-        if (tktTranTO.getTranNID() != null)
+        if (tktTranTO.getTranNID() != null) {
           tktTran.setTranNID(tktTranTO.getTranNID());
+        }
 
         qName = new QName("TktTransaction");
         JAXBElement section = new JAXBElement(qName, tktTran.getClass(), tktTran);
@@ -632,12 +650,10 @@ public abstract class ReservationXML {
 
       // TktNote
       if (aTicketTO.getTktNote() != null) {
-
         qName = new QName("TktNote");
         JAXBElement<String> tktValidityElement = new JAXBElement(qName, aTicketTO.getTktNote().getClass(),
             aTicketTO.getTktNote());
         aTicket.getTktItemOrTktPartOrTktID().add(tktValidityElement);
-
       }
 
       // Ticket Error
@@ -670,14 +686,18 @@ public abstract class ReservationXML {
   private static void setTOClientData(ReservationRequest.ClientData clientData, ClientDataTO clientDataTO) {
 
     // Optional fields
-    if (clientData.getClientId() != null)
+    if (clientData.getClientId() != null) {
       clientDataTO.setClientId(clientData.getClientId());
-    if (clientData.getClientType() != null)
+    }
+    if (clientData.getClientType() != null) {
       clientDataTO.setClientType(clientData.getClientType());
-    if (clientData.getClientCategory() != null)
+    }
+    if (clientData.getClientCategory() != null) {
       clientDataTO.setClientCategory(clientData.getClientCategory());
-    if (clientData.getDemoLanguage() != null)
+    }
+    if (clientData.getDemoLanguage() != null) {
       clientDataTO.setDemoLanguage(clientData.getDemoLanguage());
+    }
 
     // Optional Demographics
     if (clientData.getDemoData() != null) {
@@ -729,7 +749,7 @@ public abstract class ReservationXML {
           demoTO.setState(billData.getState());
         }
         
-        // Zip 
+        // ZIP 
         if (billData.getZip() != null) {
           demoTO.setZip(billData.getZip());
         }
@@ -799,7 +819,7 @@ public abstract class ReservationXML {
           demoTO.setState(shipData.getState());
         }
         
-        // Zip
+        // ZIP
         if (shipData.getZip() != null) {
           demoTO.setZip(shipData.getZip());
         }
@@ -818,6 +838,11 @@ public abstract class ReservationXML {
         if (shipData.getEmail() != null) {
           demoTO.setEmail(shipData.getEmail());
         }
+        
+        // Note
+        if (shipData.getNote() != null) {
+          demoTO.setNote(shipData.getNote());
+        }
 
         clientDataTO.setShippingInfo(demoTO);
 
@@ -829,28 +854,39 @@ public abstract class ReservationXML {
         ReservationRequest.ClientData.DemoData.Delivery deliveryData = demoData.getDelivery();
 
         // Optional Attributes
-        if (deliveryData.getName() != null)
+        if (deliveryData.getName() != null) {
           demoTO.setName(deliveryData.getName());
-        if (deliveryData.getLastName() != null)
+        }  
+        if (deliveryData.getLastName() != null) {
           demoTO.setLastName(deliveryData.getLastName());
-        if (deliveryData.getFirstName() != null)
+        }
+        if (deliveryData.getFirstName() != null) {
           demoTO.setFirstName(deliveryData.getFirstName());
-        if (deliveryData.getAddr1() != null)
+        }
+        if (deliveryData.getAddr1() != null) {
           demoTO.setAddr1(deliveryData.getAddr1());
-        if (deliveryData.getAddr2() != null)
+        }
+        if (deliveryData.getAddr2() != null) {
           demoTO.setAddr2(deliveryData.getAddr2());
-        if (deliveryData.getCity() != null)
+        }
+        if (deliveryData.getCity() != null) {
           demoTO.setCity(deliveryData.getCity());
-        if (deliveryData.getState() != null)
+        }
+        if (deliveryData.getState() != null) {
           demoTO.setState(deliveryData.getState());
-        if (deliveryData.getZip() != null)
+        }
+        if (deliveryData.getZip() != null) {
           demoTO.setZip(deliveryData.getZip());
-        if (deliveryData.getCountry() != null)
+        }
+        if (deliveryData.getCountry() != null) {
           demoTO.setCountry(deliveryData.getCountry());
-        if (deliveryData.getTelephone() != null)
+        }
+        if (deliveryData.getTelephone() != null) {
           demoTO.setTelephone(deliveryData.getTelephone());
-        if (deliveryData.getEmail() != null)
+        }
+        if (deliveryData.getEmail() != null) {
           demoTO.setEmail(deliveryData.getEmail());
+        }
 
         clientDataTO.setDeliveryInfo(demoTO);
 
@@ -1072,24 +1108,29 @@ public abstract class ReservationXML {
 
       // Optional Attributes
       // Title
-      if (acctDemoData.getTitle() != null)
+      if (acctDemoData.getTitle() != null) {
         demoTO.setTitle(acctDemoData.getTitle());
+      }
 
       // Fist Name
-      if (acctDemoData.getFirstName() != null)
+      if (acctDemoData.getFirstName() != null) {
         demoTO.setFirstName(acctDemoData.getFirstName());
+      }
 
       // Middle Name
-      if (acctDemoData.getMiddleName() != null)
+      if (acctDemoData.getMiddleName() != null) {
         demoTO.setMiddleName(acctDemoData.getMiddleName());
+      }
 
       // Last Name
-      if (acctDemoData.getLastName() != null)
+      if (acctDemoData.getLastName() != null) {
         demoTO.setLastName(acctDemoData.getLastName());
+      }
 
       // Suffix
-      if (acctDemoData.getSuffix() != null)
+      if (acctDemoData.getSuffix() != null) {
         demoTO.setSuffix(acctDemoData.getSuffix());
+      }
 
       // Date of Birth
       if (acctDemoData.getDateOfBirth() != null) {
@@ -1099,32 +1140,39 @@ public abstract class ReservationXML {
       }
 
       // Address 1
-      if (acctDemoData.getAddr1() != null)
+      if (acctDemoData.getAddr1() != null) {
         demoTO.setAddr1(acctDemoData.getAddr1());
+      }
 
       // Address 2
-      if (acctDemoData.getAddr2() != null)
+      if (acctDemoData.getAddr2() != null) {
         demoTO.setAddr2(acctDemoData.getAddr2());
+      }
 
       // City
-      if (acctDemoData.getCity() != null)
+      if (acctDemoData.getCity() != null) {
         demoTO.setCity(acctDemoData.getCity());
+      }
 
       // State
-      if (acctDemoData.getState() != null)
+      if (acctDemoData.getState() != null) {
         demoTO.setState(acctDemoData.getState());
+      }
 
       // ZIP
-      if (acctDemoData.getZip() != null)
+      if (acctDemoData.getZip() != null) {
         demoTO.setZip(acctDemoData.getZip());
+      }
 
       // Country
-      if (acctDemoData.getCountry() != null)
+      if (acctDemoData.getCountry() != null) {
         demoTO.setCountry(acctDemoData.getCountry());
+      }
 
       // eMail
-      if (acctDemoData.getEmail() != null)
+      if (acctDemoData.getEmail() != null) {
         demoTO.setEmail(acctDemoData.getEmail());
+      }
 
       // OptInSolocit (defaults to NO if not present)
       if (acctDemoData.getOptInSolicit() != null) {
@@ -1242,12 +1290,15 @@ public abstract class ReservationXML {
         creditCardTO.setCcTrack2(ccSwipe.getCCTrack2());
 
         // Optional fields
-        if (ccSwipe.getCCVV() != null)
+        if (ccSwipe.getCCVV() != null) {
           creditCardTO.setCcVV(ccSwipe.getCCVV());
-        if (ccSwipe.getPosTerminal() != null) // as of 2.12
+        }
+        if (ccSwipe.getPosTerminal() != null) { // as of 2.12
           creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
-        if (ccSwipe.getExtnlDevSerial() != null) // as of 2.12
+        }
+        if (ccSwipe.getExtnlDevSerial() != null) { // as of 2.12
           creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+        }
       } else if (creditCard.getCCWireless() != null) { // as of 2.12
 
         ReservationRequest.Payment.PayType.CreditCard.CCWireless ccWireless = creditCard.getCCWireless();
@@ -1258,12 +1309,15 @@ public abstract class ReservationXML {
         creditCardTO.setCcTrack2(ccWireless.getCCTrack2());
 
         // Optional fields
-        if (ccWireless.getCCVV() != null)
+        if (ccWireless.getCCVV() != null) {
           creditCardTO.setCcVV(ccWireless.getCCVV());
-        if (ccWireless.getPosTerminal() != null) // as of 2.12
+        }
+        if (ccWireless.getPosTerminal() != null) { // as of 2.12
           creditCardTO.setPosTermID(ccWireless.getPosTerminal());
-        if (ccWireless.getExtnlDevSerial() != null) // as of 2.12
+        }
+        if (ccWireless.getExtnlDevSerial() != null) { // as of 2.12
           creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+        }
       }
 
       aPaymentTO.setCreditCard(creditCardTO);
@@ -1275,8 +1329,9 @@ public abstract class ReservationXML {
       voucherTO.setMainCode(payType.getVoucher().getMainCode());
 
       // Optional fields
-      if (payType.getVoucher().getUniqueCode() != null)
+      if (payType.getVoucher().getUniqueCode() != null) {
         voucherTO.setUniqueCode(payType.getVoucher().getUniqueCode());
+      }
 
       aPaymentTO.setVoucher(voucherTO);
 
@@ -1488,8 +1543,9 @@ public abstract class ReservationXML {
           }
 
           // Country
-          if (aTktDemographic.getCountry() != null)
-          aTicketDemoTO.setCountry(aTktDemographic.getCountry());
+          if (aTktDemographic.getCountry() != null) {
+             aTicketDemoTO.setCountry(aTktDemographic.getCountry());
+          }
 
           // Telephone (opt) as of 2.16.1 APMP (JTL)
           if (aTktDemographic.getTelephone() != null) {
@@ -1529,8 +1585,9 @@ public abstract class ReservationXML {
     }
 
     // ProdPrice
-    if (aTicket.getProdPrice() != null)
+    if (aTicket.getProdPrice() != null) {
       aTicketTO.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
+    }
 
     // TktValidity
     if (aTicket.getTktValidity() != null) {

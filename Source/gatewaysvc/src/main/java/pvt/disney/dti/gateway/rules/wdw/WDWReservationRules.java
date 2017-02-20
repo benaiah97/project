@@ -63,7 +63,6 @@ import pvt.disney.dti.gateway.rules.ElectronicEntitlementRules;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
-import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.rules.race.utility.WDWAlgorithmUtility;
 import pvt.disney.dti.gateway.service.dtixml.ReservationXML;
 import pvt.disney.dti.gateway.util.DTIFormatter;
@@ -75,8 +74,10 @@ import com.disney.util.PropertyHelper;
 /**
  * This class is responsible for three major functions for WDW reservations:<BR>
  * 1. Defining the business rules specific to WDW reservations.<BR>
- * 2. Defining the rules for transforming requests from the DTI transfer objects to the provider transfer objects.<BR>
- * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
+ * 2. Defining the rules for transforming requests from the DTI transfer objects
+ * to the provider transfer objects.<BR>
+ * 3. Defining the rules for transforming responses from the provider transfer
+ * objects to the DTI transfer objects.<BR>
  * 
  * @author lewit019
  * @since 2.16.3
@@ -122,7 +123,8 @@ public class WDWReservationRules {
   private final static String ATSCR = "^";
 
   /**
-   * Constant representing the maximum number of line items allowed on a reservation.
+   * Constant representing the maximum number of line items allowed on a
+   * reservation.
    */
   private final static int MAX_RES_LINE_ITEMS = 20;
 
@@ -147,8 +149,7 @@ public class WDWReservationRules {
   /** Entitlement Account type */
   private final static String ENTITLEMENT_ACCOUNT_ID = "ENTITLEMENTACCOUNTID";
 
-  private static final EventLogger logger = EventLogger
-      .getLogger(WDWReservationRules.class.getCanonicalName());
+  private static final EventLogger logger = EventLogger.getLogger(WDWReservationRules.class.getCanonicalName());
 
   private static int atsMaxEncodeAllCnt = 200;
 
@@ -160,17 +161,14 @@ public class WDWReservationRules {
   public static void initWDWReservationRules(Properties props) {
 
     String encodeCountString = null;
-    encodeCountString = PropertyHelper.readPropsValue(
-        PropertyName.ATS_MAX_ENCODE_ALL_COUNT, props, null);
+    encodeCountString = PropertyHelper.readPropsValue(PropertyName.ATS_MAX_ENCODE_ALL_COUNT, props, null);
 
     if (encodeCountString != null) {
 
       try {
         atsMaxEncodeAllCnt = Integer.parseInt(encodeCountString);
-      }
-      catch (NumberFormatException nfe) {
-        logger.sendEvent(
-            "Unable to convert ATS.MaxEncodeAllCount property to a number.  Taking default.",
+      } catch (NumberFormatException nfe) {
+        logger.sendEvent("Unable to convert ATS.MaxEncodeAllCount property to a number.  Taking default.",
             EventType.WARN, THISOBJECT);
       }
     }
@@ -179,13 +177,14 @@ public class WDWReservationRules {
   }
 
   /**
-   * Transform the DTITransactionTO value object to the provider value objects and then pass those to XML Marshaling routines to create an XML string.
+   * Transform the DTITransactionTO value object to the provider value objects
+   * and then pass those to XML Marshaling routines to create an XML string.
    * 
    * @param dtiTxn
-   *            the DTI Transaction object.
+   *          the DTI Transaction object.
    * @return the XML string version of the provider request.
    * @throws DTIException
-   *             when any transformation error is encountered.
+   *           when any transformation error is encountered.
    */
   static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 
@@ -195,14 +194,12 @@ public class WDWReservationRules {
     ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
 
     // === Command Level ===
-    OTCommandTO atsCommand = new OTCommandTO(
-        OTCommandTO.OTTransactionType.MANAGERESERVATION);
+    OTCommandTO atsCommand = new OTCommandTO(OTCommandTO.OTTransactionType.MANAGERESERVATION);
     atsCommand.setXmlSchemaInstance(WDWBusinessRules.XML_SCHEMA_INSTANCE);
     atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
 
     // === Header Level ===
-    OTHeaderTO hdr = WDWBusinessRules.transformOTHeader(dtiTxn,
-        REQUEST_TYPE_MANAGE, REQUEST_SUBTYPE_MANAGERES);
+    OTHeaderTO hdr = WDWBusinessRules.transformOTHeader(dtiTxn, REQUEST_TYPE_MANAGE, REQUEST_SUBTYPE_MANAGERES);
     atsCommand.setHeaderTO(hdr);
 
     // === Manage Reservation Level ===
@@ -214,16 +211,12 @@ public class WDWReservationRules {
     otManageRes.setTagsList(tagList);
 
     // SiteNumber
-    HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn
-        .getAttributeTOMap();
-    AttributeTO anAttributeTO = aMap
-        .get(AttributeTO.CmdAttrCodeType.SITE_NUMBER);
+    HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn.getAttributeTOMap();
+    AttributeTO anAttributeTO = aMap.get(AttributeTO.CmdAttrCodeType.SITE_NUMBER);
     if (anAttributeTO == null) {
       otManageRes.setSiteNumber(WDWBusinessRules.getSiteNumberProperty());
-    }
-    else {
-      otManageRes.setSiteNumber(Integer.parseInt(anAttributeTO
-          .getAttrValue()));
+    } else {
+      otManageRes.setSiteNumber(Integer.parseInt(anAttributeTO.getAttrValue()));
     }
 
     // CommandType
@@ -232,56 +225,45 @@ public class WDWReservationRules {
     // ReservationCode
     if (dtiResReq.getReservation() != null) {
       ReservationTO resTO = dtiResReq.getReservation();
-      if (resTO.getResCode() != null) otManageRes
-          .setReservationCode(resTO.getResCode());
+      if (resTO.getResCode() != null)
+        otManageRes.setReservationCode(resTO.getResCode());
     }
 
     // Product
     ArrayList<TicketTO> dtiTktList = dtiResReq.getTktList();
     HashMap<String, DBProductTO> dtiPdtMap = dtiTxn.getDbProdMap();
     boolean productsAssignAccounts = false;
-    productsAssignAccounts = createOTProducts(otManageRes, dtiTktList,
-        dtiPdtMap);
+    productsAssignAccounts = createOTProducts(otManageRes, dtiTktList, dtiPdtMap);
 
     // Entitlement Account
     boolean electronicEnabled = false;
-    if (ReservationXML.ACCOUNT_PER_ORDER.equals(dtiResReq
-        .getDefaultAccount())) {
+    if (ReservationXML.ACCOUNT_PER_ORDER.equals(dtiResReq.getDefaultAccount())) {
 
       otManageRes.setEntitlementAccountCreationTypology(SINGLE_ACCOUNT);
       electronicEnabled = true;
 
-    }
-    else if (ReservationXML.ACCOUNT_PER_TICKET.equals(dtiResReq
-        .getDefaultAccount())) {
+    } else if (ReservationXML.ACCOUNT_PER_TICKET.equals(dtiResReq.getDefaultAccount())) {
 
-      otManageRes
-          .setEntitlementAccountCreationTypology(PER_TICKET_ACCOUNT);
+      otManageRes.setEntitlementAccountCreationTypology(PER_TICKET_ACCOUNT);
       electronicEnabled = true;
 
-    }
-    else {
+    } else {
 
-      if (dtiResReq.getSpecifiedAccounts() != null && dtiResReq
-          .getSpecifiedAccounts().size() > 0) {
+      if (dtiResReq.getSpecifiedAccounts() != null && dtiResReq.getSpecifiedAccounts().size() > 0) {
 
         // ENTITLEMENTACCOUNTID always requires a tag to be present in
         // the product node Per Andrea Martinotti 10/2/2012
         if (productsAssignAccounts) {
 
-          otManageRes
-              .setEntitlementAccountCreationTypology(ENTITLEMENT_ACCOUNT_ID);
+          otManageRes.setEntitlementAccountCreationTypology(ENTITLEMENT_ACCOUNT_ID);
 
-        }
-        else {
+        } else {
 
-          otManageRes
-              .setEntitlementAccountCreationTypology(SINGLE_ACCOUNT);
+          otManageRes.setEntitlementAccountCreationTypology(SINGLE_ACCOUNT);
 
         }
 
-        transformSpecifiedAccount(dtiResReq,
-            otManageRes.getAccountsData());
+        transformSpecifiedAccount(dtiResReq, otManageRes.getAccountsData());
         electronicEnabled = true;
 
       }
@@ -293,8 +275,7 @@ public class WDWReservationRules {
     ArrayList<OTPaymentTO> otPaymentList = otManageRes.getPaymentInfoList();
     ArrayList<PaymentTO> dtiPayList = dtiResReq.getPaymentList();
     EntityTO entityTO = dtiTxn.getEntityTO();
-    WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-        entityTO);
+    WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 
     // SellerId
     Long dtiSalesId = entityTO.getDefSalesRepId();
@@ -306,19 +287,17 @@ public class WDWReservationRules {
     ReservationTO dtiRes = dtiResReq.getReservation();
     OTReservationDataTO otRes = new OTReservationDataTO();
 
-    if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0) || (MANUALMAILORDER
-        .compareTo(dtiRes.getResSalesType()) == 0)) {
+    if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0)
+        || (MANUALMAILORDER.compareTo(dtiRes.getResSalesType()) == 0)) {
       otRes.setPrinted(new Boolean(false));
       otRes.setValidated(new Boolean(false));
-    }
-    else {
+    } else {
 
       if (otPaymentList.size() == 0) { // no payment cannot be printed or
         // validated
         otRes.setPrinted(new Boolean(false));
         otRes.setValidated(new Boolean(false));
-      }
-      else {
+      } else {
         otRes.setPrinted(new Boolean(true));
         otRes.setValidated(new Boolean(true));
       }
@@ -341,9 +320,7 @@ public class WDWReservationRules {
     // Is the rule active (atsMaxEncodeAllCnt > 0)
     if (atsMaxEncodeAllCnt <= 0) {
       executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because rule is turned off.",
-          EventType.WARN, THISOBJECT);
+      logger.sendEvent("Encode everything overriden because rule is turned off.", EventType.WARN, THISOBJECT);
     }
 
     // Is the rule active for this seller?
@@ -351,31 +328,24 @@ public class WDWReservationRules {
     if (anAttributeTO != null) {
       if (anAttributeTO.getAttrValue().compareToIgnoreCase("T") == 0) {
         executeOverride = false;
-        logger.sendEvent(
-            "Encode everything overriden because seller override is set.",
-            EventType.WARN, THISOBJECT);
+        logger.sendEvent("Encode everything overriden because seller override is set.", EventType.WARN, THISOBJECT);
       }
     }
 
     // Is the order paid?
     if (otPaymentList.size() == 0) {
       executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because order is not paid.",
-          EventType.WARN, THISOBJECT);
+      logger.sendEvent("Encode everything overriden because order is not paid.", EventType.WARN, THISOBJECT);
     }
 
     // Does the rule exceed atsMaxEncodeAllCnt?
     if (numberOfTickets > atsMaxEncodeAllCnt) {
       executeOverride = false;
-      logger.sendEvent(
-          "Encode everything overriden because number of tickets (" + numberOfTickets + ") is greater than " + atsMaxEncodeAllCnt + ".",
-          EventType.WARN, THISOBJECT);
-    }
-    else {
-      logger.sendEvent(
-          "Number of Tickets (" + numberOfTickets + ") is less than or equal to " + "ATSMaxEncodeAllCnt (" + atsMaxEncodeAllCnt + ")",
-          EventType.DEBUG, THISOBJECT);
+      logger.sendEvent("Encode everything overriden because number of tickets (" + numberOfTickets
+          + ") is greater than " + atsMaxEncodeAllCnt + ".", EventType.WARN, THISOBJECT);
+    } else {
+      logger.sendEvent("Number of Tickets (" + numberOfTickets + ") is less than or equal to " + "ATSMaxEncodeAllCnt ("
+          + atsMaxEncodeAllCnt + ")", EventType.DEBUG, THISOBJECT);
     }
 
     if (executeOverride) {
@@ -384,8 +354,7 @@ public class WDWReservationRules {
 
       // Has an electronic account already been specified?
       if (!electronicEnabled) {
-        otManageRes
-            .setEntitlementAccountCreationTypology(PER_TICKET_ACCOUNT);
+        otManageRes.setEntitlementAccountCreationTypology(PER_TICKET_ACCOUNT);
       }
 
     }
@@ -396,35 +365,28 @@ public class WDWReservationRules {
     otManageRes.setReservationData(otRes);
 
     // TP Lookups
-    HashMap<TPLookupTO.TPLookupType, TPLookupTO> tpLookupMap = dtiTxn
-        .getTpLookupTOMap();
+    HashMap<TPLookupTO.TPLookupType, TPLookupTO> tpLookupMap = dtiTxn.getTpLookupTOMap();
     try {
-      TPLookupTO aTPLookupTO = tpLookupMap
-          .get(TPLookupTO.TPLookupType.SALES_TYPE);
-      if (aTPLookupTO == null) throw new DTIException(
-          WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
-          "TPLookup for SalesType is missing in the database.");
+      TPLookupTO aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.SALES_TYPE);
+      if (aTPLookupTO == null)
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+            "TPLookup for SalesType is missing in the database.");
       otRes.setSalesType(Integer.parseInt(aTPLookupTO.getLookupValue()));
 
       aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.PICKUP_AREA);
-      if (aTPLookupTO == null) throw new DTIException(
-          WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
-          "TPLookup for ResPickupArea is missing in the database.");
-      otRes.setResPickupArea(Integer.parseInt(aTPLookupTO
-          .getLookupValue()));
+      if (aTPLookupTO == null)
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+            "TPLookup for ResPickupArea is missing in the database.");
+      otRes.setResPickupArea(Integer.parseInt(aTPLookupTO.getLookupValue()));
 
       aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.PICKUP_TYPE);
-      if (aTPLookupTO == null) throw new DTIException(
-          WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
-          "TPLookup for ResPickupType is missing in the database.");
-      otRes.setResPickupType(Integer.parseInt(aTPLookupTO
-          .getLookupValue()));
+      if (aTPLookupTO == null)
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+            "TPLookup for ResPickupType is missing in the database.");
+      otRes.setResPickupType(Integer.parseInt(aTPLookupTO.getLookupValue()));
 
-    }
-    catch (NumberFormatException nfe) {
-      throw new DTIException(
-          WDWReservationRules.class,
-          DTIErrorCode.DTI_DATA_ERROR,
+    } catch (NumberFormatException nfe) {
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
           "TPLookup value SalesType, PickupArea, or PickupType was not a valid integer in the database.");
     }
     otRes.setResPickupDate(dtiRes.getResPickupDate());
@@ -438,8 +400,8 @@ public class WDWReservationRules {
     // IATA Number
     if (dtiResReq.getAgency() != null) {
       AgencyTO dtiAgencyTO = dtiResReq.getAgency();
-      if (dtiAgencyTO.getIATA() != null) otManageRes.setIATA(dtiAgencyTO
-          .getIATA());
+      if (dtiAgencyTO.getIATA() != null)
+        otManageRes.setIATA(dtiAgencyTO.getIATA());
     }
 
     // TaxExemptCode
@@ -450,8 +412,8 @@ public class WDWReservationRules {
     // ClientData
     ClientDataTO dtiClientData = dtiResReq.getClientData();
     OTClientDataTO otClientData = new OTClientDataTO();
-    if (dtiClientData.getClientId() == null) otClientData
-        .setClientUniqueId(NO_CLIENT_PROVIDED);
+    if (dtiClientData.getClientId() == null)
+      otClientData.setClientUniqueId(NO_CLIENT_PROVIDED);
     else {
       Integer clientNumber = null;
       try { // NOTE: Cannot use Integer.decode() here, as some values are
@@ -459,38 +421,30 @@ public class WDWReservationRules {
         // will be interpreted by that routine as "octal" values.
         int clientNum = Integer.parseInt(dtiClientData.getClientId());
         clientNumber = new Integer(clientNum);
-      }
-      catch (NumberFormatException nfe) {
-        throw new DTIException(WDWReservationRules.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
-            "ClientId is non-numeric value: " + dtiClientData
-                .getClientId());
+      } catch (NumberFormatException nfe) {
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+            "ClientId is non-numeric value: " + dtiClientData.getClientId());
       }
       otClientData.setClientUniqueId(clientNumber);
     }
-    TPLookupTO aTPLookupTO = tpLookupMap
-        .get(TPLookupTO.TPLookupType.CLIENT_TYPE);
+    TPLookupTO aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.CLIENT_TYPE);
 
-    if (aTPLookupTO == null) throw new DTIException(
-        WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
-        "TPLookup for ClientType is missing in the database.");
+    if (aTPLookupTO == null)
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+          "TPLookup for ClientType is missing in the database.");
     otClientData.setClientType(aTPLookupTO.getLookupValue());
     otClientData.setClientCategory(dtiClientData.getClientCategory() + " ");
 
     aTPLookupTO = tpLookupMap.get(TPLookupTO.TPLookupType.LANGUAGE);
     try {
-      if (aTPLookupTO == null) throw new DTIException(
-          WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
-          "TPLookup for Language is missing in the database.");
+      if (aTPLookupTO == null)
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+            "TPLookup for Language is missing in the database.");
       int intValue = Integer.parseInt(aTPLookupTO.getLookupValue());
       otClientData.setClientLanguage(new Integer(intValue));
-    }
-    catch (NumberFormatException nfe) {
-      throw new DTIException(
-          WDWReservationRules.class,
-          DTIErrorCode.DTI_DATA_ERROR,
-          "TPLookup value ClientLanguage was not a valid integer in the database: " + aTPLookupTO
-              .getLookupValue());
+    } catch (NumberFormatException nfe) {
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.DTI_DATA_ERROR,
+          "TPLookup value ClientLanguage was not a valid integer in the database: " + aTPLookupTO.getLookupValue());
     }
 
     // ClientData Demographics Fields
@@ -506,8 +460,7 @@ public class WDWReservationRules {
     if (noteDetailsArray != null && noteDetailsArray.size() > 0) {
       // have Delivery notes, use it
       otManageRes.setNoteDetailsArray(noteDetailsArray);
-    }
-    else {
+    } else {
       // No Delivery Specific information
       if (dtiResReq.getNoteList().size() > 0) {
         // If note, process
@@ -516,7 +469,8 @@ public class WDWReservationRules {
         boolean firstNote = true;
         StringBuffer noteBuffer = new StringBuffer();
         for /* each */(String resString : /* in */dtiNoteList) {
-          if (!firstNote) noteBuffer.append(ATSCR);
+          if (!firstNote)
+            noteBuffer.append(ATSCR);
           firstNote = false;
           noteBuffer.append(resString);
         }
@@ -525,18 +479,17 @@ public class WDWReservationRules {
     }
 
     // Set Transaction note (2.10)
-    otManageRes.setTransactionNote(dtiRequest.getPayloadHeader()
-        .getPayloadID());
-    
+    otManageRes.setTransactionNote(dtiRequest.getPayloadHeader().getPayloadID());
+
     // Set ExternalTransactionID (optional) (as of 2.16.2, JTL)
     if (dtiResReq.getExtTxnIdentifier() != null) {
-      
-      ExtTxnIdentifierTO dtiExtId = dtiResReq.getExtTxnIdentifier(); 
-      
+
+      ExtTxnIdentifierTO dtiExtId = dtiResReq.getExtTxnIdentifier();
+
       OTExternalTransactionIDTO otExtTxnId = new OTExternalTransactionIDTO();
       otExtTxnId.setId(dtiExtId.getTxnIdentifier());
       otExtTxnId.setAlreadyEncrypted(dtiExtId.getIsSHA1Encrypted());
-      
+
       otManageRes.setExternalTransactionID(otExtTxnId);
     }
 
@@ -561,8 +514,7 @@ public class WDWReservationRules {
    * @param dtiPdtMap
    * @return
    */
-  private static boolean createOTProducts(OTManageReservationTO otManageRes,
-      ArrayList<TicketTO> dtiTktList,
+  private static boolean createOTProducts(OTManageReservationTO otManageRes, ArrayList<TicketTO> dtiTktList,
       HashMap<String, DBProductTO> dtiPdtMap) {
 
     boolean productsAssignAccounts = false;
@@ -580,8 +532,8 @@ public class WDWReservationRules {
       // ItemNumCode
       DBProductTO dtiPdt = dtiPdtMap.get(aDtiTicket.getProdCode());
       logger.sendEvent(
-          "transformRequest: got product " + dtiPdt.getPdtCode() + " is consumable?" + dtiPdt
-              .isConsumable(), EventType.DEBUG, THISOBJECT);
+          "transformRequest: got product " + dtiPdt.getPdtCode() + " is consumable?" + dtiPdt.isConsumable(),
+          EventType.DEBUG, THISOBJECT);
       BigInteger tktNbr = dtiPdt.getMappedProviderTktNbr();
       otProduct.setItemNumCode(tktNbr);
 
@@ -589,37 +541,34 @@ public class WDWReservationRules {
       otProduct.setQuantity(aDtiTicket.getProdQty());
 
       // ProdDemoData (as of 2.9)
-      ArrayList<DemographicsTO> tktDemoList = aDtiTicket
-          .getTicketDemoList();
+      ArrayList<DemographicsTO> tktDemoList = aDtiTicket.getTicketDemoList();
       if (tktDemoList.size() > 0) {
         OTDemographicInfo otDemoInfo = new OTDemographicInfo();
-        WDWBusinessRules.transformTicketDemoData(tktDemoList,
-            otDemoInfo);
+        WDWBusinessRules.transformTicketDemoData(tktDemoList, otDemoInfo);
         otProduct.setDemographicInfo(otDemoInfo);
       }
 
       // StartDate
       boolean startValidityDateSet = false;
       boolean endValidityDateSet = false;
-      if (dtiPdt.isValidityDateInfoRequired() && aDtiTicket
-          .getTktValidityValidStart() != null) {
-        otProduct.setValidity_StartDate(aDtiTicket
-            .getTktValidityValidStart());
+      if (dtiPdt.isValidityDateInfoRequired() && aDtiTicket.getTktValidityValidStart() != null) {
+        otProduct.setValidity_StartDate(aDtiTicket.getTktValidityValidStart());
         startValidityDateSet = true;
       }
 
       // EndDate
-      if (dtiPdt.isValidityDateInfoRequired() && aDtiTicket
-          .getTktValidityValidEnd() != null) {
-        otProduct.setValidity_EndDate(aDtiTicket
-            .getTktValidityValidEnd());
+      if (dtiPdt.isValidityDateInfoRequired() && aDtiTicket.getTktValidityValidEnd() != null) {
+        otProduct.setValidity_EndDate(aDtiTicket.getTktValidityValidEnd());
         endValidityDateSet = true;
       }
 
       // Validity Start Date Validation/Auto-correction (as of 2.11)
-      // Validity Start Date should be provided in all instances when end is, but there is no
-      // XSD rule mandating the relationship. The choices are to error or default, and ticketing
-      // is asking for a default to today's date for the start date if the end has been specified.
+      // Validity Start Date should be provided in all instances when end is,
+      // but there is no
+      // XSD rule mandating the relationship. The choices are to error or
+      // default, and ticketing
+      // is asking for a default to today's date for the start date if the end
+      // has been specified.
       if (endValidityDateSet && !startValidityDateSet) {
         GregorianCalendar gc = new GregorianCalendar();
         otProduct.setValidity_StartDate(gc);
@@ -630,17 +579,14 @@ public class WDWReservationRules {
 
       // EntitlementAccountId, list of id, one for each non-consumable
       // ticket of this product tied to that account
-      if ((aDtiTicket.getTicketAssignmets().size() > 0) && (dtiPdt
-          .isConsumable() == false)) {
+      if ((aDtiTicket.getTicketAssignmets().size() > 0) && (dtiPdt.isConsumable() == false)) {
 
         productsAssignAccounts = true;
 
-        for (/* each */TktAssignmentTO ticket : /* in */aDtiTicket
-            .getTicketAssignmets()) {
+        for (/* each */TktAssignmentTO ticket : /* in */aDtiTicket.getTicketAssignmets()) {
           int qty = ticket.getProdQty().intValue();
           for (int i = 0; i < qty; i++) {
-            otProduct.getEntitlementAccountId().add(
-                ticket.getAccountItem().toString());
+            otProduct.getEntitlementAccountId().add(ticket.getAccountItem().toString());
           }
         }
       }
@@ -653,16 +599,16 @@ public class WDWReservationRules {
   }
 
   /**
-   * Sets the association info on the request, based on input from the DTI reservation request.
+   * Sets the association info on the request, based on input from the DTI
+   * reservation request.
    * 
    * @param dtiResReq
-   *            the DTI Reservation Request Transfer Object
+   *          the DTI Reservation Request Transfer Object
    * @return the Omni Ticket Association Info Transfer Object
    * @throws DTIException
-   *             if unable to get the EligibilityAssocId
+   *           if unable to get the EligibilityAssocId
    */
-  private static OTAssociationInfoTO setAssociationInfo(
-      ReservationRequestTO dtiResReq) throws DTIException {
+  private static OTAssociationInfoTO setAssociationInfo(ReservationRequestTO dtiResReq) throws DTIException {
     OTAssociationInfoTO otAssocInfo = new OTAssociationInfoTO();
 
     String eligGroup = dtiResReq.getEligibilityGroup();
@@ -675,15 +621,13 @@ public class WDWReservationRules {
     Integer memberInteger = null;
     try {
       memberInteger = Integer.decode(eligMember);
-    }
-    catch (NumberFormatException nfe) {
+    } catch (NumberFormatException nfe) {
       isMemberNumeric = false;
     }
 
     if (eligGroup.compareTo(WDWBusinessRules.DVC_STRING) == 0) {
       otAssocInfo.setMemberField(eligMember);
-    }
-    else if (isMemberNumeric == false) {
+    } else if (isMemberNumeric == false) {
       otAssocInfo.setMemberId(DEFAULT_MEMBERID);
       otAssocInfo.setAllowMemberCreation(true);
 
@@ -693,8 +637,7 @@ public class WDWReservationRules {
       OTFieldTO otField = new OTFieldTO(FIELD_NUMBER_ONE, eligMember);
       otAssocInfo.getDemographicData().add(otField);
 
-    }
-    else {
+    } else {
       otAssocInfo.setMemberId(memberInteger);
     }
     return otAssocInfo;
@@ -704,91 +647,82 @@ public class WDWReservationRules {
    * Create the OT Demographics in the OT field list.
    * 
    * @param otFieldList
-   *            The field list of demographic elements and values.
+   *          The field list of demographic elements and values.
    * @param dtiBillInfo
-   *            The DTI billing info DemographicsTO.
+   *          The DTI billing info DemographicsTO.
    * @param dtiShipInfo
-   *            The DTI shipping info DemographicsTO.
+   *          The DTI shipping info DemographicsTO.
    * @param agencyTO
-   *            The DTI travel agency information.
+   *          The DTI travel agency information.
    */
-  private static void createOtDemographics(ArrayList<OTFieldTO> otFieldList,
-      DemographicsTO dtiBillInfo, DemographicsTO dtiShipInfo,
-      AgencyTO agencyTO) {
+  private static void createOtDemographics(ArrayList<OTFieldTO> otFieldList, DemographicsTO dtiBillInfo,
+      DemographicsTO dtiShipInfo, AgencyTO agencyTO) {
 
     // Billing Info
     if (dtiBillInfo != null) {
 
       // Bill name
-      if (dtiBillInfo.getName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_NAME, 
-            DTIFormatter.websafe(dtiBillInfo.getName())));
+      if (dtiBillInfo.getName() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_NAME, DTIFormatter.websafe(dtiBillInfo.getName())));
       }
 
       // Bill Last Name
-      if (dtiBillInfo.getLastName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_LASTNAME,
-              DTIFormatter.websafe(dtiBillInfo.getLastName())));
+      if (dtiBillInfo.getLastName() != null) {
+        otFieldList
+            .add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_LASTNAME, DTIFormatter.websafe(dtiBillInfo.getLastName())));
       }
 
       // Bill First Name
-      if (dtiBillInfo.getFirstName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_FIRSTNAME,
-              DTIFormatter.websafe(dtiBillInfo.getFirstName())));
+      if (dtiBillInfo.getFirstName() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_FIRSTNAME, DTIFormatter.websafe(dtiBillInfo
+            .getFirstName())));
       }
 
       // Bill Address 1
-      if (dtiBillInfo.getAddr1() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR1, 
-            DTIFormatter.websafe(dtiBillInfo.getAddr1())));
+      if (dtiBillInfo.getAddr1() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR1, DTIFormatter.websafe(dtiBillInfo.getAddr1())));
       }
 
       // Bill Address 2
-      if (dtiBillInfo.getAddr2() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR2, 
-            DTIFormatter.websafe(dtiBillInfo.getAddr2())));
+      if (dtiBillInfo.getAddr2() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ADDR2, DTIFormatter.websafe(dtiBillInfo.getAddr2())));
       }
 
       // Bill City
-      if (dtiBillInfo.getCity() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_CITY, 
-            DTIFormatter.websafe(dtiBillInfo.getCity())));
+      if (dtiBillInfo.getCity() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_CITY, DTIFormatter.websafe(dtiBillInfo.getCity())));
       }
 
       // Bill State
-      if (dtiBillInfo.getState() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_STATE, 
-            DTIFormatter.websafe(dtiBillInfo.getState())));
+      if (dtiBillInfo.getState() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_STATE, DTIFormatter.websafe(dtiBillInfo.getState())));
       }
 
       // Bill ZIP
-      if (dtiBillInfo.getZip() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ZIP, 
-            DTIFormatter.websafe(dtiBillInfo.getZip())));
+      if (dtiBillInfo.getZip() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_ZIP, DTIFormatter.websafe(dtiBillInfo.getZip())));
       }
 
       // Bill Country
-      if (dtiBillInfo.getCountry() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_COUNTRY, 
-            DTIFormatter.websafe(dtiBillInfo.getCountry())));
+      if (dtiBillInfo.getCountry() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_COUNTRY, DTIFormatter.websafe(dtiBillInfo.getCountry())));
       }
 
       // Bill Telephone
-      if (dtiBillInfo.getTelephone() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_TELEPHONE,
-              DTIFormatter.websafe(dtiBillInfo.getTelephone())));
+      if (dtiBillInfo.getTelephone() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_TELEPHONE, DTIFormatter.websafe(dtiBillInfo
+            .getTelephone())));
       }
 
       // Bill E-mail
       if (dtiBillInfo.getEmail() != null) {
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_EMAIL, 
-            DTIFormatter.websafe(dtiBillInfo.getEmail())));
-    }
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_EMAIL, DTIFormatter.websafe(dtiBillInfo.getEmail())));
+      }
 
       // Bill SellerResNbr
-      if (dtiBillInfo.getSellerResNbr() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_SLR_RES_NBR,
-              DTIFormatter.websafe(dtiBillInfo.getSellerResNbr())));
+      if (dtiBillInfo.getSellerResNbr() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_BILL_SLR_RES_NBR, DTIFormatter.websafe(dtiBillInfo
+            .getSellerResNbr())));
       }
     }
 
@@ -796,70 +730,62 @@ public class WDWReservationRules {
     if (dtiShipInfo != null) {
 
       // Ship name
-      if (dtiShipInfo.getName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_NAME, 
-            DTIFormatter.websafe(dtiShipInfo.getName())));
+      if (dtiShipInfo.getName() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_NAME, DTIFormatter.websafe(dtiShipInfo.getName())));
       }
 
       // Ship Last Name
-      if (dtiShipInfo.getLastName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_LASTNAME,
-              DTIFormatter.websafe(dtiShipInfo.getLastName())));
+      if (dtiShipInfo.getLastName() != null) {
+        otFieldList
+            .add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_LASTNAME, DTIFormatter.websafe(dtiShipInfo.getLastName())));
       }
 
       // Ship First Name
-      if (dtiShipInfo.getFirstName() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_FIRSTNAME,
-              DTIFormatter.websafe(dtiShipInfo.getFirstName())));
+      if (dtiShipInfo.getFirstName() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_FIRSTNAME, DTIFormatter.websafe(dtiShipInfo
+            .getFirstName())));
       }
 
       // Ship Address 1
-      if (dtiShipInfo.getAddr1() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR1, 
-            DTIFormatter.websafe(dtiShipInfo.getAddr1())));
+      if (dtiShipInfo.getAddr1() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR1, DTIFormatter.websafe(dtiShipInfo.getAddr1())));
       }
 
       // Ship Address 2
-      if (dtiShipInfo.getAddr2() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR2, 
-            DTIFormatter.websafe(dtiShipInfo.getAddr2())));
+      if (dtiShipInfo.getAddr2() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ADDR2, DTIFormatter.websafe(dtiShipInfo.getAddr2())));
       }
 
       // Ship City
-      if (dtiShipInfo.getCity() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_CITY, 
-            DTIFormatter.websafe(dtiShipInfo.getCity())));
+      if (dtiShipInfo.getCity() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_CITY, DTIFormatter.websafe(dtiShipInfo.getCity())));
       }
 
       // Ship State
-      if (dtiShipInfo.getState() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_STATE, 
-            DTIFormatter.websafe(dtiShipInfo.getState())));
+      if (dtiShipInfo.getState() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_STATE, DTIFormatter.websafe(dtiShipInfo.getState())));
       }
 
       // Ship ZIP
-      if (dtiShipInfo.getZip() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ZIP, 
-            DTIFormatter.websafe(dtiShipInfo.getZip())));
+      if (dtiShipInfo.getZip() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_ZIP, DTIFormatter.websafe(dtiShipInfo.getZip())));
       }
 
       // Ship Country
-      if (dtiShipInfo.getCountry() != null) { 
-        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_COUNTRY, 
-            DTIFormatter.websafe(dtiShipInfo.getCountry())));
+      if (dtiShipInfo.getCountry() != null) {
+        otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_COUNTRY, DTIFormatter.websafe(dtiShipInfo.getCountry())));
       }
 
       // Ship Telephone
-      if (dtiShipInfo.getTelephone() != null) { 
-        otFieldList.add(new OTFieldTO(+OTFieldTO.WDW_CLNT_SHIP_TELEPHONE,
-              DTIFormatter.websafe(dtiShipInfo.getTelephone())));
+      if (dtiShipInfo.getTelephone() != null) {
+        otFieldList.add(new OTFieldTO(+OTFieldTO.WDW_CLNT_SHIP_TELEPHONE, DTIFormatter.websafe(dtiShipInfo
+            .getTelephone())));
       }
 
       // Ship Agent
       if (agencyTO != null) {
         if (agencyTO.getAgent() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_AGENT,
-              DTIFormatter.websafe(agencyTO.getAgent())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_CLNT_SHIP_AGENT, DTIFormatter.websafe(agencyTO.getAgent())));
         }
       }
     }
@@ -868,18 +794,21 @@ public class WDWReservationRules {
   }
 
   /**
-   * Transforms a reservation response string from the WDW provider and updates the DTITransactionTO object with the response information.
+   * Transforms a reservation response string from the WDW provider and updates
+   * the DTITransactionTO object with the response information.
    * 
    * @param dtiTxn
-   *            The transaction object for this request.
+   *          The transaction object for this request.
    * @param xmlResponse
-   *            The WDW provider's response in string format.
-   * @return The DTITransactionTO object, enriched with the response information.
+   *          The WDW provider's response in string format.
+   * @return The DTITransactionTO object, enriched with the response
+   *         information.
    * @throws DTIException
-   *             for any error. Contains enough detail to formulate an error response to the seller.
+   *           for any error. Contains enough detail to formulate an error
+   *           response to the seller.
    */
-  static void transformResponseBody(DTITransactionTO dtiTxn,
-      OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
+  static void transformResponseBody(DTITransactionTO dtiTxn, OTCommandTO otCmdTO, DTIResponseTO dtiRespTO)
+      throws DTIException {
 
     ReservationResponseTO dtiResRespTO = new ReservationResponseTO();
     OTManageReservationTO otMngResTO = otCmdTO.getManageReservationTO();
@@ -887,8 +816,7 @@ public class WDWReservationRules {
 
     // Price mismatch warning
     if (dtiTxn.isPriceMismatch()) {
-      DTIErrorTO mismatchWarn = ErrorKey
-          .getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
+      DTIErrorTO mismatchWarn = ErrorKey.getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
       dtiRespTO.setDtiError(mismatchWarn);
     }
 
@@ -919,13 +847,11 @@ public class WDWReservationRules {
         dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
         if (otTicketInfo.getValidityStartDate() != null) {
-          dtiTicketTO.setTktValidityValidStart(otTicketInfo
-                .getValidityStartDate());
+          dtiTicketTO.setTktValidityValidStart(otTicketInfo.getValidityStartDate());
         }
 
-        if (otTicketInfo.getValidityEndDate() != null) { 
-          dtiTicketTO.setTktValidityValidEnd(otTicketInfo
-                .getValidityEndDate());
+        if (otTicketInfo.getValidityEndDate() != null) {
+          dtiTicketTO.setTktValidityValidEnd(otTicketInfo.getValidityEndDate());
         }
 
         dtiTktList.add(dtiTicketTO);
@@ -957,8 +883,7 @@ public class WDWReservationRules {
       for /* each */(PaymentTO aPaymentTO : /* in */dtiPmtList) {
         if (aPaymentTO.getInstallment() != null) {
           if (aPaymentTO.getInstallment().getContractId() != null) {
-            String contractId = aPaymentTO.getInstallment()
-                .getContractId();
+            String contractId = aPaymentTO.getInstallment().getContractId();
             dtiReservationTO.setContractId(contractId);
             break; // Leave this loop when the condition is 1st satisfied.
           }
@@ -972,8 +897,7 @@ public class WDWReservationRules {
     ClientDataTO dtiClientDataTO = new ClientDataTO();
     OTClientDataTO otClientDataTO = otMngResTO.getClientData();
     if (otClientDataTO != null) {
-      dtiClientDataTO.setClientId(otClientDataTO.getClientUniqueId()
-          .toString());
+      dtiClientDataTO.setClientId(otClientDataTO.getClientUniqueId().toString());
       dtiResRespTO.setClientData(dtiClientDataTO);
     }
 
@@ -981,19 +905,23 @@ public class WDWReservationRules {
   }
 
   /**
-   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to 
-
-both providers, implement in the BusinessRules in the parent package.<BR>
+   * If a type of transaction has a specific number of provider centric rules,
+   * implement them here, but if there are a very limited set of rules, mostly
+   * common to
+   * 
+   * both providers, implement in the BusinessRules in the parent package.<BR>
    * Implements the following rules:<BR>
-   * 1. For OMNI, ClientId must be numeric. 2. Validate max number of reservation line items. 3. Validate major client demographics. 4. Validate maximum sizes on 
-
-CVV & AVS data, if present. RULE: Validate that if the "installment" type of
-   * payment is present,
+   * 1. For OMNI, ClientId must be numeric. 2. Validate max number of
+   * reservation line items. 3. Validate major client demographics. 4. Validate
+   * maximum sizes on
+   * 
+   * CVV & AVS data, if present. RULE: Validate that if the "installment" type
+   * of payment is present,
    * 
    * @param dtiTxn
-   *            The transaction object for this request.
+   *          The transaction object for this request.
    * @throws DTIException
-   *             for any rules violation.
+   *           for any rules violation.
    */
   public static void applyWDWReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
@@ -1003,10 +931,10 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 
     // RULE: Is there one shipping product on the order? (as of 2.12)
     // Moved to both WDW and DLR as a part of 2.16.3, JTL
-    ArrayList<DBProductTO>dbProdList = dtiTxn.getDbProdList();
+    ArrayList<DBProductTO> dbProdList = dtiTxn.getDbProdList();
     ArrayList<TicketTO> tktListTO = dtiResReq.getTktList();
     ProductRules.validateOneShipProduct(tktListTO, dbProdList);
-   
+
     // Validate that the client ID is numeric and correct.
     validateWDWClientId(dtiResReq);
 
@@ -1024,13 +952,14 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<PaymentTO> pmtList = dtiResReq.getPaymentList();
     PaymentRules.validateWDWCreditCardSizes(pmtList);
 
-    // Validate the electronic entitlement account section, if present (as of 2.10)
+    // Validate the electronic entitlement account section, if present (as of
+    // 2.10)
     if (dtiResReq.getSpecifiedAccounts() != null) {
-      ElectronicEntitlementRules.validateSpecifiedAccounts(dtiResReq
-          .getSpecifiedAccounts());
+      ElectronicEntitlementRules.validateSpecifiedAccounts(dtiResReq.getSpecifiedAccounts());
     }
 
-    // Validate that if other ticket demographics have been provided, phone has been provided, as well.
+    // Validate that if other ticket demographics have been provided, phone has
+    // been provided, as well.
     // As of 2.16.1 APMP JTL
     ProductRules.validateWdwTicketDemo(tktListTO);
 
@@ -1038,51 +967,53 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    //RULE: Apply reservateCode rules - if command/entity/attribute doesn't specify an override, use RACE for rescode generation
-    String resCode = assignResCode(dtiTxn,dtiResReq);
+    // RULE: Apply reservateCode rules - if command/entity/attribute doesn't
+    // specify an override, use RACE for rescode generation
+    String resCode = assignResCode(dtiTxn, dtiResReq);
     dtiResReq.getReservation().setResCode(resCode);
-    
-    return ;
-  }
-  
-  /**
-   * Assign a reservation code based on reservation code rules.
-   * If it is not a rework, and the attribute is not set to override
-   *  the use of race rescode generation, then create a new rescode and insert it
-   * into the the transaction id rescode xref table. Otherwise rescode is not generated
-   * and is null.
-   *
-   * @param dtiTxn the dti txn
-   * @param dtiResReq the dti res req
-   * @throws DTIException the DTI exception
-   */
-  private static String assignResCode(DTITransactionTO dtiTxn,
-      ReservationRequestTO dtiResReq) throws DTIException {
-	  String resCode = null;
-	  
-	  String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
-	  HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
 
-	  boolean isRework = dtiTxn.isRework();
-	  AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
-	
-	  if (isRework) {
-		// Get the reservation code array (there should only be one)
-	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
-	      resCode = rescodeTO.getRescode(); 
-	  } else if ( !isRework && resOverrideAttr == null) { //not rework, and no race override	  
-	      //generate the rescode using wdw race algorithm utility
-	      resCode = WDWAlgorithmUtility.generateResCode(); 
-	      // and insert it into the database payload/rescode ref table	      
-	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-	  } else {
-		  logger.sendEvent(
-		            "WDW RACE_RES_OVERRIDE present for reservation code generation.",
-		            EventType.INFO, THISOBJECT);
-	  }
-	  
-	  return resCode;
+    return;
+  }
+
+  /**
+   * Assign a reservation code based on reservation code rules. If it is not a
+   * rework, and the attribute is not set to override the use of race rescode
+   * generation, then create a new rescode and insert it into the the
+   * transaction id rescode xref table. Otherwise rescode is not generated and
+   * is null.
+   * 
+   * @param dtiTxn
+   *          the dti txn
+   * @param dtiResReq
+   *          the dti res req
+   * @throws DTIException
+   *           the DTI exception
+   */
+  private static String assignResCode(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq) throws DTIException {
+    String resCode = null;
+
+    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+
+    boolean isRework = dtiTxn.isRework();
+    AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
+
+    if (isRework) {
+      // Get the reservation code array (there should only be one)
+      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      TransidRescodeTO rescodeTO = rescodeArray.get(0);
+      resCode = rescodeTO.getRescode();
+    } else if (!isRework && resOverrideAttr == null) { // not rework, and no
+                                                       // race override
+      // generate the rescode using wdw race algorithm utility
+      resCode = WDWAlgorithmUtility.generateResCode();
+      // and insert it into the database payload/rescode ref table
+      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+    } else {
+      logger.sendEvent("WDW RACE_RES_OVERRIDE present for reservation code generation.", EventType.INFO, THISOBJECT);
+    }
+
+    return resCode;
   }
 
   /**
@@ -1098,11 +1029,8 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     if (clientType.compareToIgnoreCase(MAJOR_CLIENT_TYPE) == 0) {
 
       ClientDataTO clientDataTO = dtiResReq.getClientData();
-      if ((clientDataTO.getBillingInfo() != null) || (clientDataTO
-          .getShippingInfo() != null)) {
-        throw new DTIException(
-            WDWReservationRules.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
+      if ((clientDataTO.getBillingInfo() != null) || (clientDataTO.getShippingInfo() != null)) {
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
             "Reservations with a client type of Major may not specify billing or shipping demographics.");
       }
 
@@ -1119,11 +1047,9 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 
     ArrayList<TicketTO> tktProdList = dtiResReq.getTktList();
     if (tktProdList.size() > MAX_RES_LINE_ITEMS) {
-      throw new DTIException(
-          WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
-          "Reservation exceeds the maximum number of line items (" + MAX_RES_LINE_ITEMS + "). " + tktProdList
-              .size() + " items were attempted.");
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+          "Reservation exceeds the maximum number of line items (" + MAX_RES_LINE_ITEMS + "). " + tktProdList.size()
+              + " items were attempted.");
     }
   }
 
@@ -1134,8 +1060,8 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
    * @param dtiResReq
    * @throws DTIException
    */
-  private static void validateAndSaveTPLookups(DTITransactionTO dtiTxn,
-      ReservationRequestTO dtiResReq) throws DTIException {
+  private static void validateAndSaveTPLookups(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq)
+      throws DTIException {
 
     String tpiCode = dtiTxn.getTpiCode();
     TransactionType txnType = dtiTxn.getTransactionType();
@@ -1145,39 +1071,33 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     String clientType = dtiCliDataTO.getClientType();
 
     if (language == null) {
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "ClientData DemoLanguage cannot be null.");
     }
     if (clientType == null) {
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "ClientData ClientType cannot be null.");
     }
 
     // 2013.06.25 - MWH - Added check if Reservation tag is null or not
     if (dtiResTO == null) {
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
-          "Reservation cannot be null.");
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT, "Reservation cannot be null.");
     }
 
     String resPickupArea = dtiResTO.getResPickupArea();
     String resSalesType = dtiResTO.getResSalesType();
 
     if (resPickupArea == null) {
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "Reservation ResPickupArea cannot be null.");
     }
     if (resSalesType == null) {
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "Reservation ResSalesType cannot be null.");
     }
 
-    ArrayList<TPLookupTO> tpLookups = LookupKey.getTPCommandLookup(tpiCode,
-        txnType, language, clientType, resPickupArea, resSalesType);
+    ArrayList<TPLookupTO> tpLookups = LookupKey.getTPCommandLookup(tpiCode, txnType, language, clientType,
+        resPickupArea, resSalesType);
 
     if (tpLookups.size() < 7) { // Should see seven items back.
 
@@ -1190,29 +1110,21 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 
       if (!hashSet.contains(TPLookupTO.TPLookupType.CLIENT_TYPE)) {
         missingValue = "ClientType - not mapped for " + clientType;
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.PICKUP_TYPE)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.PICKUP_TYPE)) {
         missingValue = "PickupType";
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.SALES_TYPE)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.SALES_TYPE)) {
         missingValue = "SalesType - not mapped for " + resSalesType;
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.LANGUAGE)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.LANGUAGE)) {
         missingValue = "Language - not mapped for " + language;
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.MAX_LIMIT)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.MAX_LIMIT)) {
         missingValue = "MaxLimit";
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.PICKUP_AREA)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.PICKUP_AREA)) {
         missingValue = "PickupArea - not mapped for " + resPickupArea;
-      }
-      else if (!hashSet.contains(TPLookupTO.TPLookupType.INSTALLMENT)) {
+      } else if (!hashSet.contains(TPLookupTO.TPLookupType.INSTALLMENT)) {
         missingValue = "Installment";
       }
 
-      throw new DTIException(
-          WDWReservationRules.class,
-          DTIErrorCode.INVALID_AREA,
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_AREA,
           "TPCommandLookup did not find all values (missing translation for " + missingValue + ")");
     }
     dtiTxn.setTpLookupTOList(tpLookups);
@@ -1220,6 +1132,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 
   /**
    * Validates the WDW Client ID
+   * 
    * @param dtiResReq
    * @throws DTIException
    */
@@ -1238,22 +1151,17 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 
           try {
             clientId = Integer.parseInt(clientIdString);
-          }
-          catch (NumberFormatException nfe) {
-            throw new DTIException(
-                WDWReservationRules.class,
-                DTIErrorCode.INVALID_MSG_CONTENT,
+          } catch (NumberFormatException nfe) {
+            throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                 "ClientID must be numeric (is " + clientId + ").");
           }
         }
       }
-    }
-    else {
+    } else {
 
       // 2013.06.25 - MWH - ClientData should exists before we determine
       // ClientType (see below), otherwise throws NPE
-      throw new DTIException(WDWReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT, "ClientData must exists.");
+      throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT, "ClientData must exists.");
 
     }
 
@@ -1263,21 +1171,18 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     if (clientType.compareToIgnoreCase(MAJOR_CLIENT_TYPE) == 0) {
 
       if (clientIdString == null) {
-        throw new DTIException(WDWReservationRules.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
             "Reservations with a client type of Major may not omit a clientID.");
       }
 
       if (clientId == 0) {
-        throw new DTIException(WDWReservationRules.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
             "Reservations with a client type of Major may not specify a clientID of zero.");
       }
     }
     if (clientType.compareToIgnoreCase(PRIVATE_CLIENT_TYPE) == 0) {
       if (clientIdString != null && clientIdString.length() > 0 && clientId != 0) {
-        throw new DTIException(WDWReservationRules.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
             "Reservations with a client type of Private may not specify a clientID.");
       }
     }
@@ -1286,16 +1191,15 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
   }
 
   /**
-   * Format a note with the appropriate information needed for fulfillment when handling private and major clients. If no special delivery fields supplied, then 
-
-return an empty ArrayList
+   * Format a note with the appropriate information needed for fulfillment when
+   * handling private and major clients. If no special delivery fields supplied,
+   * then return an empty ArrayList
    * 
    * @param dtiTxn
-   *            the DTITransactionTO for this transaction.
+   *          the DTITransactionTO for this transaction.
    * @return formatted note string
    */
-  private static ArrayList<String> setClientDeliveryNoteDetails(
-      DTITransactionTO dtiTxn) {
+  private static ArrayList<String> setClientDeliveryNoteDetails(DTITransactionTO dtiTxn) {
 
     String noteString = TransformRules.setFulfillmentNoteDetails(dtiTxn);
 
@@ -1320,8 +1224,7 @@ return an empty ArrayList
         if (endIndex <= sb.length()) {
           String subString = sb.substring(startIndex, endIndex);
           noteDetailList.add(subString);
-        }
-        else {
+        } else {
           String subString = sb.substring(startIndex);
           noteDetailList.add(subString);
         }
@@ -1339,9 +1242,8 @@ return an empty ArrayList
    * @param otAccounts
    * @throws DTIException
    */
-  private static void transformSpecifiedAccount(
-      ReservationRequestTO dtiResReq,
-      ArrayList<OTAccountDataTO> otAccounts) throws DTIException {
+  private static void transformSpecifiedAccount(ReservationRequestTO dtiResReq, ArrayList<OTAccountDataTO> otAccounts)
+      throws DTIException {
 
     for (SpecifiedAccountTO dtiAccount : dtiResReq.getSpecifiedAccounts()) {
 
@@ -1351,58 +1253,45 @@ return an empty ArrayList
       otAccountData.setEntitlementAccountId(dtiAccount.getAccountItem());
 
       // New Account -> ExternalReference
-      if (dtiAccount.getNewExternalReferenceType() != null && dtiAccount
-          .getNewExternalReferenceValue() != null) {
-        logger.sendEvent(
-            "WDWReservationRules: search by External Referenct type",
-            EventType.DEBUG, WDWReservationRules.class);
+      if (dtiAccount.getNewExternalReferenceType() != null && dtiAccount.getNewExternalReferenceValue() != null) {
+        logger.sendEvent("WDWReservationRules: search by External Referenct type", EventType.DEBUG,
+            WDWReservationRules.class);
 
         // New Account with external reference
-        Byte otType = WDWBusinessRules
-            .transformEntitlementExternalReferenceType(dtiAccount
-                .getNewExternalReferenceType());
+        Byte otType = WDWBusinessRules.transformEntitlementExternalReferenceType(dtiAccount
+            .getNewExternalReferenceType());
 
         if (otType == null) {
           // ERROR shouldn't happen
-          throw new DTIException(WDWReservationRules.class,
-              DTIErrorCode.INVALID_MSG_CONTENT,
+          throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
               "Invalid ExternalReferenceType submited.");
-        }
-        else {
+        } else {
           otAccountData.setAccountExternalReferenceType(otType);
         }
 
-        otAccountData.setAccountExternalReference(dtiAccount
-            .getNewExternalReferenceValue());
+        otAccountData.setAccountExternalReference(dtiAccount.getNewExternalReferenceValue());
 
-      }
-      else {
+      } else {
 
         // Existing Account -> Search Filter
         logger.sendEvent(
-            "WDWReservationRules: Search for existing account existingAccountId:" + dtiAccount
-                .getExistingAccountId(), EventType.DEBUG,
-            THISOBJECT);
+            "WDWReservationRules: Search for existing account existingAccountId:" + dtiAccount.getExistingAccountId(),
+            EventType.DEBUG, THISOBJECT);
 
         if (dtiAccount.getExistingMediaId() != null) {
 
-          otAccountData.setSearchExistingMediaId(dtiAccount
-              .getExistingMediaId());
+          otAccountData.setSearchExistingMediaId(dtiAccount.getExistingMediaId());
 
-        }
-        else if (dtiAccount.getExistingTktID() != null) {
+        } else if (dtiAccount.getExistingTktID() != null) {
 
           OTTicketTO otTicket = new OTTicketTO();
           TicketIdTO dtiTicket = dtiAccount.getExistingTktID();
-          ArrayList<TicketIdType> dtiTicketTypeList = dtiTicket
-              .getTicketTypes();
+          ArrayList<TicketIdType> dtiTicketTypeList = dtiTicket.getTicketTypes();
           TicketIdType dtiTicketType = dtiTicketTypeList.get(0);
 
           switch (dtiTicketType) {
           case DSSN_ID:
-            otTicket.setTDssn(dtiTicket.getDssnDate(),
-                dtiTicket.getDssnSite(),
-                dtiTicket.getDssnStation(),
+            otTicket.setTDssn(dtiTicket.getDssnDate(), dtiTicket.getDssnSite(), dtiTicket.getDssnStation(),
                 dtiTicket.getDssnNumber());
             break;
           case TKTNID_ID:
@@ -1421,14 +1310,10 @@ return an empty ArrayList
 
           otAccountData.setTicketSearchMode(otTicket);
 
-        }
-        else if (dtiAccount.getExistingAccountId() != null) {
-          logger.sendEvent(
-              "WDWReservationRules: Got existingAccountId:" + dtiAccount
-                  .getExistingAccountId(), EventType.DEBUG,
-              THISOBJECT);
-          otAccountData.setSearchAccountId(dtiAccount
-              .getExistingAccountId());
+        } else if (dtiAccount.getExistingAccountId() != null) {
+          logger.sendEvent("WDWReservationRules: Got existingAccountId:" + dtiAccount.getExistingAccountId(),
+              EventType.DEBUG, THISOBJECT);
+          otAccountData.setSearchAccountId(dtiAccount.getExistingAccountId());
         }
       }
 
@@ -1443,116 +1328,88 @@ return an empty ArrayList
 
         // Title
         if (dtiAcctDemo.getTitle() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_TITLE,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getTitle())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_TITLE, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getTitle())));
         }
 
         // FirstName
         if (dtiAcctDemo.getFirstName() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_FIRSTNAME,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getFirstName())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_FIRSTNAME, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getFirstName())));
         }
 
         // MiddleName
         if (dtiAcctDemo.getMiddleName() != null) {
-          otFieldList.add(new OTFieldTO(
-              OTFieldTO.WDW_ACCTDEMO_MIDDLENAME,
-              DTIFormatter.websafeToUpper(dtiAcctDemo
-                  .getMiddleName())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_MIDDLENAME, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getMiddleName())));
         }
 
         // LastName
         if (dtiAcctDemo.getLastName() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_LASTNAME,
-              DTIFormatter.websafeToUpper(dtiAcctDemo
-                  .getLastName())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_LASTNAME, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getLastName())));
         }
 
         // Suffix
         if (dtiAcctDemo.getSuffix() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_SUFFIX,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getSuffix())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_SUFFIX, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getSuffix())));
         }
 
         // DateOfBirth
         if (dtiAcctDemo.getDateOfBirth() != null) {
           SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-          String dobString = sdf.format(dtiAcctDemo.getDateOfBirth()
-              .getTime());
-          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_DOB,
-              dobString));
+          String dobString = sdf.format(dtiAcctDemo.getDateOfBirth().getTime());
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_DOB, dobString));
         }
 
         // Addr1
         if (dtiAcctDemo.getAddr1() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS1,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getAddr1())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS1, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getAddr1())));
         }
 
         // Addr2
         if (dtiAcctDemo.getAddr2() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS2,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getAddr2())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ADDRESS2, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getAddr2())));
         }
 
         // City
         if (dtiAcctDemo.getCity() != null) {
           otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_CITY,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getCity())));
+              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_CITY, DTIFormatter.websafeToUpper(dtiAcctDemo.getCity())));
         }
 
         // State
         if (dtiAcctDemo.getState() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_STATE,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getState())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_STATE, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getState())));
         }
 
         // ZIP
         if (dtiAcctDemo.getZip() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ZIP,
-              DTIFormatter.websafeToUpper(dtiAcctDemo.getZip())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_ZIP, DTIFormatter.websafeToUpper(dtiAcctDemo.getZip())));
         }
 
         // Country
         if (dtiAcctDemo.getCountry() != null) {
-          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_COUNTRY,
-              DTIFormatter.websafeToUpper(dtiAcctDemo
-                  .getCountry())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_COUNTRY, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getCountry())));
         }
 
         // Email
         if (dtiAcctDemo.getEmail() != null) {
-          otFieldList
-              .add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_EMAIL,
-                  DTIFormatter.websafeToUpper(dtiAcctDemo
-                      .getEmail())));
+          otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_EMAIL, DTIFormatter.websafeToUpper(dtiAcctDemo
+              .getEmail())));
         }
 
         // OptInSolicit
         if (dtiAcctDemo.getOptInSolicit() != null) {
           if (dtiAcctDemo.getOptInSolicit().booleanValue() == true) {
-            otFieldList.add(new OTFieldTO(
-                OTFieldTO.WDW_ACCTDEMO_OKTOMAIL,
-                WDWBusinessRules.YES));
-          }
-          else {
-            otFieldList.add(new OTFieldTO(
-                OTFieldTO.WDW_ACCTDEMO_OKTOMAIL,
-                WDWBusinessRules.NO));
+            otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_OKTOMAIL, WDWBusinessRules.YES));
+          } else {
+            otFieldList.add(new OTFieldTO(OTFieldTO.WDW_ACCTDEMO_OKTOMAIL, WDWBusinessRules.NO));
           }
         }
 
@@ -1568,8 +1425,7 @@ return an empty ArrayList
       if (dtiAccount.getNewMediaDataList() != null) {
 
         // 2013.06.12 - MWH - logic for NewMediaData
-        ArrayList<NewMediaDataTO> aMediaList = dtiAccount
-            .getNewMediaDataList();
+        ArrayList<NewMediaDataTO> aMediaList = dtiAccount.getNewMediaDataList();
 
         for (NewMediaDataTO mediaItem : aMediaList) {
 

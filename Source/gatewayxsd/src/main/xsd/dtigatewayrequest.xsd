@@ -1829,6 +1829,7 @@
 												<xs:attribute name="Country" type="xs:string" use="optional"/>
 												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
 												<xs:attribute name="Email" type="xs:string" use="optional"/>
+												<xs:attribute name="Note" type="xs:string" use="optional"/>												
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="Delivery" minOccurs="0">

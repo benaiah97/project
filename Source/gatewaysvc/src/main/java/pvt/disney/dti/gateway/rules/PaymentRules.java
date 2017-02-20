@@ -198,9 +198,10 @@ public class PaymentRules {
       } // End Payment Loop
 
       // If payments and product cost don't match, throw exception.
-      if (totalProductCost.compareTo(totalPaymentsMade) != 0)
+      if (totalProductCost.compareTo(totalPaymentsMade) != 0) {
         throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_AMOUNT, "Product cost total of "
             + totalProductCost.toString() + " did not equal total payments made of " + totalPaymentsMade.toString());
+      }
     }
 
     return (totalProductCost);
@@ -228,10 +229,8 @@ public class PaymentRules {
     }
 
     if ((payListTO == null) || (payListTO.size() == 0)) {
-
       throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
           "On this transaction type, a payment type is required, either default or expressly specified.");
-
     }
 
     return;
@@ -339,9 +338,10 @@ public class PaymentRules {
       } // End Payment Loop
 
       // If payments and product cost don't match, throw exception.
-      if (totalProductCost.compareTo(totalPaymentsMade) != 0)
+      if (totalProductCost.compareTo(totalPaymentsMade) != 0) {
         throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_AMOUNT, "Product cost total of "
             + totalProductCost.toString() + " did not equal total payments made of " + totalPaymentsMade.toString());
+      }
     }
 
     return;
@@ -368,8 +368,9 @@ public class PaymentRules {
    */
   public static void validatePaymentComposition(ArrayList<PaymentTO> payListTO, String tpiCode) throws DTIException {
 
-    if (payListTO == null)
+    if (payListTO == null) {
       return;
+    }
 
     int numberOfCCGC = 0;
     int numberOfPayments = 0;
@@ -392,9 +393,10 @@ public class PaymentRules {
     if ((payListTO != null) && (payListTO.size() > 0)) {
       numberOfPayments = payListTO.size();
 
-      if (numberOfPayments > maxNumberOfPayments)
+      if (numberOfPayments > maxNumberOfPayments) {
         throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_COUNT, "Number of payments provided "
             + numberOfPayments + " exceeded " + tpiCode + " maximum of " + maxNumberOfPayments);
+      }
 
     }
 
@@ -405,10 +407,11 @@ public class PaymentRules {
           || (aPaymentTO.getPayType() == PaymentTO.PaymentType.GIFTCARD)) {
         numberOfCCGC++;
 
-        if (aPaymentTO.getPayAmount() == null)
+        if (aPaymentTO.getPayAmount() == null) {
           throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_AMOUNT,
               "Gift Cards and Credit Cards must have a payment amount (PayItem: " + aPaymentTO.getPayItem().intValue()
                   + ").");
+        }
       }
 
       /**
@@ -440,10 +443,11 @@ public class PaymentRules {
       }
     }
 
-    if (numberOfCCGC > maxNumberOfCCGC)
+    if (numberOfCCGC > maxNumberOfCCGC) {
       throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
           "Number of credit and gift card payments provided " + numberOfCCGC + " exceeded " + tpiCode + " maximum of "
               + maxNumberOfCCGC);
+    }
 
     // Are any of the payment types being passed to DLR a voucher?
     if ((tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) && (payListTO.size() > 0)) {
@@ -475,8 +479,9 @@ public class PaymentRules {
     boolean isTaxExempt = false;
 
     // Determine Tax Exempt Status
-    if ((taxExemptCode != null) && (taxExemptCode.length() > 0))
+    if ((taxExemptCode != null) && (taxExemptCode.length() > 0)) {
       isTaxExempt = true;
+    }
 
     return isTaxExempt;
 
@@ -497,12 +502,14 @@ public class PaymentRules {
    */
   public static void validateReturnFormOfPayment(ArrayList<PaymentTO> payListTO, EntityTO entityTO) throws DTIException {
 
-    if (payListTO.size() > 0)
+    if (payListTO.size() > 0) {
       return;
+    }
 
-    if (entityTO.getDefPymtData() == null)
+    if (entityTO.getDefPymtData() == null) {
       throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
           "Void transaction has no return form of payment, explicit or default.");
+    }
 
     return;
   }
@@ -534,16 +541,15 @@ public class PaymentRules {
             String cvv = aCreditCard.getCcVV();
 
             if (cvv.length() < MIN_FIELD_LENGTH) {
-              // 2011-12-15: CUS; Special case, as the
-              // documentation doesn't dictate a minimum CCVV
-              // length
-              // then a blank CCVV XML tag is technically legal.
-              if (cvv.length() == 0)
+              // 2011-12-15: CUS; Special case, as the documentation doesn't dictate a minimum CCVV
+              // length then a blank CCVV XML tag is technically legal.
+              if (cvv.length() == 0) {
                 aCreditCard.setCcVV(null);
-              else
+              } else {
                 throw new DTIException(WDWReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                     "Credit card CVV length less than " + MIN_FIELD_LENGTH + " not allowed.  Length " + cvv.length()
                         + " attempted.");
+              }
             }
 
             if (cvv.length() > MAX_WDW_CVV_LENGTH) {
