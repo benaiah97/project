@@ -46,6 +46,7 @@ ADD docker/xsd/ /var/opt/apps/WDPRApps/RT/schemas/
 ADD docker/xsd/ /var/opt/apps/RT/schemas/
 RUN chmod -R 777 /var/opt/apps/WDPRApps/RT/schemas
 RUN chmod -R 777  /var/opt/apps/RT/schemas
+
 ###############################################################################
 # MODIFY TOMCAT AS NEEDED
 # DEFAULT CATOMCAT ENVIROMENT FROM OFFICIAL TOMCAT 7 IMAGE
@@ -59,7 +60,6 @@ RUN chmod -R 777  /var/opt/apps/RT/schemas
 RUN echo "Setting up debugging on port 8000"
 ENV JPDA_ADDRESS="8000"
 ENV JPDA_TRANSPORT="dt_socket"
-
 
 EXPOSE 8080 8080
 EXPOSE 8000 8000
