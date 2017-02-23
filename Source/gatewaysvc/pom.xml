@@ -117,6 +117,12 @@
 			<artifactId>jaxen</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		
+		<dependency>
+    <groupId>org.jmockit</groupId>
+    <artifactId>jmockit</artifactId>
+    <version>1.8</version>
+</dependency>
 
 
 		<!-- TODO: NEED A FILTER TO EXCLUDE THIS FOR A WAS BUILD -->
@@ -199,7 +205,32 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		
+			<!-- For Junit -->
+		<dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>3.0</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.4.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>1.4.9</version>
+      <scope>test</scope>
+      </dependency>
 		
 	</dependencies>
 </project>
