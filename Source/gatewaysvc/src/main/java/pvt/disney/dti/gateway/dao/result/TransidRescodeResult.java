@@ -2,11 +2,12 @@ package pvt.disney.dti.gateway.dao.result;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.disney.exception.WrappedException;
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
@@ -19,11 +20,19 @@ import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
  */
 public class TransidRescodeResult implements ResultSetProcessor {
 
-	/** The results. */
-	private ArrayList<TransidRescodeTO> results = new ArrayList<TransidRescodeTO>();
-
+	/** The result. */
+	private TransidRescodeTO result = null;
+	
 	/** The number of records processed by this result set processor. */
-	//private int recordsProcessed = 0;
+	private int recordsProcessed = 0;
+	
+	  /** The class instance used for logging. */
+	  private static final TransidRescodeResult THISINSTANCE = new TransidRescodeResult();
+	/**
+	 * shared core event logger.
+	 */
+	private static EventLogger logger = EventLogger
+			.getLogger(TransidRescodeResult.class);
 	
 	/**
 	 * Instantiates a new transid rescode result.
@@ -37,14 +46,12 @@ public class TransidRescodeResult implements ResultSetProcessor {
 	 */
 	@Override
 	public void processNextResultSet(ResultSet rs) throws SQLException, WrappedException {
-	  TransidRescodeTO transidRescodeTO = new TransidRescodeTO();
+		TransidRescodeTO transidRescodeTO = new TransidRescodeTO();
 		
 		//TSTRANSID
-		transidRescodeTO.setTsTransid( rs.getString("TS_TRANSID") );
-		
+		transidRescodeTO.setTsTransid( rs.getString("TS_TRANSID") );	
 		//RESCODE
 		transidRescodeTO.setRescode( rs.getString("RESCODE") );
-		
 		//CREATION_DATE - check and convert to GregorianCalendar and set
 		Date creationDate =  rs.getDate("CREATION_DATE");
 		if (creationDate != null) {
@@ -52,7 +59,11 @@ public class TransidRescodeResult implements ResultSetProcessor {
 			calCreationDate.setTime(creationDate);
 			transidRescodeTO.setCreationDate( calCreationDate);
 		}
+		logger.sendEvent("TransidRescodeTO:" + transidRescodeTO.toString(),
+				EventType.DEBUG, THISINSTANCE);
 
+		result = 	transidRescodeTO;	
+		this.recordsProcessed++;
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +71,7 @@ public class TransidRescodeResult implements ResultSetProcessor {
 	 */
 	@Override
 	public Object getProcessedObject() throws WrappedException {
-		return results;
+		return result;
 	}
 
 }

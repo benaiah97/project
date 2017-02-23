@@ -1068,8 +1068,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 	
 	  if (isRework) {
 		// Get the reservation code array (there should only be one)
-	      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-	      TransidRescodeTO rescodeTO = rescodeArray.get(0);
+		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
 	      resCode = rescodeTO.getRescode(); 
 	  } else if ( (!isRework) && resOverrideAttr == null) { //not rework, and no race override	  
 	      //generate the rescode using wdw race algorithm utility

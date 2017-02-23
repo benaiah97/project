@@ -5,6 +5,8 @@
 ###############################################################################
 
 FROM tomcat:7.0
+ARG CONFIG=LOCAL
+
 MAINTAINER moons012 <shan.m.moon@disney.com>
 
 ###############################################################################
@@ -13,11 +15,11 @@ MAINTAINER moons012 <shan.m.moon@disney.com>
 ###############################################################################
 
 RUN echo "Adding config directory so required properties are present."
-ADD config/LOCAL/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
-RUN chmod -R 775 /var/opt/apps/WDPRApps/DTI/CONFIG
+ADD config/$CONFIG/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
+RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/CONFIG
 
 RUN echo "Creating log directory"
-RUN mkdir -p /var/opt/apps/WDPRApps/DTI/LOGS/Gateway
+RUN mkdir -p /var/opt/apps/WDPRApps/DTI/LOGS/Gateway/
 RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/LOGS/Gateway
 
 ###############################################################################
@@ -27,7 +29,7 @@ RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/LOGS/Gateway
 
 RUN echo "Installing certs required to run gateway."
 ADD docker/certs/ /var/opt/apps/WDPRApps/DTI/CERTS/
-RUN chmod -R 775 /var/opt/apps/WDPRApps/DTI/CERTS/
+RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/CERTS/
 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/twdc-issuing-sha2_509.cer -alias twdc-issuing -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/twdc-root-sha2_509.cer -alias twdc-root -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
@@ -77,7 +79,7 @@ RUN echo "Copying catalina.properties to Tomcat conf for shared loader"
 ADD docker/tomcat/catalina.properties /usr/local/tomcat/conf/catalina.properties
 
 RUN echo "Copying context.xml to Tomcat conf for datasourece"
-ADD docker/tomcat/context.xml /usr/local/tomcat/conf/context.xml
+ADD docker/tomcat/$CONFIG/context.xml /usr/local/tomcat/conf/context.xml
 
 ###############################################################################
 # PUT DTI WAR IN TOMCAT WEBAPPS

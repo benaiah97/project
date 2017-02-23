@@ -1,7 +1,5 @@
 package pvt.disney.dti.gateway.dao;
 
-import java.util.ArrayList;
-
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -40,15 +38,20 @@ public class TransidRescodeKey {
    * @throws DTIException
    *           the DTI exception
    */
-  public static final ArrayList<TransidRescodeTO> getTransIdResCode(String transid) throws DTIException {
+ public static final TransidRescodeTO getTransIdResCode(String transid) throws DTIException {
     return getTransidRescodeFromDB(transid);
   }
 
+  /**
+   * Gets the transid rescode from DB.
+   *
+   * @param transid the transid
+   * @return the transid rescode from DB
+   * @throws DTIException the DTI exception
+   */
   @SuppressWarnings("unchecked")
-  public static final ArrayList<TransidRescodeTO> getTransidRescodeFromDB(String transid) throws DTIException {
-
-    ArrayList<TransidRescodeTO> result = null;
-
+  public static final TransidRescodeTO getTransidRescodeFromDB(String transid) throws DTIException {
+	  TransidRescodeTO result = null;
     logger.sendEvent("Entering getTransidRescodeFromDB()", EventType.DEBUG, THISINSTANCE);
 
     // validate the parameters
@@ -68,9 +71,10 @@ public class TransidRescodeKey {
 
       // Run the SQL
       logger.sendEvent("About to processQuery:  GET_TRANSID_RESCODE", EventType.DEBUG, THISINSTANCE);
-      result = (ArrayList<TransidRescodeTO>) helper.processQuery(values);
+      result = (TransidRescodeTO) helper.processQuery(values);
 
-      if (result.isEmpty()) {
+      //if (result.isEmpty()) { 
+      if (result == null || result.getRescode() ==null || result.getRescode().length() == 0) {
         logger.sendEvent("getTransidRescodeFromDB did not find results for '" + transid + "'", EventType.WARN,
             THISINSTANCE);
         throw new DTIException(TransidRescodeKey.class, DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,

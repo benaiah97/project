@@ -221,21 +221,22 @@ public class HKDReservationRules {
 
     String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
     HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
-
+	
+    boolean isRework = dtiTxn.isRework();
+    //no check for RACE override for hkdl needed at this time
+    
     // if this is a re-work, a reservation code should exist
-    if (dtiTxn.isRework()) {
+    if (isRework) {
       // Get the reservation code array (there should only be one)
-      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-      TransidRescodeTO rescodeTO = rescodeArray.get(0);
-      resCode = rescodeTO.getRescode();
-    } else { // other it is not a rework so generate rescode from R.A.C.E.
-             // utility
-      AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-      String sellerResPrefix = resPrefixAttr.getAttrValue();
-      // generate the rescode and insert it into the database payload/rescode
-      // ref table
-      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+    	resCode = rescodeTO.getRescode();
+    } else { // it is not a rework so generate rescode from RACE utility
+    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+    	String sellerResPrefix = resPrefixAttr.getAttrValue();
+    	// generate the rescode and insert it into the database payload/rescode
+    	// ref table
+    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
     }
     return resCode;
   }

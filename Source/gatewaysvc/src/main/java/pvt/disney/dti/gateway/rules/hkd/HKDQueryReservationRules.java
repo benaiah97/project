@@ -301,16 +301,16 @@ public class HKDQueryReservationRules {
     if (queryResReqTO.getPayloadID() != null) {
 
       payloadId = queryResReqTO.getPayloadID() ;
-      ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+     // ArrayList<TransidRescodeTO> rescodeArray = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+     TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
       
-      if (rescodeArray.size() == 0) {
+      if (rescodeTO == null || rescodeTO.getRescode() == null || rescodeTO.getRescode().length() == 0 ) {
         throw new DTIException(
             HKDQueryReservationRules.class,
             DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,
             "Unable to find reservation for supplied payload ID: " + payloadId); 
       }
       
-      TransidRescodeTO rescodeTO = rescodeArray.get(0);
       String resCode = rescodeTO.getRescode();
       queryResReqTO.setResCode(resCode);
       
