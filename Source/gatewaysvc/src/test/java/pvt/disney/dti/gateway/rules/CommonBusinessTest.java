@@ -22,11 +22,18 @@ public class CommonBusinessTest {
 		props.setProperty("ATS.SiteNumber","120");
 		props.setProperty("ATS.MaxEncodeAllCount","41");
 		return props;
+		
 	}
 	public void setMockProperty(){
 	
 		
-		
+		new MockUp<ResourceLoader>() {
+            @Mock
+            public ResourceBundle getResourceBundle(String props) {
+
+                  return resourceBundle;
+            }
+     };
 
 	 
 	    
@@ -39,13 +46,7 @@ public class CommonBusinessTest {
              }
       };
 
-      new MockUp<ResourceLoader>() {
-             @Mock
-             public ResourceBundle getResourceBundle(String prop) {
-
-                   return resourceBundle;
-             }
-      };
+      
 	}
 
 }
