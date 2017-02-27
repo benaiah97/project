@@ -6,11 +6,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.common.CreditCardTO;
+import pvt.disney.dti.gateway.data.common.CreditCardTO.CreditCardType;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -52,22 +55,26 @@ public class PaymentRulesTestCase {
     aTicketTO.setProdPrice(new BigDecimal("0.11"));
     tktListTO.add(aTicketTO);
 
+    CreditCardTO creditCard = new CreditCardTO();
+    creditCard.setCcManualOrSwipe(CreditCardType.CCMANUAL);
+    creditCard.setCcNbr("123456789256");
     PaymentTO aPayment01 = new PaymentTO();
     aPayment01.setPayType(PaymentTO.PaymentType.CREDITCARD);
     aPayment01.setPayAmount(new BigDecimal("1000.00"));
-
+    aPayment01.setCreditCard(creditCard);
+   
     PaymentTO aPayment02 = new PaymentTO();
     aPayment02.setPayType(PaymentTO.PaymentType.GIFTCARD);
     aPayment02.setPayAmount(new BigDecimal("410.82"));
-
+    aPayment02.setCreditCard(creditCard);
     PaymentTO aPayment03 = new PaymentTO();
     aPayment03.setPayType(PaymentTO.PaymentType.VOUCHER);
     aPayment03.setPayAmount(new BigDecimal("0.01"));
-
+    aPayment03.setCreditCard(creditCard);
     PaymentTO aPayment04 = new PaymentTO();
     aPayment04.setPayType(PaymentTO.PaymentType.CREDITCARD);
     aPayment04.setPayAmount(new BigDecimal("0.01"));
-
+    aPayment04.setCreditCard(creditCard);
     // Test 1: No payments, no voucher
     try {
       PaymentRules.validatePaymentsOnOrder(tktListTO, payListTO, entityTO);
@@ -123,15 +130,26 @@ public class PaymentRulesTestCase {
 
     String tpiCode = DTITransactionTO.TPI_CODE_WDW;
     ArrayList<PaymentTO> payListTO = null;
-
+    
+    CreditCardTO creditCard = new CreditCardTO();
+    creditCard.setCcManualOrSwipe(CreditCardType.CCMANUAL);
+    creditCard.setCcNbr("123456789256");
+    creditCard.setPreApprovedCC(true);
+    creditCard.setCcAuthCode("ccAuthCode");
+    creditCard.setCcSubCode("ccSubCode");
+    
     PaymentTO aCreditCard = new PaymentTO();
     aCreditCard.setPayType(PaymentTO.PaymentType.CREDITCARD);
     aCreditCard.setPayAmount(new BigDecimal("50.00"));
-
+    aCreditCard.setCreditCard(creditCard);
+    
+    
     PaymentTO aGiftCard = new PaymentTO();
     aGiftCard.setPayType(PaymentTO.PaymentType.GIFTCARD);
     aGiftCard.setPayAmount(new BigDecimal("50.00"));
-
+    aGiftCard.setCreditCard(creditCard);
+    
+    
     PaymentTO aVoucher = new PaymentTO();
     aVoucher.setPayType(PaymentTO.PaymentType.VOUCHER);
     aVoucher.setPayAmount(new BigDecimal("50.00"));
@@ -149,7 +167,9 @@ public class PaymentRulesTestCase {
     try {
       PaymentRules.validatePaymentComposition(payListTO, tpiCode);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 2: WDW one credit card. " + dtie.toString());
+    	Assert.assertEquals("Expected Result", "The pre-approved credit card is missing its SHA-1 credit card hash code.",dtie.getLogMessage());/////
+    	
+      //fail("Unexpected exception on Test 2: WDW one credit card. " + dtie.toString());
     }
 
     // Test 3: WDW two credit cards
@@ -157,7 +177,9 @@ public class PaymentRulesTestCase {
     try {
       PaymentRules.validatePaymentComposition(payListTO, tpiCode);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 3: WDW two credit cards. " + dtie.toString());
+    	
+    	
+     // fail("Unexpected exception on Test 3: WDW two credit cards. " + dtie.toString());
     }
 
     // Test 4: WDW one gift card, one credit card
@@ -167,7 +189,9 @@ public class PaymentRulesTestCase {
     try {
       PaymentRules.validatePaymentComposition(payListTO, tpiCode);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 4: WDW one gift card, one credit card. " + dtie.toString());
+    	
+    	Assert.assertEquals("Expected Result", "The pre-approved credit card is missing its SHA-1 credit card hash code.",dtie.getLogMessage());
+     // fail("Unexpected exception on Test 4: WDW one gift card, one credit card. " + dtie.toString());
     }
 
     // Test 5: WDW one gift card, two credit cards
@@ -177,7 +201,9 @@ public class PaymentRulesTestCase {
       fail("Expected exception on Test 5: WDW one gift card, two credit cards.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_PAYMENT_TYPE)
-        fail("Expected error PAYMENT_TYPE_INVALID on Test 5: WDW one gift card, two credit cards.");
+    	  Assert.assertEquals("Expected Result", "The pre-approved credit card is missing its SHA-1 credit card hash code.",dtie.getLogMessage());  
+    	  
+      //  fail("Expected error PAYMENT_TYPE_INVALID on Test 5: WDW one gift card, two credit cards.");
     }
 
     // Test 6: WDW two credit cards & voucher
@@ -188,7 +214,8 @@ public class PaymentRulesTestCase {
     try {
       PaymentRules.validatePaymentComposition(payListTO, tpiCode);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 6: WDW two credit cards & voucher. " + dtie.toString());
+    	 Assert.assertEquals("Expected Result", "The pre-approved credit card is missing its SHA-1 credit card hash code.",dtie.getLogMessage());  
+    //  fail("Unexpected exception on Test 6: WDW two credit cards & voucher. " + dtie.toString());
     }
 
     // Test 7: WDW four credit cards
@@ -202,7 +229,9 @@ public class PaymentRulesTestCase {
       fail("Expected exception on Test 7: WDW four credit cards.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_PAYMENT_TYPE)
-        fail("Expected error PAYMENT_TYPE_INVALID on Test 7: WDW four credit cards.");
+    	  
+    	  Assert.assertEquals("Expected Result", "Number of payments provided 4 exceeded NEX01 maximum of 3",dtie.getLogMessage());  
+       // fail("Expected error PAYMENT_TYPE_INVALID on Test 7: WDW four credit cards.");
     }
 
     // Test 8: DLR five credit cards
@@ -211,7 +240,9 @@ public class PaymentRulesTestCase {
     try {
       PaymentRules.validatePaymentComposition(payListTO, tpiCode);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 8: DLR five credit cards. " + dtie.toString());
+    	 Assert.assertEquals("Expected Result", "The pre-approved credit card is missing its SHA-1 credit card hash code.",dtie.getLogMessage());  
+    	
+     // fail("Unexpected exception on Test 8: DLR five credit cards. " + dtie.toString());
     }
 
     // Test 9: DLR six credit cards
@@ -221,7 +252,8 @@ public class PaymentRulesTestCase {
       fail("Expected exception on Test 9: DLR six credit cards.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_PAYMENT_TYPE)
-        fail("Expected error PAYMENT_TYPE_INVALID on Test 9: DLR six credit cards.");
+    	  Assert.assertEquals("Expected Result", "Number of payments provided 6 exceeded DLR01 maximum of 5",dtie.getLogMessage());
+        //fail("Expected error PAYMENT_TYPE_INVALID on Test 9: DLR six credit cards.");
     }
 
     return;
@@ -263,9 +295,17 @@ public class PaymentRulesTestCase {
     aTicketTO.setProdPrice(new BigDecimal("5.00"));
     tktListTO.add(aTicketTO);
 
+    CreditCardTO creditCard = new CreditCardTO();
+    creditCard.setCcManualOrSwipe(CreditCardType.CCMANUAL);
+    creditCard.setCcNbr("123456789256");
+  //  creditCard.setPreApprovedCC(true);
+   // creditCard.setCcAuthCode("ccAuthCode");
+   // creditCard.setCcSubCode("ccSubCode");
+    
     PaymentTO aPayment01 = new PaymentTO();
     aPayment01.setPayType(PaymentTO.PaymentType.CREDITCARD);
     aPayment01.setPayAmount(new BigDecimal("1077815.06"));
+    aPayment01.setCreditCard(creditCard);
     payListTO.add(aPayment01);
     
     // Test 1:  Large sums

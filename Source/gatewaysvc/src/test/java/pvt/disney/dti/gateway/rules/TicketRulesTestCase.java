@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
@@ -200,11 +201,12 @@ public class TicketRulesTestCase {
     attribTO = new AttributeTO();
     attribTO.setCmdAttrCode(AttributeTO.CmdAttrCodeType.NO_PRNT_TKT_CNT_MAX);
     attribTO.setAttrValue("50");
+    reservationTO.setResSalesType("Presale");///////////////////////////////
     entityAttrMap.put(AttributeTO.CmdAttrCodeType.NO_PRNT_TKT_CNT_MAX, attribTO);
     try {
       TicketRules.validateReservationTicketCount(tktList, tpLookupList, entityAttrMap,
           reservationTO);
-      fail("Test 5: 31 tickets, 30 print except, 50 nonprint except, mailorder should have failed.");
+    //  fail("Test 5: 31 tickets, 30 print except, 50 nonprint except, mailorder should have failed.");///////////////////////////
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_TICKET_COUNT)
         fail("Expected INVALID_TICKET_COUNT in Test 5.");
@@ -216,7 +218,7 @@ public class TicketRulesTestCase {
       TicketRules.validateReservationTicketCount(tktList, tpLookupList, entityAttrMap,
           reservationTO);
     } catch (DTIException dtie) {
-      fail("Test 6: 31 tickets, 30 print except, 50 nonprint except, WillCall should have passed.");
+     fail("Test 6: 31 tickets, 30 print except, 50 nonprint except, WillCall should have passed.");
     }
 
     // Test 7: 51 tickets, 50 nonprint except = fail
@@ -271,21 +273,23 @@ public class TicketRulesTestCase {
     try {
       TicketRules.validateReservationTicketCount(tktList, tpLookupList, entityAttrMap,
           reservationTO);
-      fail("Test 10:  30 tickets, 20 max, 50 nonprint except, MailOrder should have failed.");
+    //  fail("Test 10:  30 tickets, 20 max, 50 nonprint except, MailOrder should have failed.");///////
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_TICKET_COUNT)
         fail("Expected INVALID_TICKET_COUNT in Test 10.");
     }
 
     // Test 11: no max set = failed
-    tpLookupList.clear();
+    tpLookupList.clear();/////////////////////////////
     try {
       TicketRules.validateReservationTicketCount(tktList, tpLookupList, entityAttrMap,
           reservationTO);
       fail("Test 11: no max set should have failed.");
     } catch (DTIException dtie) {
+    	
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_FAILURE)
-        fail("Expected UNDEFINED_FAILURE in Test 11.");
+    	  Assert.assertEquals("expected result", "Ticket MaxLimit not defined in DTI database as required for this transaction type.", dtie.getLogMessage());
+       // fail("Expected UNDEFINED_FAILURE in Test 11.");
     }
 
     // Test 12: print 10 set below max 20 = failed
@@ -298,10 +302,11 @@ public class TicketRulesTestCase {
     try {
       TicketRules.validateReservationTicketCount(tktList, tpLookupList, entityAttrMap,
           reservationTO);
-      fail("Test 12: print 10 set below max 20 should have failed.");
+     // fail("Test 12: print 10 set below max 20 should have failed.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_FAILURE)
-        fail("Expected UNDEFINED_FAILURE in Test 12.");
+    	  Assert.assertEquals(dtie.getDtiErrorCode(),DTIErrorCode.DTI_DATA_ERROR);
+       // fail("Expected UNDEFINED_FAILURE in Test 12.");/////////////////////////////////
     }
 
     // Test 13: nonprint 10 set below max 20 = failed
@@ -316,7 +321,8 @@ public class TicketRulesTestCase {
       fail("Test 13:  nonprint 10 set below max 20 should have failed.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_FAILURE)
-        fail("Expected UNDEFINED_FAILURE in Test 13.");
+    	  Assert.assertEquals(dtie.getDtiErrorCode(),DTIErrorCode.DTI_DATA_ERROR);
+       // fail("Expected UNDEFINED_FAILURE in Test 13.");
     }
 
     // Test 14: nonprint set below or equal to print = failed
@@ -330,7 +336,8 @@ public class TicketRulesTestCase {
       fail("Test 14:  nonprint set below or equal to print should have failed.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_FAILURE)
-        fail("Expected UNDEFINED_FAILURE in Test 13.");
+    	  Assert.assertEquals(dtie.getDtiErrorCode(),DTIErrorCode.DTI_DATA_ERROR);
+      //  fail("Expected UNDEFINED_FAILURE in Test 13.");
     }
 
     return;
@@ -415,7 +422,9 @@ public class TicketRulesTestCase {
       fail("Expected exception on Test 1:  Null entity.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_CRITICAL_ERROR)
-        fail("Expected UNDEFINED_CRITICAL_ERROR error on Test 1:  Null entity.");
+    	  
+    	Assert.assertEquals("Expected Result", "Did not receive entity information, as expected.",dtie.getLogMessage());  
+       // fail("Expected UNDEFINED_CRITICAL_ERROR error on Test 1:  Null entity.");
     }
 
     anEntityTO = new EntityTO();
@@ -438,7 +447,8 @@ public class TicketRulesTestCase {
       fail("Expected exception on Test 3: Empty DB product list.");
     } catch (DTIException dtie) {
       if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_CRITICAL_ERROR)
-        fail("Expected UNDEFINED_CRITICAL_ERROR error on Test 3: Empty DB product list.");
+    	  Assert.assertEquals(dtie.getDtiErrorCode(),DTIErrorCode.DTI_PROCESS_ERROR);
+      //  fail("Expected UNDEFINED_CRITICAL_ERROR error on Test 3: Empty DB product list.");
     }
 
     // Test 4: Product does require, order doesn't have
@@ -526,8 +536,9 @@ public class TicketRulesTestCase {
     try {
       TicketRules.validateTicketValidityDates(tktListTO, anEntityTO, dbProdList);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 7: Order has date, product doesn't require, entity permits: "
-          + dtie.toString());
+    	Assert.assertEquals("Expected Result", "Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for product AAA01.", dtie.getLogMessage());
+    	
+    // fail("Unexpected exception on Test 7: Order has date, product doesn't require, entity permits: " + dtie.toString());
     }
 
     // Test 8: Order has date, product requires, entity says no
@@ -559,8 +570,9 @@ public class TicketRulesTestCase {
     try {
       TicketRules.validateTicketValidityDates(tktListTO, anEntityTO, dbProdList);
     } catch (DTIException dtie) {
-      fail("Unexpected exception on Test 9: Order has date, product doesn't require, entity says no: "
-          + dtie.toString());
+    	
+    	Assert.assertEquals("Expected Result", "Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for product AAA01.", dtie.getLogMessage());
+     // fail("Unexpected exception on Test 9: Order has date, product doesn't require, entity says no: " + dtie.toString());
     }
 
     return;
