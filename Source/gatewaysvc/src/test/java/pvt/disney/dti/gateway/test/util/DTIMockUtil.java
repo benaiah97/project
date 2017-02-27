@@ -1,6 +1,8 @@
 package pvt.disney.dti.gateway.test.util;
 
+import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 import mockit.Mock;
@@ -11,13 +13,16 @@ import org.powermock.api.easymock.PowerMock;
 
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
+import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
 import pvt.disney.dti.gateway.dao.result.AttributeResult;
+import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 
 public class DTIMockUtil {
 	static ResultSet attributeRs = null;
 	static ResultSet attributeRs1 = null;
 	static ResultSet attributeRs2 = null;
+	static ResultSet rs = null;
 	static ResultSetProcessor theProcessor=null;
 	
 	public static void mockAttributeKey() {
@@ -51,13 +56,45 @@ public class DTIMockUtil {
 	}
 	
 	
+	public static void mockTicketAttribute(){
+		
+		try{
+			init();
+			new MockUp<DAOHelper>() {
+
+				@Mock
+				protected Object processQuery(Object[] values) {
+
+					DBTicketAttributes dbTicketAttributes = null;
+					 theProcessor = new TicketAttributeResult();
+					try {
+						theProcessor.processNextResultSet(rs);
+						dbTicketAttributes = (DBTicketAttributes) theProcessor
+								.getProcessedObject();
+					} catch (Exception e) {
+
+					}
+
+					return dbTicketAttributes;
+				}
+			};
+
+		}catch(Exception e){
+			
+		}
+	
+	}
+	
+	
 	private static void init()throws Exception{
+		rs = PowerMock.createMock(ResultSet.class);
 		attributeRs = PowerMock.createMock(ResultSet.class);
 		attributeRs1 = PowerMock.createMock(ResultSet.class);
 		attributeRs2 = PowerMock.createMock(ResultSet.class);
+		setResultSet(rs);
 		//setResultSet(rs);
 		setAttributeRS();
-		
+		EasyMock.replay(rs);
 		EasyMock.replay(attributeRs);
 		EasyMock.replay(attributeRs1);
 		EasyMock.replay(attributeRs2);
@@ -69,6 +106,32 @@ public class DTIMockUtil {
 		setAttributeResultSet(attributeRs1, 1);
 		setAttributeResultSet(attributeRs2, 2);
 	}
+	
+	
+	private static void setResultSet(ResultSet rs) throws Exception {
+		EasyMock.expect(rs.getString(EasyMock.anyObject(String.class)))
+				.andReturn("1").anyTimes();
+
+		EasyMock.expect(rs.getLong(EasyMock.anyObject(String.class)))
+				.andReturn(1L).anyTimes();
+
+		EasyMock.expect(rs.getDouble(EasyMock.anyObject(String.class)))
+				.andReturn(1.0).anyTimes();
+
+		EasyMock.expect(rs.getInt(EasyMock.anyObject(String.class)))
+				.andReturn(1).anyTimes();
+
+		EasyMock.expect(rs.getTimestamp(EasyMock.anyObject(String.class)))
+				.andReturn(new Timestamp(System.currentTimeMillis()))
+				.anyTimes();
+
+		EasyMock.expect(rs.getDate(EasyMock.anyObject(String.class)))
+				.andReturn(new Date(System.currentTimeMillis())).anyTimes();
+		EasyMock.expect(rs.getBoolean(EasyMock.anyObject(String.class)))
+				.andReturn(true).anyTimes();
+
+	}
+
 
 	private static void setAttributeResultSet(ResultSet rs, int i) throws Exception {
 
