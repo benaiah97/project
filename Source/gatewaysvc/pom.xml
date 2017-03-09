@@ -25,16 +25,16 @@
 			</plugin>
 
 			<!-- Adding test exclusions for Surefire reporting.. TODO : This is a hack until SHAN can setup filters -->
-			<plugin>
+	<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>**/GWOrdersResXMLTestCase*</include>
+						<include>**/*RulesTestCase*</include>
 					</includes>
 				</configuration>
 			</plugin>
-		</plugins>
+	</plugins>
 	</build>
 
 	<dependencies>
@@ -121,7 +121,7 @@
 		<dependency>
     <groupId>org.jmockit</groupId>
     <artifactId>jmockit</artifactId>
-    <version>1.8</version>
+    <version>1.9</version>
 </dependency>
 
 

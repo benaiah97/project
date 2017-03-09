@@ -53,7 +53,7 @@ public class WDWBusinessRulesTestCase {
    * (new). <BR>
    * 5. There may only be one TicketIdType per in-bound ticket.
    */
-  @Test
+  //@Test
   public final void testValidateInBoundWDWTickets() {
 
     ArrayList<TicketTO> aTktList = new ArrayList<TicketTO>();

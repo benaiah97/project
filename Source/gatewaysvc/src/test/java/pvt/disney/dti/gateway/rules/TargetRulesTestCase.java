@@ -102,7 +102,7 @@ public class TargetRulesTestCase {
         }
  };
 	}
-  @Test
+  //@Test
   public final void testValidateProviderTarget() {
 
     DTITransactionTO dtiTxn = new DTITransactionTO(DTITransactionTO.TransactionType.QUERYTICKET);
