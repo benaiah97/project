@@ -16,6 +16,7 @@ import org.junit.Test;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
+import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
@@ -29,7 +30,7 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
  * 
  */
 public class TestAttributeKey {
-
+	
 	@Before
 	public void setUp() throws Exception {
 
@@ -143,8 +144,8 @@ public class TestAttributeKey {
 			assertEquals("Exception executing getWDWTicketAttributes",
 					dtie.getLogMessage());
 		}
-
-		DTIMockUtil.mockTicketAttribute();
+		
+		DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TicketAttributeResult");
 
 		DBTicketAttributes dbTicketAttributes = AttributeKey
 				.getWDWTicketAttributes(new BigInteger("3"));
@@ -178,7 +179,7 @@ public class TestAttributeKey {
 
 		}
 
-		DTIMockUtil.mockAttributeKey();
+		DTIMockUtil.mockEntAttribute();
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 		try {
 			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
