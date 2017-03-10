@@ -1220,6 +1220,13 @@ public class DLRReservationRules implements TransformConstants {
 
         orderTO.setGroupVisitDescription(resReq.getClientData()
             .getBillingInfo().getName());
+        
+        if (resReq.getEligibilityGroup() == null) {
+          throw new DTIException(
+              DLRReservationRules.class,
+              DTIErrorCode.INVALID_ELIGIBILITY_NBR,
+              "Eligibility Group not provided as expected on order.");
+        }
 
         // Populate Group Visit Reference only for BOLT style orders.
         if (resReq.getEligibilityGroup().equalsIgnoreCase(
