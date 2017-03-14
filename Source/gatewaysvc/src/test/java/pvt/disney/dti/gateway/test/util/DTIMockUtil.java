@@ -62,6 +62,7 @@ public class DTIMockUtil {
 	static ResultSet attributeRs2 = null;
 	static ResultSet rs = null;
 	static ResultSetProcessor theProcessor = null;
+	public static ArrayList<DBProductTO> prodList=new ArrayList<DBProductTO>();
 
 	/**
 	 * For Mocking AttributeKey
@@ -406,6 +407,26 @@ public class DTIMockUtil {
 
 		}
 	}
+	
+	/**
+	 * @return
+	 */
+	public static ArrayList<DBProductTO> fetchDBOrderList() {
+		ArrayList<DBProductTO> dbProduct = null;
+		try {
+			init();
+			theProcessor = new ProductDetailResult();
+			theProcessor.processNextResultSet(rs);
+			dbProduct = (ArrayList<DBProductTO>) theProcessor
+					.getProcessedObject();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dbProduct;
+		}
+	
+	
 
 	/**
 	 * For Mocking DBProductTO getOrderProducts
@@ -585,6 +606,7 @@ public class DTIMockUtil {
 						}
 					} catch (Exception e) {
 					}
+					prodList=dbProdList;
 					return dbProdList;
 				}
 			};
