@@ -1,7 +1,6 @@
 package pvt.disney.dti.gateway.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
  * @author lewit019
  * 
  */
-public class TicketRulesTestCase {
+public class TicketRulesTestCase extends CommonBusinessTest{
 
 	/**
 	 * JUnit for validateOnlyOneTicketOnRequest
@@ -46,7 +45,7 @@ public class TicketRulesTestCase {
 		 */
 		try {
 			TicketRules.validateOnlyOneTicketOnRequest(aTktList);
-			fail("Expected exception on Test 1:  More than one ticket.");
+			Assert.fail("Transaction required to have at least 1 and no more than 1 had 2 tickets.");
 		} catch (DTIException dtie) {
 			assertEquals(
 					"Transaction required to have at least 1 and no more than 1 had 2 tickets.",
@@ -59,7 +58,7 @@ public class TicketRulesTestCase {
 		aTktList.clear();
 		try {
 			TicketRules.validateOnlyOneTicketOnRequest(aTktList);
-			fail("Expected exception on Test 2:  Empty ticket list.");
+			Assert.fail("Transaction required to have at least 1 and no more than 1 had 0 tickets.");
 		} catch (DTIException dtie) {
 
 			assertEquals(
@@ -74,10 +73,9 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateOnlyOneTicketOnRequest(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on Test 3:  One ticket in list: "
+			Assert.fail("Unexpected exception one ticket in list: "
 					+ dtie.toString());
 		}
-		return;
 	}
 
 	/**
@@ -85,7 +83,6 @@ public class TicketRulesTestCase {
 	 */
 	@Test
 	public final void testValidateMaxEightTicketsOnRequest() {
-
 		ArrayList<TicketTO> aTktList = new ArrayList<TicketTO>();
 		TicketTO aTicketTO = new TicketTO();
 		aTicketTO.setBarCode("12345678901234567890");
@@ -100,14 +97,14 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateMaxEightTicketsOnRequest(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception  Less than 8 tickets: " + dtie);
+			Assert.fail("Unexpected exception less than 8 tickets: " + dtie);
 		}
 		/* Scenario :: 2 Exactly 8 tickets */
 		aTktList.add(aTicketTO);
 		try {
 			TicketRules.validateMaxEightTicketsOnRequest(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception Exactly 8 tickets: " + dtie);
+			Assert.fail("Unexpected exception exactly 8 tickets: " + dtie);
 		}
 		/*
 		 * Scenario :: 3 More than 8 tickets Expected Exception Transaction
@@ -116,14 +113,12 @@ public class TicketRulesTestCase {
 		aTktList.add(aTicketTO);
 		try {
 			TicketRules.validateMaxEightTicketsOnRequest(aTktList);
-			fail("More than 8 tickets.");
+			Assert.fail("Transaction required to have at no more than 8 had 9 tickets.");
 		} catch (DTIException dtie) {
 			assertEquals(
 					"Transaction required to have at no more than 8 had 9 tickets.",
 					dtie.getLogMessage());
 		}
-		return;
-
 	}
 
 	/**
@@ -161,7 +156,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("21 tickets, 20 max, no exceptions should have failed.");
+			Assert.fail("21 tickets, 20 max, no exceptions should have failed.");
 		} catch (DTIException dtie) {
 			assertEquals("Transaction exceeded max ticket count of 20: 21",
 					dtie.getLogMessage());
@@ -186,13 +181,12 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Transaction exceeded printed ticket exception count of 30: 50");
+			Assert.fail("Transaction exceeded printed ticket exception count of 30: 50");
 		} catch (DTIException dtie) {
 			assertEquals(
 					"Transaction exceeded printed ticket exception count of 30: 50",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 3 numberOfTickets > noPrntTktCntMaxException Expected
 		 * exception Transaction exceeded non-printed ticket exception count of
@@ -202,23 +196,20 @@ public class TicketRulesTestCase {
 		aTicketTO.setProdQty(new BigInteger("1"));
 		tktList.add(aTicketTO);
 		attribTO = new AttributeTO();
-		aTicketTO.setProdQty(new BigInteger("1"));
 		attribTO.setCmdAttrCode(AttributeTO.CmdAttrCodeType.NO_PRNT_TKT_CNT_MAX);
 		attribTO.setAttrValue("50");
 		reservationTO.setResSalesType("Presale");
 		entityAttrMap.put(AttributeTO.CmdAttrCodeType.NO_PRNT_TKT_CNT_MAX,
 				attribTO);
-
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Transaction exceeded non-printed ticket exception count of 50: 51");
+			Assert.fail("Transaction exceeded non-printed ticket exception count of 50: 51");
 		} catch (DTIException dtie) {
 			assertEquals(
 					"Transaction exceeded non-printed ticket exception count of 50: 51",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 4 Expected exception Data set-up failure: PrntTktCntMax
 		 * greater than NoPrntTktCntMax, 60 versus 50
@@ -230,18 +221,15 @@ public class TicketRulesTestCase {
 		reservationTO.setResSalesType("Presale");
 		entityAttrMap.put(AttributeTO.CmdAttrCodeType.PRNT_TKT_CNT_MAX,
 				attribTO);
-
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Data set-up failure:  PrntTktCntMax greater than NoPrntTktCntMax, 60 versus 50");
+			Assert.fail("Data set-up failure:  PrntTktCntMax greater than NoPrntTktCntMax, 60 versus 50");
 		} catch (DTIException dtie) {
-
 			assertEquals(
 					"Data set-up failure:  PrntTktCntMax greater than NoPrntTktCntMax, 60 versus 50",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 5 Expected exception Entity Attr NoPrntTktCntMax in DTI
 		 * database is not a parseable integer: TEN
@@ -255,7 +243,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Entity Attr NoPrntTktCntMax in DTI database is not a parseable integer: TEN");
+			Assert.fail("Entity Attr NoPrntTktCntMax in DTI database is not a parseable integer: TEN");
 		} catch (DTIException dtie) {
 
 			assertEquals(
@@ -280,7 +268,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Transaction exceeded non-printed ticket exception count of 50: 72");
+			Assert.fail("Transaction exceeded non-printed ticket exception count of 50: 72");
 		} catch (DTIException dtie) {
 			assertEquals(
 					"Transaction exceeded non-printed ticket exception count of 50: 72",
@@ -301,7 +289,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
+			Assert.fail("Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20",
@@ -322,7 +310,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Data set-up failure:  NoPrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
+			Assert.fail("Data set-up failure:  NoPrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Data set-up failure:  NoPrntTktCntMax is less or equal to MaxTicket, 15 versus 20",
@@ -342,7 +330,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
+			Assert.fail("Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, 15 versus 20",
@@ -350,7 +338,8 @@ public class TicketRulesTestCase {
 
 		}
 		/*
-		 * Scenario :: 10 Expected exception Entity Attr PrntTktCntMax in DTI database is not a parseable integer: ONE
+		 * Scenario :: 10 Expected exception Entity Attr PrntTktCntMax in DTI
+		 * database is not a parseable integer: ONE
 		 */
 		attribTO.setAttrValue("ONE");
 		entityAttrMap.put(AttributeTO.CmdAttrCodeType.PRNT_TKT_CNT_MAX,
@@ -358,7 +347,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Entity Attr PrntTktCntMax in DTI database is not a parseable integer: ONE");
+			Assert.fail("Entity Attr PrntTktCntMax in DTI database is not a parseable integer: ONE");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Entity Attr PrntTktCntMax in DTI database is not a parseable integer: ONE",
@@ -375,13 +364,12 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Reservation transaction had a ticket clause with no quantity. Not allowed.");
+			Assert.fail("Reservation transaction had a ticket clause with no quantity. Not allowed.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Reservation transaction had a ticket clause with no quantity. Not allowed.",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 12 Expected exception Ticket MaxLimit not defined in DTI
 		 * database as required for this transaction type.
@@ -390,36 +378,30 @@ public class TicketRulesTestCase {
 		tpLookupTO.setLookupType(TPLookupTO.TPLookupType.MAX_LIMIT);
 		tpLookupTO.setLookupValue("-2");
 		tpLookupList.add(tpLookupTO);
-
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Ticket MaxLimit not defined in DTI database as required for this transaction type.");
+			Assert.fail("Ticket MaxLimit not defined in DTI database as required for this transaction type.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket MaxLimit not defined in DTI database as required for this transaction type.",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 13 Expected exception Ticket MaxLimit in DTI database is
 		 * not a parseable integer: ONE
 		 */
-		aTicketTO.setProdQty(new BigInteger("2"));
-		tpLookupTO.setLookupType(TPLookupTO.TPLookupType.MAX_LIMIT);
 		tpLookupTO.setLookupValue("ONE");
 		tpLookupList.add(tpLookupTO);
-
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Ticket MaxLimit in DTI database is not a parseable integer: ONE");
+			Assert.fail("Ticket MaxLimit in DTI database is not a parseable integer: ONE");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket MaxLimit in DTI database is not a parseable integer: ONE",
 					dtie.getLogMessage());
 		}
-
 		/*
 		 * Scenario :: 14 Expected exception Transaction has no tickets that
 		 * could be counted. Not allowed.
@@ -429,15 +411,12 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateReservationTicketCount(tktList, tpLookupList,
 					entityAttrMap, reservationTO);
-			fail("Transaction has no tickets that could be counted. Not allowed.");
+			Assert.fail("Transaction has no tickets that could be counted. Not allowed.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Transaction has no tickets that could be counted. Not allowed.",
 					dtie.getLogMessage());
 		}
-
-		return;
-
 	}
 
 	/**
@@ -457,12 +436,11 @@ public class TicketRulesTestCase {
 		 */
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
-			fail("Exception expected on Test 1:  Uninitialized ticket.");
+			Assert.fail("Exception expected on uninitialized ticket.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals("Ticket did not include any ticket ids.",
 					dtie.getLogMessage());
 		}
-
 		/* Too many ticket types */
 		/*
 		 * Scenario :: 2 Expected exception Ticket included more ticket types
@@ -472,13 +450,12 @@ public class TicketRulesTestCase {
 		aTicket.setExternal("IMAEXTERNAL");
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
-			fail("Too many ticket types.");
+			Assert.fail("Too many ticket types.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket included more ticket types than external ID.",
 					dtie.getLogMessage());
 		}
-
 		/* Doesn't have an external Id. */
 		/*
 		 * Scenario :: 3 Expected exception Ticket did not include external
@@ -488,12 +465,11 @@ public class TicketRulesTestCase {
 		aTicket.setBarCode("IMABARCODE");
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
-			fail("Doesn't have an external Id.");
+			Assert.fail("Doesn't have an external Id.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals("Ticket did not include external ticket id.",
 					dtie.getLogMessage());
 		}
-
 		/* Ticket includes null external Id. */
 		/*
 		 * Scenario :: 4 Expected exception Ticket did not include any ticket
@@ -501,15 +477,13 @@ public class TicketRulesTestCase {
 		 */
 		aTicket = new TicketTO();
 		aTicket.setExternal(null);
-
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
-			fail("Ticket did not include any ticket ids.");
+			Assert.fail("Ticket did not include any ticket ids.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals("Ticket did not include any ticket ids.",
 					dtie.getLogMessage());
 		}
-
 		/* Ticket includes empty string external Id. */
 		/*
 		 * Scenario :: 5 Expected exception Ticket included invalid external
@@ -518,20 +492,18 @@ public class TicketRulesTestCase {
 		aTicket.setExternal(new String(""));
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
-			fail("Ticket included invalid external ticket id.");
+			Assert.fail("Ticket included invalid external ticket id.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals("Ticket included invalid external ticket id.",
 					dtie.getLogMessage());
 		}
-
 		/* Scenario :: 6 Ticket contains valid external number. */
 		aTicket.setExternal("ImaValidExternal");
 		try {
 			TicketRules.validateExternalTktIdOnly(aTicket);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on Test 6: Ticket contains valid external number.");
+			Assert.fail("Unexpected exception Ticket contains valid external number.");
 		}
-
 	}
 
 	/**
@@ -551,7 +523,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
-			fail("Did not receive entity information, as expected.");
+			Assert.fail("Did not receive entity information, as expected.");
 		} catch (DTIException dtie) {
 			if (dtie.getDtiErrorCode() != DTIErrorCode.UNDEFINED_CRITICAL_ERROR)
 
@@ -560,15 +532,13 @@ public class TicketRulesTestCase {
 						dtie.getLogMessage());
 
 		}
-
 		anEntityTO = new EntityTO();
-
 		/* Scenario :: 2 Empty ticket list. */
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception : Empty ticket list." + dtie.toString());
+			Assert.fail("Unexpected exception : Empty ticket list." + dtie.toString());
 		}
 		/*
 		 * Scenario :: 3 Expected exception Ticket item 1 with product AAA01
@@ -579,16 +549,14 @@ public class TicketRulesTestCase {
 		aTicketTO.setProdCode("AAA01");
 		aTicketTO.setTktItem(new BigInteger("1"));
 		tktListTO.add(aTicketTO);
-
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
-			fail("Ticket item 1 with product AAA01 does not have an entry, as expected, in the DB Product list.");
+			Assert.fail("Ticket item 1 with product AAA01 does not have an entry, as expected, in the DB Product list.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket item 1 with product AAA01 does not have an entry, as expected, in the DB Product list.",
 					dtie.getLogMessage());
-
 		}
 		/*
 		 * Scenario :: 4 Expected exception Ticket item 1 with product AAA01 did
@@ -599,19 +567,16 @@ public class TicketRulesTestCase {
 		aDBProduct.setPdtCode("AAA01");
 		aDBProduct.setValidityDateInfoRequired(true);
 		dbProdList.add(aDBProduct);
-
 		aDBProduct = new DBProductTO();
 		aDBProduct.setPdtCode("BBB02");
 		aDBProduct.setValidityDateInfoRequired(false);
 		dbProdList.add(aDBProduct);
-
-		// Should have it
+		/*Should have it*/
 		aTicketTO = new TicketTO();
 		aTicketTO.setProdCode("AAA01");
 		aTicketTO.setTktItem(new BigInteger("1"));
 		tktListTO.add(aTicketTO);
-
-		// Should not have it.
+		/*Should have it*/
 		aTicketTO = new TicketTO();
 		aTicketTO.setProdCode("BBB02");
 		aTicketTO.setTktItem(new BigInteger("2"));
@@ -620,7 +585,7 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
-			fail("Expected exception on Test 4: Product does require, order doesn't have.");
+			Assert.fail("Ticket item 1 with product AAA01 did not have ticket validity dates as required.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket item 1 with product AAA01 did not have ticket validity dates as required.",
@@ -642,7 +607,7 @@ public class TicketRulesTestCase {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception : Product doesn't require, order doesn't have: "
+			Assert.fail("Unexpected exception : Product doesn't require, order doesn't have: "
 					+ dtie.toString());
 		}
 
@@ -669,7 +634,7 @@ public class TicketRulesTestCase {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception: Order has date, product requires, entity permits: "
+			Assert.fail("Unexpected exception: Order has date, product requires, entity permits: "
 					+ dtie.toString());
 		}
 		/*
@@ -686,11 +651,11 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
+			Assert.fail("Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for product AAA01.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for product AAA01.",
 					dtie.getLogMessage());
-
 		}
 		/*
 		 * Scenario :: 8 Expected exception Ticket item 1 with product AAA01 had
@@ -698,18 +663,15 @@ public class TicketRulesTestCase {
 		 */
 		/* Order has date, product requires, entity says no */
 		dbProdList.clear();
-
 		aDBProduct = new DBProductTO();
 		aDBProduct.setPdtCode("AAA01");
 		aDBProduct.setValidityDateInfoRequired(true);
 		dbProdList.add(aDBProduct);
-
 		anEntityTO.setValidityDateProductAllowed(false);
-
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
-			fail("Expected exception on Test 8:  Order has date, product requires, entity says no.");
+			Assert.fail("Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for entity null.");
 		} catch (DTIException dtie) {
 			Assert.assertEquals(
 					"Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for entity null.",
@@ -725,18 +687,14 @@ public class TicketRulesTestCase {
 		aDBProduct.setPdtCode("AAA01");
 		aDBProduct.setValidityDateInfoRequired(false);
 		dbProdList.add(aDBProduct);
-
 		try {
 			TicketRules.validateTicketValidityDates(tktListTO, anEntityTO,
 					dbProdList);
 		} catch (DTIException dtie) {
-
 			Assert.assertEquals(
 					"Ticket item 1 with product AAA01 had ticket validity dates.  Not allowed for product AAA01.",
 					dtie.getLogMessage());
 		}
-
-		return;
 	}
 
 	/**
@@ -785,7 +743,6 @@ public class TicketRulesTestCase {
 	 */
 	@Test
 	public void testValidateCreateTicketCount() {
-
 		TicketTO ticketTO = new TicketTO();
 		ArrayList<TicketTO> aTktList = new ArrayList<>();
 		aTktList.add(ticketTO);
@@ -800,7 +757,6 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateCreateTicketCount(aTktList, tpLookupList);
 		} catch (DTIException dtie) {
-
 			Assert.assertEquals(
 					"Reservation transaction had a ticket clause with no quantity. Not allowed.",
 					dtie.getLogMessage());
@@ -828,7 +784,6 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateCreateTicketCount(aTktList, tpLookupList);
 		} catch (DTIException dtie) {
-
 			Assert.assertEquals(
 					"Ticket MaxLimit not defined in DTI database as required for this transaction type.",
 					dtie.getLogMessage());
@@ -842,7 +797,6 @@ public class TicketRulesTestCase {
 		try {
 			TicketRules.validateCreateTicketCount(aTktList, tpLookupList);
 		} catch (DTIException dtie) {
-
 			Assert.assertEquals(
 					"Transaction exceeded max ticket count of 0: 8",
 					dtie.getLogMessage());
@@ -866,9 +820,7 @@ public class TicketRulesTestCase {
 	 */
 	@Test
 	public void testValidateTicketAssignment() {
-
 		ArrayList<TktAssignmentTO> ticketAssignmetList = new ArrayList<>();
-
 		TicketTO ticketTO = new TicketTO();
 		TicketTO.TktAssignmentTO ticketAssignmets = ticketTO.new TktAssignmentTO();
 		ticketAssignmets.setProdQty(null);
@@ -914,6 +866,5 @@ public class TicketRulesTestCase {
 					"validateTicketAssignment: Ticket Product Quantity must match the sum of Assigned Products.",
 					dtie.getLogMessage());
 		}
-
 	}
 }
