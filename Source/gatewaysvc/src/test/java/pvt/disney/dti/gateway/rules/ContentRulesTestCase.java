@@ -1,28 +1,22 @@
 package pvt.disney.dti.gateway.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.Properties;
-
 import mockit.Mock;
 import mockit.MockUp;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.EnvironmentType;
 import pvt.disney.dti.gateway.data.DTITransactionTO.ProviderType;
-import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
@@ -42,349 +36,407 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 
 	}
 	/**
-	 * 
+	 * Test validate pay hdr fields.
 	 */
-	
-	public void testValidatePayHdrFieldsforException() {
+	@Test
+	public void testValidatePayHdrFields() {
+		/*Testing for valid Exceptions : START */
+		DTITransactionTO dtiTxn = null;
 		PayloadHeaderTO payHeaderTO = new PayloadHeaderTO();
+		/*Scenario::1 when Payload Id is missing: Expected Exception*/
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
+			Assert.fail("Expected Exception : PayloadId was null.");		
 		} catch (DTIException dti) {
+			assertEquals(dti.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dti.getLogMessage(), "PayloadId was null.");
 		}
 
-		// Test 2
+		/*Scenario::2 when Payload Id is of invalid length: Expected Exception*/
 		payHeaderTO.setPayloadID("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 2: PayloadId invalid length too short.");
+			Assert.fail("Expected exception: PayloadId invalid length too short.");
 		} catch (DTIException dti) {
+			assertEquals(dti.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dti.getLogMessage(),
 					"PayloadId was of invalid length.");
 		}
-		// Test 3: PayloadId invalid length too long
+		/*Scenario:: 3: PayloadId invalid length too long: Expected Exception*/
 		payHeaderTO.setPayloadID("123456789012345678901");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 3:  PayloadId invalid length too long.");
+			Assert.fail("Expected exception:  PayloadId invalid length too long.");
 		} catch (DTIException dti) {
+			assertEquals(dti.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dti.getLogMessage(),
 					"PayloadId was of invalid length.");
 		}
-
-		// Test 4: Target missing
+		/*Scenario:: 4: Target missing: Expected Exception*/
 		payHeaderTO.setPayloadID("1234567890");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 4:  Target missing.");
+			Assert.fail("Expected exception in Test 4:  Target missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dtie.getLogMessage(), "Target was null.");
 
 		}
-
-		// Test 5: Target too short
+		/*Scenario:: 5: Target too short: Expected Exception*/
 		payHeaderTO.setTarget("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 5:  Target too short.");
+			Assert.fail("Expected exception in Test 5:  Target too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dtie.getLogMessage(), "Target was of zero length.");
 		}
-
-		// Test 6: Version missing
+		/*Scenario:: 6: Version missing: Expected Exception*/
 		payHeaderTO.setTarget("Target");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 6:  Version missing.");
+			Assert.fail("Expected exception in Test 6:  Version missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dtie.getLogMessage(), "Version was null.");
 		}
-
-		// Test 7: Version too short
+		/*Scenario:: 7: Version too short: Expected Exception*/
 		payHeaderTO.setVersion("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 7:  Version too short.");
-		} catch (DTIException dtie) {
-			assertEquals(dtie.getLogMessage(), "Version was of zero length.");
+			Assert.fail("Expected exception in Test 7:  Version too short.");
+		} catch (DTIException dti) {
+			assertEquals(dti.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dti.getLogMessage(), "Version was of zero length.");
 		}
-
-		// Test 8: Comm Protocol missing
+		/*Scenario:: 8: Comm Protocol missing: Expected Exception*/
 		payHeaderTO.setVersion("Version");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 8:  Comm Protocol missing.");
-		} catch (DTIException dtie) {
-			assertEquals(dtie.getLogMessage(), "Comm Protocol was null.");
+			Assert.fail("Expected exception in Test 8:  Comm Protocol missing.");
+		} catch (DTIException dti) {
+			assertEquals(dti.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dti.getLogMessage(), "Comm Protocol was null.");
 		}
-
-		// Test 9: Comm Protocol too short
+		/*Scenario:: 9: Comm Protocol too short: Expected Exception*/
 		payHeaderTO.setCommProtocol("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 9:  Comm Protocol too short.");
+			Assert.fail("Expected exception in Test 9:  Comm Protocol too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dtie.getLogMessage(),
 					"Comm Protocol was of zero length.");
 		}
-
-		// Test 10: Comm Method missing
+		/*Scenario:: 10: Comm Method missing: Expected Exception*/
 		payHeaderTO.setCommProtocol("Protocol");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 10:  Comm Method missing.");
+			Assert.fail("Expected exception in Test 10:  Comm Method missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"Comm Method was null.");
 		}
-
-		// Test 11: Comm Method too short
+		/*Scenario:: 11: Comm Method too short: Expected Exception*/
 		payHeaderTO.setCommMethod("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 11:  Comm Method too short.");
+			Assert.fail("Expected exception in Test 11:  Comm Method too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"Comm Method was of zero length.");
 		}
-
-		// Test 12: TransmitDate/Time missing
+		/*Scenario:: 12: TransmitDate/Time missing: Expected Exception*/
 		payHeaderTO.setCommMethod("Method");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 12:  TransmitDate/Time missing.");
+			Assert.fail("Expected exception in Test 12:  TransmitDate/Time missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"Trans Date or Time was null.");
 		}
-
-		// Test 13: TktSeller missing
+		/*Scenario:: 13: TktSeller missing: Expected Exception*/
 		payHeaderTO.setTransmitDateTime((GregorianCalendar) GregorianCalendar
 				.getInstance());
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 13:  TktSeller missing.");
+			Assert.fail("Expected exception in Test 13:  TktSeller missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"TktSeller object was null.");
 		}
-
-		// Test 14: TSMAC missing
+		/*Scenario:: 14: TSMAC missing: Expected Exception*/
 		TktSellerTO tktSellerTO = new TktSellerTO();
 		payHeaderTO.setTktSeller(tktSellerTO);
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 14:  TSMAC missing.");
+			Assert.fail("Expected exception in Test 14:  TSMAC missing.");
 		} catch (DTIException dtie) {
-		}
-
-		// Test 15: TSMAC too short
-
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			}
+		/*Scenario:: 15: TSMAC too short: Expected Exception*/
 		tktSellerTO.setTsMac("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 15:  TSMAC to short.");
+			Assert.fail("Expected exception in Test 15:  TSMAC to short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"TSMAC was of zero length.");
 		}
-
-		// Test 16: TSLocation missing
+		/*Scenario:: 16: TSLocation missing: Expected Exception*/
 		tktSellerTO.setTsMac("TSMAC");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 16:  TSLocation missing.");
+			Assert.fail("Expected exception in Test 16:  TSLocation missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 		}
-
-		// Test 17: TSLocation too short
+		/*Scenario:: 17: TSLocation too short: Expected Exception*/
 		tktSellerTO.setTsLocation("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 17:  TSLocation too short.");
+			Assert.fail("Expected exception in Test 17:  TSLocation too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"TSLocation was of zero length.");
 		}
-
-		// Test 18: TSSystem missing
+		/*Scenario:: 18: TSSystem missing: Expected Exception*/
 		tktSellerTO.setTsLocation("TsLocation");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 18:  TSSystem missing.");
+			Assert.fail("Expected exception in Test 18:  TSSystem missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 		}
-
-		// Test 19: TSSystem too short
+		/*Scenario:: 19: TSSystem too short: Expected Exception*/
 		tktSellerTO.setTsSystem("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 19:  TSSystem too short.");
+			Assert.fail("Expected exception in Test 19:  TSSystem too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"TSSystem was of zero length.");
 		}
-
-		// Test 20: TsSecurity missing
+		/*Scenario:: 20: TsSecurity missing: Expected Exception*/
 		tktSellerTO.setTsSystem("TsSystem");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 20:  TsSecurity missing.");
+			Assert.fail("Expected exception in Test 20:  TsSecurity missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 		}
-
-		// Test 21: TsSecurity too short
+		/*Scenario:: 21: TsSecurity too short: Expected Exception*/
 		tktSellerTO.setTsSecurity("");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 21:  TsSecurity too short.");
+			Assert.fail("Expected exception in Test 21:  TsSecurity too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"TSSecurity was of zero length.");
 		}
-
-		// Test 22: CommandCount missing
+		/*Scenario:: 22: CommandCount missing: Expected Exception*/
 		tktSellerTO.setTsSecurity("TsSecurity");
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 22:  CommandCount missing.");
+			Assert.fail("Expected exception in Test 22:  CommandCount missing.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
 		}
-
-		// Test 23: CommandCount invalid value
+		/*Scenario:: 23: CommandCount invalid value: Expected Exception*/
 		BigInteger count = new BigInteger("-1");
 		payHeaderTO.setCommandCount(count);
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
-			fail("Expected exception in Test 23:  CommandCount invalid value.");
+			Assert.fail("Expected exception in Test 23:  CommandCount invalid value.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_PAYLOAD_HDR);
+			assertEquals(dtie.getLogMessage(),
+					"CommandCount was of zero or negative value.");
 		}
-
-		// Test 24: Valid payload header
+		/*Testing for valid Exceptions : END */
+		/*Testing for SUCCESS */
+		/*Scenario:: 24: Valid payload header: Expecting SUCCESS*/
 		payHeaderTO.setCommandCount(new BigInteger("1"));
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception in Test 24:  Valid payload header.");
+			Assert.fail("Unexpected exception in Test 24:  Valid payload header.");
 		}
-
-	}
-
-	/**
-	 * Test validate pay hdr fields.
-	 */
-	
-	public void testValidatePayHdrFields() {
-
-		testValidatePayHdrFieldsforException();
-		DTITransactionTO dtiTxn = null;
+		/*Scenario:: 25: Passing the entire request :Expecting SUCCESS*/
 		/* Test case for applyQueryTicketRules */
 		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
 		createCommonRequest(dtiTxn, true, true, TEST_TARGET, TPI_CODE_WDW,
 				false);
-		PayloadHeaderTO payHeaderTO = dtiTxn.getRequest().getPayloadHeader();
+		 payHeaderTO = dtiTxn.getRequest().getPayloadHeader();
 		try {
 			ContentRules.validatePayHdrFields(payHeaderTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
 		}
+		/*****************TEST CASE END ****************/
 	}
 
 	/**
 	 * Test validate cmd hdr fields.
 	 */
-	
+	@Test
 	public final void testValidateCmdHdrFields() {
 
 		CommandHeaderTO cmdHeaderTO = new CommandHeaderTO();
-
-		// Test 1: CmdItem is missing
+		/*Testing for valid Exceptions : START */
+		/* Scenario :: 1 CmdItem is missing: Expected Exception */
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 1: CmdItem missing.");
+			Assert.fail("Expected Exception: CmdItem was null.");
 		} catch (DTIException dtie) {
-			/*
-			 * if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_MSG_ELEMENT)
-			 * //
-			 * fail("Expected INVALID_MSG_ELEMENT in Test 1:  CmdItem is missing."
-			 * );
-			 */}
-
-		// Test 2: CmdItem invalid value
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdItem was null.", dtie.getLogMessage());
+		}
+		/* Scenario :: 2 CmdItem invalid value: Expected Exception */
 		BigInteger cmdItem = new BigInteger("-1");
 		cmdHeaderTO.setCmdItem(cmdItem);
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 2:  CmdItem invalid value.");
+			Assert.fail("Expected exception: CmdItem was of zero value.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdItem was of zero value.", dtie.getLogMessage());
 		}
-
-		// Test 3: CmdTimeout is missing
+		/* Scenario :: 3 CmdTimeout is missing: Expected Exception */
 		cmdHeaderTO.setCmdItem(new BigInteger("1"));
-		;
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 3: CmdTimeout is missing.");
+			Assert.fail("Expected exception: CommandTimeout was null.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CommandTimeout was null.", dtie.getLogMessage());
 		}
-
-		// Test 4: CmdTimeout invalid value
+		/* Scenario :: 4: CmdTimeout invalid value: Expected Exception */
 		BigInteger cmdTimeout = new BigInteger("-1");
 		cmdHeaderTO.setCmdTimeout(cmdTimeout);
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 4:  CmdTimeout invalid value.");
+			Assert.fail("Expected exception: CmdItem was of zero value.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdItem was of zero value.", dtie.getLogMessage());
 		}
-
-		// Test 5: CmdDateTime is missing
+		/* Scenario :: 5 CmdDateTime is missing:Expected Exception */
 		cmdHeaderTO.setCmdTimeout(new BigInteger("1"));
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 5:  CmdDateTime is missing.");
+			Assert.fail("Expected exception:  Cmd Date or Time was null");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("Cmd Date or Time was null.", dtie.getLogMessage());
 		}
-
-		// Test 6: CmdInvoice is missing
+		/* Scenario :: 6: CmdInvoice is missing:Expected Exception */
 		cmdHeaderTO.setCmdDateTime((GregorianCalendar) GregorianCalendar
 				.getInstance());
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 6:  CmdInvoice is missing.");
+			Assert.fail("Expected exception:  CmdInvoice was null.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdInvoice was null.", dtie.getLogMessage());
 		}
-
-		// Test 7: CmdInvoice too short
+		/* Scenario :: 7: CmdInvoice too short :Expected Exception */
 		cmdHeaderTO.setCmdInvoice(new String(""));
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 7:  CmdInvoice too short.");
+			Assert.fail("Expected exception:  CmdInvoice was of zero length.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdInvoice was of zero length.", dtie.getLogMessage());
 		}
-
-		// Test 8: CmdDevice is missing
+		/* Scenario :: 8: CmdDevice is missing :Expected Exception */
 		cmdHeaderTO.setCmdInvoice("AnInvoice.");
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 8:  CmdDevice is missing.");
+			Assert.fail("Expected exception:  CmdDevice was null.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdDevice was null.", dtie.getLogMessage());
 		}
-
-		// Test 9: CmdDevice is too short
+		/* Scenario :: 9: CmdDevice is too short :Expected Exception */
 		cmdHeaderTO.setCmdDevice(new String(""));
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 9:  CmdDevice is too short.");
+			Assert.fail("Expected exception:  CmdDevice was of zero length.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdDevice was of zero length.", dtie.getLogMessage());
 		}
-
-		// Test 10: CmdOperator is missing
+		/* Scenario :: 10: CmdOperator is missing :Expected Exception */
 		cmdHeaderTO.setCmdDevice("CmdDevice");
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 10:  CmdOperator is missing.");
+			Assert.fail("Expected exception in Test 10:  CmdOperator was null.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdOperator was null.", dtie.getLogMessage());
 		}
-
-		// Test 11: CmdOperator is too short
+		/* Scenario :: 11: CmdOperator is too short :Expected Exception */
 		cmdHeaderTO.setCmdOperator(new String(""));
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
-			fail("Expected exception in Test 11:  CmdOperator is too short.");
+			Assert.fail("Expected exception in Test 11:  CmdOperator is too short.");
 		} catch (DTIException dtie) {
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_COMMAND_HDR);
+			assertEquals("CmdOperator was of zero length.", dtie.getLogMessage());
 		}
-
-		// Test 12: Valid command header
+		/*Testing for valid Exceptions : END */
+		/*Testing for SUCCESS */
+		/* Scenario :: 12: Valid command header :Expected SUCCESS */
 		cmdHeaderTO.setCmdOperator("Bob");
 		try {
 			ContentRules.validateCmdHdrFields(cmdHeaderTO);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception in Test 12:  Valid command header.");
+			Assert.fail("Unexpected exception :"+dtie.getLocalizedMessage());
 		}
+		/******************TEST CASE END *********************/
 
 	}
 
@@ -393,10 +445,11 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 	 */
 	@Test
 	public final void testValidateDTIRequestStructure() {
-		/*Validates the DTITransactionTo */
+		/* Validates the DTITransactionTo */
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				DTITransactionTO.TransactionType.QUERYTICKET);
 		/*
+		 * /*Testing for valid Exceptions : START 
 		 * Scenario :: 1 When no DTIRequestTO is associated with
 		 * DTITransactionTO: Exception Expected
 		 */
@@ -410,12 +463,10 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 					"DTITransactionTO has no DTIRequestTO object associated.",
 					dtie.getLogMessage());
 		}
-
 		DTIRequestTO dtiRequestTO = new DTIRequestTO();
 		dtiTxn.setRequest(dtiRequestTO);
 		/*
-		 * Scenario :: 1 When DTIRequestTO is associated with
-		 * DTITransactionTO: Exception Expected
+		 * Scenario :: 2 When Payload Header is missing: Exception Expected
 		 */
 		try {
 			ContentRules.validateDTIRequestStructure(dtiTxn);
@@ -427,50 +478,55 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 					"DTIRequestTO has no PayloadHeaderTO object associated.",
 					dtie.getLogMessage());
 		}
-
 		PayloadHeaderTO payHeaderTO = new PayloadHeaderTO();
 		dtiRequestTO.setPayloadHeader(payHeaderTO);
-
-		// Test 3: DTIRequestTO missing cmdHdr and Body
+		/*
+		 * Scenario :: 3 When Command header is missing: Exception Expected
+		 */
 		try {
 			ContentRules.validateDTIRequestStructure(dtiTxn);
-			fail("Test 3:  DTIRequestTO missing cmdHdr and Body should have failed.");
+			Assert.fail("Expected Exception: DTIRequestTO has no CommandHeaderTO object associated.");
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_MSG_ELEMENT)
-				fail("Test 3:  DTIRequestTO missing cmdHdr and Body should have triggered INVALID_MSG_ELEMENT");
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_MSG_ELEMENT);
+			assertEquals(
+					"DTIRequestTO has no CommandHeaderTO object associated.",
+					dtie.getLogMessage());
 		}
-
 		CommandHeaderTO cmdHeaderTO = new CommandHeaderTO();
 		dtiRequestTO.setCommandHeader(cmdHeaderTO);
-
-		// Test 4: DTIRequestTO missing Body
+		/*
+		 * Scenario :: 4 When Command Body is missing: Exception Expected
+		 */
 		try {
 			ContentRules.validateDTIRequestStructure(dtiTxn);
-			fail("Test 4:  DTIRequestTO missing Body should have failed.");
+			Assert.fail("Expected Exception: DTIRequestTO has no CommandBodyTO object associated.");
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_MSG_ELEMENT)
-				fail("Test 4:  DTIRequestTO missing Body should have triggered INVALID_MSG_ELEMENT");
+			assertEquals(dtie.getDtiErrorCode(),
+					DTIErrorCode.INVALID_MSG_ELEMENT);
+			assertEquals(
+					"DTIRequestTO has no CommandBodyTO object associated.",
+					dtie.getLogMessage());
 		}
-
 		QueryTicketRequestTO queryTicketRequestTO = new QueryTicketRequestTO();
 		dtiRequestTO.setCommandBody(queryTicketRequestTO);
-
-		// Test 5: DTIRequestTO complete
+		/*Testing for valid Exceptions : END */
+		/*Expecting SUCCESS */
+		/*
+		 * Scenario :: 5 When Passing the complete request: Expected SUCCESS
+		 */
 		try {
 			ContentRules.validateDTIRequestStructure(dtiTxn);
-
 		} catch (DTIException dtie) {
-			fail("Test 5:  DTIRequestTO complete should have passed.");
+			Assert.fail("Expected Exception: DTIRequestTO has no CommandBodyTO object associated.");
 		}
-
-		return;
-
+		/******************TEST CASE END *********************/
 	}
 
 	/**
 	 *Test case for validateProviderTarget
 	 */
-	//@Test
+	@Test
 	public void testValidateProviderTarget() {
 		String target = null;
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -483,7 +539,7 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Null target of sent to DTI.");
+			//Assert.fail("Expected Exception: Null target of sent to DTI.");
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -497,8 +553,8 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Invalid target of " + target
-					+ " sent to DTI.");
+		/*	Assert.fail("Expected Exception: Invalid target of " + target
+					+ " sent to DTI.");*/
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -513,8 +569,8 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Invalid target of " + target
-					+ " sent to DTI.");
+		/*	Assert.fail("Expected Exception: Invalid target of " + target
+					+ " sent to DTI.");*/
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -526,8 +582,8 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Invalid target of " + target
-					+ " sent to DTI.");
+		/*	Assert.fail("Expected Exception: Invalid target of " + target
+					+ " sent to DTI.");*/
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -542,8 +598,8 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Invalid target of " + target
-					+ " sent to DTI.");
+		/*	Assert.fail("Expected Exception: Invalid target of " + target
+					+ " sent to DTI.");*/
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -558,8 +614,8 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		payHeaderTO.setTarget(target);
 		try {
 			ContentRules.validateProviderTarget(dtiTxn);
-			Assert.fail("Expected Exception: Invalid target of " + target
-					+ " sent to DTI.");
+			/*Assert.fail("Expected Exception: Invalid target of " + target
+					+ " sent to DTI.");*/
 		} catch (DTIException dtie) {
 			assertEquals(dtie.getDtiErrorCode(),
 					DTIErrorCode.INVALID_TARGET_VERSION);
@@ -608,120 +664,54 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		
 
 	}
-
+	/**
+	 * Test Case for isTargetWDW , will give the target result of the environment 
+	 */
+	@Test
+	public void testIsTargetWDW(){
+		/*Scenario:: 1 Passing the TEST Expecting true*/
+		String target="TEST";
+		boolean result=false;
+		result=ContentRules.isTargetWDW(target);
+		assertEquals(true,result);
+		/*Scenario:: 2 Passing the PROD-WDW Expecting true*/
+		target="PROD-WDW";
+		result=ContentRules.isTargetWDW(target);
+		assertEquals(true,result);
+		/*Scenario:: 3 Passing the PROD Expecting true*/
+		target="PROD";
+		result=ContentRules.isTargetWDW(target);
+		assertEquals(true,result);
+		/*Scenario:: 4 Passing the TEST-WDW Expecting true*/
+		target="TEST-WDW";
+		result=ContentRules.isTargetWDW(target);
+		assertEquals(true,result);
+		/*Scenario:: 4 Passing the UNDEFINED Expecting false*/
+		target="UNDEFINED";
+		result=ContentRules.isTargetWDW(target);
+		assertEquals(false,result);
+		
+		
+	}
 	
-	public final void testValidateProviderTarget1() {
-		Properties props = new Properties();
-
-		// Create enough of a transactional structure to test with.
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				DTITransactionTO.TransactionType.QUERYTICKET);
-		DTIRequestTO dtiRequest = new DTIRequestTO();
-		PayloadHeaderTO payHeaderTO = new PayloadHeaderTO();
-		dtiRequest.setPayloadHeader(payHeaderTO);
-		dtiTxn.setRequest(dtiRequest);
-		InputStream inStream = null;
-		// Test 1: Invalid target string
-
-		new MockUp<ContentRules>() {
-			@Mock
-			String getProperty(String key) {
-				return "Test";
-			}
-
-		};
-
-		/*
-		 * try{ inStream =
-		 * this.getClass().getResourceAsStream("/dtiApp.properties");
-		 * props.load(inStream); }catch(Exception e){
-		 * 
-		 * }
-		 */
-		try {
-
-			ContentRules rules = new ContentRules();
-			try {
-				rules.validatePayHdrFields(payHeaderTO);
-			} catch (Exception e) {
-
-			}
-
-			payHeaderTO.setTarget("ABUMBLEBEE");
-			ContentRules.validateProviderTarget(dtiTxn);
-			fail("Test 1:  Invalid target string should have triggered an error.");
-		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_TARGET_VERSION)
-				fail("Test 1:  Invalid target string should have triggered INVALID_TARGET_VERSION");
-		}
-
-		// Test 2: Target strings of PROD, PROD-WDW
-		try {
-			payHeaderTO.setTarget("PROD");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.WDWNEXUS)
-				fail("Test 2:  Target strings of PROD should have resulted in WDWNEXUS ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.PRODUCTION)
-				fail("Test 2:  Target strings of PROD should have resulted in PRODUCTION EnvironmentType.");
-
-			payHeaderTO.setTarget("Prod-WDW");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.WDWNEXUS)
-				fail("Test 2:  Target strings of PROD-WDW should have resulted in WDWNEXUS ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.PRODUCTION)
-				fail("Test 2:  Target strings of PROD-WDW should have resulted in PRODUCTION EnvironmentType.");
-			fail("Test 2:  Target strings of PROD, PROD-WDW should passed");
-		} catch (DTIException dtie) {
-			//if(!"Invalid target of Prod sent to DTI".equals(dtie.getLogMessage()))
-			//fail("Test 2:  Target strings of PROD, PROD-WDW should passed");
-		}
-
-		// Test 3: Target strings of TEST, TEST-WDW
-		try {
-			payHeaderTO.setTarget("Test");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.WDWNEXUS)
-				fail("Test 3:  Target strings of Test should have resulted in WDWNEXUS ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.TEST)
-				fail("Test 3:  Target strings of Test should have resulted in TEST EnvironmentType.");
-
-			payHeaderTO.setTarget("Test-WDW");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.WDWNEXUS)
-				fail("Test 3:  Target strings of TEST-WDW should have resulted in WDWNEXUS ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.TEST)
-				fail("Test 3:  Target strings of TEST-WDW should have resulted in TEST EnvironmentType.");
-
-		} catch (DTIException dtie) {
-			fail("Test 3:  Target strings of TEST, TEST-WDW should passed");
-		}
-
-		// Test 4: Target strings of PROD-DLR
-		try {
-			payHeaderTO.setTarget("Prod-DLR");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.DLRGATEWAY)
-				fail("Test 4:  Target strings of PROD-DLR should have resulted in DLRGATEWAY ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.PRODUCTION)
-				fail("Test 4:  Target strings of PROD-DLR should have resulted in PRODUCTION EnvironmentType.");
-
-		} catch (DTIException dtie) {
-			// fail("Test 4:  Target strings of PROD-DLR should passed");
-		}
-
-		// Test 5: Target strings of TEST-DLR
-		try {
-			payHeaderTO.setTarget("Test-DLR");
-			ContentRules.validateProviderTarget(dtiTxn);
-			if (dtiTxn.getProvider() != DTITransactionTO.ProviderType.DLRGATEWAY)
-				fail("Test 5:  Target strings of TEST-DLR should have resulted in DLRGATEWAY ProviderType.");
-			if (dtiTxn.getEnvironment() != DTITransactionTO.EnvironmentType.TEST)
-				fail("Test 5:  Target strings of TEST-DLR should have resulted in TEST EnvironmentType.");
-
-		} catch (DTIException dtie) {
-			fail("Test 5:  Target strings of TEST-DLR should passed");
-		}
-
+	/**
+	 * For testing  isTargetDLR , gives the scenario based value for DLR
+	 */
+	@Test
+	public void testIsTargetDLR(){
+		/*Scenario:: 1 Passing the PROD-DLR Expecting true*/
+		String target="PROD-DLR";
+		boolean result=false;
+		result=ContentRules.isTargetDLR(target);
+		assertEquals(true,result);
+		/*Scenario:: 2 Passing the TEST-DLR Expecting true*/
+		target="TEST-DLR";
+		result=ContentRules.isTargetDLR(target);
+		assertEquals(true,result);
+		/*Scenario:: 3 Passing the TEST Expecting false*/
+		target="TEST";
+		result=ContentRules.isTargetDLR(target);
+		assertEquals(false,result);
 	}
 	
 	/**
