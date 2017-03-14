@@ -12,8 +12,159 @@
 	<artifactId>gatewaysvc</artifactId>
 	<name>gatewaysvc</name>
 	<url>http://maven.apache.org</url>
+	
+	<developers>
+	   <developer>
+            <id>lewit019</id>
+            <name>Todd Lewis</name>
+            <url>https://rostr.disney.com/people/cca54d23dfd46f45534f6de13e07f4d4?locale=en</url>
+            <email>Todd.Lewis@disney.com</email>
+            <organization>WDPR E-Ticket Studio</organization>
+            <organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+            <roles>
+                <role>engineering lead</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>moons012</id>
+            <name>Shannon (Shan) Moon</name>
+            <url>https://rostr.disney.com/people/2b79a5946358f586b2117c401b2e80ba</url>
+            <email>shan.m.moon@disney.com</email>
+            <organization>WDPR E-Ticket Studio</organization>
+            <organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+            <roles>
+                <role>engineering lead</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>biest001</id>
+            <name>Tamra (Tam) Biese</name>
+            <url>https://rostr.disney.com/people/1f0f4ecd9f8c69d88bff5ec9caa1c605</url>
+            <email>TAMRA.F.BIESE@DISNEY.COM</email>
+            <organization>WDPR E-Ticket Studio</organization>
+            <organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+            <roles>
+                <role>engineering lead</role>
+            </roles>
+        </developer>
+    </developers>
 
+    <reporting>
+        <excludeDefaults>false</excludeDefaults>
+        <outputDirectory>${project.build.directory}/site</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+                    <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+
+            <!--  
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.19.1</version>
+                <!-- 
+                <configuration>
+                    <includes>
+                        <include>pvt/disney/race/**/*.java
+                        </include>
+                    </includes>
+                </configuration>
+                 -->
+            </plugin>
+
+           <plugin>
+                 <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <!--  
+                <reportSets>
+                <reportSet>
+                    <reports>
+                  
+                    <report>report</report>
+                    </reports>
+                </reportSet>
+                </reportSets>
+              -->
+              
+            </plugin>
+
+	       <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>emma-maven-plugin</artifactId>
+                <version>1.0-alpha-3</version>
+	       </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.4.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.6</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </reporting>
+
+<scm>
+        <url>git@github.disney.com:WDPR-DTI/DTIGateway.git</url>
+    </scm>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://wdpr-cicd-magneto-master.cloud.corp.dig.com/job/DTIGateway/</url>
+    </ciManagement>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.7</java.version>
+        <jacoco.version>0.7.8</jacoco.version>
+    </properties>
 	<build>
+	<pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+	
 		<plugins>
 			<!-- REQUIRED FOR JAVA 5 -->
 			<plugin>
@@ -25,7 +176,7 @@
 			</plugin>
 
 			<!-- Adding test exclusions for Surefire reporting.. TODO : This is a hack until SHAN can setup filters -->
-	<plugin>
+	   <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -34,7 +185,46 @@
 					</includes>
 				</configuration>
 			</plugin>
-	</plugins>
+			
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                 <formats>
+                    <format>html</format>
+                     <format>xml</format>
+                </formats>
+            </configuration>
+            </plugin>
+			
+			 <!-- reporting plugin for jacoco is not setting up executing properly
+                 until that is fixed we have to configured goals for the plugin
+                 in build.
+             -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <!--  
+                        <configuration>
+                            <propertyName>jacoco.argLine</propertyName>
+                        </configuration>
+                        -->
+                    </execution>
+                 </executions>
+            </plugin>
+
+        </plugins>
+	
 	</build>
 
 	<dependencies>
