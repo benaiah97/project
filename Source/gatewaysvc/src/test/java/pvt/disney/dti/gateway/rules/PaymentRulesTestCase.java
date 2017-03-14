@@ -181,30 +181,27 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 	 */
 	@Test
 	public final void testValidatePaymentComposition() {
-
 		String tpiCode = DTITransactionTO.TPI_CODE_WDW;
 		ArrayList<PaymentTO> payListTO = null;
-
 		CreditCardTO creditCard = new CreditCardTO();
 		creditCard.setCcManualOrSwipe(CreditCardType.CCMANUAL);
 		creditCard.setCcNbr("123456789256");
 		creditCard.setPreApprovedCC(true);
 		creditCard.setCcAuthCode("ccAuthCode");
 		creditCard.setCcSubCode("ccSubCode");
-		
-		
+
 		CreditCardTO creditCard01 = new CreditCardTO();
 		creditCard01.setCcManualOrSwipe(CreditCardType.CCMANUAL);
 		creditCard01.setCcNbr("123456789256");
 		creditCard01.setPreApprovedCC(true);
-		/*Removing authCode for cover the exception*/
-		//creditCard01.setCcAuthCode("ccAuthCode");
+		/* Removing authCode for cover the exception */
+		// creditCard01.setCcAuthCode("ccAuthCode");
 		creditCard01.setCcSubCode("ccSubCode");
 
 		CreditCardTO creditCard02 = new CreditCardTO();
 		creditCard02.setCcManualOrSwipe(CreditCardType.CCMANUAL);
 		creditCard02.setCcNbr("123456789256");
-		
+
 		PaymentTO aCreditCard = new PaymentTO();
 		aCreditCard.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aCreditCard.setPayAmount(new BigDecimal("50.00"));
@@ -218,33 +215,30 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 		PaymentTO aVoucher = new PaymentTO();
 		aVoucher.setPayType(PaymentTO.PaymentType.VOUCHER);
 		aVoucher.setPayAmount(new BigDecimal("50.00"));
-		
+
 		PaymentTO aCreditCard01 = new PaymentTO();
 		aCreditCard01.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aCreditCard01.setPayItem(new BigInteger("1"));
 		aCreditCard01.setCreditCard(creditCard);
-		
+
 		PaymentTO aCreditCard02 = new PaymentTO();
 		aCreditCard02.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aCreditCard02.setPayItem(new BigInteger("1"));
 		aCreditCard02.setPayAmount(new BigDecimal("50.00"));
 		aCreditCard02.setCreditCard(creditCard01);
-		
+
 		PaymentTO aCreditCard03 = new PaymentTO();
 		aCreditCard03.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aCreditCard03.setPayItem(new BigInteger("1"));
 		aCreditCard03.setPayAmount(new BigDecimal("50.00"));
 		aCreditCard03.setCreditCard(creditCard02);
-
-		/*Scenario :: 1: No paylist.*/
+		/* Scenario :: 1: No paylist. */
 		try {
 			PaymentRules.validatePaymentComposition(payListTO, tpiCode);
 		} catch (DTIException dtie) {
-			Assert.fail("Unexpected exception: No paylist. "
-					+ dtie.toString());
+			Assert.fail("Unexpected exception: No paylist. " + dtie.toString());
 		}
-
-		/*Scenario :: 2: WDW one credit card*/
+		/* Scenario :: 2: WDW one credit card */
 		payListTO = new ArrayList<PaymentTO>();
 		payListTO.add(aCreditCard);
 		try {
@@ -255,8 +249,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"The pre-approved credit card is missing its SHA-1 credit card hash code.",
 					dtie.getLogMessage());// ///
 		}
-
-		/*Scenario :: 3: WDW two credit cards*/
+		/* Scenario :: 3: WDW two credit cards */
 		payListTO.add(aCreditCard);
 		try {
 			PaymentRules.validatePaymentComposition(payListTO, tpiCode);
@@ -266,8 +259,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"The pre-approved credit card is missing its SHA-1 credit card hash code.",
 					dtie.getLogMessage());
 		}
-
-		/*Scenario :: 4: WDW one gift card, one credit card*/
+		/* Scenario :: 4: WDW one gift card, one credit card */
 		payListTO.clear();
 		payListTO.add(aGiftCard);
 		payListTO.add(aCreditCard);
@@ -280,8 +272,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"The pre-approved credit card is missing its SHA-1 credit card hash code.",
 					dtie.getLogMessage());
 		}
-
-		/*Scenario :: 5: WDW one gift card, two credit cards*/
+		/* Scenario :: 5: WDW one gift card, two credit cards */
 		payListTO.add(aCreditCard);
 		try {
 			PaymentRules.validatePaymentComposition(payListTO, tpiCode);
@@ -293,8 +284,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 						"The pre-approved credit card is missing its SHA-1 credit card hash code.",
 						dtie.getLogMessage());
 		}
-
-		/*Scenario :: 6: WDW two credit cards & voucher*/
+		/* Scenario :: 6: WDW two credit cards & voucher */
 		payListTO.clear();
 		payListTO.add(aCreditCard);
 		payListTO.add(aCreditCard);
@@ -306,11 +296,8 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"Expected Result",
 					"The pre-approved credit card is missing its SHA-1 credit card hash code.",
 					dtie.getLogMessage());
-			// fail("Unexpected exception on Test 6: WDW two credit cards & voucher. "
-			// + dtie.toString());
 		}
-
-		/*Scenario :: 7: WDW four credit cards*/
+		/* Scenario :: 7: WDW four credit cards */
 		payListTO.clear();
 		payListTO.add(aCreditCard);
 		payListTO.add(aCreditCard);
@@ -318,7 +305,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 		payListTO.add(aCreditCard);
 		try {
 			PaymentRules.validatePaymentComposition(payListTO, tpiCode);
-			fail("Expected exception on Test 7: WDW four credit cards.");
+			Assert.fail("Expected exception on Test 7: WDW four credit cards.");
 		} catch (DTIException dtie) {
 			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_PAYMENT_TYPE)
 
@@ -329,7 +316,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 			// fail("Expected error PAYMENT_TYPE_INVALID on Test 7: WDW four credit cards.");
 		}
 
-		/*Scenario :: 8: DLR five credit cards*/
+		/* Scenario :: 8: DLR five credit cards */
 		tpiCode = DTITransactionTO.TPI_CODE_DLR;
 		payListTO.add(aCreditCard);
 		try {
@@ -341,11 +328,11 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					dtie.getLogMessage());
 		}
 
-		/*Scenario :: 9: DLR six credit cards*/
+		/* Scenario :: 9: DLR six credit cards */
 		payListTO.add(aCreditCard);
 		try {
 			PaymentRules.validatePaymentComposition(payListTO, tpiCode);
-			fail("Expected exception on Test 9: DLR six credit cards.");
+			Assert.fail("Expected exception on Test 9: DLR six credit cards.");
 		} catch (DTIException dtie) {
 			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_PAYMENT_TYPE)
 				Assert.assertEquals(
@@ -354,7 +341,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 						dtie.getLogMessage());
 			// fail("Expected error PAYMENT_TYPE_INVALID on Test 9: DLR six credit cards.");
 		}
-		/*Scenario :: 10: Passing Voucher*/
+		/* Scenario :: 10: Passing Voucher */
 		payListTO.clear();
 		payListTO.add(aVoucher);
 		try {
@@ -366,9 +353,9 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 			assertEquals(
 					"DLR reservation attempted with the voucher payment type.  Not permitted.",
 					dtie.getLogMessage());
-			
+
 		}
-		/*Scenario :: 11: DLR five credit cards*/
+		/* Scenario :: 11: DLR five credit cards */
 		tpiCode = DTITransactionTO.TPI_CODE_HKD;
 		payListTO.clear();
 		payListTO.add(aVoucher);
@@ -382,7 +369,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 							+ aCreditCard01.getPayItem().intValue() + ").",
 					dtie.getLogMessage());
 		}
-		/*Scenario :: 12: DLR five credit cards*/
+		/* Scenario :: 12: DLR five credit cards */
 		payListTO.clear();
 		payListTO.add(aCreditCard02);
 		try {
@@ -394,7 +381,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"The pre-approved credit card is missing its authorization code.",
 					dtie.getLogMessage());
 		}
-		/*Scenario :: 13: When Passing 3 Gift Card*/
+		/* Scenario :: 13: When Passing 3 Gift Card */
 		payListTO.clear();
 		payListTO.add(aCreditCard03);
 		payListTO.add(aCreditCard03);
@@ -408,9 +395,6 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 					"Number of credit and gift card payments provided 3 exceeded HKD01 maximum of 2",
 					dtie.getLogMessage());
 		}
-
-
-		
 	}
 
 	/**
@@ -975,11 +959,11 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 		/* Creating object for GiftCardTO */
 		GiftCardTO aGiftCard = new GiftCardTO();
 		aGiftCard.setGcNbr("12345678925");
-		/*Object for InstallmentTO*/
+		/* Object for InstallmentTO */
 		InstallmentTO installment = new InstallmentTO();
 		ArrayList<PaymentTO> payListTO = null;
 		ArrayList<DBProductTO> prodList = null;
-		/*Payment Detail*/
+		/* Payment Detail */
 		PaymentTO aPayment01 = new PaymentTO();
 		aPayment01.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aPayment01.setPayAmount(new BigDecimal("25.01"));
@@ -992,10 +976,10 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 		aPayment03.setPayType(PaymentTO.PaymentType.CREDITCARD);
 		aPayment03.setPayAmount(new BigDecimal("1"));
 		aPayment03.setCreditCard(creditCard);
-		/*Creating DTITransactionTO object of type RENEWENTITLEMENT*/
+		/* Creating DTITransactionTO object of type RENEWENTITLEMENT */
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.RENEWENTITLEMENT);
-		/*Creating common Request applicable to all */
+		/* Creating common Request applicable to all */
 		createCommonRequest(dtiTxn, true, true, TEST_TARGET, TPI_CODE_WDW,
 				false);
 		ArrayList<TPLookupTO> tpLookups = new ArrayList<TPLookupTO>();
@@ -1047,7 +1031,7 @@ public class PaymentRulesTestCase extends CommonBusinessTest {
 		renewEntReqTO.setPaymentList(payListTO);
 		dtiTxn.getRequest().setCommandBody(renewEntReqTO);
 		tpLookupTO.setLookupValue("1");
-		tpLookups.add(tpLookupTO);	
+		tpLookups.add(tpLookupTO);
 		prodList = DTIMockUtil.fetchDBOrderList();
 		dtiTxn.setDbProdList(prodList);
 		try {

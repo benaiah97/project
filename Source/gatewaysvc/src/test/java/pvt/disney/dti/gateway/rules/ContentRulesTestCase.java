@@ -33,7 +33,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		Properties props=setConfigProperty();
 		setMockProperty();
 		mockProperty();
-
 	}
 	/**
 	 * Test validate pay hdr fields.
@@ -52,7 +51,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 					DTIErrorCode.INVALID_PAYLOAD_HDR);
 			assertEquals(dti.getLogMessage(), "PayloadId was null.");
 		}
-
 		/*Scenario::2 when Payload Id is of invalid length: Expected Exception*/
 		payHeaderTO.setPayloadID("");
 		try {
@@ -312,7 +310,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 	 */
 	@Test
 	public final void testValidateCmdHdrFields() {
-
 		CommandHeaderTO cmdHeaderTO = new CommandHeaderTO();
 		/*Testing for valid Exceptions : START */
 		/* Scenario :: 1 CmdItem is missing: Expected Exception */
@@ -437,7 +434,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 			Assert.fail("Unexpected exception :"+dtie.getLocalizedMessage());
 		}
 		/******************TEST CASE END *********************/
-
 	}
 
 	/**
@@ -633,7 +629,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 			assertEquals(dtiTxn.getTpiCode(),TPI_CODE_WDW);
 			assertEquals(dtiTxn.getProvider(),ProviderType.WDWNEXUS);
 			assertEquals(dtiTxn.getEnvironment(),EnvironmentType.TEST);
-			
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
@@ -645,7 +640,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 			assertEquals(dtiTxn.getTpiCode(),TPI_CODE_DLR);
 			assertEquals(dtiTxn.getProvider(),ProviderType.DLRGATEWAY);
 			assertEquals(dtiTxn.getEnvironment(),EnvironmentType.TEST);
-			
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
@@ -661,8 +655,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
-		
-
 	}
 	/**
 	 * Test Case for isTargetWDW , will give the target result of the environment 
@@ -690,8 +682,6 @@ public class ContentRulesTestCase extends CommonBusinessTest {
 		target="UNDEFINED";
 		result=ContentRules.isTargetWDW(target);
 		assertEquals(false,result);
-		
-		
 	}
 	
 	/**
