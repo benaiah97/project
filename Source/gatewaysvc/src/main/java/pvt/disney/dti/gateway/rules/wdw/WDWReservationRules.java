@@ -63,7 +63,6 @@ import pvt.disney.dti.gateway.rules.ElectronicEntitlementRules;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
-import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.rules.race.utility.WDWAlgorithmUtility;
 import pvt.disney.dti.gateway.service.dtixml.ReservationXML;
 import pvt.disney.dti.gateway.util.DTIFormatter;
@@ -1066,19 +1065,27 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 	  boolean isRework = dtiTxn.isRework();
 	  AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
 	
-	  if (isRework) {
-		// Get the reservation code array (there should only be one)
+	  if ((isRework) && (resOverrideAttr == null)) {
+		  // Get the reservation code array (there should only be one)
 		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-	      resCode = rescodeTO.getRescode(); 
-	  } else if ( (!isRework) && resOverrideAttr == null) { //not rework, and no race override	  
+		  
+      // Contingency assignment (should be infrequent that res isn't found in DB for rework)
+      if (rescodeTO == null) {
+         resCode = WDWAlgorithmUtility.generateResCode();
+         TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+      } else {
+         resCode = rescodeTO.getRescode();
+      }
+
+	  } else if ( (!isRework) && (resOverrideAttr == null)) { //not rework, and no race override	  
 	      //generate the rescode using wdw race algorithm utility
 	      resCode = WDWAlgorithmUtility.generateResCode(); 
 	      // and insert it into the database payload/rescode ref table	      
 	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
 	  } else {
-		  // and insert it into the database payload/rescode ref table	      
+		    // and insert it into the database payload/rescode ref table	      
 	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-		  logger.sendEvent(
+		    logger.sendEvent(
 		            "WDW RACE_RES_OVERRIDE present for reservation code generation.",
 		            EventType.INFO, THISOBJECT);
 	  }

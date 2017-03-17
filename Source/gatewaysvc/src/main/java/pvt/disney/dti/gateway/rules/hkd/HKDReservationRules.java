@@ -223,13 +223,25 @@ public class HKDReservationRules {
     HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
 	
     boolean isRework = dtiTxn.isRework();
-    //no check for RACE override for hkdl needed at this time
+    //no check for RACE override for HKDL needed at this time
     
     // if this is a re-work, a reservation code should exist
     if (isRework) {
       // Get the reservation code array (there should only be one)
     	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-    	resCode = rescodeTO.getRescode();
+    	
+    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
+    	if (rescodeTO == null) {
+        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+        String sellerResPrefix = resPrefixAttr.getAttrValue();
+        // generate the rescode and insert it into the database payload/rescode
+        // ref table
+        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+    	} else {
+    	  resCode = rescodeTO.getRescode();
+    	}
+    	
     } else { // it is not a rework so generate rescode from RACE utility
     	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
     	String sellerResPrefix = resPrefixAttr.getAttrValue();

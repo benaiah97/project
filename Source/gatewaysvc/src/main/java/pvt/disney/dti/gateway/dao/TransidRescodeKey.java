@@ -74,15 +74,14 @@ public class TransidRescodeKey {
       result = (TransidRescodeTO) helper.processQuery(values);
 
       //if (result.isEmpty()) { 
-      if (result == null || result.getRescode() ==null || result.getRescode().length() == 0) {
-        logger.sendEvent("getTransidRescodeFromDB did not find results for '" + transid + "'", EventType.WARN,
+      if ((result == null) || (result.getRescode() ==null) || (result.getRescode().length() == 0)) {
+         logger.sendEvent("getTransidRescodeFromDB did not find results for '" + transid + "'", EventType.WARN,
             THISINSTANCE);
-        throw new DTIException(TransidRescodeKey.class, DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,
-            "Exception executing getTransidRescodeFromDB");
+         result = null; // Makes SURE the response when not found is NULL.
+      } else {
+         // Debug
+         logger.sendEvent("getTransidRescodeFromDB found rescode.", EventType.DEBUG, THISINSTANCE, result, null);
       }
-
-      // Debug
-      logger.sendEvent("getTransidRescodeFromDB found rescode.", EventType.DEBUG, THISINSTANCE, result, null);
 
     } catch (Exception e) {
       logger.sendEvent("Exception executing getTransidRescodeFromDB: " + e.toString(), EventType.WARN, THISINSTANCE);
