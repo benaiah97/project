@@ -45,7 +45,7 @@ import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
-import pvt.disney.dti.gateway.rules.CalmRules;
+import pvt.disney.dti.gateway.rules.CalmRulesTestCase;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
 
 import com.disney.exception.WrappedException;
@@ -188,9 +188,12 @@ public class DTIMockUtil {
 		} else if (i == 1) {
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE")).andReturn("User")
 					.anyTimes();
-		} else {
+		} else if(i==2){
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
-					.andReturn("SellerResPrefix").anyTimes();
+					.andReturn("Pass").anyTimes();
+		}else{
+			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
+			.andReturn("SellerResPrefix").anyTimes();
 		}
 		EasyMock.expect(rs.getString("ACTIVE_IND")).andReturn("T").anyTimes();
 		EasyMock.expect(rs.getString("CMD_CODE")).andReturn("QueryReservation")
@@ -210,30 +213,6 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking DAOHelper processUpdate
-	 */
-	public static void processMockUpdate() {
-		new MockUp<DAOHelper>() {
-			@Mock
-			public int processUpdate(Object[] inputValues) {
-				return 1;
-			}
-		};
-	}
-
-	/**
-	 * For Mocking DAOHelper processDelete
-	 */
-	public static void processMockDelete() {
-		new MockUp<DAOHelper>() {
-			@Mock
-			public int processDelete(Object[] inputValues) {
-				return 1;
-			}
-		};
-	}
-
-	/**
 	 * For Mocking DAOHelper prepareAndExecuteSql
 	 */
 	public static void processMockprepareAndExecuteSql() {
@@ -241,6 +220,26 @@ public class DTIMockUtil {
 			@Mock
 			protected int prepareAndExecuteSql(Object[] inputValues,
 					String sql, boolean query, ResultSetProcessor theProcessor) {
+				Object obj = new Object();
+				try {
+					if (theProcessor != null) {
+						theProcessor.processNextResultSet(rs);
+						// obj = (Object)theProcessor.getProcessedObject();
+						if (theProcessor instanceof TransidRescodeResult) {
+							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
+							TransidRescodeTO transCode = new TransidRescodeTO();
+							transCode
+									.setCreationDate((GregorianCalendar) GregorianCalendar
+											.getInstance());
+							transCode.setRescode("1");
+							transCode.setTsTransid("1");
+							list.add(transCode);
+							obj = list;
+						}
+					}
+				} catch (Exception e) {
+				}
+
 				return 1;
 			}
 		};
@@ -253,19 +252,22 @@ public class DTIMockUtil {
 		try {
 			Object obj = null;
 			obj = Loader.loadClass(resultSetProcessor).newInstance();
-			if (obj instanceof ResultSetProcessor) {
-				theProcessor = (ResultSetProcessor) obj;
-			} else {
-				fail("given String does not belong to ResultSetProcessor");
+			if(resultSetProcessor!=null){
+				if (obj instanceof ResultSetProcessor) {
+					theProcessor = (ResultSetProcessor) obj;
+				} else {
+					fail("given String does not belong to ResultSetProcessor");
+				}
+				init();	
 			}
-			init();
+			
 			new MockUp<DAOHelper>() {
 				@Mock
 				protected Object processQuery(Object[] values) throws Exception {
-					Object obj = null;
+					Object obj = new Object();
 					try {
 						theProcessor.processNextResultSet(rs);
-						obj = theProcessor.getProcessedObject();
+						obj = (Object)theProcessor.getProcessedObject();
 						if (theProcessor instanceof TransidRescodeResult) {
 							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
 							TransidRescodeTO transCode = new TransidRescodeTO();
@@ -282,10 +284,12 @@ public class DTIMockUtil {
 					return obj;
 				}
 			};
+			
 		} catch (Exception e) {
 			fail("Not able to create object for given String "
 					+ resultSetProcessor);
 		}
+		
 	}
 
 	/**
@@ -409,6 +413,7 @@ public class DTIMockUtil {
 	}
 	
 	/**
+	 * Method for getting the DBProduct List
 	 * @return
 	 */
 	public static ArrayList<DBProductTO> fetchDBOrderList() {
@@ -424,6 +429,29 @@ public class DTIMockUtil {
 			e.printStackTrace();
 		}
 		return dbProduct;
+		}
+	
+	/**
+	 * Method for getting the DBProduct List
+	 * @return
+	 */
+	public static HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> fetchAttributeTOMapList() {
+
+		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
+	
+		try {
+			init();
+			theProcessor = new AttributeResult();
+			theProcessor.processNextResultSet(attributeRs);
+			theProcessor.processNextResultSet(attributeRs1);
+			theProcessor.processNextResultSet(attributeRs2);
+			attributeMap = (HashMap<AttributeTO.CmdAttrCodeType, AttributeTO>) theProcessor
+					.getProcessedObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return attributeMap;
+	
 		}
 	
 	
@@ -817,16 +845,6 @@ public class DTIMockUtil {
 
 
 	
-	/**
-	 * For Mocking the calm Rules 
-	 */
-	public static void mockCalmRules(){
-		new MockUp<CalmRules>(){
-			@Mock
-			public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn){
-				
-			}
-		};
-	}
+	
 
 }
