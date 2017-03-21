@@ -6,10 +6,12 @@ import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import mockit.Mock;
 import mockit.MockUp;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,8 +37,11 @@ import pvt.disney.dti.gateway.data.UpgradeAlphaRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.VoidReservationRequestTO;
 import pvt.disney.dti.gateway.data.VoidTicketRequestTO;
+import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
+import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
@@ -50,6 +55,8 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	private static boolean MOCK_INIT = false;
 	private static boolean MOCK_COMMON_RULE = false;
 
+	// CalmRules calmRules=null;
+
 	/**
 	 * Initializing the properties and initializing Business Rule.
 	 * 
@@ -57,13 +64,14 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+
 		BusinessRules.initBusinessRules(setConfigProperty());
 		setMockProperty();
 		/* mocking the paymentLookup */
 		DTIMockUtil.mockPaymentLookUp();
 		DTIMockUtil.mockEntAttribute();
-		DTIMockUtil.mockCalmRules();
-	}
+		mockCalmRules();
+		}
 
 	/**
 	 * Unit Test For applyBusinessRules. * * This will cover the method for
@@ -77,6 +85,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		DTITransactionTO dtiTxn = null;
 		/* Test case for applyCommonRules :: START(private method) */
 		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
+
 		MOCK_COMMON_RULE = true;
 		createCommonRequest(dtiTxn, false, false, TEST_TARGET, TPI_CODE_WDW,
 				false);
@@ -928,4 +937,16 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		DTIMockUtil.mockGetEntityProductGroupsthreeParam();
 	}
 
+	/**
+	 * For Mocking the calm Rules
+	 */
+	public void mockCalmRules() {
+		new MockUp<CalmRulesTestCase>() {
+			@Mock
+			public void checkContingencyActionsLogicModule(
+					DTITransactionTO dtiTxn) {
+
+			}
+		};
+	}
 }
