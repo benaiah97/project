@@ -1,6 +1,7 @@
 package pvt.disney.dti.gateway.test.util;
 
 import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,10 +14,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
 import mockit.Mock;
 import mockit.MockUp;
+
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
+
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.QueryBuilder;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
@@ -45,7 +49,6 @@ import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
-import pvt.disney.dti.gateway.rules.CalmRulesTestCase;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
 
 import com.disney.exception.WrappedException;

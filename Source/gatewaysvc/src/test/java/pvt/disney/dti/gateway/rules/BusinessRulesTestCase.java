@@ -6,12 +6,10 @@ import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import mockit.Mock;
 import mockit.MockUp;
 
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +35,8 @@ import pvt.disney.dti.gateway.data.UpgradeAlphaRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.VoidReservationRequestTO;
 import pvt.disney.dti.gateway.data.VoidTicketRequestTO;
-import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
-import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
