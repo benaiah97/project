@@ -1,22 +1,17 @@
 package pvt.disney.dti.gateway.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
-import java.sql.ResultSet;
 import java.util.HashMap;
 
-import mockit.Deencapsulation;
-
-import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
-import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
@@ -30,201 +25,232 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
  * 
  */
 public class TestAttributeKey {
-	
+
 	@Before
 	public void setUp() throws Exception {
 
 	}
-
-	@Test
-	public void testGetCommandCodeString() {
-		DTITransactionTO associatemediatoaccount = new DTITransactionTO(
-				TransactionType.ASSOCIATEMEDIATOACCOUNT);
-		String commandCode = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString",
-				new Object[] { associatemediatoaccount });
-		assertEquals("AssocMediaToAccount", commandCode);
-
-		DTITransactionTO createticket = new DTITransactionTO(
-				TransactionType.CREATETICKET);
-		String createticketString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { createticket });
-		assertEquals("CreateTicket", createticketString);
-
-		DTITransactionTO queryreservation = new DTITransactionTO(
-				TransactionType.QUERYRESERVATION);
-		String queryreservationString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { queryreservation });
-		assertEquals("QueryReservation", queryreservationString);
-
-		DTITransactionTO queryticket = new DTITransactionTO(
-				TransactionType.QUERYTICKET);
-		String queryticketString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { queryticket });
-		assertEquals("QueryTicket", queryticketString);
-
-		DTITransactionTO renewentitlement = new DTITransactionTO(
-				TransactionType.RENEWENTITLEMENT);
-		String renewentitlementString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { renewentitlement });
-		assertEquals("RenewEntitlement", renewentitlementString);
-
-		DTITransactionTO reservation = new DTITransactionTO(
-				TransactionType.RESERVATION);
-		String reservationString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { reservation });
-		assertEquals("Reservation", reservationString);
-
-		DTITransactionTO tickerateentitlement = new DTITransactionTO(
-				TransactionType.TICKERATEENTITLEMENT);
-		String tickerateentitlementString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { tickerateentitlement });
-		assertEquals("TickerateEntitlement", tickerateentitlementString);
-
-		DTITransactionTO updateticket = new DTITransactionTO(
-				TransactionType.UPDATETICKET);
-		String updateticketString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { updateticket });
-		assertEquals("UpdateTicket", updateticketString);
-
-		DTITransactionTO updatetransaction = new DTITransactionTO(
-				TransactionType.UPDATETRANSACTION);
-		String updatetransactionString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { updatetransaction });
-		assertEquals("UpdateTransaction", updatetransactionString);
-
-		DTITransactionTO upgradealpha = new DTITransactionTO(
-				TransactionType.UPGRADEALPHA);
-		String upgradealphaString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { upgradealpha });
-		assertEquals("UpgradeAlpha", upgradealphaString);
-
-		DTITransactionTO upgradeentitlement = new DTITransactionTO(
-				TransactionType.UPGRADEENTITLEMENT);
-		String upgradeentitlementString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { upgradeentitlement });
-		assertEquals("UpgradeEntitlement", upgradeentitlementString);
-
-		DTITransactionTO voidreservation = new DTITransactionTO(
-				TransactionType.VOIDRESERVATION);
-		String voidreservationString = Deencapsulation.invoke(
-				AttributeKey.class, "getCommandCodeString",
-				new Object[] { voidreservation });
-		assertEquals("VoidReservation", voidreservationString);
-
-		DTITransactionTO voidticket = new DTITransactionTO(
-				TransactionType.VOIDTICKET);
-		String voidticketString = Deencapsulation.invoke(AttributeKey.class,
-				"getCommandCodeString", new Object[] { voidticket });
-		assertEquals("VoidTicket", voidticketString);
-
-	}
-
+	/**
+	 * @throws DTIException
+	 */
 	@Test
 	public void testGetWDWTicketAttributes() throws DTIException {
-
-		// EasyMock.replay(rs);
+		/* Scenario:: 1 when null is passes as an argument */
 		try {
 			AttributeKey.getWDWTicketAttributes(null);
 		} catch (DTIException dtie) {
+			assertEquals(DTIErrorCode.TP_INTERFACE_FAILURE,
+					dtie.getDtiErrorCode());
 			assertEquals("No ticketNumber provided to getWDWTicketAttributes",
 					dtie.getLogMessage());
 		}
-
+		/*
+		 * Scenario:: 2 when 3 is passes as an argument and without mocking DAO
+		 * class
+		 */
 		try {
-
 			AttributeKey.getWDWTicketAttributes(new BigInteger("3"));
-
 		} catch (DTIException dtie) {
 			assertEquals("Exception executing getWDWTicketAttributes",
 					dtie.getLogMessage());
 		}
-		
-		DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TicketAttributeResult");
-
+		/* Scenario:: 3 when 3 is passes as an argument and mocking DAO class */
+		DTIMockUtil
+				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TicketAttributeResult");
 		DBTicketAttributes dbTicketAttributes = AttributeKey
 				.getWDWTicketAttributes(new BigInteger("3"));
 		if (dbTicketAttributes == null) {
-			fail("DBTicketAttributes can not be null");
+			Assert.fail("DBTicketAttributes can not be null");
 		}
-
 	}
 
-	@Test
-	public void testGetEntAttribtues() {
+	/**
+	 * @param type
+	 */
+	private void testGetEntAttribtues(TransactionType type) {
 		DTITransactionTO dtiTxn = null;
-
 		String tpiCode = "NEX01";
 		long entityId = 1;
 		String actor = "1";
+		/*Scenario 1:: when dtiTxn is passed as null*/
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_ENTITY) {
-				fail("Insufficient parameters to execute getEntAttribtues. with Error code INVALID_ENTITY");
-			}
+			assertEquals(DTIErrorCode.INVALID_ENTITY, dtie.getDtiErrorCode());
+			assertEquals("Insufficient parameters to execute getEntAttribtues.",dtie.getLogMessage());
+			
 		}
-		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
+		/*Scenario 2:: when dtiTxn is passed as not null and without mock Dao object*/
+		dtiTxn = new DTITransactionTO(type);
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.FAILED_DB_OPERATION_SVC) {
-				fail("Exception executing getEntAttributes expected");
-			}
+			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
+			assertEquals("Exception executing getEntAttributes",dtie.getLogMessage());
 
 		}
-
-		DTIMockUtil.mockEntAttribute();
+		/*Scenario 3:: when dtiTxn is passed as not null and mock Dao object*/
+		DTIMockUtil
+		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 		try {
 			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
 					entityId, actor);
 		} catch (DTIException dtie) {
-			fail("Exception executing getEntAttributes expected");
+			Assert.fail("Exception executing getEntAttributes expected");
 		}
 		if (attributeMap == null) {
-			fail("Attribute value is not retrieved");
+			Assert.fail("Attribute value is not retrieved");
 		}
-
-		// /for calling getEntAttribtues getEntAttribtues( DTITransactionTO
-		// dtiTxn, String tpiCode, long entityId)
-		testGetEntAttributes();
-
+		
 	}
 
-	private void testGetEntAttributes() {
+	/** Test Case for getEntAttribtues(
+	 * @param type
+	 */
+	private void testGetEntAttributeswithoutActor(TransactionType type) {
 		DTITransactionTO dtiTxn = null;
-
 		String tpiCode = "NEX01";
 		long entityId = 1;
-
+		/*Scenario 1:: when dtiTxn is passed as null*/
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId);
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.INVALID_ENTITY) {
-				fail("Insufficient parameters to execute getEntAttribtues. with Error code INVALID_ENTITY");
-			}
+			assertEquals(DTIErrorCode.INVALID_ENTITY, dtie.getDtiErrorCode());
+			assertEquals("Insufficient parameters to execute getEntAttribtues.",dtie.getLogMessage());
 		}
+		
+		
+		/*Scenario 2:: when dtiTxn is passed as not null and mock Dao object*/
+		DTIMockUtil
+		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
 		try {
 			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
 					entityId);
 		} catch (DTIException dtie) {
-			if (dtie.getDtiErrorCode() != DTIErrorCode.FAILED_DB_OPERATION_SVC) {
-				fail("Exception executing getEntAttributes expected");
-			}
-
+			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
+			assertEquals("Exception executing getEntAttributes",dtie.getLogMessage());
 		}
-
 		if (attributeMap == null) {
-			fail("Attribute value is not retrieved");
+			Assert.fail("Attribute value is not retrieved");
 		}
 	}
+	
+	/**
+	 * For testing for QUERYTICKET Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeQueryTicket() {
+		testGetEntAttribtues(TransactionType.QUERYTICKET);
+		testGetEntAttributeswithoutActor(TransactionType.QUERYTICKET);
+	}
+	/**
+	 * For testing for UPGRADEALPHA Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeUpgradeAlpha() {
+		testGetEntAttribtues(TransactionType.UPGRADEALPHA);
+		testGetEntAttributeswithoutActor(TransactionType.UPGRADEALPHA);
+	}
+	/**
+	 * For testing for VOIDTICKET Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeVoidTicket() {
+		testGetEntAttribtues(TransactionType.VOIDTICKET);
+		testGetEntAttributeswithoutActor(TransactionType.VOIDTICKET);
+	}
+	/**
+	 * For testing for RESERVATION Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeReservation() {
+		testGetEntAttribtues(TransactionType.RESERVATION);
+		testGetEntAttributeswithoutActor(TransactionType.RESERVATION);
+	}
+	/**
+	 * For testing for CREATETICKET Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeCreateTicket() {
+		testGetEntAttribtues(TransactionType.CREATETICKET);
+		testGetEntAttributeswithoutActor(TransactionType.CREATETICKET);
+	}
+	/**
+	 * For testing for UPDATETICKET Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeUpdateTicket() {
+		testGetEntAttribtues(TransactionType.UPDATETICKET);
+		testGetEntAttributeswithoutActor(TransactionType.UPDATETICKET);
+		
+	}
+	/**
+	 * For testing for UPDATETRANSACTION Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeUpdateTransaction() {
+		testGetEntAttribtues(TransactionType.UPDATETRANSACTION);
+		testGetEntAttributeswithoutActor(TransactionType.UPDATETRANSACTION);
+	}
+	/**
+	 * For testing for QUERYRESERVATION Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeQueryReservation() {
+		testGetEntAttribtues(TransactionType.QUERYRESERVATION);
+		testGetEntAttributeswithoutActor(TransactionType.QUERYRESERVATION);
+	}
+	/**
+	 * For testing for UPGRADEENTITLEMENT Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeUpdgradeEntitlement() {
+		testGetEntAttribtues(TransactionType.UPGRADEENTITLEMENT);
+		testGetEntAttributeswithoutActor(TransactionType.UPGRADEENTITLEMENT);
+	}
+	/**
+	 * For testing for ASSOCIATEMEDIATOACCOUNT Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeAssociateAccount() {
+		testGetEntAttribtues(TransactionType.ASSOCIATEMEDIATOACCOUNT);
+		testGetEntAttributeswithoutActor(TransactionType.ASSOCIATEMEDIATOACCOUNT);
+	}
+	/**
+	 * For testing for TICKERATEENTITLEMENT Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeTicketEntitlemet() {
+		testGetEntAttribtues(TransactionType.TICKERATEENTITLEMENT);
+		testGetEntAttributeswithoutActor(TransactionType.TICKERATEENTITLEMENT);
+	}
+	/**
+	 * For testing for RENEWENTITLEMENT Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeRenewEntitlement() {
+		testGetEntAttribtues(TransactionType.RENEWENTITLEMENT);
+		testGetEntAttributeswithoutActor(TransactionType.RENEWENTITLEMENT);
+	}
+	/**
+	 * For testing for VOIDRESERVATION Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeVoidReservation() {
+		testGetEntAttribtues(TransactionType.VOIDRESERVATION);
+		testGetEntAttributeswithoutActor(TransactionType.VOIDRESERVATION);
+	}
+	/**
+	 * For testing for UNDEFINED Transaction Type 
+	 */
+	@Test
+	public void testGenEntAttributeNUll() {
+		testGetEntAttribtues(TransactionType.UNDEFINED);
+		testGetEntAttributeswithoutActor(TransactionType.UNDEFINED);
+	}
 
+	
 }
