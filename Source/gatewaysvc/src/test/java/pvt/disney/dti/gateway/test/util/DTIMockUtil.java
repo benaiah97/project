@@ -60,6 +60,7 @@ public class DTIMockUtil {
 	static ResultSet attributeRs = null;
 	static ResultSet attributeRs1 = null;
 	static ResultSet attributeRs2 = null;
+	static ResultSet attributeRs3 = null;
 	static ResultSet rs = null;
 	static ResultSetProcessor theProcessor = null;
 	public static ArrayList<DBProductTO> prodList=new ArrayList<DBProductTO>();
@@ -127,12 +128,14 @@ public class DTIMockUtil {
 		attributeRs = PowerMock.createMock(ResultSet.class);
 		attributeRs1 = PowerMock.createMock(ResultSet.class);
 		attributeRs2 = PowerMock.createMock(ResultSet.class);
+		attributeRs3 = PowerMock.createMock(ResultSet.class);
 		setResultSet(rs);
 		setAttributeRS();
 		EasyMock.replay(rs);
 		EasyMock.replay(attributeRs);
 		EasyMock.replay(attributeRs1);
 		EasyMock.replay(attributeRs2);
+		EasyMock.replay(attributeRs3);
 	}
 
 	/**
@@ -142,6 +145,7 @@ public class DTIMockUtil {
 		setAttributeResultSet(attributeRs, 0);
 		setAttributeResultSet(attributeRs1, 1);
 		setAttributeResultSet(attributeRs2, 2);
+		setAttributeResultSet(attributeRs3, 3);
 	}
 
 	/**
@@ -190,10 +194,10 @@ public class DTIMockUtil {
 					.anyTimes();
 		} else if(i==2){
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
-					.andReturn("Pass").anyTimes();
+					.andReturn("SellerResPrefix").anyTimes();
 		}else{
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
-			.andReturn("SellerResPrefix").anyTimes();
+			.andReturn("Pass").anyTimes();
 		}
 		EasyMock.expect(rs.getString("ACTIVE_IND")).andReturn("T").anyTimes();
 		EasyMock.expect(rs.getString("CMD_CODE")).andReturn("QueryReservation")

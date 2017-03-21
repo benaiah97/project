@@ -71,7 +71,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		DTIMockUtil.mockPaymentLookUp();
 		DTIMockUtil.mockEntAttribute();
 		mockCalmRules();
-		}
+	}
 
 	/**
 	 * Unit Test For applyBusinessRules. * * This will cover the method for
@@ -941,7 +941,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	 * For Mocking the calm Rules
 	 */
 	public void mockCalmRules() {
-		new MockUp<CalmRulesTestCase>() {
+		new MockUp<CalmRules>() {
 			@Mock
 			public void checkContingencyActionsLogicModule(
 					DTITransactionTO dtiTxn) {
