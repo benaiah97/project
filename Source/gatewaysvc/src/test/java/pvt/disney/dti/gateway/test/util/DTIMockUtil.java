@@ -452,6 +452,7 @@ public class DTIMockUtil {
 			theProcessor.processNextResultSet(attributeRs);
 			theProcessor.processNextResultSet(attributeRs1);
 			theProcessor.processNextResultSet(attributeRs2);
+			theProcessor.processNextResultSet(attributeRs3);
 			attributeMap = (HashMap<AttributeTO.CmdAttrCodeType, AttributeTO>) theProcessor
 					.getProcessedObject();
 		} catch (Exception e) {

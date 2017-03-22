@@ -880,57 +880,8 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		/*-------------TEST CASE END applyAssociateMediaToAccountRules--------------------*/
 	}
 
-	/**
-	 * For setting up the environment, TEST / PROD , to achieve the value of
-	 * tpiCode
-	 * 
-	 * @param dtiTxn
-	 * @param env
-	 * @return
-	 */
-	private DTITransactionTO mockValidateProviderTarget(
-			DTITransactionTO dtiTxn, String env) {
-		TESTENV = env;
-		new MockUp<ContentRules>() {
-			@Mock
-			protected DTITransactionTO validateProviderTarget(
-					DTITransactionTO dtiTxn) {
-				if (TESTENV.compareTo("TEST") == 0) {
-					dtiTxn.setProvider(ProviderType.WDWNEXUS);
-					dtiTxn.setEnvironment(EnvironmentType.TEST);
-					dtiTxn.getRequest().getPayloadHeader().setTarget(TESTWDW);
-				} else if (TESTENV.compareTo("PROD") == 0) {
-					dtiTxn.setProvider(ProviderType.DLRGATEWAY);
-					dtiTxn.setEnvironment(EnvironmentType.PRODUCTION);
-					dtiTxn.getRequest().getPayloadHeader().setTarget(PRODWDW);
-				} else {
-					dtiTxn.setProvider(ProviderType.HKDNEXUS);
-					dtiTxn.setEnvironment(EnvironmentType.PRODUCTION);
-					dtiTxn.getRequest().getPayloadHeader().setTarget(PRODWDW);
-				}
-				return dtiTxn;
-			}
-		};
-		return dtiTxn;
-	}
-
-	/**
-	 * For providing a common place for Mock Util methods
-	 */
-	private void mockUtilMethods() {
-		DTIMockUtil.mockGetOrderProduct();
-		DTIMockUtil.mockGetEntityProducts();
-		DTIMockUtil.mockGetEntityProductGroups();
-		DTIMockUtil.mockGetOrderEligibility();
-		DTIMockUtil.mockGetProductTicketTypes();
-		DTIMockUtil.mockGetTPCommandLookup();
-		DTIMockUtil.mockGetWordCollection();
-		DTIMockUtil.processMockInsert();
-		DTIMockUtil.mockGetGWTPCommandLookup();
-		DTIMockUtil.mockGetOrderProductWithParam();
-		DTIMockUtil.mockGetEntityProductsWithParam();
-		DTIMockUtil.mockGetEntityProductGroupsthreeParam();
-	}
+	
+	
 
 	/**
 	 * For Mocking the calm Rules

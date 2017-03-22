@@ -5,9 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigInteger;
 import java.text.ParseException;
 
-import mockit.Mock;
-import mockit.MockUp;
-
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,12 +1,12 @@
 package pvt.disney.dti.gateway.rules;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
@@ -15,9 +15,10 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.ReservationRequestTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.EnvironmentType;
+import pvt.disney.dti.gateway.data.DTITransactionTO.ProviderType;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.NewMediaDataTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
@@ -25,13 +26,13 @@ import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
-import pvt.disney.dti.gateway.util.ResourceLoader;
+import pvt.disney.dti.gateway.test.util.CommonTestUtils;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 /**
- * @author rasta006
- *  Common Class for keeping the common method
+ * @author rasta006 Common Class for keeping the common method
  */
-public class CommonBusinessTest {
+public class CommonBusinessTest extends CommonTestUtils {
 	@Mocked
 	ResourceBundle resourceBundle;
 	/** Properties */
@@ -56,38 +57,6 @@ public class CommonBusinessTest {
 	protected static final String TPI_CODE_HKD = "HKD01";
 	/** The CREATETAG. */
 	protected final static String CREATETAG = "Create";
-
-	/* for setting up the properties from dtiapp.properties */
-	public Properties setConfigProperty() {
-		props = new Properties();
-		props.setProperty("DtiApp.TSMACExclusion", "WDWADMIN");
-		props.setProperty("DtiApp.FloodControlExceptionTsLoc",
-				"mkl2,VoidStore,97016000002");
-		props.setProperty("POS.target", "Test");
-		props.setProperty("POS.tktBroker", "DTIDV");
-		props.setProperty("ATS.SiteNumber", "120");
-		props.setProperty("ATS.MaxEncodeAllCount", "41");
-		return props;
-	}
-
-	/* Mocking the ResourceBundle getResourceBundle */
-	public void setMockProperty() {
-		new MockUp<ResourceLoader>() {
-			@Mock
-			public ResourceBundle getResourceBundle(String props) {
-				return resourceBundle;
-			}
-		};
-		/* Mocking the ResourceBundle convertResourceBundleToProperties */
-		new MockUp<ResourceLoader>() {
-			@Mock
-			public Properties convertResourceBundleToProperties(
-					ResourceBundle Key) {
-				/* Returning the values of property from property */
-				return setConfigProperty();
-			}
-		};
-	}
 
 	/**
 	 * Common method for populating the medial List
@@ -205,46 +174,8 @@ public class CommonBusinessTest {
 		} else {
 			tktList = getTicketList(TicketIdType.EXTERNAL_ID);
 		}
-
 		queryReq.setTktList(tktList);
 		dtiTxn.getRequest().setCommandBody(queryReq);
-
-	}
-
-	/**
-	 * Common code for Ticket Creation
-	 * 
-	 * @return
-	 */
-	protected ArrayList<TicketTO> getTicketList(TicketIdType type) {
-		TicketTO ticket = new TicketTO();
-		switch (type) {
-		case MAG_ID:
-			ticket.setTktItem(new BigInteger("1"));
-			ticket.setProdQty(new BigInteger("1"));
-			// ticket.set
-			ticket.setMag("AFTWU6SRSBUVRZSSUURYHGRS65RSRRRRRRRWFFWU6SRSBUVRZSSUURYHGRS65RSRRRRRRRW12");
-			ticket.setProdCode("1");
-			ticket.setProdPrice(new BigDecimal("1"));
-			ticket.setFromPrice(new BigDecimal("1"));
-			ticket.setFromProdCode("1");
-			ticket.setUpgrdPrice(new BigDecimal("0"));
-			break;
-		case TKTNID_ID:
-			ticket.setTktItem(new BigInteger("1"));
-			ticket.setTktNID("12000507111600050");
-			break;
-		case EXTERNAL_ID:
-			ticket.setTktItem(new BigInteger("1"));
-			ticket.setExternal("1");
-			ticket.setProdCode("1");
-			ticket.setProdPrice(new BigDecimal("1"));
-			break;
-		}
-
-		ArrayList<TicketTO> tktList = new ArrayList<TicketTO>();
-		tktList.add(ticket);
-		return tktList;
 	}
 
 	/**
@@ -266,52 +197,6 @@ public class CommonBusinessTest {
 		resReqTO.setReservation(reserv);
 
 	}
-
-	/**
-	 * Shipping Information
-	 * 
-	 * @return
-	 */
-	private DemographicsTO getShippingInfo() {
-		DemographicsTO ship = new DemographicsTO();
-		ship.setAddr1("1");
-		ship.setAddr2("2");
-		return ship;
-	}
-
-	/**
-	 * Billing Information
-	 * 
-	 * @return
-	 */
-	private DemographicsTO getBillingInfo() {
-		DemographicsTO bill = new DemographicsTO();
-		bill.setAddr1("1");
-		bill.setAddr2("2");
-		bill.setFirstName("FIRST");
-		bill.setLastName("LAST");
-		bill.setCity("TEST");
-		bill.setZip("560067");
-		bill.setCountry("US");
-		bill.setTelephone("9876543210");
-		bill.setEmail("test@test.com");
-		return bill;
-	}
-
-	/**
-	 * populating the clientData
-	 * 
-	 * @param clientData
-	 */
-	protected void getClientData(ClientDataTO clientData) {
-		clientData.setClientType("Private");
-		clientData.setClientCategory("WW");
-		clientData.setDemoLanguage("en");
-		clientData.setBillingInfo(getBillingInfo());
-		clientData.setShippingInfo(getShippingInfo());
-
-	}
-
 	/**
 	 * RenewEntitlementRequestTO request
 	 * 
@@ -331,5 +216,56 @@ public class CommonBusinessTest {
 		reserv.setResCode("ABCD");
 		renewEntReqTO.setReservation(reserv);
 	}
+	/**
+	 * For providing a common place for Mock Util methods
+	 */
+	protected void mockUtilMethods() {
+		DTIMockUtil.mockGetOrderProduct();
+		DTIMockUtil.mockGetEntityProducts();
+		DTIMockUtil.mockGetEntityProductGroups();
+		DTIMockUtil.mockGetOrderEligibility();
+		DTIMockUtil.mockGetProductTicketTypes();
+		DTIMockUtil.mockGetTPCommandLookup();
+		DTIMockUtil.mockGetWordCollection();
+		DTIMockUtil.processMockInsert();
+		DTIMockUtil.mockGetGWTPCommandLookup();
+		DTIMockUtil.mockGetOrderProductWithParam();
+		DTIMockUtil.mockGetEntityProductsWithParam();
+		DTIMockUtil.mockGetEntityProductGroupsthreeParam();
+	}
+	/**
+	 * For setting up the environment, TEST / PROD , to achieve the value of
+	 * tpiCode
+	 * 
+	 * @param dtiTxn
+	 * @param env
+	 * @return
+	 */
+	public DTITransactionTO mockValidateProviderTarget(
+			DTITransactionTO dtiTxn, String env) {
+		TESTENV = env;
+		new MockUp<ContentRules>() {
+			@Mock
+			protected DTITransactionTO validateProviderTarget(
+					DTITransactionTO dtiTxn) {
+				if (TESTENV.compareTo("TEST") == 0) {
+					dtiTxn.setProvider(ProviderType.WDWNEXUS);
+					dtiTxn.setEnvironment(EnvironmentType.TEST);
+					dtiTxn.getRequest().getPayloadHeader().setTarget(TESTWDW);
+				} else if (TESTENV.compareTo("PROD") == 0) {
+					dtiTxn.setProvider(ProviderType.DLRGATEWAY);
+					dtiTxn.setEnvironment(EnvironmentType.PRODUCTION);
+					dtiTxn.getRequest().getPayloadHeader().setTarget(PRODWDW);
+				} else {
+					dtiTxn.setProvider(ProviderType.HKDNEXUS);
+					dtiTxn.setEnvironment(EnvironmentType.PRODUCTION);
+					dtiTxn.getRequest().getPayloadHeader().setTarget(PRODWDW);
+				}
+				return dtiTxn;
+			}
+		};
+		return dtiTxn;
+	}
+
 
 }
