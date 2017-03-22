@@ -15,6 +15,7 @@ public class DBUtilTestCase {
 	/**
 	 * Test create sql in list.
 	 */
+	
 	//@Test
 	public final void testCreateSQLInList() {
 		HashSet<String> stringsHashSet = new HashSet<String>();
