@@ -4,8 +4,6 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 
-import org.junit.Test;
-
 /**
  * This class tests the DB utilities.
  * 
@@ -17,7 +15,7 @@ public class DBUtilTestCase {
 	/**
 	 * Test create sql in list.
 	 */
-	@Test
+	//@Test
 	public final void testCreateSQLInList() {
 		HashSet<String> stringsHashSet = new HashSet<String>();
 		stringsHashSet.add("ABC01");
