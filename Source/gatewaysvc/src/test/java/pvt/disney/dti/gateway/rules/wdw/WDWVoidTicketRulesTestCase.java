@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Assert;
@@ -13,16 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.VoidTicketRequestTO;
-import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
-import pvt.disney.dti.gateway.data.common.EntityTO;
-import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
-import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO.OTTransactionType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTVoidTicketTO;

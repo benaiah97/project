@@ -1,14 +1,14 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-
-import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -120,9 +120,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
-		} catch (DTIException e) {
-			Assert.fail("Exception in xml conversion");
+			assertNotNull(actualXml);
+		} catch (DTIException dtie) {
+			fail("Unexepected Exception "+dtie.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaAccountId = getAssociateMediaToAccountRequestTO();
@@ -133,10 +133,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaMag = getAssociateMediaToAccountRequestTO();
@@ -150,10 +149,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaBarCode = getAssociateMediaToAccountRequestTO();
@@ -166,10 +164,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaTktNID = getAssociateMediaToAccountRequestTO();
@@ -182,10 +179,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaExternal = getAssociateMediaToAccountRequestTO();
@@ -198,10 +194,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 
 		AssociateMediaToAccountRequestTO dtiAssociateMediaDssnSite = getAssociateMediaToAccountRequestTO();
@@ -215,10 +210,9 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 		try {
 			String actualXml = WDWAssociateMediaToAccountRules
 					.transformRequest(dtiTxn);
-			Assert.assertNotNull(actualXml);
+			assertNotNull(actualXml);
 		} catch (DTIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 	}
 
@@ -250,7 +244,7 @@ public class WDWAssociateMediaToAccountRulesTestCase {
 			WDWAssociateMediaToAccountRules.transformResponseBody(
 					getDTITransactionTO(), otCmdTO, dtiRespTO);
 		} catch (DTIException e) {
-			e.printStackTrace();
+			fail("Unexepected Exception "+e.getLogMessage());
 		}
 	}
 
