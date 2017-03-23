@@ -35,7 +35,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for transformRequest
 	 */  
-	@Test
+	//@Test
 	public void testTransformRequest() {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
