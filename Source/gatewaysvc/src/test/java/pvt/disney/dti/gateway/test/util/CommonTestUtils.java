@@ -26,14 +26,28 @@ import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
+/**
+ * The Class CommonTestUtils.
+ * 
+ * @author rasta006
+ */
 public class CommonTestUtils {
+
+	/** The resource bundle. */
 	@Mocked
 	ResourceBundle resourceBundle;
-	/** Properties */
+
+	/** Properties. */
 	Properties props = null;
+
 	/* for setting up the properties from dtiapp.properties */
+	/**
+	 * Sets the config property.
+	 *
+	 * @return the properties
+	 */
 	public Properties setConfigProperty() {
-		props = new Properties(); 
+		props = new Properties();
 		props.setProperty("DtiApp.TSMACExclusion", "WDWADMIN");
 		props.setProperty("DtiApp.FloodControlExceptionTsLoc",
 				"mkl2,VoidStore,97016000002");
@@ -45,7 +59,10 @@ public class CommonTestUtils {
 	}
 
 	/* Mocking the ResourceBundle getResourceBundle */
-	public void setMockProperty() { 
+	/**
+	 * Sets the mock property.
+	 */
+	public void setMockProperty() {
 		new MockUp<ResourceLoader>() {
 			@Mock
 			public ResourceBundle getResourceBundle(String props) {
@@ -62,10 +79,13 @@ public class CommonTestUtils {
 			}
 		};
 	}
+
 	/**
-	 * Common code for Ticket Creation
-	 * 
-	 * @return 
+	 * Common code for Ticket Creation.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the ticket list
 	 */
 	public ArrayList<TicketTO> getTicketList(TicketIdType type) {
 		TicketTO ticket = new TicketTO();
@@ -80,13 +100,6 @@ public class CommonTestUtils {
 			ticket.setFromPrice(new BigDecimal("1"));
 			ticket.setFromProdCode("1");
 			ticket.setUpgrdPrice(new BigDecimal("0"));
-			ticket.addTicketDemographic(getBillingInfo());
-			ticket.setTicketAssignmets(getTicketAssingment(ticket));
-			ticket.setProdQty(new BigInteger("1"));
-			ticket.setTktNote("1");
-			ticket.setTktShell("1");
-			ticket.setTktValidityValidStart(new GregorianCalendar());
-			ticket.setTktValidityValidEnd(new GregorianCalendar());
 			break;
 		case TKTNID_ID:
 			ticket.setTktItem(new BigInteger("1"));
@@ -134,9 +147,6 @@ public class CommonTestUtils {
 		bill.setCountry("US");
 		bill.setTelephone("9876543210");
 		bill.setEmail("test@test.com");
-		bill.setDateOfBirth(new GregorianCalendar());
-		bill.setGender(GenderType.MALE);
-		bill.setOptInSolicit(true);
 		return bill;
 	}
 
@@ -188,6 +198,7 @@ public class CommonTestUtils {
 		EntityTO entityTO = new EntityTO();
 		entityTO.setDefPymtId(3);
 		entityTO.setDefPymtData("1");
+		entityTO.setEntityId(1);
 		dtiTxn.setEntityTO(entityTO);
 		entityTO.setActive(true);
 		dtiTxn.setEntityTO(entityTO);
@@ -251,13 +262,21 @@ public class CommonTestUtils {
 		cmdHeaderTO.setCmdDevice("PAULH");
 		cmdHeaderTO.setCmdOperator("PAULH");
 	}
-	private ArrayList<TktAssignmentTO>  getTicketAssingment(TicketTO ticket){
-		ArrayList<TktAssignmentTO> ticketAssignmets=new ArrayList<TktAssignmentTO>();
-		TktAssignmentTO ticketassignment=ticket.new TktAssignmentTO();
+
+	/**
+	 * Gets the ticket assingment.
+	 *
+	 * @param ticket
+	 *            the ticket
+	 * @return the ticket assingment
+	 */
+	private ArrayList<TktAssignmentTO> getTicketAssingment(TicketTO ticket) {
+		ArrayList<TktAssignmentTO> ticketAssignmets = new ArrayList<TktAssignmentTO>();
+		TktAssignmentTO ticketassignment = ticket.new TktAssignmentTO();
 		ticketassignment.setAccountItem(new BigInteger("1"));
 		ticketassignment.setProdQty(new BigInteger("1"));
 		ticketAssignmets.add(ticketassignment);
 		return ticketAssignmets;
-		
+
 	}
 }

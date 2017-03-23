@@ -18,6 +18,7 @@ import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
 
+import org.dom4j.Element;
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
 
@@ -41,35 +42,60 @@ import pvt.disney.dti.gateway.dao.result.ProductTktTypeResult;
 import pvt.disney.dti.gateway.dao.result.ShellTypeResult;
 import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.dao.result.TransidRescodeResult;
+import pvt.disney.dti.gateway.data.CreateTicketResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
+import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTCreateTransactionTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
+import pvt.disney.dti.gateway.provider.wdw.xml.OTCreateTransactionXML;
+import pvt.disney.dti.gateway.provider.wdw.xml.OTHeaderXML;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
+import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
 
 import com.disney.exception.WrappedException;
 import com.disney.util.Loader;
 
 /**
- * Utility class for Mocked methods 
+ * Utility class for Mocked methods.
+ *
  * @author rasta006
- * 
  */
 public class DTIMockUtil {
+
+	/** The attribute rs. */
 	static ResultSet attributeRs = null;
+
+	/** The attribute rs1. */
 	static ResultSet attributeRs1 = null;
+
+	/** The attribute rs2. */
 	static ResultSet attributeRs2 = null;
+
+	/** The attribute rs3. */
 	static ResultSet attributeRs3 = null;
+
+	/** The rs. */
 	static ResultSet rs = null;
+
+	/** The processor. */
 	static ResultSetProcessor theProcessor = null;
-	public static ArrayList<DBProductTO> prodList=new ArrayList<DBProductTO>();
+
+	/** The prod list. */
+	public static ArrayList<DBProductTO> prodList = new ArrayList<DBProductTO>();
 
 	/**
-	 * For Mocking AttributeKey
+	 * For Mocking AttributeKey.
 	 */
 	public static void mockEntAttribute() {
 		try {
@@ -100,7 +126,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking DAOHelper processQuery
+	 * For Mocking DAOHelper processQuery.
 	 */
 	public static void mockTicketAttribute() {
 		try {
@@ -124,7 +150,10 @@ public class DTIMockUtil {
 	}
 
 	/**
+	 * Inits the.
+	 *
 	 * @throws Exception
+	 *             the exception
 	 */
 	private static void init() throws Exception {
 		rs = PowerMock.createMock(ResultSet.class);
@@ -142,7 +171,10 @@ public class DTIMockUtil {
 	}
 
 	/**
+	 * Sets the attribute rs.
+	 *
 	 * @throws Exception
+	 *             the exception
 	 */
 	private static void setAttributeRS() throws Exception {
 		setAttributeResultSet(attributeRs, 0);
@@ -152,8 +184,12 @@ public class DTIMockUtil {
 	}
 
 	/**
+	 * Sets the result set.
+	 *
 	 * @param rs
+	 *            the new result set
 	 * @throws Exception
+	 *             the exception
 	 */
 	private static void setResultSet(ResultSet rs) throws Exception {
 		EasyMock.expect(rs.getString(EasyMock.contains("ACTIVE_IND")))
@@ -180,9 +216,14 @@ public class DTIMockUtil {
 	}
 
 	/**
+	 * Sets the attribute result set.
+	 *
 	 * @param rs
+	 *            the rs
 	 * @param i
+	 *            the i
 	 * @throws Exception
+	 *             the exception
 	 */
 	private static void setAttributeResultSet(ResultSet rs, int i)
 			throws Exception {
@@ -195,12 +236,12 @@ public class DTIMockUtil {
 		} else if (i == 1) {
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE")).andReturn("User")
 					.anyTimes();
-		} else if(i==2){
+		} else if (i == 2) {
 			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
 					.andReturn("SellerResPrefix").anyTimes();
-		}else{
-			EasyMock.expect(rs.getString("CMD_ATTR_CODE"))
-			.andReturn("Pass").anyTimes();
+		} else {
+			EasyMock.expect(rs.getString("CMD_ATTR_CODE")).andReturn("Pass")
+					.anyTimes();
 		}
 		EasyMock.expect(rs.getString("ACTIVE_IND")).andReturn("T").anyTimes();
 		EasyMock.expect(rs.getString("CMD_CODE")).andReturn("QueryReservation")
@@ -208,7 +249,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking DAOHelper processInsert
+	 * For Mocking DAOHelper processInsert.
 	 */
 	public static void processMockInsert() {
 		new MockUp<DAOHelper>() {
@@ -220,7 +261,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking DAOHelper prepareAndExecuteSql 
+	 * For Mocking DAOHelper prepareAndExecuteSql.
 	 */
 	public static void processMockprepareAndExecuteSql() {
 		new MockUp<DAOHelper>() {
@@ -246,35 +287,38 @@ public class DTIMockUtil {
 					}
 				} catch (Exception e) {
 				}
- 
+
 				return 1;
 			}
 		};
 	}
 
-	/** 
-	 * For Mocking DAOHelper processQuery for mockResultProcessor
+	/**
+	 * For Mocking DAOHelper processQuery for mockResultProcessor.
+	 *
+	 * @param resultSetProcessor
+	 *            the result set processor
 	 */
 	public static void mockResultProcessor(String resultSetProcessor) {
 		try {
 			Object obj = null;
 			obj = Loader.loadClass(resultSetProcessor).newInstance();
-			if(resultSetProcessor!=null){
+			if (resultSetProcessor != null) {
 				if (obj instanceof ResultSetProcessor) {
 					theProcessor = (ResultSetProcessor) obj;
 				} else {
 					fail("given String does not belong to ResultSetProcessor");
 				}
-				init();	
+				init();
 			}
-			
+
 			new MockUp<DAOHelper>() {
 				@Mock
 				protected Object processQuery(Object[] values) throws Exception {
 					Object obj = new Object();
 					try {
 						theProcessor.processNextResultSet(rs);
-						obj = (Object)theProcessor.getProcessedObject();
+						obj = (Object) theProcessor.getProcessedObject();
 						if (theProcessor instanceof TransidRescodeResult) {
 							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
 							TransidRescodeTO transCode = new TransidRescodeTO();
@@ -291,19 +335,25 @@ public class DTIMockUtil {
 					return obj;
 				}
 			};
-			
+
 		} catch (Exception e) {
 			fail("Not able to create object for given String "
 					+ resultSetProcessor);
 		}
-		
+
 	}
 
 	/**
+	 * Mock result processor.
+	 *
 	 * @param resultSetProcessor
+	 *            the result set processor
 	 * @param inputValues
+	 *            the input values
 	 * @param queryParameters
+	 *            the query parameters
 	 * @param theQueryBuilder
+	 *            the the query builder
 	 */
 	public static void mockResultProcessor(String resultSetProcessor,
 			Object[] inputValues, Object[] queryParameters,
@@ -350,7 +400,10 @@ public class DTIMockUtil {
 	}
 
 	/**
+	 * Mock null result processor.
+	 *
 	 * @param resultSetProcessor
+	 *            the result set processor
 	 */
 	public static void mockNullResultProcessor(String resultSetProcessor) {
 		try {
@@ -368,7 +421,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking PaymentKey getPaymentLookup
+	 * For Mocking PaymentKey getPaymentLookup.
 	 */
 	public static void mockPaymentLookUp() {
 		try {
@@ -392,7 +445,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking DBProductTO getOrderProducts
+	 * For Mocking DBProductTO getOrderProducts.
 	 */
 	public static void mockGetOrderProduct() {
 		try {
@@ -418,10 +471,11 @@ public class DTIMockUtil {
 
 		}
 	}
-	
+
 	/**
-	 * Method for getting the DBProduct List
-	 * @return
+	 * Method for getting the DBProduct List.
+	 *
+	 * @return the array list
 	 */
 	public static ArrayList<DBProductTO> fetchDBOrderList() {
 		ArrayList<DBProductTO> dbProduct = null;
@@ -436,39 +490,17 @@ public class DTIMockUtil {
 			e.printStackTrace();
 		}
 		return dbProduct;
-		}
-	
-	public static ArrayList<DBProductTO> fetchDBTicketTypeList() {
-		ArrayList<DBProductTO> dbProduct = null;
-		try {
-			init();
-			dbProduct=DTIMockUtil.fetchDBOrderList();
-			theProcessor = new ProductTktTypeResult();
-			theProcessor.processNextResultSet(rs);
-			ArrayList<DBProductTO> dbProductTemp = (ArrayList<DBProductTO>) theProcessor
-					.getProcessedObject();
-			for(DBProductTO dbProductTo:dbProductTemp){
-				for(DBProductTO dbProductFinal:dbProduct){
-					dbProductFinal.setMappedProviderTktNbr(dbProductTo.getMappedProviderTktNbr());
-					dbProductFinal.setMappedProviderTktName(dbProductTo.getMappedProviderTktName());
-					dbProductFinal.setValidityDateInfoRequired(true);
-				}
-			}
+	}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return dbProduct;
-		}
-	
 	/**
-	 * Method for getting the DBProduct List
-	 * @return
+	 * Method for getting the DBProduct List.
+	 *
+	 * @return the hash map
 	 */
 	public static HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> fetchAttributeTOMapList() {
 
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
-	
+
 		try {
 			init();
 			theProcessor = new AttributeResult();
@@ -482,13 +514,11 @@ public class DTIMockUtil {
 			e.printStackTrace();
 		}
 		return attributeMap;
-	
-		}
-	
-	
+
+	}
 
 	/**
-	 * For Mocking DBProductTO getOrderProducts
+	 * For Mocking DBProductTO getOrderProducts.
 	 */
 	public static void mockGetOrderProductWithParam() {
 		try {
@@ -515,7 +545,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking EntityKey getEntityProducts
+	 * For Mocking EntityKey getEntityProducts.
 	 */
 	public static void mockGetEntityProducts() {
 		try {
@@ -542,8 +572,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking EntityKey getEntityProducts
-	 * 
+	 * For Mocking EntityKey getEntityProducts.
 	 */
 	public static void mockGetEntityProductsWithParam() {
 		try {
@@ -573,7 +602,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking EntityKey getEntityProductGroups
+	 * For Mocking EntityKey getEntityProductGroups.
 	 */
 	public static void mockGetEntityProductGroups() {
 		try {
@@ -600,7 +629,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking EntityKey getEntityProductGroups
+	 * For Mocking EntityKey getEntityProductGroups.
 	 */
 	public static void mockGetEntityProductGroupsthreeParam() {
 		try {
@@ -628,7 +657,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking EligibilityKey getOrderEligibility
+	 * For Mocking EligibilityKey getOrderEligibility.
 	 */
 	public static void mockGetOrderEligibility() {
 		new MockUp<EligibilityKey>() {
@@ -643,7 +672,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking ProductKey getProductTicketTypes
+	 * For Mocking ProductKey getProductTicketTypes.
 	 */
 	public static void mockGetProductTicketTypes() {
 		try {
@@ -665,7 +694,7 @@ public class DTIMockUtil {
 						}
 					} catch (Exception e) {
 					}
-					prodList=dbProdList;
+					prodList = dbProdList;
 					return dbProdList;
 				}
 			};
@@ -674,7 +703,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking ProductKey getActiveShells
+	 * For Mocking ProductKey getActiveShells.
 	 */
 	public static void mockGetActiveShells() {
 		try {
@@ -700,7 +729,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking TPLookupTO getTPCommandLookup
+	 * For Mocking TPLookupTO getTPCommandLookup.
 	 */
 	public static void mockGetTPCommandLookup() {
 		try {
@@ -740,7 +769,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking TPLookupTO getGWTPCommandLookup
+	 * For Mocking TPLookupTO getGWTPCommandLookup.
 	 */
 	public static void mockGetGWTPCommandLookup() {
 		try {
@@ -779,7 +808,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking Cipher
+	 * For Mocking Cipher.
 	 */
 	public static void mockGetWordCollection() {
 		try {
@@ -801,7 +830,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking the getTransidRescodeFromDB , value obtained from
+	 * For Mocking the getTransidRescodeFromDB , value obtained from.
 	 */
 	public static void mockGetTransidRescodeFromDB() {
 		try {
@@ -827,7 +856,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking File exists
+	 * For Mocking File exists.
 	 */
 	public static void mockFileExists() {
 		new MockUp<File>() {
@@ -839,7 +868,7 @@ public class DTIMockUtil {
 	}
 
 	/**
-	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement
+	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
 	 */
 	public static void insertUpgradedEntitlement() {
 		new MockUp<ElectronicEntitlementKey>() {
@@ -849,11 +878,11 @@ public class DTIMockUtil {
 			}
 		};
 	}
+
 	/**
-	 *  For Mocking ElectronicEntitlementKey insertVoidedEntitlement
+	 * For Mocking ElectronicEntitlementKey insertVoidedEntitlement.
 	 */
-	public static void mockinsertVoidedEntitlement()
-	{
+	public static void mockinsertVoidedEntitlement() {
 		new MockUp<ElectronicEntitlementKey>() {
 			@Mock
 			public void insertVoidedEntitlement(Integer inboundTSID,
@@ -861,9 +890,9 @@ public class DTIMockUtil {
 			}
 		};
 	}
-	
+
 	/**
-	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement
+	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
 	 */
 	public static void mockinsertUpgradedEntitlement() {
 		new MockUp<ElectronicEntitlementKey>() {
@@ -874,8 +903,148 @@ public class DTIMockUtil {
 		};
 	}
 
+	/**
+	 * For Mocking WDWBusinessRules transformOTHeader.
+	 */
+	public static void mocktransformOTHeader() {
+		new MockUp<WDWBusinessRules>() {
+			@Mock
+			protected OTHeaderTO transformOTHeader(DTITransactionTO dtiTxn,
+					String requestType, String requestSubType) {
+				return new OTHeaderTO();
+			}
+		};
+	}
 
-	
-	
+	/**
+	 * For Mocking EligibilityKey getEligibilityAssocId.
+	 */
+	public static void mockgetEligibilityAssocId() {
+		new MockUp<EligibilityKey>() {
 
+			@Mock
+			public Integer getEligibilityAssocId(String eligGrpCode) {
+
+				return 1;
+			}
+		};
+	}
+
+	/**
+	 * For Mocking OTHeaderXML addHeaderElement.
+	 */
+	public static void mockaddHeaderElement() {
+		new MockUp<OTHeaderXML>() {
+
+			@Mock
+			public void addHeaderElement(OTHeaderTO otHdrTO,
+					Element commandStanza) {
+
+			}
+		};
+	}
+
+	/**
+	 * For Mocking OTCreateTransactionXML addTxnBodyElement.
+	 */
+	public static void mockaddTxnBodyElement() {
+		new MockUp<OTCreateTransactionXML>() {
+
+			@Mock
+			public void addTxnBodyElement(OTCreateTransactionTO otCrtTxnTO,
+					Element commandStanza) {
+
+			}
+		};
+	}
+
+	/**
+	 * For Mocking OTCreateTransactionTO getProductList.
+	 */
+	public static void mockgetProductList() {
+		new MockUp<OTCreateTransactionTO>() {
+			@Mock
+			public ArrayList<OTProductTO> getProductList() {
+				OTProductTO otProductTO = new OTProductTO();
+
+				ArrayList<OTProductTO> arrayListL = new ArrayList<OTProductTO>();
+				arrayListL.add(otProductTO);
+				arrayListL.add(otProductTO);
+				return arrayListL;
+			}
+		};
+	}
+
+	/**
+	 * For Mocking WDWBusinessRules transformTicketDemoData.
+	 */
+	public static void mocktransformTicketDemoData() {
+		new MockUp<WDWBusinessRules>() {
+
+			@Mock
+			public void transformTicketDemoData(
+					ArrayList<DemographicsTO> tktDemoList,
+					OTDemographicInfo otDemoInfo) {
+
+			}
+		};
+	}
+
+	/**
+	 * For Mocking WDWBusinessRules createOTPaymentList.
+	 */
+	public static void mockcreateOTPaymentList() {
+		new MockUp<WDWBusinessRules>() {
+
+			@Mock
+			public void createOTPaymentList(
+					ArrayList<OTPaymentTO> otPaymentList,
+					ArrayList<PaymentTO> dtiPayList, EntityTO entityTO) {
+			}
+		};
+	}
+
+	/**
+	 * For Mocking CreateTicketResponseTO getTicketList.
+	 */
+	public static void mockgetTicketList() {
+		new MockUp<CreateTicketResponseTO>() {
+			@Mock
+			public ArrayList<TicketTO> getTicketList() {
+				ArrayList<TicketTO> ticketTOs = new ArrayList<>();
+				return ticketTOs;
+			}
+
+		};
+	}
+
+	/**
+	 * Fetch db ticket type list.
+	 *
+	 * @return the array list
+	 */
+	public static ArrayList<DBProductTO> fetchDBTicketTypeList() {
+		ArrayList<DBProductTO> dbProduct = null;
+		try {
+			init();
+			dbProduct = DTIMockUtil.fetchDBOrderList();
+			theProcessor = new ProductTktTypeResult();
+			theProcessor.processNextResultSet(rs);
+			ArrayList<DBProductTO> dbProductTemp = (ArrayList<DBProductTO>) theProcessor
+					.getProcessedObject();
+			for (DBProductTO dbProductTo : dbProductTemp) {
+				for (DBProductTO dbProductFinal : dbProduct) {
+					dbProductFinal.setMappedProviderTktNbr(dbProductTo
+							.getMappedProviderTktNbr());
+					dbProductFinal.setMappedProviderTktName(dbProductTo
+							.getMappedProviderTktName());
+					dbProductFinal.setValidityDateInfoRequired(true);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dbProduct;
+	}
 }
