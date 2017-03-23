@@ -33,7 +33,7 @@ public class CommonTestUtils {
 	Properties props = null;
 	/* for setting up the properties from dtiapp.properties */
 	public Properties setConfigProperty() {
-		props = new Properties();
+		props = new Properties(); 
 		props.setProperty("DtiApp.TSMACExclusion", "WDWADMIN");
 		props.setProperty("DtiApp.FloodControlExceptionTsLoc",
 				"mkl2,VoidStore,97016000002");
