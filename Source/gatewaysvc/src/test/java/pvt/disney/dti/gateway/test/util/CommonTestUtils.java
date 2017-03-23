@@ -45,7 +45,7 @@ public class CommonTestUtils {
 	}
 
 	/* Mocking the ResourceBundle getResourceBundle */
-	public void setMockProperty() {
+	public void setMockProperty() { 
 		new MockUp<ResourceLoader>() {
 			@Mock
 			public ResourceBundle getResourceBundle(String props) {
