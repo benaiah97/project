@@ -17,11 +17,13 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
+import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
 public class CommonTestUtils {
@@ -78,6 +80,13 @@ public class CommonTestUtils {
 			ticket.setFromPrice(new BigDecimal("1"));
 			ticket.setFromProdCode("1");
 			ticket.setUpgrdPrice(new BigDecimal("0"));
+			ticket.addTicketDemographic(getBillingInfo());
+			ticket.setTicketAssignmets(getTicketAssingment(ticket));
+			ticket.setProdQty(new BigInteger("1"));
+			ticket.setTktNote("1");
+			ticket.setTktShell("1");
+			ticket.setTktValidityValidStart(new GregorianCalendar());
+			ticket.setTktValidityValidEnd(new GregorianCalendar());
 			break;
 		case TKTNID_ID:
 			ticket.setTktItem(new BigInteger("1"));
@@ -125,6 +134,9 @@ public class CommonTestUtils {
 		bill.setCountry("US");
 		bill.setTelephone("9876543210");
 		bill.setEmail("test@test.com");
+		bill.setDateOfBirth(new GregorianCalendar());
+		bill.setGender(GenderType.MALE);
+		bill.setOptInSolicit(true);
 		return bill;
 	}
 
@@ -238,5 +250,14 @@ public class CommonTestUtils {
 		entityTO.setEndValidDate(new Date(System.currentTimeMillis()));
 		cmdHeaderTO.setCmdDevice("PAULH");
 		cmdHeaderTO.setCmdOperator("PAULH");
+	}
+	private ArrayList<TktAssignmentTO>  getTicketAssingment(TicketTO ticket){
+		ArrayList<TktAssignmentTO> ticketAssignmets=new ArrayList<TktAssignmentTO>();
+		TktAssignmentTO ticketassignment=ticket.new TktAssignmentTO();
+		ticketassignment.setAccountItem(new BigInteger("1"));
+		ticketassignment.setProdQty(new BigInteger("1"));
+		ticketAssignmets.add(ticketassignment);
+		return ticketAssignmets;
+		
 	}
 }
