@@ -65,7 +65,7 @@ public class CommonTestUtils {
 	/**
 	 * Common code for Ticket Creation
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public ArrayList<TicketTO> getTicketList(TicketIdType type) {
 		TicketTO ticket = new TicketTO();
