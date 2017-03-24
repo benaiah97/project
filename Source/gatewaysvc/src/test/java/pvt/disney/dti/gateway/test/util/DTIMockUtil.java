@@ -18,7 +18,6 @@ import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
 
-import org.dom4j.Element;
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
 
@@ -42,26 +41,15 @@ import pvt.disney.dti.gateway.dao.result.ProductTktTypeResult;
 import pvt.disney.dti.gateway.dao.result.ShellTypeResult;
 import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.dao.result.TransidRescodeResult;
-import pvt.disney.dti.gateway.data.CreateTicketResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
-import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTCreateTransactionTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
-import pvt.disney.dti.gateway.provider.wdw.xml.OTCreateTransactionXML;
-import pvt.disney.dti.gateway.provider.wdw.xml.OTHeaderXML;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
-import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
 
 import com.disney.exception.WrappedException;
 import com.disney.util.Loader;
@@ -902,122 +890,6 @@ public class DTIMockUtil {
 			}
 		};
 	}
-
-	/**
-	 * For Mocking WDWBusinessRules transformOTHeader.
-	 */
-	public static void mocktransformOTHeader() {
-		new MockUp<WDWBusinessRules>() {
-			@Mock
-			protected OTHeaderTO transformOTHeader(DTITransactionTO dtiTxn,
-					String requestType, String requestSubType) {
-				return new OTHeaderTO();
-			}
-		};
-	}
-
-	/**
-	 * For Mocking EligibilityKey getEligibilityAssocId.
-	 */
-	public static void mockgetEligibilityAssocId() {
-		new MockUp<EligibilityKey>() {
-
-			@Mock
-			public Integer getEligibilityAssocId(String eligGrpCode) {
-
-				return 1;
-			}
-		};
-	}
-
-	/**
-	 * For Mocking OTHeaderXML addHeaderElement.
-	 */
-	public static void mockaddHeaderElement() {
-		new MockUp<OTHeaderXML>() {
-
-			@Mock
-			public void addHeaderElement(OTHeaderTO otHdrTO,
-					Element commandStanza) {
-
-			}
-		};
-	}
-
-	/**
-	 * For Mocking OTCreateTransactionXML addTxnBodyElement.
-	 */
-	public static void mockaddTxnBodyElement() {
-		new MockUp<OTCreateTransactionXML>() {
-
-			@Mock
-			public void addTxnBodyElement(OTCreateTransactionTO otCrtTxnTO,
-					Element commandStanza) {
-
-			}
-		};
-	}
-
-	/**
-	 * For Mocking OTCreateTransactionTO getProductList.
-	 */
-	public static void mockgetProductList() {
-		new MockUp<OTCreateTransactionTO>() {
-			@Mock
-			public ArrayList<OTProductTO> getProductList() {
-				OTProductTO otProductTO = new OTProductTO();
-
-				ArrayList<OTProductTO> arrayListL = new ArrayList<OTProductTO>();
-				arrayListL.add(otProductTO);
-				arrayListL.add(otProductTO);
-				return arrayListL;
-			}
-		};
-	}
-
-	/**
-	 * For Mocking WDWBusinessRules transformTicketDemoData.
-	 */
-	public static void mocktransformTicketDemoData() {
-		new MockUp<WDWBusinessRules>() {
-
-			@Mock
-			public void transformTicketDemoData(
-					ArrayList<DemographicsTO> tktDemoList,
-					OTDemographicInfo otDemoInfo) {
-
-			}
-		};
-	}
-
-	/**
-	 * For Mocking WDWBusinessRules createOTPaymentList.
-	 */
-	public static void mockcreateOTPaymentList() {
-		new MockUp<WDWBusinessRules>() {
-
-			@Mock
-			public void createOTPaymentList(
-					ArrayList<OTPaymentTO> otPaymentList,
-					ArrayList<PaymentTO> dtiPayList, EntityTO entityTO) {
-			}
-		};
-	}
-
-	/**
-	 * For Mocking CreateTicketResponseTO getTicketList.
-	 */
-	public static void mockgetTicketList() {
-		new MockUp<CreateTicketResponseTO>() {
-			@Mock
-			public ArrayList<TicketTO> getTicketList() {
-				ArrayList<TicketTO> ticketTOs = new ArrayList<>();
-				return ticketTOs;
-			}
-
-		};
-	}
-
 	/**
 	 * Fetch db ticket type list.
 	 *
