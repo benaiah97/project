@@ -39,7 +39,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for transformRequest
 	 */  
-	//@Test
+	@Test
 	public void testTransformRequest() {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -65,7 +65,8 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 		dtiCreateTktReq.setDefaultAccount("AccountPerTicket");
 		String xmlString = null;
 		/* mocking prepareAndExecuteSql */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		/*"pvt.disney.dti.gateway.dao.result.AssociationResult";*/
+		DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AssociationResult");
 		/* Scenario:: 1 passing the dtTxn Object */
 		try {
 			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
@@ -107,7 +108,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	 * 
 	 * @throws ParseException
 	 */ 
-	//@Test
+	@Test
 	public void testtransformResponseBody() throws ParseException {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
