@@ -136,7 +136,7 @@ public class CommonTestUtils {
 	 * 
 	 * @return
 	 */
-	private DemographicsTO getBillingInfo() {
+	protected DemographicsTO getBillingInfo() {
 		DemographicsTO bill = new DemographicsTO();
 		bill.setAddr1("1");
 		bill.setAddr2("2");
@@ -147,8 +147,12 @@ public class CommonTestUtils {
 		bill.setCountry("US");
 		bill.setTelephone("9876543210");
 		bill.setEmail("test@test.com");
+		bill.setDateOfBirth(new GregorianCalendar());
+		bill.setGender(GenderType.MALE);
+		bill.setOptInSolicit(true);
 		return bill;
 	}
+
 
 	/**
 	 * populating the clientData
@@ -270,7 +274,7 @@ public class CommonTestUtils {
 	 *            the ticket
 	 * @return the ticket assingment
 	 */
-	private ArrayList<TktAssignmentTO> getTicketAssingment(TicketTO ticket) {
+	protected ArrayList<TktAssignmentTO> getTicketAssingment(TicketTO ticket) {
 		ArrayList<TktAssignmentTO> ticketAssignmets = new ArrayList<TktAssignmentTO>();
 		TktAssignmentTO ticketassignment = ticket.new TktAssignmentTO();
 		ticketassignment.setAccountItem(new BigInteger("1"));

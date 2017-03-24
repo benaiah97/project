@@ -1,19 +1,23 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
 import static org.junit.Assert.assertNotNull;
+
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCreateTransactionTO;
@@ -35,14 +39,23 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for transformRequest
 	 */  
-	//@Test
+	@Test
 	public void testTransformRequest() {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.CREATETICKET);
 		createCommonRequest(dtiTxn);
 		CreateTicketRequestTO dtiCreateTktReq = new CreateTicketRequestTO();
-		dtiCreateTktReq.setTicketList(getTicketList(TicketIdType.MAG_ID));
+		ArrayList<TicketTO> ticketList=getTicketList(TicketIdType.MAG_ID);
+		for(TicketTO ticket:ticketList){
+			ticket.addTicketDemographic(getBillingInfo());
+			ticket.setTicketAssignmets(getTicketAssingment(ticket));
+			ticket.setTktNote("1");
+			ticket.setTktShell("1");
+			ticket.setTktValidityValidStart(new GregorianCalendar());
+			ticket.setTktValidityValidEnd(new GregorianCalendar());
+		}
+		dtiCreateTktReq.setTicketList(ticketList);
 		dtiCreateTktReq.setEligibilityGroup("1");
 		dtiCreateTktReq.setEligibilityMember("1");
 		dtiTxn.getRequest().setCommandBody(dtiCreateTktReq);
