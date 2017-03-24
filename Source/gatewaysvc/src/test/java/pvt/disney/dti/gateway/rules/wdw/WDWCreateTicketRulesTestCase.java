@@ -39,7 +39,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for transformRequest
 	 */  
-	@Test
+	//@Test
 	public void testTransformRequest() {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -107,7 +107,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	 * 
 	 * @throws ParseException
 	 */ 
-	@Test
+	//@Test
 	public void testtransformResponseBody() throws ParseException {
 
 		DTITransactionTO dtiTxn = new DTITransactionTO(
