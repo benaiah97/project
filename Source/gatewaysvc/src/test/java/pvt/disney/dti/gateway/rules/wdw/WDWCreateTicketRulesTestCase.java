@@ -41,7 +41,6 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	 */  
 	@Test
 	public void testTransformRequest() {
-
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.CREATETICKET);
 		createCommonRequest(dtiTxn);
@@ -110,7 +109,6 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	 */ 
 	@Test
 	public void testtransformResponseBody() throws ParseException {
-
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.CREATETICKET);
 		OTCommandTO otCmdTO = new OTCommandTO(
@@ -118,6 +116,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 		getOTCommad(otCmdTO);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
 		createCommonRequest(dtiTxn);
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			WDWCreateTicketRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
