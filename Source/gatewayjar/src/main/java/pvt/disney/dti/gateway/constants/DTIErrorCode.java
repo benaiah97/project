@@ -394,7 +394,7 @@ public class DTIErrorCode implements Serializable {
     if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.RESERVATION) {
       
       if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
-
+        
         DTIRequestTO dtiRequest = dtiTxn.getRequest();
         CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
         ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
@@ -405,7 +405,7 @@ public class DTIErrorCode implements Serializable {
           ReservationTO resTO = new ReservationTO();
           resTO.setResCode(resCode);
           resRespTO.setReservation(resTO);
-          dtiResp.setCommandBody(dtiResReq);
+          dtiResp.setCommandBody(resRespTO);
         }
         
       }
