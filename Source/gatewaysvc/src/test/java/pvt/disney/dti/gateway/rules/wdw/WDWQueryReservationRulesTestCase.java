@@ -89,7 +89,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 	/**
 	 * Test case for transformResponseBody.
 	 */
-	@Test
+	//@Test
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYTICKET);
