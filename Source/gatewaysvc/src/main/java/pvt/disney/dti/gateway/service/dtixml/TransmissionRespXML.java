@@ -143,7 +143,7 @@ public class TransmissionRespXML {
       } else if ((dtiErrorTO.getErrorCode().toString().equalsIgnoreCase(
           DTIErrorCode.DUPLICATE_ORDER.getErrorCode()) )) {
         
-        if (responseIn.getResponse().getCommandBody() != null) { // TODO JTL (Doesn't work, generates a happy, non-error answer)
+        if (responseIn.getResponse().getCommandBody() != null) { 
           setCommandBodyXML(responseIn, cmd, dtiErrorTO);
         }
         

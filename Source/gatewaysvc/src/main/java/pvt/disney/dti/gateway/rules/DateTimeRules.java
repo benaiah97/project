@@ -27,8 +27,6 @@ public class DateTimeRules {
 		// the second Sunday in March to the first Sunday in November, almost
 		// two-thirds of the year.
 		Date todayLocal = new Date();
-		// Date todayLocal = new Date(1201630842322L + (86400000L * 40));
-		// SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
 
 		SimpleTimeZone stz = new SimpleTimeZone(18000000, "America/New_York",
 				Calendar.MARCH, 8, -Calendar.SUNDAY, 7200000,
@@ -45,6 +43,23 @@ public class DateTimeRules {
 		return todayGMT;
 	}
 
+ /**
+   * Gets the current Pacific Time.
+   * TODO:  Work underway
+   * @return GMT date set to "now".
+   */
+  private static Date getPTNow() {
+
+    // Starting in 2007, most of the United States and Canada observe DST from
+    // the second Sunday in March to the first Sunday in November, almost
+    // two-thirds of the year.
+    Date todayLocal = new Date();
+
+    Date todayPT = new Date(todayLocal.getTime() - 10800000L); // -3 hours
+
+    return todayPT;
+  }
+	
 	/**
 	 * Determines if now is within the GMT time.
 	 * 
@@ -80,13 +95,18 @@ public class DateTimeRules {
 		int curTimeInt = Integer.parseInt(curTimeGMT);
 
 		if (startTimeInt < endTimeInt) {
-			if ((curTimeInt > endTimeInt) || (curTimeInt < startTimeInt)) return false;
-			else return true;
+			if ((curTimeInt > endTimeInt) || (curTimeInt < startTimeInt)) {
+			  return false;
+			}	else { 
+			  return true;
+			}
 		}
 		else {
-			// if ((curTimeInt > endTimeInt) && (curTimeInt < endTimeInt)) JTL
-			if ((endTimeInt < curTimeInt) && (startTimeInt > curTimeInt)) return false;
-			else return true;
+			if ((endTimeInt < curTimeInt) && (startTimeInt > curTimeInt)) { 
+			  return false;
+			} else { 
+			  return true;
+			}
 		}
 
 	}
@@ -165,4 +185,19 @@ public class DateTimeRules {
 
 		return gCal;
 	}
+	
+  /**
+   * Gets the current GMT Date.
+   * 
+   * @return A GregorianDate version of the GMT Date Time.
+   */
+  public static GregorianCalendar getPTDateNow() {
+
+    Date ptDateTime = DateTimeRules.getPTNow();
+    GregorianCalendar gCal = new GregorianCalendar();
+    gCal.setTime(ptDateTime);
+
+    return gCal;
+  }
+	
 }
