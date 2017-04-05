@@ -20,10 +20,8 @@ import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO.OTTransactionType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTVoidTicketTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTransactionDSSNTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTVTicketTO;
-import pvt.disney.dti.gateway.rules.BusinessRules;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 /**
@@ -34,8 +32,6 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 public class WDWVoidTicketRulesTestCase extends CommonTestUtils{
 	@Before
 	public void setUp() throws Exception {
-
-		BusinessRules.initBusinessRules(setConfigProperty());
 		setMockProperty();
 	}
 	/**
@@ -130,13 +126,13 @@ public class WDWVoidTicketRulesTestCase extends CommonTestUtils{
 	 * Common request for creation of ticket
 	 * @return
 	 */
-	private OTTicketTO getOTicket(){
+	/*private OTTicketTO getOTicket(){
 		OTTicketTO ticket=new OTTicketTO();
 		ticket.setTCOD("12000507111600050");
 		ticket.setTDssn((GregorianCalendar) GregorianCalendar
 				.getInstance(), "1", "1", "1");
 		
 		return ticket;
-	}
+	}*/
 
 }

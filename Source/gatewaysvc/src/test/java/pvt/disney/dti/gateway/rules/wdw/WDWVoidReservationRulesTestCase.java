@@ -20,7 +20,6 @@ import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO.OTTransactionType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTClientDataTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
-import pvt.disney.dti.gateway.rules.BusinessRules;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
@@ -32,9 +31,7 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 public class WDWVoidReservationRulesTestCase extends CommonTestUtils{
 	@Before
 	public void setUp() throws Exception {
-
-		BusinessRules.initBusinessRules(setConfigProperty());
-		setMockProperty();
+				setMockProperty();
 	}
 	/**
 	 * test case for transformRequest method
@@ -51,6 +48,7 @@ public class WDWVoidReservationRulesTestCase extends CommonTestUtils{
 		dtiTxn.setTpRefNum(new Integer(1));
 		dtiTxn.setAttributeTOMap(DTIMockUtil.fetchAttributeTOMapList());
 		String xmlString=null;
+		DTIMockUtil.mockTicketInfoList();
 		/*Scenario:: 1 passing the dtTxn Object*/
 		try{
 			xmlString=WDWVoidReservationRules.transformRequest(dtiTxn);

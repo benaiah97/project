@@ -35,7 +35,6 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	public void setUp() throws Exception {
 		setMockProperty();
 	}
-
 	/**
 	 * JUnit for transformRequest
 	 */  
@@ -93,6 +92,16 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 		}
 		/* Scenario:: 4 EligibilityGroup is DVC */
 		dtiCreateTktReq.setEligibilityGroup("DVC");
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 5 Mocking  */
+		dtiCreateTktReq.setEligibilityGroup("DVC");
+		dtiCreateTktReq.setDefaultAccount("");
+		DTIMockUtil.mockGetSpecifiedAccounts();
 		try {
 			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
 			assertNotNull(xmlString);
