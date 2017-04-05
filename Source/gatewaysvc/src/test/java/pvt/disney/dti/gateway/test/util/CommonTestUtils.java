@@ -24,6 +24,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
 /**
@@ -55,6 +56,16 @@ public class CommonTestUtils {
 		props.setProperty("POS.tktBroker", "DTIDV");
 		props.setProperty("ATS.SiteNumber", "120");
 		props.setProperty("ATS.MaxEncodeAllCount", "41");
+		props.setProperty("iago.endpoint", "http://aa.com");
+		props.setProperty("iago.socketTimeout", "40000");
+		props.setProperty("iago.connectionTimeout", "8000");
+		props.setProperty("iago.socketTimeout.renewal", "100000");
+		props.setProperty("ACTIVECONN", "DEFAULTURL");
+		props.setProperty("DEFAULTURL", "http://aa.com");
+
+		props.setProperty("CONNECT_TIMEOUT_MILLIS", "5000");
+		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
+		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
 		return props;
 	}
 
@@ -119,6 +130,7 @@ public class CommonTestUtils {
 		tktList.add(ticket);
 		return tktList;
 	}
+
 	/**
 	 * Shipping Information
 	 * 
@@ -153,7 +165,6 @@ public class CommonTestUtils {
 		return bill;
 	}
 
-
 	/**
 	 * populating the clientData
 	 * 
@@ -166,8 +177,10 @@ public class CommonTestUtils {
 		clientData.setBillingInfo(getBillingInfo());
 		clientData.setShippingInfo(getShippingInfo());
 	}
+
 	/**
 	 * Common Request for DTITransactionTO
+	 * 
 	 * @param dtiTxn
 	 */
 	public void createCommonRequest(DTITransactionTO dtiTxn) {
@@ -214,8 +227,10 @@ public class CommonTestUtils {
 		cmdHeaderTO.setCmdDevice("PAULH");
 		cmdHeaderTO.setCmdOperator("PAULH");
 	}
+
 	/**
 	 * Common Response for DTITransactionTO
+	 * 
 	 * @param dtiTxn
 	 */
 	public void createCommonResponse(DTITransactionTO dtiTxn) {
@@ -282,5 +297,19 @@ public class CommonTestUtils {
 		ticketAssignmets.add(ticketassignment);
 		return ticketAssignmets;
 
+	}
+
+	/**
+	 * Common request for creation of ticket
+	 * 
+	 * @return
+	 */
+	public static OTTicketTO getOTicket() {
+		OTTicketTO ticket = new OTTicketTO();
+		ticket.setTCOD("12000507111600050");
+		ticket.setTDssn((GregorianCalendar) GregorianCalendar.getInstance(),
+				"1", "1", "1");
+
+		return ticket;
 	}
 }

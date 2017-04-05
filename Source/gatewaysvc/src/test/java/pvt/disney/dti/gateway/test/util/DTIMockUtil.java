@@ -2,11 +2,24 @@ package pvt.disney.dti.gateway.test.util;
 
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +34,8 @@ import mockit.MockUp;
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
 
+import pvt.disney.dti.gateway.connection.ConnectionException;
+import pvt.disney.dti.gateway.connection.ConnectionManager;
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.QueryBuilder;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
@@ -34,6 +49,7 @@ import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
 import pvt.disney.dti.gateway.dao.result.AttributeResult;
+import pvt.disney.dti.gateway.dao.result.MultipleSeqNumResult;
 import pvt.disney.dti.gateway.dao.result.PaymentLookupResult;
 import pvt.disney.dti.gateway.dao.result.ProductDetailResult;
 import pvt.disney.dti.gateway.dao.result.ProductIdListResult;
@@ -41,14 +57,21 @@ import pvt.disney.dti.gateway.dao.result.ProductTktTypeResult;
 import pvt.disney.dti.gateway.dao.result.ShellTypeResult;
 import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.dao.result.TransidRescodeResult;
+import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
+import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTUpgradeTicketTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
 
 import com.disney.exception.WrappedException;
@@ -59,7 +82,7 @@ import com.disney.util.Loader;
  *
  * @author rasta006
  */
-public class DTIMockUtil {
+public class DTIMockUtil extends CommonTestUtils {
 
 	/** The attribute rs. */
 	static ResultSet attributeRs = null;
@@ -81,6 +104,9 @@ public class DTIMockUtil {
 
 	/** The prod list. */
 	public static ArrayList<DBProductTO> prodList = new ArrayList<DBProductTO>();
+	/** the TicketList */
+	public static OTTicketTO ticket = getOTicket();
+	static boolean mocking = false;
 
 	/**
 	 * For Mocking AttributeKey.
@@ -156,6 +182,7 @@ public class DTIMockUtil {
 		EasyMock.replay(attributeRs1);
 		EasyMock.replay(attributeRs2);
 		EasyMock.replay(attributeRs3);
+
 	}
 
 	/**
@@ -201,6 +228,7 @@ public class DTIMockUtil {
 				.andReturn(true).anyTimes();
 		EasyMock.expect(rs.getBigDecimal(EasyMock.anyObject(String.class)))
 				.andReturn(new BigDecimal("1.0")).anyTimes();
+
 	}
 
 	/**
@@ -248,37 +276,51 @@ public class DTIMockUtil {
 		};
 	}
 
+	public static void processMocking() {
+		mocking = true;
+	}
+
 	/**
 	 * For Mocking DAOHelper prepareAndExecuteSql.
 	 */
+	@SuppressWarnings("unused")
 	public static void processMockprepareAndExecuteSql() {
-		new MockUp<DAOHelper>() {
-			@Mock
-			protected int prepareAndExecuteSql(Object[] inputValues,
-					String sql, boolean query, ResultSetProcessor theProcessor) {
-				Object obj = new Object();
-				try {
-					if (theProcessor != null) {
-						theProcessor.processNextResultSet(rs);
-						// obj = (Object)theProcessor.getProcessedObject();
-						if (theProcessor instanceof TransidRescodeResult) {
-							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
-							TransidRescodeTO transCode = new TransidRescodeTO();
-							transCode
-									.setCreationDate((GregorianCalendar) GregorianCalendar
-											.getInstance());
-							transCode.setRescode("1");
-							transCode.setTsTransid("1");
-							list.add(transCode);
-							obj = list;
+		mocking = false;
+		if (!mocking) {
+			new MockUp<DAOHelper>() {
+				@Mock
+				protected int prepareAndExecuteSql(Object[] inputValues,
+						String sql, boolean query,
+						ResultSetProcessor theProcessor) {
+					if (!mocking) {
+						Object obj = new Object();
+						try {
+							init();
+							if (theProcessor != null) {
+								theProcessor.processNextResultSet(rs);
+								// obj =
+								// (Object)theProcessor.getProcessedObject();
+								if (theProcessor instanceof TransidRescodeResult) {
+									ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
+									TransidRescodeTO transCode = new TransidRescodeTO();
+									transCode
+											.setCreationDate((GregorianCalendar) GregorianCalendar
+													.getInstance());
+									transCode.setRescode("1");
+									transCode.setTsTransid("1");
+									list.add(transCode);
+									obj = list;
+								}
+							}
+						} catch (Exception e) {
 						}
 					}
-				} catch (Exception e) {
-				}
 
-				return 1;
-			}
-		};
+					return 1;
+				}
+			};
+
+		}
 	}
 
 	/**
@@ -288,6 +330,7 @@ public class DTIMockUtil {
 	 *            the result set processor
 	 */
 	public static void mockResultProcessor(String resultSetProcessor) {
+
 		try {
 			Object obj = null;
 			obj = Loader.loadClass(resultSetProcessor).newInstance();
@@ -304,22 +347,25 @@ public class DTIMockUtil {
 				@Mock
 				protected Object processQuery(Object[] values) throws Exception {
 					Object obj = new Object();
-					try {
-						theProcessor.processNextResultSet(rs);
-						obj = (Object) theProcessor.getProcessedObject();
-						if (theProcessor instanceof TransidRescodeResult) {
-							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
-							TransidRescodeTO transCode = new TransidRescodeTO();
-							transCode
-									.setCreationDate((GregorianCalendar) GregorianCalendar
-											.getInstance());
-							transCode.setRescode("1");
-							transCode.setTsTransid("1");
-							list.add(transCode);
-							obj = list;
+					{
+						try {
+							theProcessor.processNextResultSet(rs);
+							obj = (Object) theProcessor.getProcessedObject();
+							if (theProcessor instanceof TransidRescodeResult) {
+								ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
+								TransidRescodeTO transCode = new TransidRescodeTO();
+								transCode
+										.setCreationDate((GregorianCalendar) GregorianCalendar
+												.getInstance());
+								transCode.setRescode("1");
+								transCode.setTsTransid("1");
+								list.add(transCode);
+								obj = list;
+							}
+						} catch (Exception e) {
 						}
-					} catch (Exception e) {
 					}
+
 					return obj;
 				}
 			};
@@ -465,6 +511,7 @@ public class DTIMockUtil {
 	 *
 	 * @return the array list
 	 */
+	@SuppressWarnings("unchecked")
 	public static ArrayList<DBProductTO> fetchDBOrderList() {
 		ArrayList<DBProductTO> dbProduct = null;
 		try {
@@ -485,8 +532,8 @@ public class DTIMockUtil {
 	 *
 	 * @return the hash map
 	 */
+	@SuppressWarnings("unchecked")
 	public static HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> fetchAttributeTOMapList() {
-
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 
 		try {
@@ -649,7 +696,6 @@ public class DTIMockUtil {
 	 */
 	public static void mockGetOrderEligibility() {
 		new MockUp<EligibilityKey>() {
-			@SuppressWarnings("unchecked")
 			@Mock
 			protected Boolean getOrderEligibility(
 					ArrayList<DBProductTO> dbProdList, String eligGrpCode,
@@ -662,10 +708,10 @@ public class DTIMockUtil {
 	/**
 	 * For Mocking ProductKey getProductTicketTypes.
 	 */
+	@SuppressWarnings({ "unchecked", "unused" })
 	public static void mockGetProductTicketTypes() {
 		try {
 			new MockUp<ProductKey>() {
-				@SuppressWarnings("unchecked")
 				@Mock
 				protected ArrayList<DBProductTO> getProductTicketTypes(
 						ArrayList<DBProductTO> dbProdList) {
@@ -722,7 +768,6 @@ public class DTIMockUtil {
 	public static void mockGetTPCommandLookup() {
 		try {
 			new MockUp<LookupKey>() {
-				@SuppressWarnings("unchecked")
 				@Mock
 				protected ArrayList<TPLookupTO> getTPCommandLookup(
 						String tpiCode,
@@ -762,7 +807,6 @@ public class DTIMockUtil {
 	public static void mockGetGWTPCommandLookup() {
 		try {
 			new MockUp<LookupKey>() {
-				@SuppressWarnings("unchecked")
 				@Mock
 				protected ArrayList<TPLookupTO> getGWTPCommandLookup(
 						String tpiCode,
@@ -801,7 +845,6 @@ public class DTIMockUtil {
 	public static void mockGetWordCollection() {
 		try {
 			new MockUp<WordCipher>() {
-				@SuppressWarnings("unchecked")
 				@Mock
 				protected Collection<String> getWordCollection(String fileName) {
 					List<String> decodedWordCollection = new ArrayList<String>();
@@ -823,7 +866,6 @@ public class DTIMockUtil {
 	public static void mockGetTransidRescodeFromDB() {
 		try {
 			new MockUp<TransidRescodeKey>() {
-				@SuppressWarnings("unchecked")
 				@Mock
 				protected ArrayList<TransidRescodeTO> getTransidRescodeFromDB(
 						String transid) {
@@ -890,11 +932,13 @@ public class DTIMockUtil {
 			}
 		};
 	}
+
 	/**
 	 * Fetch db ticket type list.
 	 *
 	 * @return the array list
 	 */
+	@SuppressWarnings("unchecked")
 	public static ArrayList<DBProductTO> fetchDBTicketTypeList() {
 		ArrayList<DBProductTO> dbProduct = null;
 		try {
@@ -913,10 +957,58 @@ public class DTIMockUtil {
 					dbProductFinal.setValidityDateInfoRequired(true);
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return dbProduct;
+	}
+
+	/**
+	 * Mocking getPaymentInfoList
+	 */
+	public static void mockGetPaymentInfoList() {
+		new MockUp<OTUpgradeTicketTO>() {
+			@Mock
+			public ArrayList<OTPaymentTO> getPaymentInfoList() {
+				ArrayList<OTPaymentTO> otPaymentList = new ArrayList<OTPaymentTO>();
+				OTPaymentTO oTpayment = new OTPaymentTO();
+				otPaymentList.add(oTpayment);
+				return otPaymentList;
+			}
+		};
+	}
+
+	/**
+	 * For Mocking CreateTicketRequestTO getSpecifiedAccounts
+	 */
+	public static void mockGetSpecifiedAccounts() {
+		new MockUp<CreateTicketRequestTO>() {
+			@Mock
+			public ArrayList<SpecifiedAccountTO> getSpecifiedAccounts() {
+				SpecifiedAccountTO specifiedAccountTO = new SpecifiedAccountTO();
+				specifiedAccountTO.setAccountItem(new BigInteger("1"));
+				specifiedAccountTO.setNewExternalReferenceType("XBANDID");
+				ArrayList<SpecifiedAccountTO> accountTOs = new ArrayList<SpecifiedAccountTO>();
+				accountTOs.add(specifiedAccountTO);
+				return accountTOs;
+			}
+		};
+	}
+
+	/**
+	 * For Mocking CreateTicketRequestTO getSpecifiedAccounts
+	 */
+	public static void mockTicketInfoList() {
+		new MockUp<OTManageReservationTO>() {
+			@Mock
+			public ArrayList<OTTicketInfoTO> getTicketInfoList() {
+				OTTicketInfoTO ticketInfo = new OTTicketInfoTO();
+				ticketInfo.setTicket(ticket);
+				ticketInfo.setItem(new BigInteger("1"));
+				ArrayList<OTTicketInfoTO> ticketInfos = new ArrayList<OTTicketInfoTO>();
+				ticketInfos.add(ticketInfo);
+				return ticketInfos;
+			}
+		};
 	}
 }
