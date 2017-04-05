@@ -182,7 +182,6 @@ public class DTIMockUtil extends CommonTestUtils {
 		EasyMock.replay(attributeRs1);
 		EasyMock.replay(attributeRs2);
 		EasyMock.replay(attributeRs3);
-
 	}
 
 	/**
@@ -228,7 +227,6 @@ public class DTIMockUtil extends CommonTestUtils {
 				.andReturn(true).anyTimes();
 		EasyMock.expect(rs.getBigDecimal(EasyMock.anyObject(String.class)))
 				.andReturn(new BigDecimal("1.0")).anyTimes();
-
 	}
 
 	/**

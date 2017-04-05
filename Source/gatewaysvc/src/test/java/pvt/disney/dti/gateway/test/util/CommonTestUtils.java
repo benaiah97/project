@@ -62,7 +62,6 @@ public class CommonTestUtils {
 		props.setProperty("iago.socketTimeout.renewal", "100000");
 		props.setProperty("ACTIVECONN", "DEFAULTURL");
 		props.setProperty("DEFAULTURL", "http://aa.com");
-
 		props.setProperty("CONNECT_TIMEOUT_MILLIS", "5000");
 		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
 		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
