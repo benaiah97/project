@@ -1028,8 +1028,7 @@ public class DTIMockUtil extends CommonTestUtils {
 						IOException, Exception {
 					Document doc = null;
 					DOMParser domParser = new DOMParser();
-					
-						if (is == null) {
+					if (is == null) {
 							throw new IllegalArgumentException(
 									"InputStream cannot be null");
 						}
@@ -1041,11 +1040,7 @@ public class DTIMockUtil extends CommonTestUtils {
 						domParser.parse(in);
 						doc = domParser.getDocument();
 						domParser.dropDocumentReferences();	
-						mockParse=true;
-					
-					
-
-					return doc;
+											return doc;
 				}
 			};
 
