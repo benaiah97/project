@@ -89,7 +89,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 	/**
 	 * Test case for transformResponseBody.
 	 */
-	//@Test
+	@Test
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYTICKET);
@@ -128,8 +128,13 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		
 		otMngResTO.setPaymentInfoList(otPmtList);
 		otMngResTO.setReservationCode("ABC");
+		//otMngResTO.
 		OTCommandTO otCmdTO = new OTCommandTO(txType);
 		otCmdTO.setManageReservationTO(otMngResTO);
+		OTTicketInfoTO ottTcket=new OTTicketInfoTO();
+		ottTcket.setItemNumCode(new BigInteger("1"));
+		ottTcket.setTicket(getOTicket());
+		otMngResTO.getTicketInfoList().add(ottTcket);
 
 		QueryTicketRequestTO queryReq = new QueryTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(queryReq);
@@ -162,7 +167,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -188,7 +193,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -226,7 +231,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -248,7 +253,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -270,7 +275,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -292,7 +297,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -314,7 +319,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -336,7 +341,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -358,7 +363,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -380,7 +385,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -402,7 +407,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -424,7 +429,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -447,7 +452,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -469,7 +474,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -491,7 +496,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -513,7 +518,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -535,7 +540,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -557,7 +562,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -579,7 +584,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -601,7 +606,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -623,7 +628,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -645,7 +650,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -667,7 +672,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
@@ -689,7 +694,7 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		otCmdTO.setManageReservationTO(otMngResTO);
 
 		
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);

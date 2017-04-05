@@ -20,6 +20,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO.OTTransactionType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTClientDataTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
@@ -48,7 +49,7 @@ public class WDWVoidReservationRulesTestCase extends CommonTestUtils{
 		dtiTxn.setTpRefNum(new Integer(1));
 		dtiTxn.setAttributeTOMap(DTIMockUtil.fetchAttributeTOMapList());
 		String xmlString=null;
-		DTIMockUtil.mockTicketInfoList();
+		//DTIMockUtil.mockTicketInfoList();
 		/*Scenario:: 1 passing the dtTxn Object*/
 		try{
 			xmlString=WDWVoidReservationRules.transformRequest(dtiTxn);
@@ -78,8 +79,12 @@ public class WDWVoidReservationRulesTestCase extends CommonTestUtils{
 		OTClientDataTO clientData=new OTClientDataTO();
 		clientData.setClientUniqueId(new Integer(1));
 		oManageReser.setClientData(clientData);
+		OTTicketInfoTO ottTcket=new OTTicketInfoTO();
 		OTTransactionType txType=OTTransactionType.UNDEFINED;
 		OTCommandTO otCmdTO=new OTCommandTO(txType);
+		ottTcket.setItemNumCode(new BigInteger("1"));
+		ottTcket.setTicket(getOTicket());
+		oManageReser.getTicketInfoList().add(ottTcket);
 		otCmdTO.setManageReservationTO(oManageReser);
 		DTIResponseTO dtiRespTO=new DTIResponseTO();
 		EntityTO entityTO = new EntityTO();
