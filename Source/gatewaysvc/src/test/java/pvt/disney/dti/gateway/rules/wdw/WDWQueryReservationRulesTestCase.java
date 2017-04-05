@@ -131,20 +131,20 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		//otMngResTO.
 		OTCommandTO otCmdTO = new OTCommandTO(txType);
 		otCmdTO.setManageReservationTO(otMngResTO);
-		OTTicketInfoTO ottTcket=new OTTicketInfoTO();
+		/*OTTicketInfoTO ottTcket=new OTTicketInfoTO();
 		ottTcket.setItemNumCode(new BigInteger("1"));
 		ottTcket.setTicket(getOTicket());
 		otMngResTO.getTicketInfoList().add(ottTcket);
-
+*/
 		QueryTicketRequestTO queryReq = new QueryTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
-		//DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.PdtCodeTktNbrResult");
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
 		}
 		
 		otPmtList.clear();
