@@ -5,7 +5,9 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,11 +30,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import mockit.Mock;
 import mockit.MockUp;
 
+import org.apache.xerces.parsers.DOMParser;
 import org.easymock.EasyMock;
 import org.powermock.api.easymock.PowerMock;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import pvt.disney.dti.gateway.connection.ConnectionException;
 import pvt.disney.dti.gateway.connection.ConnectionManager;
@@ -107,6 +115,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/** the TicketList */
 	public static OTTicketTO ticket = getOTicket();
 	static boolean mocking = false;
+	static boolean mockParse=false;
 
 	/**
 	 * For Mocking AttributeKey.
@@ -1009,4 +1018,37 @@ public class DTIMockUtil extends CommonTestUtils {
 			}
 		};
 	}
+	public static void mockParseProcess(boolean mock){
+		
+		if(mock){
+			mockParse=false;
+			new MockUp<DocumentBuilder>() {
+				@Mock
+				public Document parse(InputStream is) throws SAXException,
+						IOException, Exception {
+					Document doc = null;
+					DOMParser domParser = new DOMParser();
+					
+						if (is == null) {
+							throw new IllegalArgumentException(
+									"InputStream cannot be null");
+						}
+						URL url = this.getClass().getResource("/xml/iagoTestSuccess.xml");
+						File file = new File(url.toURI());
+						InputStream inStream = new FileInputStream(file);
+						InputSource in = new InputSource(inStream);
+
+						domParser.parse(in);
+						doc = domParser.getDocument();
+						domParser.dropDocumentReferences();	
+						mockParse=true;
+					
+					
+
+					return doc;
+				}
+			};
+
+		}
+		  	}
 }
