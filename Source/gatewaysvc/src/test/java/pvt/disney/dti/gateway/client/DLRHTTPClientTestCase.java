@@ -27,6 +27,7 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.xml.DLRTestUtil;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 public class DLRHTTPClientTestCase extends CommonTestUtils{
 	DLRHTTPClient client=null;
@@ -34,28 +35,7 @@ public class DLRHTTPClientTestCase extends CommonTestUtils{
 	public void setUp(){
 		setMockProperty();  
 	  client=new DLRHTTPClient();
-      new MockUp<DocumentBuilder>() {
-			@Mock
-			public Document parse(InputStream is) throws SAXException,
-					IOException, Exception {
-				Document doc = null;
-				DOMParser domParser = new DOMParser();
-				if (is == null) {
-					throw new IllegalArgumentException(
-							"InputStream cannot be null");
-				}
-				URL url = this.getClass().getResource("/xml/iagoTestSuccess.xml");
-				File file = new File(url.toURI());
-				InputStream inStream = new FileInputStream(file);
-				InputSource in = new InputSource(inStream);
-
-				domParser.parse(in);
-				doc = domParser.getDocument();
-				domParser.dropDocumentReferences();
-
-				return doc;
-			}
-		};
+    
 
 	}
 	@Test
@@ -94,6 +74,7 @@ public class DLRHTTPClientTestCase extends CommonTestUtils{
 				"</Envelope>";
 		
 		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
+		DTIMockUtil.mockParseProcess(true);
 		try{
 			String xmlResponse=client.sendRequest(dtiTxn, reqXml);	
 			assertNotNull(xmlResponse);

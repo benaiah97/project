@@ -31,6 +31,7 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.xml.DLRTestUtil;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 public class IAGOCLientTestCase extends CommonTestUtils {
 
@@ -46,28 +47,6 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 	public void setUp() {
 
 		setMockProperty();
-		new MockUp<DocumentBuilder>() {
-			@Mock
-			public Document parse(InputStream is) throws SAXException,
-					IOException, Exception {
-				Document doc = null;
-				DOMParser domParser = new DOMParser();
-				if (is == null) {
-					throw new IllegalArgumentException(
-							"InputStream cannot be null");
-				}
-				URL url = this.getClass().getResource("/xml/iagoTestSuccess.xml");
-				File file = new File(url.toURI());
-				InputStream inStream = new FileInputStream(file);
-				InputSource in = new InputSource(inStream);
-
-				domParser.parse(in);
-				doc = domParser.getDocument();
-				domParser.dropDocumentReferences();
-
-				return doc;
-			}
-		};
 
 		client = new IagoClient();
 	}
@@ -109,8 +88,8 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 
 		IagoClient client = new IagoClient();
 		try {
-
-			String  xmlResponse = client.sendRequest(dtiTxn, reqXml);
+			DTIMockUtil.mockParseProcess(true);
+			String xmlResponse = client.sendRequest(dtiTxn, reqXml);
 			assertNotNull(xmlResponse);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.TP_INTERFACE_FAILURE,

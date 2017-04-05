@@ -31,6 +31,7 @@ import pvt.disney.dti.gateway.data.DTITransactionTO.ProviderType;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.xml.DLRTestUtil;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
 public class ProviderClientTestcase extends CommonTestUtils{
@@ -43,28 +44,7 @@ public class ProviderClientTestcase extends CommonTestUtils{
       	}
 	@Test
 	public void testSendRequestToProvider(){
-		new MockUp<DocumentBuilder>() {
-			@Mock
-			public Document parse(InputStream is) throws SAXException,
-					IOException, Exception {
-				Document doc = null;
-				DOMParser domParser = new DOMParser();
-				if (is == null) {
-					throw new IllegalArgumentException(
-							"InputStream cannot be null");
-				}
-				URL url = this.getClass().getResource("/xml/iagoTestSuccess.xml");
-				File file = new File(url.toURI());
-				InputStream inStream = new FileInputStream(file);
-				InputSource in = new InputSource(inStream);
-
-				domParser.parse(in);
-				doc = domParser.getDocument();
-				domParser.dropDocumentReferences();
-
-				return doc;
-			}
-		};
+		
 		String xmlRequest =
 				"<Envelope>" +
 					"<Header>" +
@@ -99,8 +79,10 @@ public class ProviderClientTestcase extends CommonTestUtils{
 				"</Envelope>";
 		
 		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
+		DTIMockUtil.mockParseProcess(true);
 		dtiTxn.setProvider(ProviderType.DLRGATEWAY);
 		try{
+			
 			String result=ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
 			assertNotNull(result);
 		}catch(DTIException dtie){
@@ -108,6 +90,7 @@ public class ProviderClientTestcase extends CommonTestUtils{
 		}
 		dtiTxn.setProvider(ProviderType.HKDNEXUS);
 		try{
+			//DTIMockUtil.mockParseProcess(true);
 			String result=ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
 			assertNotNull(result);
 		}catch(DTIException dtie){
@@ -115,6 +98,7 @@ public class ProviderClientTestcase extends CommonTestUtils{
 		}
 		dtiTxn.setProvider(ProviderType.WDWNEXUS);
 		try{
+			//DTIMockUtil.mockParseProcess(true);
 			String result=ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
 			assertNotNull(result);
 		}catch(DTIException dtie){
