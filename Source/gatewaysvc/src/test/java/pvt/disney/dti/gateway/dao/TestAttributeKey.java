@@ -83,7 +83,6 @@ public class TestAttributeKey {
 		}
 		/*Scenario 2:: when dtiTxn is passed as not null and without mock Dao object*/
 		dtiTxn = new DTITransactionTO(type);
-		DTIMockUtil.processMocking();
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
 		} catch (DTIException dtie) {

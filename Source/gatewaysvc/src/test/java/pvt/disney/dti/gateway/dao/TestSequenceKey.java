@@ -26,7 +26,6 @@ public class TestSequenceKey extends CommonTestDao {
 	@Test
 	public void testGetTpRefNum() {
 		Integer result = null;
-		DTIMockUtil.processMocking();
 		/* Scenario::1 Passing object without mocking DB */
 		try {
 			SequenceKey.getTpRefNum();
@@ -37,7 +36,10 @@ public class TestSequenceKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
+		
 		try {
 			result = SequenceKey.getTpRefNum();
 			assertNotNull(result);
@@ -53,7 +55,6 @@ public class TestSequenceKey extends CommonTestDao {
 	@Test
 	public void testGetITSTransId() {
 		Integer result = null;
-		DTIMockUtil.processMocking();
 		/* Scenario::1 Passing object without mocking DB */
 		try {
 			SequenceKey.getITSTransId();
@@ -80,7 +81,6 @@ public class TestSequenceKey extends CommonTestDao {
 	public void testGetITPTransId() {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
-		DTIMockUtil.processMocking();
 		try {
 			SequenceKey.getITPTransId();
 		} catch (DTIException dtie) {
@@ -107,8 +107,7 @@ public class TestSequenceKey extends CommonTestDao {
 	public void testGetOTPTransId() {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
-		DTIMockUtil.processMocking();
-		try {
+			try {
 			SequenceKey.getOTPTransId();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
