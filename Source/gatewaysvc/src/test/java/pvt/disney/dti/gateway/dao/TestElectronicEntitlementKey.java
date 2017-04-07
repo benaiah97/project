@@ -31,11 +31,10 @@ public class TestElectronicEntitlementKey extends CommonTestDao{
 		} catch (Exception e) {
 			//Assert.fail("Unexpected Exception::" + e.getMessage());
 		}
-		
-		if(!DTIMockUtil.mocking){
+	/*	if(!DTIMockUtil.mocking){
 			DTIMockUtil.processMockprepareAndExecuteSql();	
 		}
-		result = ElectronicEntitlementKey.queryEntitlementVisualId(aTicket);
+	*/	result = ElectronicEntitlementKey.queryEntitlementVisualId(aTicket);
 		//assertNotNull(result);
 	}
 	/**
