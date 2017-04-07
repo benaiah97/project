@@ -302,6 +302,9 @@ public class DTIMockUtil extends CommonTestUtils {
 				try {
 					init();
 					if (theProcessor != null) {
+						if (theProcessor instanceof MultipleSeqNumResult) {
+							return 1;
+						}
 						theProcessor.processNextResultSet(rs);
 						// obj =
 						// (Object)theProcessor.getProcessedObject();

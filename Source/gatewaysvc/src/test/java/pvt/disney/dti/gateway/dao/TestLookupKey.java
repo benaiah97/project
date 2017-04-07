@@ -255,8 +255,10 @@ public class TestLookupKey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
-		try {
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
+			try {
 			result=LookupKey.getSimpleTPLookup(ticketProviderId, lookup_key, lookup_type);
 			assertNotNull(result);
 		} catch (DTIException dtie) {

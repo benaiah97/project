@@ -282,7 +282,7 @@ public class TestProductkey extends CommonTestDao{
 	 * Test Case for getProductFromTicketType
 	 */
 	@Test
-	public void testgetProductFromTicketType(){
+	public void testGetProductFromTicketType(){
 		String providerTicketType=null;
 		String result = null;
 		/* Scenario::1 Passing providerTicketType as null*/
@@ -303,7 +303,7 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		//DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			result=ProductKey.getProductFromTicketType(providerTicketType);
 			assertNotNull(result);
@@ -337,7 +337,7 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		//DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			result=ProductKey.getProductCodeFromTktNbr(tktNbr);
 			assertNotNull(result);

@@ -57,7 +57,9 @@ public class TestLogKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			result = LogKey.getITPLogEntry(tpTransId);
 			assertNotNull(result);
@@ -94,7 +96,9 @@ public class TestLogKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			result = LogKey.getITSLogTransId(payloadId);
 			assertNotNull(result);
@@ -153,7 +157,9 @@ public class TestLogKey extends CommonTestDao {
 		}
 
 		/* Scenario::2 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			LogKey.insertITSLog(payloadId, entityTO, transIdITS, inXMLString);
 		} catch (DTIException dtie) {
@@ -226,7 +232,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 
 		try {
 			LogKey.insertOTSLog(dtiTxn, inXMLString);
@@ -318,7 +326,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 
 		try {
 			LogKey.insertITPLog(dtiTxn, inXMLString);
@@ -376,7 +386,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 
 		try {
 			LogKey.insertOTPLog(dtiTxn, inXMLString);
@@ -405,7 +417,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 
 		try {
 			LogKey.insertDTITransLog(tpRefNumber, payloadId, entityTO, target,
@@ -432,7 +446,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 
 		try {
 			LogKey.updateDTITransLogITP(tpRefNumber, trans_date, cmdid,
@@ -455,8 +471,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		DTIMockUtil.processMockprepareAndExecuteSql();
-
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			LogKey.updateDTITransLogOTP(tpRefNumber, transIdOTP);
 		} catch (DTIException dtie) {
@@ -510,6 +527,9 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			LogKey.insertOTSLogError(otsLogKey, tsPayloadId, inXMLString,
 					errorCode, transIdITS);
@@ -542,7 +562,9 @@ public class TestLogKey extends CommonTestDao {
 					dtie.getDtiErrorCode());
 		}
 
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
 			LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTP, errReturnCode,
 					errName, providerErrCode, providerErrName, trans_date,

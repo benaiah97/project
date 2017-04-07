@@ -39,19 +39,19 @@ public class TestSequenceKey extends CommonTestDao {
 		/* Scenario::3 Passing object after mocking DB */
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			result=SequenceKey.getTpRefNum();
+			result = SequenceKey.getTpRefNum();
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 
 	}
-	
+
 	/**
 	 * Test case for getITSTransId()
 	 */
 	@Test
-	public void testGetITSTransId(){
+	public void testGetITSTransId() {
 		Integer result = null;
 		DTIMockUtil.processMocking();
 		/* Scenario::1 Passing object without mocking DB */
@@ -66,17 +66,18 @@ public class TestSequenceKey extends CommonTestDao {
 		/* Scenario::3 Passing object after mocking DB */
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			result=SequenceKey.getITSTransId();
+			result = SequenceKey.getITSTransId();
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	}
+
 	/**
 	 * Test Case for getITPTransId
 	 */
 	@Test
-	public void testGetITPTransId(){
+	public void testGetITPTransId() {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		DTIMockUtil.processMocking();
@@ -91,19 +92,19 @@ public class TestSequenceKey extends CommonTestDao {
 		/* Scenario::3 Passing object after mocking DB */
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			result=SequenceKey.getITPTransId();
+			result = SequenceKey.getITPTransId();
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
-	
-		
+
 	}
+
 	/**
 	 * Test Case for getOTPTransId
 	 */
 	@Test
-	public void testGetOTPTransId(){
+	public void testGetOTPTransId() {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		DTIMockUtil.processMocking();
@@ -118,21 +119,21 @@ public class TestSequenceKey extends CommonTestDao {
 		/* Scenario::3 Passing object after mocking DB */
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			result=SequenceKey.getOTPTransId();
+			result = SequenceKey.getOTPTransId();
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	}
+
 	/**
 	 * Test Case for getOTSTransId
 	 */
-	@Test
-	public void testGetOTSTransId(){
+	 @Test
+	public void testGetOTSTransId() {
 
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
-		DTIMockUtil.processMocking();
 		try {
 			SequenceKey.getOTSTransId();
 		} catch (DTIException dtie) {
@@ -142,24 +143,27 @@ public class TestSequenceKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		if(!DTIMockUtil.mocking){
+			DTIMockUtil.processMockprepareAndExecuteSql();	
+		}
 		try {
-			result=SequenceKey.getOTSTransId();
+			result = SequenceKey.getOTSTransId();
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
-	
+
 	}
+
 	/**
 	 * Test Case for setItpOtpOtsSequenceNumbers
 	 */
 	@Test
-	public void testSetItpOtpOtsSequenceNumbers(){
+	public void testSetItpOtpOtsSequenceNumbers() {
 		TransactionSequences result = null;
-		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.QUERYTICKET);
+		DTITransactionTO dtiTxn = new DTITransactionTO(
+				TransactionType.QUERYTICKET);
 		/* Scenario::1 Passing object without mocking DB */
-		DTIMockUtil.processMocking();
 		try {
 			SequenceKey.setItpOtpOtsSequenceNumbers(dtiTxn);
 		} catch (DTIException dtie) {
@@ -168,9 +172,7 @@ public class TestSequenceKey extends CommonTestDao {
 			assertEquals("Exception executing setItpOtpOtsSequenceNumbers",
 					dtie.getLogMessage());
 		}
-		
-	
-	
+
 	}
 
 }
