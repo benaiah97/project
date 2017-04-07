@@ -274,7 +274,6 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals("Exception executing insertOTSLog",
 					dtie.getLogMessage());
 		}
-
 	}
 
 	@Test
