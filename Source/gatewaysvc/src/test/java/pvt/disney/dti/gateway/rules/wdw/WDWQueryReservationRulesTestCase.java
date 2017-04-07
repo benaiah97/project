@@ -139,9 +139,9 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		QueryTicketRequestTO queryReq = new QueryTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
-		if(!DTIMockUtil.mocking){
+		/*if(!DTIMockUtil.mocking){
 			DTIMockUtil.processMockprepareAndExecuteSql();	
-		}
+		}*/
 		
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
