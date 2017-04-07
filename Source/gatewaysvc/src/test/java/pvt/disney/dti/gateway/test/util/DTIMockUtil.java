@@ -114,8 +114,8 @@ public class DTIMockUtil extends CommonTestUtils {
 	public static ArrayList<DBProductTO> prodList = new ArrayList<DBProductTO>();
 	/** the TicketList */
 	public static OTTicketTO ticket = getOTicket();
-	static boolean mocking = false;
-	static boolean mockParse=false;
+	public static boolean mocking = false;
+	static boolean mockParse = false;
 
 	/**
 	 * For Mocking AttributeKey.
@@ -292,42 +292,39 @@ public class DTIMockUtil extends CommonTestUtils {
 	 */
 	@SuppressWarnings("unused")
 	public static void processMockprepareAndExecuteSql() {
-		mocking = false;
-		if (!mocking) {
-			new MockUp<DAOHelper>() {
-				@Mock
-				protected int prepareAndExecuteSql(Object[] inputValues,
-						String sql, boolean query,
-						ResultSetProcessor theProcessor) {
-					if (!mocking) {
-						Object obj = new Object();
-						try {
-							init();
-							if (theProcessor != null) {
-								theProcessor.processNextResultSet(rs);
-								// obj =
-								// (Object)theProcessor.getProcessedObject();
-								if (theProcessor instanceof TransidRescodeResult) {
-									ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
-									TransidRescodeTO transCode = new TransidRescodeTO();
-									transCode
-											.setCreationDate((GregorianCalendar) GregorianCalendar
-													.getInstance());
-									transCode.setRescode("1");
-									transCode.setTsTransid("1");
-									list.add(transCode);
-									obj = list;
-								}
-							}
-						} catch (Exception e) {
+
+		new MockUp<DAOHelper>() {
+			@Mock
+			protected int prepareAndExecuteSql(Object[] inputValues,
+					String sql, boolean query, ResultSetProcessor theProcessor) {
+
+				Object obj = new Object();
+				try {
+					init();
+					if (theProcessor != null) {
+						theProcessor.processNextResultSet(rs);
+						// obj =
+						// (Object)theProcessor.getProcessedObject();
+						if (theProcessor instanceof TransidRescodeResult) {
+							ArrayList<TransidRescodeTO> list = new ArrayList<TransidRescodeTO>();
+							TransidRescodeTO transCode = new TransidRescodeTO();
+							transCode
+									.setCreationDate((GregorianCalendar) GregorianCalendar
+											.getInstance());
+							transCode.setRescode("1");
+							transCode.setTsTransid("1");
+							list.add(transCode);
+							obj = list;
 						}
 					}
-
-					return 1;
+				} catch (Exception e) {
 				}
-			};
 
-		}
+				mocking = true;
+				return 1;
+			}
+		};
+
 	}
 
 	/**
@@ -986,42 +983,14 @@ public class DTIMockUtil extends CommonTestUtils {
 	}
 
 	/**
-	 * For Mocking CreateTicketRequestTO getSpecifiedAccounts
+	 * For mocking the client parser
+	 * 
+	 * @param mock
 	 */
-	public static void mockGetSpecifiedAccounts() {
-		new MockUp<CreateTicketRequestTO>() {
-			@Mock
-			public ArrayList<SpecifiedAccountTO> getSpecifiedAccounts() {
-				SpecifiedAccountTO specifiedAccountTO = new SpecifiedAccountTO();
-				specifiedAccountTO.setAccountItem(new BigInteger("1"));
-				specifiedAccountTO.setNewExternalReferenceType("XBANDID");
-				ArrayList<SpecifiedAccountTO> accountTOs = new ArrayList<SpecifiedAccountTO>();
-				accountTOs.add(specifiedAccountTO);
-				return accountTOs;
-			}
-		};
-	}
+	public static void mockParseProcess(boolean mock) {
 
-	/**
-	 * For Mocking CreateTicketRequestTO getSpecifiedAccounts
-	 */
-	public static void mockTicketInfoList() {
-		new MockUp<OTManageReservationTO>() {
-			@Mock
-			public ArrayList<OTTicketInfoTO> getTicketInfoList() {
-				OTTicketInfoTO ticketInfo = new OTTicketInfoTO();
-				ticketInfo.setTicket(ticket);
-				ticketInfo.setItem(new BigInteger("1"));
-				ArrayList<OTTicketInfoTO> ticketInfos = new ArrayList<OTTicketInfoTO>();
-				ticketInfos.add(ticketInfo);
-				return ticketInfos;
-			}
-		};
-	}
-	public static void mockParseProcess(boolean mock){
-		
-		if(mock){
-			mockParse=false;
+		if (mock) {
+			mockParse = false;
 			new MockUp<DocumentBuilder>() {
 				@Mock
 				public Document parse(InputStream is) throws SAXException,
@@ -1029,21 +998,22 @@ public class DTIMockUtil extends CommonTestUtils {
 					Document doc = null;
 					DOMParser domParser = new DOMParser();
 					if (is == null) {
-							throw new IllegalArgumentException(
-									"InputStream cannot be null");
-						}
-						URL url = this.getClass().getResource("/xml/iagoTestSuccess.xml");
-						File file = new File(url.toURI());
-						InputStream inStream = new FileInputStream(file);
-						InputSource in = new InputSource(inStream);
+						throw new IllegalArgumentException(
+								"InputStream cannot be null");
+					}
+					URL url = this.getClass().getResource(
+							"/xml/iagoTestSuccess.xml");
+					File file = new File(url.toURI());
+					InputStream inStream = new FileInputStream(file);
+					InputSource in = new InputSource(inStream);
 
-						domParser.parse(in);
-						doc = domParser.getDocument();
-						domParser.dropDocumentReferences();	
-											return doc;
+					domParser.parse(in);
+					doc = domParser.getDocument();
+					domParser.dropDocumentReferences();
+					return doc;
 				}
 			};
 
 		}
-		  	}
+	}
 }
