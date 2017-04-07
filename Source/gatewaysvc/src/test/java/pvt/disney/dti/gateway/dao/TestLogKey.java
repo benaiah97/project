@@ -187,7 +187,7 @@ public class TestLogKey extends CommonTestDao {
 	/**
 	 * Test case for insertOTSLog
 	 */
-	//@Test
+	@Test
 	public void testInsertOTSLog() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYTICKET);
@@ -232,11 +232,8 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		if(!DTIMockUtil.mocking){
-			DTIMockUtil.processMockprepareAndExecuteSql();	
-		}
-
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();	
 			LogKey.insertOTSLog(dtiTxn, inXMLString);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
@@ -471,13 +468,12 @@ public class TestLogKey extends CommonTestDao {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					dtie.getDtiErrorCode());
 		}
-		if(!DTIMockUtil.mocking){
-			DTIMockUtil.processMockprepareAndExecuteSql();	
-		}
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();	
 			LogKey.updateDTITransLogOTP(tpRefNumber, transIdOTP);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 
 	}
@@ -528,20 +524,21 @@ public class TestLogKey extends CommonTestDao {
 					dtie.getDtiErrorCode());
 		}
 		if(!DTIMockUtil.mocking){
-			DTIMockUtil.processMockprepareAndExecuteSql();	
+			
 		}
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();	
 			LogKey.insertOTSLogError(otsLogKey, tsPayloadId, inXMLString,
 					errorCode, transIdITS);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	}
 
 	/**
 	 * Test case for updateDTITransLogOTS
 	 */
-	//@Test
+	@Test
 	public void testUpdateDTITransLogOTS() {
 		Integer tpRefNumber = new Integer(1);
 		Integer transIdOTP = new Integer(1);
@@ -566,6 +563,7 @@ public class TestLogKey extends CommonTestDao {
 			DTIMockUtil.processMockprepareAndExecuteSql();	
 		}*/
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();	
 			LogKey.updateDTITransLogOTS(tpRefNumber, transIdOTP, errReturnCode,
 					errName, providerErrCode, providerErrName, trans_date,
 					txnType, cmdInvoice);

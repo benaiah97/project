@@ -29,6 +29,8 @@ public class TestEntityKey extends CommonTestDao {
 		String tsMac = null;
 		String tsLocation = null;
 		EntityTO result = null;
+		DTIMockUtil
+		.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
 		/* Scenario::1 Passing null as tsMac */
 		try {
 			result = EntityKey.getEntity(tsMac, tsLocation);
@@ -53,8 +55,6 @@ public class TestEntityKey extends CommonTestDao {
 		 */
 		
 		try {
-			DTIMockUtil
-			.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
 			result = EntityKey.getEntity(tsMac, tsLocation);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
