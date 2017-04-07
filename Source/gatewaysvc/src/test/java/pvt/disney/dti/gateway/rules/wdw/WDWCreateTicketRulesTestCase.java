@@ -1,6 +1,6 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -11,12 +11,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.common.NewMediaDataTO;
+import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
+import pvt.disney.dti.gateway.data.common.TicketIdTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
@@ -101,13 +105,117 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 		/* Scenario:: 5 Mocking  */
 		dtiCreateTktReq.setEligibilityGroup("DVC");
 		dtiCreateTktReq.setDefaultAccount("");
-		DTIMockUtil.mockGetSpecifiedAccounts();
+		SpecifiedAccountTO specifiedAccountTO = new SpecifiedAccountTO();
+		specifiedAccountTO.setAccountItem(new BigInteger("1"));
+		specifiedAccountTO.setNewExternalReferenceType("1");
+		specifiedAccountTO.setNewExternalReferenceValue("1");
+		ArrayList<NewMediaDataTO> newMediaDataList=new ArrayList<NewMediaDataTO>();
+		NewMediaDataTO media=new NewMediaDataTO();
+		media.setMediaId("1");
+		media.setMfrId("1");
+		media.setVisualId("1");
+		newMediaDataList.add(media);
+		specifiedAccountTO.setNewMediaDataList(newMediaDataList);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			//assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,dtie.getDtiErrorCode());
+		}
+		/* Scenario:: 6 Mocking  */
+		
+		specifiedAccountTO.setNewExternalReferenceType("XBANDID");
+		
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
 		try {
 			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
 			assertNotNull(xmlString);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
 		}
+		
+		/* Scenario:: 7 for Specified Account  */
+		specifiedAccountTO.setAccountItem(new BigInteger("1"));
+		specifiedAccountTO.setNewExternalReferenceType(null);
+		specifiedAccountTO.setNewExternalReferenceValue("1");
+		specifiedAccountTO.setExistingMediaId("1");
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 8 for Specified Account  */
+		specifiedAccountTO.setExistingMediaId(null);
+		TicketIdTO ticket=new TicketIdTO();
+		ticket.setBarCode("1");
+		//ticket.setTktNID("12000507111600050");
+		specifiedAccountTO.setExistingTktID(ticket);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 9 for Specified Account  */
+		ticket=new TicketIdTO();
+		ticket.setTktNID("12000507111600050");
+		specifiedAccountTO.setExistingTktID(ticket);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 10 for Specified Account  */
+		ticket=new TicketIdTO();
+		ticket.setDssn(new GregorianCalendar(), "1", "1", "1");
+		specifiedAccountTO.setExistingTktID(ticket);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 11 for Specified Account  */
+		ticket=new TicketIdTO();
+		ticket.setMag("AFTWU6SRSBUVRZSSUURYHGRS65RSRRRRRRRWFFWU6SRSBUVRZSSUURYHGRS65RSRRRRRRRW12");
+		specifiedAccountTO.setExistingTktID(ticket);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 12 for Specified Account  */
+		ticket=new TicketIdTO();
+		ticket.setExternal("1");
+		specifiedAccountTO.setExistingTktID(ticket);
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+		/* Scenario:: 13 for Specified Account  */
+		ticket.setExternal("1");
+		specifiedAccountTO.setExistingTktID(null);
+		specifiedAccountTO.setExistingAccountId("1");
+		dtiCreateTktReq.getSpecifiedAccounts().add(specifiedAccountTO);
+		try {
+			xmlString = WDWCreateTicketRules.transformRequest(dtiTxn);
+			assertNotNull(xmlString);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
+		}
+
 
 	}
 
