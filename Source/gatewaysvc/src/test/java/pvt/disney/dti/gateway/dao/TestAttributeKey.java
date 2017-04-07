@@ -55,8 +55,9 @@ public class TestAttributeKey {
 					dtie.getLogMessage());
 		}
 		/* Scenario:: 3 when 3 is passes as an argument and mocking DAO class */
-		DTIMockUtil
-				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TicketAttributeResult");
+		/*DTIMockUtil
+				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TicketAttributeResult");*/
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		DBTicketAttributes dbTicketAttributes = AttributeKey
 				.getWDWTicketAttributes(new BigInteger("3"));
 		if (dbTicketAttributes == null) {
@@ -82,6 +83,7 @@ public class TestAttributeKey {
 		}
 		/*Scenario 2:: when dtiTxn is passed as not null and without mock Dao object*/
 		dtiTxn = new DTITransactionTO(type);
+		DTIMockUtil.processMocking();
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
 		} catch (DTIException dtie) {
@@ -90,8 +92,9 @@ public class TestAttributeKey {
 
 		}
 		/*Scenario 3:: when dtiTxn is passed as not null and mock Dao object*/
-		DTIMockUtil
-		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");
+		/*DTIMockUtil
+		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");*/
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 		try {
 			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
@@ -122,8 +125,9 @@ public class TestAttributeKey {
 		
 		
 		/*Scenario 2:: when dtiTxn is passed as not null and mock Dao object*/
-		DTIMockUtil
-		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");
+	/*	DTIMockUtil
+		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");*/
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
 		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
 		try {

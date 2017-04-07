@@ -107,8 +107,8 @@ public class TestArchiveKey extends CommonTestDao {
 		}
 
 		/* Mocking for process Query */
-		DTIMockUtil
-				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TxnLoggedResult");
+		/*DTIMockUtil
+				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TxnLoggedResult");*/
 
 		dtiTxn.getResponse().getPayloadHeader()
 				.setPayloadID("1234567890123456789");
@@ -216,6 +216,7 @@ public class TestArchiveKey extends CommonTestDao {
 		 */
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		;
+		dtiTxn.getRequest().getPayloadHeader().setTarget("TEST-DLR");
 		dtiTxn.getResponse().setDtiError(null);
 		voidTicketResponseTO = new VoidTicketResponseTO();
 		voidTicketResponseTO.addTicket(getTicketTO(true, true));
@@ -225,15 +226,18 @@ public class TestArchiveKey extends CommonTestDao {
 		} catch (DTIException dti) {
 			Assert.fail("Unexpected Exception ::" + dti.getLogMessage());
 		}
-		/*
-		 * Scenario :: 5 Setting the target as TEST-DLR
-		 */
+		
+		 /* Scenario :: 5 Setting the target as TEST-DLR*/
+		 
 		// dtiTxn.setProvider(ProviderType.HKDNEXUS);
+		DTIMockUtil.processMockprepareAndExecuteSql();
+		;
 		dtiTxn.getRequest().getPayloadHeader().setTarget("TEST-DLR");
 		dtiTxn.getResponse().setDtiError(null);
 		voidTicketResponseTO = new VoidTicketResponseTO();
 		voidTicketResponseTO.addTicket(getTicketTO(true, false));
 		dtiTxn.getResponse().setCommandBody(voidTicketResponseTO);
+		
 		try {
 			ArchiveKey.updateVoidTicketResponse(dtiTxn);
 		} catch (DTIException dti) {
