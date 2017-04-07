@@ -51,7 +51,7 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::2 Passing through DB without Mocking */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.ProductDetailResult");
 		try {
 			result=ProductKey.getOrderProducts(tktListTO);
 			assertNotNull(result);
@@ -86,8 +86,10 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing through DB without Mocking */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			//DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.ProductDetailResult");
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			result=ProductKey.getOrderProducts(tktListTO,typCode);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -127,8 +129,8 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			resultList=ProductKey.getProductTicketTypes(dbProdList);
 			assertNotNull(resultList);
 		} catch (DTIException dtie) {
@@ -161,8 +163,9 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			result=ProductKey.getActiveShells(shellSet);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -194,8 +197,9 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			result=ProductKey.getProductShellXref(dbProdList);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -222,6 +226,7 @@ public class TestProductkey extends CommonTestDao{
 		}
 		dtiTxn.setDbProdList(dbProdList);
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			ProductKey.insertProductDetail(dtiTxn);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
@@ -238,7 +243,7 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::4 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
 			ProductKey.insertProductDetail(dtiTxn);
 		} catch (DTIException dtie) {
@@ -270,8 +275,9 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			result=ProductKey.getProductReceipt(pdtCode);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -303,8 +309,8 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		//DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
+			DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.TktTypeProductResult");
 			result=ProductKey.getProductFromTicketType(providerTicketType);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -337,8 +343,10 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		//DTIMockUtil.processMockprepareAndExecuteSql();
+		//
+		
 		try {
+			DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.PdtCodeTktNbrResult");
 			result=ProductKey.getProductCodeFromTktNbr(tktNbr);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
