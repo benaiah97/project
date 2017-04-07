@@ -99,12 +99,6 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		OTManageReservationTO otMngResTO = new OTManageReservationTO();
 		otMngResTO.setCommandType("commandType");
 
-		ArrayList<OTTicketInfoTO> otTicketList = new ArrayList<OTTicketInfoTO>();
-		OTTicketInfoTO otTicketInfoTO = new OTTicketInfoTO();
-		otTicketList.add(otTicketInfoTO);
-
-		// otMngResTO no setter for ticketInfoList in OTManageReservationTO
-
 		ArrayList<OTProductTO> dtiProdList = new ArrayList<OTProductTO>();
 		OTProductTO productTO = new OTProductTO();
 		productTO.setItem(BigInteger.valueOf(1));
@@ -131,18 +125,18 @@ public class WDWQueryReservationRulesTestCase extends CommonTestUtils {
 		//otMngResTO.
 		OTCommandTO otCmdTO = new OTCommandTO(txType);
 		otCmdTO.setManageReservationTO(otMngResTO);
-		/*OTTicketInfoTO ottTcket=new OTTicketInfoTO();
+		OTTicketInfoTO ottTcket=new OTTicketInfoTO();
 		ottTcket.setItemNumCode(new BigInteger("1"));
+		ottTcket.setValidityStartDate(new GregorianCalendar());
+		ottTcket.setValidityEndDate(new GregorianCalendar());
 		ottTcket.setTicket(getOTicket());
-		otMngResTO.getTicketInfoList().add(ottTcket);*/
+		otMngResTO.getTicketInfoList().add(ottTcket);
 
 		QueryTicketRequestTO queryReq = new QueryTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
-		/*if(!DTIMockUtil.mocking){
-			DTIMockUtil.processMockprepareAndExecuteSql();	
-		}*/
-		
+		DTIMockUtil.mockGetProductCodeFromTktNbr();
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO,
 					dtiRespTO);

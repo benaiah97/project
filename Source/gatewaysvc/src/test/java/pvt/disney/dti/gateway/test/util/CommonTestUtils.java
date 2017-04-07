@@ -215,7 +215,7 @@ public class CommonTestUtils {
 		entityTO.setDefPymtId(3);
 		entityTO.setDefPymtData("1");
 		entityTO.setEntityId(1);
-		dtiTxn.setEntityTO(entityTO);
+		
 		entityTO.setActive(true);
 		dtiTxn.setEntityTO(entityTO);
 		entityTO.setEntityId(1);
@@ -223,6 +223,7 @@ public class CommonTestUtils {
 		entityTO.setDefPymtData("1");
 		entityTO.setStartValidDate(new Date(System.currentTimeMillis()));
 		entityTO.setEndValidDate(new Date(System.currentTimeMillis()));
+		dtiTxn.setEntityTO(entityTO);
 		cmdHeaderTO.setCmdDevice("PAULH");
 		cmdHeaderTO.setCmdOperator("PAULH");
 	}

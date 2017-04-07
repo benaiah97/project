@@ -2,26 +2,15 @@ package pvt.disney.dti.gateway.test.util;
 
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
-import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,8 +31,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import pvt.disney.dti.gateway.connection.ConnectionException;
-import pvt.disney.dti.gateway.connection.ConnectionManager;
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.QueryBuilder;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
@@ -65,20 +52,16 @@ import pvt.disney.dti.gateway.dao.result.ProductTktTypeResult;
 import pvt.disney.dti.gateway.dao.result.ShellTypeResult;
 import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.dao.result.TransidRescodeResult;
-import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
-import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTUpgradeTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.rules.race.utility.WordCipher;
 
@@ -112,9 +95,14 @@ public class DTIMockUtil extends CommonTestUtils {
 
 	/** The prod list. */
 	public static ArrayList<DBProductTO> prodList = new ArrayList<DBProductTO>();
-	/** the TicketList */
+
+	/** the TicketList. */
 	public static OTTicketTO ticket = getOTicket();
+
+	/** The mocking. */
 	public static boolean mocking = false;
+
+	/** The mock parse. */
 	static boolean mockParse = false;
 
 	/**
@@ -283,6 +271,9 @@ public class DTIMockUtil extends CommonTestUtils {
 		};
 	}
 
+	/**
+	 * Process mocking.
+	 */
 	public static void processMocking() {
 		mocking = true;
 	}
@@ -971,7 +962,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	}
 
 	/**
-	 * Mocking getPaymentInfoList
+	 * Mocking getPaymentInfoList.
 	 */
 	public static void mockGetPaymentInfoList() {
 		new MockUp<OTUpgradeTicketTO>() {
@@ -986,9 +977,10 @@ public class DTIMockUtil extends CommonTestUtils {
 	}
 
 	/**
-	 * For mocking the client parser
-	 * 
+	 * For mocking the client parser.
+	 *
 	 * @param mock
+	 *            the mock
 	 */
 	public static void mockParseProcess(boolean mock) {
 
@@ -1017,6 +1009,31 @@ public class DTIMockUtil extends CommonTestUtils {
 				}
 			};
 
+		}
+	}
+
+	/**
+	 * Mock get product code from tkt nbr.
+	 */
+	public static void mockGetProductCodeFromTktNbr() {
+		try {
+			new MockUp<ProductKey>() {
+				@Mock
+				protected ArrayList<DBProductTO> getProductCodeFromTktNbr(
+						BigInteger itemNumCode) throws Exception {
+					ArrayList<DBProductTO> dbProdArray = null;
+					try {
+						dbProdArray = new ArrayList<DBProductTO>();
+						DBProductTO dbProductTO = new DBProductTO();
+						dbProductTO.setPdtCode("abc");
+						dbProdArray.add(dbProductTO);
+
+					} catch (Exception e) {
+					}
+					return dbProdArray;
+				}
+			};
+		} catch (Exception e) {
 		}
 	}
 }
