@@ -62,7 +62,7 @@ public class TestProductkey extends CommonTestDao{
 	/**
 	 * Test case for getOrderProducts with TypeCode 
 	 */
-	@Test
+	//@Test
 	public void testGetOrderProductsWithTypeCode(){
 		ArrayList<TicketTO> tktListTO=null;
 		ArrayList<DBProductTO> result = null;
