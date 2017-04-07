@@ -19,7 +19,7 @@ public class TestElectronicEntitlementKey extends CommonTestDao{
 	 * Test case for queryEntitlementVisualId
 	 */
 	@Test
-	public void queryEntitlementVisualId() {
+	public void testQueryEntitlementVisualId() {
 		String result = null;
 		TicketTO aTicket = null;
 		/* Scenario ::1 when ticket is passed as null */
