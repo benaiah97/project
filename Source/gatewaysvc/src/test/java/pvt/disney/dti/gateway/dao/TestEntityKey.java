@@ -51,9 +51,10 @@ public class TestEntityKey extends CommonTestDao {
 		 * Scenario::3 Passing the object by mocking DB and getting null as
 		 * result
 		 */
-		DTIMockUtil
-				.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
+		
 		try {
+			DTIMockUtil
+			.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
 			result = EntityKey.getEntity(tsMac, tsLocation);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -104,9 +105,10 @@ public class TestEntityKey extends CommonTestDao {
 		 * Scenario::3 Passing the object by mocking DB and getting null as
 		 * result
 		 */
-		DTIMockUtil
-				.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityActiveResult");
+		
 		try {
+			DTIMockUtil
+			.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityActiveResult");
 			result = EntityKey.getEntityActive(tsMac, tsLocation);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.INVALID_ENTITY, dtie.getDtiErrorCode());
@@ -117,9 +119,8 @@ public class TestEntityKey extends CommonTestDao {
 		 * Scenario::4 Passing the object by mocking DB and getting value as
 		 * result
 		 */
-		DTIMockUtil
-				.processMockprepareAndExecuteSql();
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			result = EntityKey.getEntityActive(tsMac, tsLocation);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -165,8 +166,9 @@ public class TestEntityKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::4 Passing the values to DB by mocking*/
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			 result=EntityKey.getEntityProducts(entityTO, dbProdList);
 			 assertNotNull(result);
 		} catch (DTIException dtie) {
@@ -215,8 +217,9 @@ public class TestEntityKey extends CommonTestDao {
 					dtie.getLogMessage());
 		}
 		/* Scenario::4 Passing the values to DB and mocking the DB  */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
 		try {
+			DTIMockUtil.processMockprepareAndExecuteSql();
 			 result=EntityKey.getEntityProducts(entityTO, dbProdList,typeCode);
 			 assertNotNull(result);
 		} catch (DTIException dtie) {
