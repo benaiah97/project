@@ -451,6 +451,7 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
+
 	/**
 	 * Mock null result processor.
 	 *
@@ -463,7 +464,7 @@ public class DTIMockUtil extends CommonTestUtils {
 				@Mock
 				protected Object processQuery(Object[] values) throws Exception {
 					throw new Exception("");
-					//return null;
+					// return null;
 				}
 			};
 		} catch (Exception e) {
@@ -474,26 +475,29 @@ public class DTIMockUtil extends CommonTestUtils {
 	 * For Mocking PaymentKey getPaymentLookup.
 	 */
 	public static void mockPaymentLookUp() {/*
-		try {
-			new MockUp<PaymentKey>() {
-				@SuppressWarnings("unchecked")
-				@Mock
-				protected Object getPaymentLookup(String tpiCode, long paymentId) {
-					ArrayList<PaymentLookupTO> paymentLookUp = null;
-					theProcessor = new PaymentLookupResult();
-					try {
-						theProcessor.processNextResultSet(rs);
-						paymentLookUp = (ArrayList<PaymentLookupTO>) theProcessor
-								.getProcessedObject();
-					} catch (Exception e) {
-					}
-					return paymentLookUp;
-				}
-			};
-		} catch (Exception e) {
-		}
-	*/
-		processMockprepareAndExecuteSql();}
+											 * try { new MockUp<PaymentKey>() {
+											 * 
+											 * @SuppressWarnings("unchecked")
+											 * 
+											 * @Mock protected Object
+											 * getPaymentLookup(String tpiCode,
+											 * long paymentId) {
+											 * ArrayList<PaymentLookupTO>
+											 * paymentLookUp = null;
+											 * theProcessor = new
+											 * PaymentLookupResult(); try {
+											 * theProcessor
+											 * .processNextResultSet(rs);
+											 * paymentLookUp =
+											 * (ArrayList<PaymentLookupTO>)
+											 * theProcessor
+											 * .getProcessedObject(); } catch
+											 * (Exception e) { } return
+											 * paymentLookUp; } }; } catch
+											 * (Exception e) { }
+											 */
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * For Mocking DBProductTO getOrderProducts.
@@ -600,29 +604,35 @@ public class DTIMockUtil extends CommonTestUtils {
 	 * For Mocking EntityKey getEntityProducts.
 	 */
 	public static void mockGetEntityProducts() {/*
-		try {
-			new MockUp<EntityKey>() {
-				@SuppressWarnings("unchecked")
-				@Mock
-				protected ArrayList<BigInteger> getEntityProducts(
-						EntityTO entityTO, ArrayList<DBProductTO> dbProdList) {
-					ArrayList<BigInteger> entityProd = null;
-					theProcessor = new ProductIdListResult();
-					try {
-						theProcessor.processNextResultSet(rs);
-						entityProd = (ArrayList<BigInteger>) theProcessor
-								.getProcessedObject();
-
-					} catch (Exception e) {
-					}
-					return entityProd;
-				}
-			};
-
-		} catch (Exception e) {
-		}
-	*/
-		processMockprepareAndExecuteSql();}
+												 * try { new MockUp<EntityKey>()
+												 * {
+												 * 
+												 * @SuppressWarnings("unchecked")
+												 * 
+												 * @Mock protected
+												 * ArrayList<BigInteger>
+												 * getEntityProducts( EntityTO
+												 * entityTO,
+												 * ArrayList<DBProductTO>
+												 * dbProdList) {
+												 * ArrayList<BigInteger>
+												 * entityProd = null;
+												 * theProcessor = new
+												 * ProductIdListResult(); try {
+												 * theProcessor
+												 * .processNextResultSet(rs);
+												 * entityProd =
+												 * (ArrayList<BigInteger>)
+												 * theProcessor
+												 * .getProcessedObject();
+												 * 
+												 * } catch (Exception e) { }
+												 * return entityProd; } };
+												 * 
+												 * } catch (Exception e) { }
+												 */
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProducts.
@@ -712,15 +722,19 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking EligibilityKey getOrderEligibility.
 	 */
-	public static void mockGetOrderEligibility() {
-		new MockUp<EligibilityKey>() {
-			@Mock
-			protected Boolean getOrderEligibility(
-					ArrayList<DBProductTO> dbProdList, String eligGrpCode,
-					String eligMemberID) {
-				return true;
-			}
-		};
+	public static void mockGetOrderEligibility() {/*
+												 * new MockUp<EligibilityKey>()
+												 * {
+												 * 
+												 * @Mock protected Boolean
+												 * getOrderEligibility(
+												 * ArrayList<DBProductTO>
+												 * dbProdList, String
+												 * eligGrpCode, String
+												 * eligMemberID) { return true;
+												 * } };
+												 */
+		processMockprepareAndExecuteSql();
 	}
 
 	/**
