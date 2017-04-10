@@ -28,6 +28,7 @@ public class TestSequenceKey extends CommonTestDao {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		try {
+			//DTIMockUtil.mockExceptionResultProcessor("");
 			SequenceKey.getTpRefNum();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
@@ -57,6 +58,7 @@ public class TestSequenceKey extends CommonTestDao {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		try {
+			DTIMockUtil.mockExceptionResultProcessor("");
 			SequenceKey.getITSTransId();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
@@ -82,6 +84,7 @@ public class TestSequenceKey extends CommonTestDao {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		try {
+			DTIMockUtil.mockExceptionResultProcessor("");
 			SequenceKey.getITPTransId();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
@@ -108,6 +111,7 @@ public class TestSequenceKey extends CommonTestDao {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 			try {
+				DTIMockUtil.mockExceptionResultProcessor("");
 			SequenceKey.getOTPTransId();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
@@ -134,6 +138,7 @@ public class TestSequenceKey extends CommonTestDao {
 		Integer result = null;
 		/* Scenario::1 Passing object without mocking DB */
 		try {
+			DTIMockUtil.mockExceptionResultProcessor("");
 			SequenceKey.getOTSTransId();
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
