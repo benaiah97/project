@@ -474,28 +474,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking PaymentKey getPaymentLookup.
 	 */
-	public static void mockPaymentLookUp() {/*
-											 * try { new MockUp<PaymentKey>() {
-											 * 
-											 * @SuppressWarnings("unchecked")
-											 * 
-											 * @Mock protected Object
-											 * getPaymentLookup(String tpiCode,
-											 * long paymentId) {
-											 * ArrayList<PaymentLookupTO>
-											 * paymentLookUp = null;
-											 * theProcessor = new
-											 * PaymentLookupResult(); try {
-											 * theProcessor
-											 * .processNextResultSet(rs);
-											 * paymentLookUp =
-											 * (ArrayList<PaymentLookupTO>)
-											 * theProcessor
-											 * .getProcessedObject(); } catch
-											 * (Exception e) { } return
-											 * paymentLookUp; } }; } catch
-											 * (Exception e) { }
-											 */
+	public static void mockPaymentLookUp() {
 		processMockprepareAndExecuteSql();
 	}
 
@@ -577,123 +556,30 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking DBProductTO getOrderProducts.
 	 */
-	public static void mockGetOrderProductWithParam() {/*
-		try {
-			new MockUp<ProductKey>() {
-				@SuppressWarnings("unchecked")
-				@Mock
-				protected ArrayList<DBProductTO> getOrderProducts(
-						ArrayList<TicketTO> tktListTO, String typeCode) {
-					ArrayList<DBProductTO> dbProduct = null;
-					theProcessor = new ProductDetailResult();
-					try {
-						theProcessor.processNextResultSet(rs);
-						dbProduct = (ArrayList<DBProductTO>) theProcessor
-								.getProcessedObject();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					return dbProduct;
-				}
-			};
-		} catch (Exception e) {
-
-		}
-	*/
-		processMockprepareAndExecuteSql();}
-
-	/**
-	 * For Mocking EntityKey getEntityProducts.
-	 */
-	public static void mockGetEntityProducts() {/*
-												 * try { new MockUp<EntityKey>()
-												 * {
-												 * 
-												 * @SuppressWarnings("unchecked")
-												 * 
-												 * @Mock protected
-												 * ArrayList<BigInteger>
-												 * getEntityProducts( EntityTO
-												 * entityTO,
-												 * ArrayList<DBProductTO>
-												 * dbProdList) {
-												 * ArrayList<BigInteger>
-												 * entityProd = null;
-												 * theProcessor = new
-												 * ProductIdListResult(); try {
-												 * theProcessor
-												 * .processNextResultSet(rs);
-												 * entityProd =
-												 * (ArrayList<BigInteger>)
-												 * theProcessor
-												 * .getProcessedObject();
-												 * 
-												 * } catch (Exception e) { }
-												 * return entityProd; } };
-												 * 
-												 * } catch (Exception e) { }
-												 */
+	public static void mockGetOrderProductWithParam() {
 		processMockprepareAndExecuteSql();
 	}
 
 	/**
 	 * For Mocking EntityKey getEntityProducts.
 	 */
-	public static void mockGetEntityProductsWithParam() {/*
-		try {
-			new MockUp<EntityKey>() {
+	public static void mockGetEntityProducts() {
+		processMockprepareAndExecuteSql();
+	}
 
-				@SuppressWarnings("unchecked")
-				@Mock
-				protected ArrayList<BigInteger> getEntityProducts(
-						EntityTO entityTO, ArrayList<DBProductTO> dbProdList,
-						String typeCode) {
-					ArrayList<BigInteger> entityProd = null;
-					theProcessor = new ProductIdListResult();
-					try {
-						theProcessor.processNextResultSet(rs);
-						entityProd = (ArrayList<BigInteger>) theProcessor
-								.getProcessedObject();
-
-					} catch (Exception e) {
-
-					}
-					return entityProd;
-				}
-			};
-
-		} catch (Exception e) {
-		}
-	*/
-		processMockprepareAndExecuteSql();}
+	/**
+	 * For Mocking EntityKey getEntityProducts.
+	 */
+	public static void mockGetEntityProductsWithParam() {
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProductGroups.
 	 */
-	public static void mockGetEntityProductGroups() {/*
-		try {
-			new MockUp<EntityKey>() {
-				@SuppressWarnings("unchecked")
-				@Mock
-				protected ArrayList<BigInteger> getEntityProductGroups(
-						EntityTO entityTO, ArrayList<DBProductTO> dbProdList) {
-					ArrayList<BigInteger> entityProd = null;
-					theProcessor = new ProductIdListResult();
-					try {
-						theProcessor.processNextResultSet(rs);
-						entityProd = (ArrayList<BigInteger>) theProcessor
-								.getProcessedObject();
-
-					} catch (Exception e) {
-					}
-					return entityProd;
-				}
-			};
-
-		} catch (Exception e) {
-		}
-	*/
-		processMockprepareAndExecuteSql();}
+	public static void mockGetEntityProductGroups() {
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProductGroups.
@@ -726,18 +612,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking EligibilityKey getOrderEligibility.
 	 */
-	public static void mockGetOrderEligibility() {/*
-												 * new MockUp<EligibilityKey>()
-												 * {
-												 * 
-												 * @Mock protected Boolean
-												 * getOrderEligibility(
-												 * ArrayList<DBProductTO>
-												 * dbProdList, String
-												 * eligGrpCode, String
-												 * eligMemberID) { return true;
-												 * } };
-												 */
+	public static void mockGetOrderEligibility() {
 		processMockprepareAndExecuteSql();
 	}
 
@@ -934,43 +809,18 @@ public class DTIMockUtil extends CommonTestUtils {
 	}
 
 	/**
-	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
-	 */
-	public static void insertUpgradedEntitlement() {/*
-		new MockUp<ElectronicEntitlementKey>() {
-			@Mock
-			public void insertUpgradedEntitlement(Integer inboundTSID,
-					TicketTO aTicket, String payloadID, int entityId) {
-			}
-		};
-	*/
-		processMockprepareAndExecuteSql();}
-
-	/**
 	 * For Mocking ElectronicEntitlementKey insertVoidedEntitlement.
 	 */
-	public static void mockinsertVoidedEntitlement() {/*
-		new MockUp<ElectronicEntitlementKey>() {
-			@Mock
-			public void insertVoidedEntitlement(Integer inboundTSID,
-					TicketTO aTicket, String payloadID, int entityId) {
-			}
-		};
-	*/
-		processMockprepareAndExecuteSql();}
+	public static void mockInsertVoidedEntitlement() {
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
 	 */
-	public static void mockinsertUpgradedEntitlement() {/*
-		new MockUp<ElectronicEntitlementKey>() {
-			@Mock
-			public void insertUpgradedEntitlement(Integer inboundTSID,
-					TicketTO aTicket, String payloadID, int entityId) {
-			}
-		};
-	*/
-		processMockprepareAndExecuteSql();}
+	public static void mockInsertUpgradedEntitlement() {
+		processMockprepareAndExecuteSql();
+	}
 
 	/**
 	 * Fetch db ticket type list.

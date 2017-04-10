@@ -41,9 +41,9 @@ public class ElectronicEntitlementRulesTestCase extends CommonBusinessTest {
 				TransactionType.UPGRADEALPHA);
 		getDTITransactionTO(dtiTxn, false);
 		/* mocking insertUpgradedEntitlement method of ElectronicEntitlementKey */
-		DTIMockUtil.mockinsertUpgradedEntitlement();
+		DTIMockUtil.mockInsertUpgradedEntitlement();
 		/* mocking insertVoidedEntitlement method of ElectronicEntitlementKey */
-		DTIMockUtil.mockinsertVoidedEntitlement();
+		DTIMockUtil.mockInsertVoidedEntitlement();
 		getDTITransactionTO(dtiTxn, false);
 		ElectronicEntitlementRules.recordShellEntitlements(dtiTxn);
 		/* Scenario :: 2 if transaction type is VOIDTICKET */
