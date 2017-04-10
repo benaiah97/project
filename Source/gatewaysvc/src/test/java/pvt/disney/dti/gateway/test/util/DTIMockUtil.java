@@ -451,6 +451,24 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
+	/**
+	 * Mock null result processor.
+	 *
+	 * @param resultSetProcessor
+	 *            the result set processor
+	 */
+	public static void mockExceptionResultProcessor(String resultSetProcessor) {
+		try {
+			new MockUp<DAOHelper>() {
+				@Mock
+				protected Object processQuery(Object[] values) throws Exception {
+					throw new Exception("");
+					//return null;
+				}
+			};
+		} catch (Exception e) {
+		}
+	}
 
 	/**
 	 * For Mocking PaymentKey getPaymentLookup.

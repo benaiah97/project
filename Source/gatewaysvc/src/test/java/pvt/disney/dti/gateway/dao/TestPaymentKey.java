@@ -40,6 +40,7 @@ public class TestPaymentKey extends CommonTestDao{
 		/* Scenario::2 Passing object without mocking DB */
 		tpiCode="1";
 		try {
+			DTIMockUtil.mockExceptionResultProcessor("pvt.disney.dti.gateway.dao.result.PaymentLookupResult");
 			PaymentKey.getPaymentLookup(tpiCode,paymentId);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
