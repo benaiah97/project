@@ -577,7 +577,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking DBProductTO getOrderProducts.
 	 */
-	public static void mockGetOrderProductWithParam() {
+	public static void mockGetOrderProductWithParam() {/*
 		try {
 			new MockUp<ProductKey>() {
 				@SuppressWarnings("unchecked")
@@ -599,7 +599,8 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 
 		}
-	}
+	*/
+		processMockprepareAndExecuteSql();}
 
 	/**
 	 * For Mocking EntityKey getEntityProducts.
