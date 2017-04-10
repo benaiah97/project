@@ -599,7 +599,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking EntityKey getEntityProducts.
 	 */
-	public static void mockGetEntityProducts() {/*
+	public static void mockGetEntityProducts() {
 		try {
 			new MockUp<EntityKey>() {
 				@SuppressWarnings("unchecked")
@@ -621,14 +621,12 @@ public class DTIMockUtil extends CommonTestUtils {
 
 		} catch (Exception e) {
 		}
-	*/
-		processMockprepareAndExecuteSql();
-		}
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProducts.
 	 */
-	public static void mockGetEntityProductsWithParam() {/*
+	public static void mockGetEntityProductsWithParam() {
 		try {
 			new MockUp<EntityKey>() {
 
@@ -653,14 +651,12 @@ public class DTIMockUtil extends CommonTestUtils {
 
 		} catch (Exception e) {
 		}
-	*/
-		processMockprepareAndExecuteSql();
-		}
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProductGroups.
 	 */
-	public static void mockGetEntityProductGroups() {/*
+	public static void mockGetEntityProductGroups() {
 		try {
 			new MockUp<EntityKey>() {
 				@SuppressWarnings("unchecked")
@@ -682,9 +678,7 @@ public class DTIMockUtil extends CommonTestUtils {
 
 		} catch (Exception e) {
 		}
-	*/
-		processMockprepareAndExecuteSql();
-		}
+	}
 
 	/**
 	 * For Mocking EntityKey getEntityProductGroups.
