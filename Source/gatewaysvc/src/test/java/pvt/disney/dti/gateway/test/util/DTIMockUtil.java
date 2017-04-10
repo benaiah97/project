@@ -502,7 +502,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking DBProductTO getOrderProducts.
 	 */
-	public static void mockGetOrderProduct() {
+	public static void mockGetOrderProduct() {/*
 		try {
 			new MockUp<ProductKey>() {
 				@SuppressWarnings("unchecked")
@@ -525,7 +525,8 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 
 		}
-	}
+	*/
+		processMockprepareAndExecuteSql();}
 
 	/**
 	 * Method for getting the DBProduct List.
