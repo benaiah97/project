@@ -473,7 +473,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking PaymentKey getPaymentLookup.
 	 */
-	public static void mockPaymentLookUp() {
+	public static void mockPaymentLookUp() {/*
 		try {
 			new MockUp<PaymentKey>() {
 				@SuppressWarnings("unchecked")
@@ -492,7 +492,8 @@ public class DTIMockUtil extends CommonTestUtils {
 			};
 		} catch (Exception e) {
 		}
-	}
+	*/
+		processMockprepareAndExecuteSql();}
 
 	/**
 	 * For Mocking DBProductTO getOrderProducts.

@@ -63,7 +63,8 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		BusinessRules.initBusinessRules(setConfigProperty());
 		setMockProperty();
 		/* mocking the paymentLookup */
-		DTIMockUtil.mockPaymentLookUp();
+		//DTIMockUtil.mockPaymentLookUp();
+		DTIMockUtil.processMockprepareAndExecuteSql();
 		DTIMockUtil.mockEntAttribute();
 		mockCalmRules();
 	}
@@ -148,7 +149,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		}
 		/* For Asserting the records fetched */
 		assertNotNull(dtiTxn.getAttributeTOMap());
-		assertNotNull(dtiTxn.getPaymentLookupTOList());
+		/*assertNotNull(dtiTxn.getPaymentLookupTOList());*/
 		assertEquals(TPI_CODE_WDW, dtiTxn.getTpiCode());
 		/*-------------TEST END FOR TPICODE NEX01--------------------*/
 		/* Scenario :: 5 Passing the DLR01 for validation */
