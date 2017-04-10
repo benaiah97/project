@@ -932,26 +932,28 @@ public class DTIMockUtil extends CommonTestUtils {
 	/**
 	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
 	 */
-	public static void insertUpgradedEntitlement() {
+	public static void insertUpgradedEntitlement() {/*
 		new MockUp<ElectronicEntitlementKey>() {
 			@Mock
 			public void insertUpgradedEntitlement(Integer inboundTSID,
 					TicketTO aTicket, String payloadID, int entityId) {
 			}
 		};
-	}
+	*/
+		processMockprepareAndExecuteSql();}
 
 	/**
 	 * For Mocking ElectronicEntitlementKey insertVoidedEntitlement.
 	 */
-	public static void mockinsertVoidedEntitlement() {
+	public static void mockinsertVoidedEntitlement() {/*
 		new MockUp<ElectronicEntitlementKey>() {
 			@Mock
 			public void insertVoidedEntitlement(Integer inboundTSID,
 					TicketTO aTicket, String payloadID, int entityId) {
 			}
 		};
-	}
+	*/
+		processMockprepareAndExecuteSql();}
 
 	/**
 	 * For Mocking ElectronicEntitlementKey insertUpgradedEntitlement.
