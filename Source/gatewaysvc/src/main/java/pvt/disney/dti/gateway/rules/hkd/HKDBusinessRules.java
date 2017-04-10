@@ -48,7 +48,7 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 
 /**
  * 
- * @author lewit019
+ * @author lewit019, moons012
  * @since 2.16.3
  */
 public class HKDBusinessRules {
@@ -693,9 +693,10 @@ public class HKDBusinessRules {
       // Country (not used for HKDL)
 
       // Telephone (HOME)
-      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_HOMEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
+      if (aDtiTicket.getTelephone() != null) {
+    	  otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_HOMEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
           .toUpperCase())));
-
+      }
       // OptInSolicit (2.10)
 //      if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
 //        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_OKAYFORNEWS, HKDBusinessRules.YES));

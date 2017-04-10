@@ -68,7 +68,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * 3. Defining the rules for transforming responses from the provider transfer
  * objects to the DTI transfer objects.<BR>
  * 
- * @author lewit019
+ * @author lewit019, moon012
  * @since 2.16.3
  * 
  */
@@ -675,7 +675,7 @@ public class HKDReservationRules {
 
       // Bill First Name (Chinese)
       if (dtiBillInfo.getFirstNameChinese() != null) {
-        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_FIRSTNAME_CH, DTIFormatter.websafe(dtiShipInfo
+        otFieldList.add(new HkdOTFieldTO(HkdOTFieldTO.HKD_CLNT_BILL_FIRSTNAME_CH, DTIFormatter.websafe(dtiBillInfo
             .getFirstNameChinese())));
       }
 
