@@ -68,7 +68,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * 3. Defining the rules for transforming responses from the provider transfer
  * objects to the DTI transfer objects.<BR>
  * 
- * @author lewit019, moon012
+ * @author lewit019
  * @since 2.16.3
  * 
  */

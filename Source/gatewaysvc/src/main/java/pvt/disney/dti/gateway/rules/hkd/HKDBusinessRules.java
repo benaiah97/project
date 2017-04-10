@@ -48,7 +48,7 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 
 /**
  * 
- * @author lewit019, moons012
+ * @author lewit019
  * @since 2.16.3
  */
 public class HKDBusinessRules {
