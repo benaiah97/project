@@ -47,7 +47,7 @@ public class TestPaymentKey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.PaymentLookupResult");
 		try {
 			result=PaymentKey.getPaymentLookup(tpiCode,paymentId);
 			assertNotNull(result);
