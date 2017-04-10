@@ -203,6 +203,7 @@
 						<include>pvt/disney/dti/gateway/dao/data/*.class</include>
 						<include>pvt/disney/dti/gateway/client/*.class</include>
 						<include>pvt/disney/dti/gateway/rules/wdw/*.class</include>
+						<include>pvt/disney/dti/gateway/provider/hkd/xml/*.class</include>
 					</includes>
 				</configuration>
 			</plugin>
