@@ -83,6 +83,7 @@ public class TestAttributeKey {
 		}
 		/*Scenario 2:: when dtiTxn is passed as not null and without mock Dao object*/
 		dtiTxn = new DTITransactionTO(type);
+		DTIMockUtil.mockExceptionResultProcessor("");
 		try {
 			AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
 		} catch (DTIException dtie) {
@@ -126,15 +127,24 @@ public class TestAttributeKey {
 		/*Scenario 2:: when dtiTxn is passed as not null and mock Dao object*/
 	/*	DTIMockUtil
 		.mockResultProcessor("pvt.disney.dti.gateway.dao.result.AttributeResult");*/
-		DTIMockUtil.processMockprepareAndExecuteSql();
+		
+		DTIMockUtil.mockExceptionResultProcessor("");
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeMap = null;
-		dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
+		dtiTxn = new DTITransactionTO(type);
 		try {
 			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
 					entityId);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
 			assertEquals("Exception executing getEntAttributes",dtie.getLogMessage());
+		}
+		DTIMockUtil.processMockprepareAndExecuteSql();
+	
+		try {
+			attributeMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
+					entityId );
+		} catch (DTIException dtie) {
+			Assert.fail("Exception executing getEntAttributes expected");
 		}
 		if (attributeMap == null) {
 			Assert.fail("Attribute value is not retrieved");
