@@ -782,10 +782,10 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		dtiTxn.getRequest().setCommandBody(resReqTO);
 		mockValidateProviderTarget(dtiTxn, TEST_TARGET);
 		/* For Mocking the required objects */
-		
+		if (!MOCK_INIT) {
 			mockUtilMethods();
 			MOCK_INIT = true;
-		
+		}
 		/* Scenario ::4 Success passing NEX01 as tpiCode */
 		try {
 			BusinessRules.applyBusinessRules(dtiTxn);
