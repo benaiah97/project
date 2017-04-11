@@ -9,11 +9,9 @@ import java.util.Properties;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
-//import com.disney.util.PropertyHelper;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-//import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
@@ -54,9 +52,9 @@ import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTShowDataTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTTicketTO;
 import pvt.disney.dti.gateway.provider.hkd.xml.HkdOTCommandXML;
+import pvt.disney.dti.gateway.rules.ContentRules;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
-import pvt.disney.dti.gateway.rules.TransformRules;
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
@@ -124,15 +122,7 @@ public class HKDReservationRules {
   /** Constant representing the appropriate value for a major client type. */
   private final static String PRIVATE_CLIENT_TYPE = "Private";
 
-  /** The maximum number of note details (20). */
-  public final static int MAX_NUMBER_OF_NOTE_DETAILS = 20;
-
-  /** The maximum note detail line length (50). */
-  public final static int MAX_NOTE_DETAIL_LINE_LENGTH = 50;
-
   private static final EventLogger logger = EventLogger.getLogger(HKDReservationRules.class.getCanonicalName());
-
-  //private static int atsMaxEncodeAllCnt = 200;
 
   /**
    * Pull in any rule values from the properties file.
@@ -140,25 +130,11 @@ public class HKDReservationRules {
    * @param props
    */
   public static void initHKDReservationRules(Properties props) {
-
-//    String encodeCountString = null;
-//    encodeCountString = PropertyHelper.readPropsValue(PropertyName.ATS_MAX_ENCODE_ALL_COUNT, props, null);
-//
-//    if (encodeCountString != null) {
-//
-//      try {
-//        atsMaxEncodeAllCnt = Integer.parseInt(encodeCountString);
-//      } catch (NumberFormatException nfe) {
-//        logger.sendEvent("Unable to convert ATS.MaxEncodeAllCount property to a number.  Taking default.",
-//            EventType.WARN, THISOBJECT);
-//      }
-//    }
-
     return;
   }
 
   /**
-   * 
+   * Apply the Hong Kong Reservation Rules
    * @param dtiTxn
    * @throws DTIException
    */
@@ -189,6 +165,9 @@ public class HKDReservationRules {
     // RULE: Validate that if the "installment" type of payment is present,
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
+    
+    // RULE: Validate that reservation notes are valid for ATS (JTL, as of 2.17.2)
+    ContentRules.validateATSNoteDetails(dtiResReq);
 
     // RULE: assignResCode
     String resCode = assignResCode(dtiTxn, dtiResReq);
@@ -203,10 +182,6 @@ public class HKDReservationRules {
    * then create a new rescode and insert it into the the transaction id rescode
    * xref table.
    * 
-   * TODO: What if we do find it/can't insert? If I can know which index failed,
-   * then that determines remediation. If I can't... (1) getTransidRescodeFromDB
-   * (if not null, then it was already created) (2) getTransidRescodeFromDB (if
-   * null, then recreate (x# of times).
    * 
    * @param dtiTxn
    *          the dti txn
@@ -448,7 +423,7 @@ public class HKDReservationRules {
     otManageRes.setClientData(otClientData);
 
     // ReservationRequest.Note
-    ArrayList<String> noteDetailsArray = setClientDeliveryNoteDetails(dtiTxn);
+    ArrayList<String> noteDetailsArray = setReservationNoteDetails(dtiTxn);
     if (noteDetailsArray != null && noteDetailsArray.size() > 0) {
       // have Delivery notes, use it
       otManageRes.setNoteDetailsArray(noteDetailsArray);
@@ -817,38 +792,17 @@ public class HKDReservationRules {
    *          the DTITransactionTO for this transaction.
    * @return formatted note string
    */
-  private static ArrayList<String> setClientDeliveryNoteDetails(DTITransactionTO dtiTxn) {
+  private static ArrayList<String> setReservationNoteDetails(DTITransactionTO dtiTxn) {
 
-    String noteString = TransformRules.setFulfillmentNoteDetails(dtiTxn);
-
+    DTIRequestTO dtiRequest = dtiTxn.getRequest();
+    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+    ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
+    ArrayList<String> dtiNoteList = dtiResReq.getNoteList();
+    
     ArrayList<String> noteDetailList = new ArrayList<String>();
-
-    if (noteString != null) {
-
-      // Carve the note up into "Note Details".
-      StringBuffer sb = new StringBuffer(noteString);
-      double lineCount = (float) sb.length() / (float) MAX_NOTE_DETAIL_LINE_LENGTH;
-      int numberOfLines = (int) Math.ceil(lineCount);
-
-      if (numberOfLines > MAX_NUMBER_OF_NOTE_DETAILS) {
-        numberOfLines = MAX_NUMBER_OF_NOTE_DETAILS;
-      }
-
-      for (int i = 0; i < numberOfLines; i++) {
-
-        int startIndex = i * MAX_NOTE_DETAIL_LINE_LENGTH;
-        int endIndex = (i + 1) * MAX_NOTE_DETAIL_LINE_LENGTH;
-
-        if (endIndex <= sb.length()) {
-          String subString = sb.substring(startIndex, endIndex);
-          noteDetailList.add(subString);
-        } else {
-          String subString = sb.substring(startIndex);
-          noteDetailList.add(subString);
-        }
-
-      }
-
+    
+    for (/*each*/ String aNote: /* in */ dtiNoteList)  {
+      noteDetailList.add(aNote);
     }
 
     return noteDetailList;
@@ -871,7 +825,7 @@ public class HKDReservationRules {
   }
 
   /**
-   * 
+   * Validate the Client ID.
    * @param dtiResReq
    * @throws DTIException
    */
@@ -1047,15 +1001,6 @@ public class HKDReservationRules {
     ReservationResponseTO dtiResRespTO = new ReservationResponseTO();
     HkdOTManageReservationTO otMngResTO = otCmdTO.getManageReservationTO();
     dtiRespTO.setCommandBody(dtiResRespTO);
-
-    // Price mismatch warning (Commented out as of 2.16.3, JTL)
-    // HKDL plans to make extensive use of price mismatch, and the
-    // warnings, likewise, would be excessive.
-    // if (dtiTxn.isPriceMismatch()) {
-    // DTIErrorTO mismatchWarn = ErrorKey
-    // .getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
-    // dtiRespTO.setDtiError(mismatchWarn);
-    // }
 
     // ResponseType
     dtiResRespTO.setResponseType(otMngResTO.getCommandType());

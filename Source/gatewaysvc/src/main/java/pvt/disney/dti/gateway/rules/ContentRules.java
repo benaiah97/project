@@ -1,11 +1,11 @@
 package pvt.disney.dti.gateway.rules;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import com.disney.util.AbstractInitializer;
 import com.disney.util.PropertyHelper;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
@@ -14,6 +14,7 @@ import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.ReservationRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.EnvironmentType;
 import pvt.disney.dti.gateway.data.DTITransactionTO.ProviderType;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
@@ -52,13 +53,15 @@ public class ContentRules {
 	
 	/** Constant value for Test HKD (as of 2.16.3, JTL) */	
 	private final static String TESTHDK = "TEST-HKD";
+	
+  /** The maximum number of note details (20). */
+  public final static int MAX_NUMBER_OF_NOTE_DETAILS = 20;
+
+  /** The maximum note detail line length (50). */
+  public final static int MAX_NOTE_DETAIL_LINE_LENGTH = 50;
 
 	/** Current Target */
 	private static DTITransactionTO.EnvironmentType brokerEnvType = DTITransactionTO.EnvironmentType.UNDEFINED;
-
-	/** Core properties management initializer. */
-	private static AbstractInitializer abstrInit = AbstractInitializer
-			.getInitializer();
 
 	/** Properties variable to store properties */
 	private static Properties props;
@@ -470,4 +473,41 @@ public class ContentRules {
 
 	}
 
+	
+	/** 
+	 * Validate that the note details being passed to ATS will not cause a system 
+	 * failure by exceeding the maximum size/count.
+	 * @author lewit019
+	 * @since 2.17.2
+	 * @param noteArray
+	 */
+	public static void validateATSNoteDetails(ReservationRequestTO dtiResReq) throws DTIException {
+	  
+	  ArrayList<String> noteArray = dtiResReq.getNoteList();
+	  
+	  if (noteArray != null) {
+	    
+	    if (noteArray.size() > MAX_NUMBER_OF_NOTE_DETAILS) {
+	      throw new DTIException(ContentRules.class,
+            DTIErrorCode.INVALID_MSG_ELEMENT,
+            "Reservation Note count exceeds maximum allowable of " + MAX_NUMBER_OF_NOTE_DETAILS);
+	    }
+	    
+	    for (/*each*/ String aNote: /*in*/ noteArray) {
+	      if (aNote.length() > MAX_NOTE_DETAIL_LINE_LENGTH) {
+	        throw new DTIException(ContentRules.class,
+	            DTIErrorCode.INVALID_MSG_ELEMENT,
+	            "Reservation Note length exceeds maximum allowable of " + MAX_NOTE_DETAIL_LINE_LENGTH);
+	      }
+	    }
+	    
+	  }
+	  
+	  return;
+
+	}
+	
+	
+	
+	
 }
