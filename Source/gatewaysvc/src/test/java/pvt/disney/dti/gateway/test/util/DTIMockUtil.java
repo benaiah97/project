@@ -35,17 +35,14 @@ import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.QueryBuilder;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 import pvt.disney.dti.gateway.dao.AttributeKey;
-import pvt.disney.dti.gateway.dao.ElectronicEntitlementKey;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
-import pvt.disney.dti.gateway.dao.PaymentKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
 import pvt.disney.dti.gateway.dao.result.AttributeResult;
 import pvt.disney.dti.gateway.dao.result.MultipleSeqNumResult;
-import pvt.disney.dti.gateway.dao.result.PaymentLookupResult;
 import pvt.disney.dti.gateway.dao.result.ProductDetailResult;
 import pvt.disney.dti.gateway.dao.result.ProductIdListResult;
 import pvt.disney.dti.gateway.dao.result.ProductTktTypeResult;
@@ -56,7 +53,6 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
-import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
@@ -927,4 +923,61 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
+
+	/**
+	 * For Mocking TPLookupTO getTPCommandLookup.
+	 */
+	public static void mockGetTPCommandLookupForException() {
+		try {
+			new MockUp<LookupKey>() {
+				@Mock
+				protected ArrayList<TPLookupTO> getTPCommandLookup(
+						String tpiCode,
+						DTITransactionTO.TransactionType txnType,
+						String language, String clientType,
+						String resPickupArea, String resSalesType) {
+					ArrayList<TPLookupTO> dbProd = new ArrayList<TPLookupTO>();
+					for (int i = 0; i < 6; i++) {
+						TPLookupTO tpLookupTO = new TPLookupTO();
+						if (i % 2 == 0) {
+							tpLookupTO
+									.setLookupType(TPLookupTO.TPLookupType.MAX_LIMIT);
+							tpLookupTO.setLookupValue("1");
+						} else if (i % 3 == 0) {
+							tpLookupTO
+									.setLookupType(TPLookupTO.TPLookupType.CLIENT_TYPE);
+							tpLookupTO.setLookupValue("2");
+						} else {
+							tpLookupTO
+									.setLookupType(TPLookupTO.TPLookupType.LANGUAGE);
+							tpLookupTO.setLookupValue("3");
+						}
+						tpLookupTO.setCmdCode("" + i);
+						tpLookupTO.setCmdId(new BigInteger("" + i));
+						dbProd.add(tpLookupTO);
+					}
+					return dbProd;
+				}
+			};
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * Mock get eligibility assoc id.
+	 */
+	public static void mockGetEligibilityAssocId() {
+		try {
+			new MockUp<EligibilityKey>() {
+				@Mock
+				protected Integer getEligibilityAssocId(String itemNumCode)
+						throws Exception {
+
+					return new Integer(1);
+				}
+			};
+		} catch (Exception e) {
+		}
+	}
+
 }

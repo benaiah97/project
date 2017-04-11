@@ -218,6 +218,7 @@ public class CommonTestUtils {
 		entityTO.setDefPymtData("1");
 		entityTO.setEntityId(1);
 		
+		entityTO.setDefSalesRepId(Long.valueOf(1));
 		entityTO.setActive(true);
 		dtiTxn.setEntityTO(entityTO);
 		entityTO.setEntityId(1);
