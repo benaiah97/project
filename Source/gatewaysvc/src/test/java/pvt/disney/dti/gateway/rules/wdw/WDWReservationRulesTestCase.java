@@ -434,7 +434,7 @@ public class WDWReservationRulesTestCase extends CommonTestUtils {
 	/**
 	 * Test apply wdw associate media to account rules.
 	 */
-	@Test
+	///@Test
 	public void testApplyWDWReservationRules() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYTICKET);
