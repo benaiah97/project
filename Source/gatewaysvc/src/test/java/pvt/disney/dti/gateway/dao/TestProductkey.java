@@ -29,7 +29,7 @@ public class TestProductkey extends CommonTestDao{
 	/**
 	 * Test Case for getOrderProducts
 	 */
-	@Test
+	//@Test
 	public void testGetOrderProducts(){
 		ArrayList<TicketTO> tktListTO=null;
 		ArrayList<DBProductTO> result = null;
@@ -56,7 +56,7 @@ public class TestProductkey extends CommonTestDao{
 			result=ProductKey.getOrderProducts(tktListTO);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	}
 	/**
