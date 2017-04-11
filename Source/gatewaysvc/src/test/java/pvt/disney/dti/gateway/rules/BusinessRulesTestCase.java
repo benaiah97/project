@@ -734,7 +734,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	 * @throws DTICalmException
 	 * @throws DTIException
 	 */
-	//@Test
+	@Test
 	public void testApplyReservationRules() throws DTICalmException,
 			DTIException {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -782,15 +782,16 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		dtiTxn.getRequest().setCommandBody(resReqTO);
 		mockValidateProviderTarget(dtiTxn, TEST_TARGET);
 		/* For Mocking the required objects */
-		if (!MOCK_INIT) {
+		
 			mockUtilMethods();
 			MOCK_INIT = true;
-		}
+			DTIMockUtil.mockGetProductTicketTypes();
+		
 		/* Scenario ::4 Success passing NEX01 as tpiCode */
 		try {
 			BusinessRules.applyBusinessRules(dtiTxn);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
 		}
 		mockValidateProviderTarget(dtiTxn, PROD_TARGET);
 		/* Scenario ::5 Success passing DLR01 as tpiCode */
