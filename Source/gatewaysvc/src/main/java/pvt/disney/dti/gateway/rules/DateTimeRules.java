@@ -45,7 +45,6 @@ public class DateTimeRules {
 
  /**
    * Gets the current Pacific Time.
-   * TODO:  Work underway
    * @return GMT date set to "now".
    */
   private static Date getPTNow() {
