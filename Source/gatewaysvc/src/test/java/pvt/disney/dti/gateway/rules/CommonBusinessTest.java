@@ -224,6 +224,7 @@ public class CommonBusinessTest extends CommonTestUtils {
 		DTIMockUtil.mockGetEntityProducts();
 		DTIMockUtil.mockGetEntityProductGroups();
 		DTIMockUtil.mockGetOrderEligibility();
+		DTIMockUtil.mockGetProductTicketTypes();
 		DTIMockUtil.mockGetTPCommandLookup();
 		DTIMockUtil.mockGetWordCollection();
 		DTIMockUtil.processMockInsert();
