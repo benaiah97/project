@@ -799,13 +799,13 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
 		}
-		mockValidateProviderTarget(dtiTxn, PROD_HKD_TARGET);
-		/* Scenario ::6 Success passing HKD01 as tpiCode */
+		/*mockValidateProviderTarget(dtiTxn, PROD_HKD_TARGET);
+		 Scenario ::6 Success passing HKD01 as tpiCode 
 		try {
 			BusinessRules.applyBusinessRules(dtiTxn);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
-		}
+		}*/
 
 		/*-------------TEST CASE PASSED-------------------------------------------- */
 		/*-------------TEST CASE END applyReservationRules--------------------*/
