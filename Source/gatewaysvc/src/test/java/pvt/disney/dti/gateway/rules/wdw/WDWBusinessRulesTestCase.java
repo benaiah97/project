@@ -1,8 +1,14 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
 import static org.junit.Assert.fail;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -14,6 +20,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.data.DTIRequestTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.QueryReservationRequestTO;
+import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
+import pvt.disney.dti.gateway.data.UpdateTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
@@ -21,12 +33,15 @@ import pvt.disney.dti.gateway.data.common.GiftCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
 import pvt.disney.dti.gateway.data.common.InstallmentTO;
+import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
+import pvt.disney.dti.gateway.test.util.DTITestUtilities;
 
 /**
  * Tests the WDW specific business rules.
@@ -117,8 +132,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules
 					.validateInBoundWDWTickets(getTicketList(TicketIdType.MAG_ID));
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  Valid DSSN: "
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  Valid DSSN: " + dtie.getLogMessage());
 		}
 		/* scenario : 5 Invalid DSSN */
 		aTktList = new ArrayList<TicketTO>();
@@ -228,16 +242,14 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		try {
 			WDWBusinessRules.validateVoidTicketActor(cmdHeader);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception in  MGR value:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception in  MGR value:" + dtie.getLogMessage());
 		}
 		/* scenario : 4 SYS value */
 		cmdHeader.setCmdActor("SYS");
 		try {
 			WDWBusinessRules.validateVoidTicketActor(cmdHeader);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception in  SYS value:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception in  SYS value:" + dtie.getLogMessage());
 		}
 	}
 
@@ -532,5 +544,191 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 				.transformEntitlementExternalReferenceType("DME_LINK_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("SECURE_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("TXN_GUID");
+	}
+
+	/**
+	 * JUnit for changeWDWProviderFormatToDti
+	 * 
+	 * @throws URISyntaxException
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void testChangeWDWProviderFormatToDti() throws URISyntaxException,
+			FileNotFoundException {
+		DTITransactionTO dtiTxn = new DTITransactionTO(
+				TransactionType.QUERYTICKET); 
+		createCommonRequest(dtiTxn);
+		/* Scenario :1 TransactionType as QUERYTICKET with ErrorCode >0 */
+		DTIRequestTO request = new DTIRequestTO();
+		PayloadHeaderTO header = new PayloadHeaderTO();
+		request.setPayloadHeader(header);
+		CommandHeaderTO commandHeaderTO = new CommandHeaderTO();
+		request.setCommandHeader(commandHeaderTO);
+		dtiTxn.setTpRefNum(new Integer(1));
+		QueryTicketRequestTO queryReq = new QueryTicketRequestTO();
+		dtiTxn.getRequest().setCommandBody(queryReq);
+		DTIMockUtil.processMockprepareAndExecuteSql();
+		String xmlResponse = null;
+		URL url = this.getClass().getResource("/xml/wdw/WDW_Queryticket_01.xml");
+		File file = null;
+		DTITransactionTO dtiTransactionTO = null;
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		/* Scenario :2 TransactionType as QUERYTICKET with ErrorCode=0 */
+		dtiTransactionTO = null;
+		url = this.getClass().getResource("/xml/wdw/WDW_Queryticket_02.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.VOIDTICKET);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTxn.setAttributeTOMap(DTIMockUtil.fetchAttributeTOMapList());
+		dtiTxn.setTpRefNum(22);
+		dtiTransactionTO = null;
+		/* Scenario :3 TransactionType as VOIDTICKET with ErrorCode>0 */
+		url = this.getClass().getResource("/xml/wdw/WDW_Voidticket_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTransactionTO = null;
+		/* Scenario :4 TransactionType as VOIDTICKET with ErrorCode=0 */
+		url = this.getClass().getResource("/xml/wdw/WDW_Voidticket_02.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.UPDATETICKET);
+		UpdateTicketResponseTO updateTicketResponseTO = new UpdateTicketResponseTO();
+		request.setCommandBody(updateTicketResponseTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :5 TransactionType as UPDATETICKET */
+		url = this.getClass().getResource("/xml/wdw/WDW_Updateticket_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.UPDATETRANSACTION);
+		createCommonRequest(dtiTxn);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :6 TransactionType as UPDATETRANSACTION */
+		url = this.getClass().getResource("/xml/wdw/WDW_Updatetransaction_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :7 TransactionType as CreateTransaction */
+		url = this.getClass().getResource("/xml/wdw/WDW_CreateTransaction_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.QUERYRESERVATION);
+		createCommonRequest(dtiTxn);
+		QueryReservationRequestTO queryReservationRequestTO = new QueryReservationRequestTO();
+		request.setCommandBody(queryReservationRequestTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :8 TransactionType as QUERYRESERVATION */
+		url = this.getClass().getResource("/xml/wdw/WDW_Reservation_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.VOIDRESERVATION);
+		createCommonRequest(dtiTxn);
+		dtiTxn.setRequest(request);
+		DTIMockUtil.processMockprepareAndExecuteSql();
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :9 TransactionType as VOIDRESERVATION */
+		url = this.getClass().getResource("/xml/wdw/WDW_Reservation_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
+		dtiTxn = new DTITransactionTO(TransactionType.RESERVATION);
+		createCommonRequest(dtiTxn);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(new Integer(1));
+		dtiTransactionTO = null;
+		/* Scenario :10 TransactionType as RESERVATION */
+		url = this.getClass().getResource("/xml/wdw/WDW_Reservation_01.xml");
+		try {
+			file = new File(url.toURI());
+			InputStream ls = new FileInputStream(file);
+			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
+					dtiTxn, xmlResponse);
+			Assert.assertNotNull(dtiTransactionTO);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected exception" + dtie.getLogMessage());
+		}
 	}
 }
