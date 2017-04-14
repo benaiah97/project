@@ -489,14 +489,14 @@ public class ContentRules {
 	    
 	    if (noteArray.size() > MAX_NUMBER_OF_NOTE_DETAILS) {
 	      throw new DTIException(ContentRules.class,
-            DTIErrorCode.INVALID_MSG_ELEMENT,
+            DTIErrorCode.INVALID_MSG_CONTENT,
             "Reservation Note count exceeds maximum allowable of " + MAX_NUMBER_OF_NOTE_DETAILS);
 	    }
 	    
 	    for (/*each*/ String aNote: /*in*/ noteArray) {
 	      if (aNote.length() > MAX_NOTE_DETAIL_LINE_LENGTH) {
 	        throw new DTIException(ContentRules.class,
-	            DTIErrorCode.INVALID_MSG_ELEMENT,
+	            DTIErrorCode.INVALID_MSG_CONTENT,
 	            "Reservation Note length exceeds maximum allowable of " + MAX_NOTE_DETAIL_LINE_LENGTH);
 	      }
 	    }
