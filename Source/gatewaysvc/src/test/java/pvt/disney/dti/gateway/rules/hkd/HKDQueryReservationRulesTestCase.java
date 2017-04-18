@@ -16,17 +16,6 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.QueryReservationRequestTO;
-import pvt.disney.dti.gateway.data.common.AgencyTO;
-import pvt.disney.dti.gateway.data.common.ClientDataTO;
-import pvt.disney.dti.gateway.data.common.CreditCardTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
-import pvt.disney.dti.gateway.data.common.ExtTxnIdentifierTO;
-import pvt.disney.dti.gateway.data.common.PaymentTO;
-import pvt.disney.dti.gateway.data.common.PaymentTO.PaymentType;
-import pvt.disney.dti.gateway.data.common.ReservationTO;
-import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TicketTO.TktAssignmentTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTManageReservationTO;
 import pvt.disney.dti.gateway.provider.hkd.data.common.HkdOTClientDataTO;
@@ -90,118 +79,6 @@ public class HKDQueryReservationRulesTestCase extends CommonTestUtils {
 			Assert.fail("Unexepected Exception " + dtie.getLogMessage());
 		}
 
-	}
-
-	/**
-	 * Gets the reservation request to.
-	 *
-	 * @return the reservation request to
-	 */
-	private QueryReservationRequestTO getReservationRequestTO() {
-		QueryReservationRequestTO reservationRequestTO = new QueryReservationRequestTO();
-		ExtTxnIdentifierTO extTxnIdentifierTO = new ExtTxnIdentifierTO();
-		extTxnIdentifierTO.setTxnIdentifier("asd");
-		extTxnIdentifierTO.setIsSHA1Encrypted(true);
-		AgencyTO agencyTO = new AgencyTO();
-		agencyTO.setIATA("IAIA");
-		agencyTO.setAgent("asd");
-
-		ReservationTO reservationTO = new ReservationTO();
-		reservationTO.setResCode("abc");
-		reservationTO.setResSalesType("Presale");
-
-		ArrayList<PaymentTO> dtiPayList = new ArrayList<PaymentTO>();
-		PaymentTO paymentTO = new PaymentTO();
-
-		CreditCardTO dtiCreditCard = new CreditCardTO();
-		dtiCreditCard.setCcManualOrSwipe(CreditCardTO.CreditCardType.CCSWIPE);
-		dtiCreditCard.setCcTrack1("123");
-		dtiCreditCard.setCcTrack2("456");
-		dtiCreditCard.setPosTermID("12");
-		dtiCreditCard.setWireless(true);
-		paymentTO.setPayType(PaymentType.CREDITCARD);
-		paymentTO.setCreditCard(dtiCreditCard);
-		paymentTO.setPayItem(BigInteger.valueOf(1));
-		paymentTO.setPayAmount(BigDecimal.valueOf(2.0));
-		dtiPayList.add(paymentTO);
-
-		ClientDataTO clientData = new ClientDataTO();
-		clientData.setClientId("123");
-		DemographicsTO billingInfo = getDemographicsTO();
-		DemographicsTO shippingInfo = getDemographicsTO();
-		clientData.setBillingInfo(billingInfo);
-		clientData.setShippingInfo(shippingInfo);
-		clientData.setClientCategory("abc");
-		return reservationRequestTO;
-	}
-
-	/**
-	 * Gets the demographics to.
-	 *
-	 * @return the demographics to
-	 */
-	private DemographicsTO getDemographicsTO() {
-		DemographicsTO billingInfo = new DemographicsTO();
-		billingInfo.setName("ABC");
-		billingInfo.setFirstName("ABC");
-		billingInfo.setLastName("DEF");
-		billingInfo.setAddr1("ABC");
-		billingInfo.setAddr2("DEF");
-		billingInfo.setCity("ABC");
-		billingInfo.setState("ABC");
-		billingInfo.setZip("ABC");
-		billingInfo.setCountry("ABC");
-		billingInfo.setTelephone("123456789");
-		billingInfo.setEmail("acd@gmail.com");
-		billingInfo.setSellerResNbr("1234567");
-		return billingInfo;
-	}
-
-	/**
-	 * Gets the tkt list.
-	 *
-	 * @param productsAssignAccounts
-	 *            the products assign accounts
-	 * @return the tkt list
-	 */
-	private ArrayList<TicketTO> getTktList(boolean productsAssignAccounts) {
-		ArrayList<TicketTO> tktList = new ArrayList<TicketTO>();
-		TicketTO ticketTO = new TicketTO();
-		ticketTO.setTktItem(BigInteger.valueOf(1));
-		ticketTO.setProdQty(BigInteger.valueOf(1));
-		ticketTO.setProdCode("ABC");
-
-		if (productsAssignAccounts) {
-			ArrayList<TktAssignmentTO> ticketAssignmetList = new ArrayList<>();
-			TicketTO ticket = new TicketTO();
-			TicketTO.TktAssignmentTO ticketAssignmets = ticket.new TktAssignmentTO();
-			ticketAssignmets.setProdQty(BigInteger.valueOf(1));
-			ticketAssignmets.setAccountItem(BigInteger.valueOf(12));
-			ticketAssignmetList.add(ticketAssignmets);
-			ticketTO.setTicketAssignmets(ticketAssignmetList);
-		}
-
-		ticketTO.setTktValidityValidStart(new GregorianCalendar());
-		ticketTO.setTktValidityValidEnd(new GregorianCalendar());
-		ArrayList<DemographicsTO> tktDemoList = new ArrayList<DemographicsTO>();
-		DemographicsTO demographicsTO = new DemographicsTO();
-		demographicsTO.setFirstName("ABC");
-		demographicsTO.setLastName("DEF");
-		demographicsTO.setDateOfBirth(new GregorianCalendar());
-		demographicsTO.setGender(GenderType.MALE);
-		demographicsTO.setAddr1("ABC");
-		demographicsTO.setAddr2("DEF");
-		demographicsTO.setCity("ABC");
-		demographicsTO.setState("DEF");
-		demographicsTO.setZip("ABC");
-		demographicsTO.setCountry("ADCF");
-		demographicsTO.setEmail("abc@gmail.com");
-		demographicsTO.setTelephone("123456789");
-		demographicsTO.setOptInSolicit(true);
-		tktDemoList.add(demographicsTO);
-		ticketTO.setTicketDemoList(tktDemoList);
-		tktList.add(ticketTO);
-		return tktList;
 	}
 
 	/**
