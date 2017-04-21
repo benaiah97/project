@@ -33,6 +33,8 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
  * @author rasta006
  */
 public class CommonTestUtils {
+	
+	protected static String DLR_XML_PATH = "/xml/dlr/";
 
 	/** The resource bundle. */
 	@Mocked
@@ -222,6 +224,7 @@ public class CommonTestUtils {
 		entityTO.setActive(true);
 		dtiTxn.setEntityTO(entityTO);
 		entityTO.setEntityId(1);
+		entityTO.setCustomerId("1");
 		entityTO.setDefPymtId(1);
 		entityTO.setDefPymtData("1");
 		entityTO.setStartValidDate(new Date(System.currentTimeMillis()));
