@@ -205,6 +205,7 @@
 						<include>pvt/disney/dti/gateway/rules/wdw/*.class</include>
 						<include>pvt/disney/dti/gateway/rules/hkd/*.class</include>
 						<include>pvt/disney/dti/gateway/provider/hkd/xml/*.class</include>
+						<include>pvt/disney/dti/gateway/rules/dlr/*.class</include>
 					</includes>
 				</configuration>
 			</plugin>
