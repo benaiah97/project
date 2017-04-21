@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Envelope>
+	<Header>
+		<MessageID>123456</MessageID>
+		<MessageType>SetOrderStatus</MessageType>
+		<SourceID>DLRMerch</SourceID>
+		<TimeStamp>2009-01-23 11:38:20</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Username />
+		<Password />
+		<OrderID>DOL48369861702</OrderID>
+		<GalaxyOrderID>2659171</GalaxyOrderID>
+		<Status>2</Status>
+		<AuthCode>088062</AuthCode>
+		<ResponseText>APPROVED 088062</ResponseText>
+		<AVSResultCode />
+		<CVNResultCode />
+		<PaymentContracts>1</PaymentContracts>
+		<CreateTransactionResponse>
+		<Products>
+		<Type>1</Type>
+		<Ticket>
+					<VisualID>6051039879902575</VisualID>
+					<ItemCode>21353</ItemCode>
+					<Price>65.00</Price>
+					<PLU>1</PLU>
+				</Ticket>
+		</Products>
+		</CreateTransactionResponse>
+		
+		
+	</Body>
+</Envelope>
