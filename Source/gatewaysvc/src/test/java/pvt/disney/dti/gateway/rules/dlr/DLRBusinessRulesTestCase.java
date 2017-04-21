@@ -36,7 +36,6 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for changeToDLRProviderFormat
 	 */
-	private static String xmlPath = "/xml/dlr/";
 	@Test
 	public void testChangeToDLRProviderFormat() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -294,7 +293,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		/* scenario :1 TransactionType is QUERYTICKET */
 		String xmlResponse = "";
-		InputStream fileName = this.getClass().getResourceAsStream(xmlPath+"DLR_QueryTicket_01_Rsp.xml");
+		InputStream fileName = this.getClass().getResourceAsStream(
+				DLR_XML_PATH + "DLR_QueryTicket_01_Rsp.xml");
 		DTITransactionTO dtiTransactionTO = null;
 		try {
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
@@ -314,10 +314,7 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		dtiTransactionTO = null;
 
 		try {
-			fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
+			fileName = this.getClass().getResourceAsStream(DLR_XML_PATH
 									+ "DLR_UpgradeAlphaResponse_01_TestTransformResponse.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
@@ -339,11 +336,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		/* scenario :3 TransactionType is VOIDTICKET */
 
 		try {
-			fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
-									+ "DLR_VoidTicketResponse.xml");
+			fileName = this.getClass().getResourceAsStream(
+					DLR_XML_PATH + "DLR_VoidTicketResponse.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
 					dtiTxn, xmlResponse);
@@ -360,7 +354,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		/* scenario :4 TransactionType is QUERYRESERVATION */
 
 		try {
-			fileName = this.getClass().getResourceAsStream(xmlPath+"DLR_QueryReservation_01_Rsp.xml");
+			fileName = this.getClass().getResourceAsStream(
+					DLR_XML_PATH + "DLR_QueryReservation_01_Rsp.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
 					dtiTxn, xmlResponse);
@@ -376,11 +371,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		dtiTransactionTO = null;
 		/* scenario :5 TransactionType is RENEWENTITLEMENT */
 		try {
-			fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
-									+ "DLR_RenewEntitlement_Res_01.xml");
+			fileName = this.getClass().getResourceAsStream(
+					DLR_XML_PATH + "DLR_RenewEntitlement_Res_01.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
 					dtiTxn, xmlResponse);
@@ -400,11 +392,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		dtiTxn.setProvider(DTITransactionTO.ProviderType.HKDNEXUS);
 		/* scenario :6 TransactionType is RESERVATION */
 		try {
-			fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
-									+ "DLR_Reservation_Res.xml");
+			fileName = this.getClass().getResourceAsStream(
+					DLR_XML_PATH + "DLR_Reservation_Res.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
 					dtiTxn, xmlResponse);
@@ -421,11 +410,8 @@ public class DLRBusinessRulesTestCase extends CommonTestUtils {
 		 */
 
 		try {
-			fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
-									+ "DLR_Reservation_Res.xml");
+			fileName = this.getClass().getResourceAsStream(
+					DLR_XML_PATH + "DLR_Reservation_Res.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			dtiTransactionTO = DLRBusinessRules.changeDLRProviderFormatToDti(
 					dtiTxn, xmlResponse);
