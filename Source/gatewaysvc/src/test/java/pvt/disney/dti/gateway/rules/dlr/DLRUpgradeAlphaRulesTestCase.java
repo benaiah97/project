@@ -13,14 +13,12 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.UpgradeAlphaRequestTO;
-import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
-import pvt.disney.dti.gateway.data.common.CommandHeaderTO.CmdAttributeTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
-import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.provider.dlr.xml.DLRTestUtil;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 import pvt.disney.dti.gateway.test.util.DTITestUtilities;
@@ -29,8 +27,6 @@ import pvt.disney.dti.gateway.test.util.DTITestUtilities;
  * @author MISHP012 JUnit for DLRUpgradeAlphaRules
  */
 public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
-	private static String xmlPath = "/xml/dlr/";
-
 	/**
 	 * JUnit for transformRequest
 	 */
@@ -87,7 +83,7 @@ public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.UPGRADEALPHA);
 		createCommonRequest(dtiTxn);
-		getRequestTO(dtiTxn);
+		populateTxn(dtiTxn);
 		dtiTxn.setTpRefNum(2222);
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		InputStream fileName = null;
@@ -100,7 +96,7 @@ public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
 			fileName = this
 					.getClass()
 					.getResourceAsStream(
-							xmlPath
+							DLR_XML_PATH
 									+ "DLR_UpgradeAlphaResponse_01_TestTransformResponse.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			DTITransactionTO dtiTransactionTO = DLRUpgradeAlphaRules
@@ -118,7 +114,7 @@ public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
 			fileName = this
 					.getClass()
 					.getResourceAsStream(
-							xmlPath
+							DLR_XML_PATH
 									+ "DLR_UpgradeAlphaResponse_02_TestTransformResponse.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			DLRUpgradeAlphaRules.transformResponse(dtiTxn, xmlResponse);
@@ -163,21 +159,29 @@ public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
 				TransactionType.UPGRADEALPHA);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
 		String statusString = "";
-		String xmlResponse = null;
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		getRequestTO(dtiTxn);
+		createCommonRequest(dtiTxn);
+		populateTxn(dtiTxn);
+		String xmlResponse = "<Envelope> "
+				+ "<Header>"
+				+ "<MessageID>290118</MessageID>"
+				+ "<MessageType>QueryTicketResponse</MessageType>"
+				+ "<SourceID>WDPRODLRNA</SourceID>"
+				+ "<TimeStamp>"
+				+ DLRTestUtil.getDLRTimeStamp()
+				+ "</TimeStamp>"
+				+ "<EchoData />"
+				+ "<SystemFields />"
+				+ "</Header>"
+				+ "<Body><Status><StatusCode>1300</StatusCode><StatusText>QueryTicket request error</StatusText></Status>"
+				+ "<QueryTicketErrors><Errors><Error><ErrorCode>1306</ErrorCode><ErrorText>Can not process messages from source WDPRODLRNA, source is inactive</ErrorText>"
+				+ "</Error></Errors><DataRequestErrors /></QueryTicketErrors></Body></Envelope>";
 		DTIMockUtil.mockDtiErrorCodeScope("TICKET");
 		/*
 		 * scenario :1 Passing dtiTxn and xmlResponse , expecting
 		 * dtiTransactionTO should not be null
 		 */
 		try {
-			InputStream fileName = this
-					.getClass()
-					.getResourceAsStream(
-							xmlPath
-									+ "DLR_UpgradeAlphaResponse_01_TestTransformResponse.xml");
-			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			DTITransactionTO dtiTransactionTO = DLRUpgradeAlphaRules
 					.transformError(dtiTxn, dtiRespTO, statusString,
 							xmlResponse);
@@ -191,20 +195,9 @@ public class DLRUpgradeAlphaRulesTestCase extends CommonTestUtils {
 	 * @param dtiTxn
 	 * @return
 	 */
-	private void getRequestTO(DTITransactionTO dtiTxn) {
-		DTIRequestTO request = new DTIRequestTO();
-		PayloadHeaderTO payloadHeaderTO = new PayloadHeaderTO();
-		CommandHeaderTO header = new CommandHeaderTO();
-		CmdAttributeTO cmdAttributeTO = header.new CmdAttributeTO();
-		cmdAttributeTO.setAttribValue("1");
-		ArrayList<CmdAttributeTO> cmdAttributeList = new ArrayList<>();
-		cmdAttributeList.add(cmdAttributeTO);
+	private void populateTxn(DTITransactionTO dtiTxn) {
 		UpgradeAlphaRequestTO alphaRequestTO = new UpgradeAlphaRequestTO();
 		alphaRequestTO.setTktList(getTicketList(TicketIdType.MAG_ID));
-		header.setCmdAttributeList(cmdAttributeList);
-		request.setCommandHeader(header);
-		request.setPayloadHeader(payloadHeaderTO);
-		request.setCommandBody(alphaRequestTO);
-		dtiTxn.setRequest(request);
+		dtiTxn.getRequest().setCommandBody(alphaRequestTO);
 	}
 }
