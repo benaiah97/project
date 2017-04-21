@@ -34,6 +34,8 @@ import org.xml.sax.SAXException;
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.connection.QueryBuilder;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
+import pvt.disney.dti.gateway.constants.DTIErrorCode.ErrorScope;
 import pvt.disney.dti.gateway.dao.AttributeKey;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
@@ -100,6 +102,7 @@ public class DTIMockUtil extends CommonTestUtils {
 
 	/** The mock parse. */
 	static boolean mockParse = false;
+	private static String errorScope=null; 
 
 	/**
 	 * For Mocking AttributeKey.
@@ -974,6 +977,22 @@ public class DTIMockUtil extends CommonTestUtils {
 						throws Exception {
 
 					return new Integer(1);
+				}
+			};
+		} catch (Exception e) {
+		}
+	}
+	/**
+	 * Mock for method getScopeFromCode of DTIErrorCode
+	 */
+	public static void mockDtiErrorCodeScope(String errScope) {
+		errorScope=errScope;
+		try {
+			new MockUp<DTIErrorCode>() {
+				@Mock
+				public DTIErrorCode.ErrorScope getScopeFromCode(
+						String dtiErrorCode) {
+					return ErrorScope.valueOf(errorScope);
 				}
 			};
 		} catch (Exception e) {
