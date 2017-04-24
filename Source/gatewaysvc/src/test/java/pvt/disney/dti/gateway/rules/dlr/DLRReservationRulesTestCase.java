@@ -116,7 +116,6 @@ public class DLRReservationRulesTestCase extends CommonTestUtils {
 		dtiTxn.setTpLookupTOList(tpLookupTOListIn);
 		/* scenario :1 Passing dtiTxn in request */
 		try {
-
 			DLRReservationRules.transformRequest(dtiTxn);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexcpected Exception" + dtie.getLogMessage());
