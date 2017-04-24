@@ -133,8 +133,8 @@ public class WDWVoidReservationRules {
     // Set Transaction note (2.17.2, JTL)
     otManageRes.setTransactionNote(dtiRequest.getPayloadHeader().getPayloadID());
 
-    // Generate Event - Querying a reservation shouldn't trigger an event
-    otManageRes.setGenerateEvent(false);
+    // Generate Event - Void a reservation should trigger an event
+    otManageRes.setGenerateEvent(true);
 
     // Set the manage reservation TO on the command
     atsCommand.setManageReservationTO(otManageRes);

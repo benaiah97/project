@@ -3,9 +3,9 @@ package pvt.disney.dti.gateway.provider.wdw.data;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTErrorTO;
 
@@ -397,25 +397,32 @@ public class OTCommandTO implements Serializable {
   }
 
   /**
-   * Converts an Omni date (in the format of "yy-MM-dd") into a GregorianCalendar. Makes a correction to the parsed year based on the "OMNI_CENTURY_YEAR".
-   * 
+   * Converts an Omni ticket DOB date into a GregorianCalendar.
+   * Updated per 2.17.2.  There are at least two different formats of date coming  
+   * back from ATS - and excess data may follow them.
+   * 12/02/1953 - Century Pattern
+   * 12/02/53 - Year
+   *  
    * @param stringDate
    *            the String version of the date.
    * @return GregorianCalendar version of the date.
    */
   public static GregorianCalendar convertTicketDOB(String stringDate) throws ParseException {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+    SimpleDateFormat sdf;
+    
+    if (Pattern.matches("([0-9]{2})/([0-9]{2})/([0-9]{4}).*", stringDate)) {
+      sdf = new SimpleDateFormat("MM/dd/yyyy");
+    } else if (Pattern.matches("([0-9]{2})/([0-9]{2})/([0-9]{2}).*", stringDate)) {
+      sdf = new SimpleDateFormat("MM/dd/yy");
+    } else {
+      sdf = new SimpleDateFormat("MM/dd/yy");
+    }
+    
     Date tempDate = sdf.parse(stringDate);
 
     GregorianCalendar gc = new GregorianCalendar();
     gc.setTime(tempDate);
-
-    /*
-    if (gc.get(Calendar.YEAR) < OTCommandTO.OMNI_CENTURY_YEAR) {
-      gc.set(Calendar.YEAR, gc.get(Calendar.YEAR) + 100);
-    }
-    */
 
     return gc;
 
