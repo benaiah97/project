@@ -227,7 +227,7 @@ fi
 
 # Archive old compressed log files in the archive directory
 if [ $DAYS -eq 0 ]; then
-   exit
+   exit 0
 else
    if [ $SUFFIX = "NULL" ]; then
       eraseOldName
@@ -235,3 +235,7 @@ else
       eraseOldSuffix
    fi
 fi 
+
+# We really don't care about the response code from the archive.
+exit 0
+
