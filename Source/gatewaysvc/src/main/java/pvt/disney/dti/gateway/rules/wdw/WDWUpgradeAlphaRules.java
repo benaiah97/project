@@ -418,8 +418,7 @@ public class WDWUpgradeAlphaRules {
       // product?
       HashMap<String, ArrayList<Integer>> prodShellsXRef = ProductKey
           .getProductShellXref(dbProdList);
-      WDWBusinessRules.validateTicketShellToProduct(aTktListTO,
-          prodShellsXRef);
+      WDWBusinessRules.validateTicketShellToProduct(aTktListTO, prodShellsXRef);
     }
 
     // RULE: Always log WDW Upgrades to reporting

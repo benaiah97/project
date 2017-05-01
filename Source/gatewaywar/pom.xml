@@ -1,11 +1,9 @@
-<?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0</version>
+		<version>1.0.0-131.0.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
@@ -23,13 +21,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<!-- NOTE: we should really add our own rulesets as specified below. 
-					Files can be located relative to the pom, or off on a webserver. <configuration> 
-					<rulesets> <ruleset>/rulesets/braces.xml</ruleset> <ruleset>/rulesets/naming.xml</ruleset> 
-					<ruleset>/rulesets/strings.xml</ruleset> <ruleset>http://localhost/design.xml</ruleset> 
-					</rulesets> </configuration> -->
-				<!-- NOTE: Must specify target jdk versino for PMD so it can process 
-					rules for version specific JDKs, such as generics, autoboxing, etc. -->
+				
+				
 				<configuration>
 					<targetJdk>1.5</targetJdk>
 				</configuration>
@@ -40,11 +33,9 @@
 				<reportSets>
 					<reportSet>
 						<reports>
-							<!-- generate pmd report -->
+							
 							<report>maven-pmd-plugin</report>
-							<!-- note: additional posible reports below: <report>dependencies</report> 
-								<report>project-team</report> <report>mailing-list</report> <report>cim</report> 
-								<report>issue-tracking</report> <report>license</report> <report>scm</report> -->
+							
 						</reports>
 					</reportSet>
 				</reportSets>
@@ -52,7 +43,7 @@
 		</plugins>
 	</reporting>
 
-	<!-- TODO CHANGE THIS TO PROPER CONTEXTROOT -->
+	
 	<build>
 		<finalName>DTIWeb</finalName>
 		<plugins>
@@ -83,7 +74,7 @@
 
 	<dependencies>
 
-		<!-- TESTING / JUNIT DEPENDENCIES -->
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -99,7 +90,7 @@
 		</dependency>
 
 
-		<!-- XML dependencies -->
+		
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -112,7 +103,7 @@
 		</dependency>
 
 
-		<!-- SPRING WS DEPENDENCIES -->
+		
 		<dependency>
 			<groupId>org.apache.ws.commons.schema</groupId>
 			<artifactId>XmlSchema</artifactId>
@@ -125,7 +116,7 @@
 			<version>1.3.04</version>
 		</dependency>
 
-		<!-- jaxb Dependencies -->
+		
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -138,8 +129,8 @@
 			<version>2.1.9</version>
 			<optional>true</optional>
 		</dependency>
-		<!-- jsr173 is STAX, jsr173_1.0_api.jar is equivalent to stax-api jar -->
-		<!-- we have 1.0, 1.0.1, and 1.2.0 -->
+		
+		
 		<dependency>
 			<groupId>stax</groupId>
 			<artifactId>stax-api</artifactId>
@@ -147,21 +138,21 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- LOGGING -->
+		
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
 
-		<!-- ORACLE JAR -->
+		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc5</artifactId>
 			<version>11.2.0.2.0</version>
 		</dependency>
 
-		<!-- for Tomcat -->
+		
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
@@ -174,7 +165,7 @@
 			<version>2.1.7</version>
 		</dependency>
 
-		<!-- OTHER EXTERNAL JARS -->
+		
 		<dependency>
 			<groupId>com.image.agif</groupId>
 			<artifactId>agif</artifactId>
@@ -188,7 +179,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- DISNEY JAR, SECURITY FRAMEWORK, UNKNOWN ORIGIN -->
+		
 		<dependency>
 			<groupId>com.disney.security</groupId>
 			<artifactId>SecurityClient</artifactId>
@@ -197,7 +188,7 @@
 		</dependency>
 
 
-		<!-- DISNEY SHARED CORE, ETC -->
+		
 		<dependency>
 			<groupId>com.disney.shared</groupId>
 			<artifactId>SharedCore</artifactId>
@@ -205,7 +196,7 @@
 		</dependency>
 
 
-		<!-- DTI PROJECT DEPENDENCIES -->
+		
 
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>

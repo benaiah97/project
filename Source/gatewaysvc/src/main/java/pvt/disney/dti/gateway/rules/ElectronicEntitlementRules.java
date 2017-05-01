@@ -4,20 +4,31 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.data.*;
+import pvt.disney.dti.gateway.dao.ElectronicEntitlementKey;
+import pvt.disney.dti.gateway.data.DTIRequestTO;
+import pvt.disney.dti.gateway.data.DTIResponseTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.UpgradeAlphaRequestTO;
+import pvt.disney.dti.gateway.data.UpgradeAlphaResponseTO;
+import pvt.disney.dti.gateway.data.VoidTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.SpecifiedAccountTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.dao.*;
 
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
+
+/**
+ * This class contains the various rules pertaining to electronic entitelments and 
+ * the management thereof.
+ * @author lewit019
+ *
+ */
 public class ElectronicEntitlementRules {
 
 	/** The object used for logging. */
@@ -29,6 +40,9 @@ public class ElectronicEntitlementRules {
 
 	public static final BigInteger PRICE_MISMATCH_WARN = new BigInteger(
 			DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode());
+	
+	public static final String SHELL78 = "78";
+	public static final String SHELL79 = "79";
 
 	/**
 	 * Constructor for ElectronicEntitlementRules
@@ -38,8 +52,11 @@ public class ElectronicEntitlementRules {
 	}
 
 	/**
-	 * Records sales for auto-promotion to electronic entitlements. 1. Don't save any products which are consumable. 2. Only save voids and upgrades, all other transaction types are excluded. 3. Insert only non-errant transactions
-	 * (completed).
+	 * Records sales for auto-promotion to electronic entitlements. 
+	 * 1. Don't save any products which are consumable. 
+	 * 2. Only save voids and upgrades, all other transaction types are excluded. 
+	 * 3. Insert only non-errant transactions
+	 * 4. (As of 2.17.2, JTL) Only insert electronic shell types.
 	 * 
 	 */
 	public static void recordShellEntitlements(DTITransactionTO dtiTxn) {
@@ -97,22 +114,32 @@ public class ElectronicEntitlementRules {
 
 				String prodCode = aRqstTicket.getProdCode();
 				DBProductTO aProduct = dbProdMap.get(prodCode);
+				
+				// If a product is consumable, don't save it.
 				if (aProduct.isConsumable()) {
 					continue;
 				}
-				else {
+				
+				// If a product isn't an RFID shell, don't save it.
+				if (aRqstTicket.getTktShell()!= null) {
 
-					int tktItem = aRqstTicket.getTktItem().intValue();
-					TicketTO aRespTicket = respTktList.get(tktItem - 1);
+	 		    String tktShell = aRqstTicket.getTktShell();
+				  
+				  ArrayList<String> rfidShellList = new ArrayList<String>();
+				  rfidShellList.add(SHELL78);
+				  rfidShellList.add(SHELL79);
+				  
+				  if (rfidShellList.contains(tktShell)) {
+		        int tktItem = aRqstTicket.getTktItem().intValue();
+		        TicketTO aRespTicket = respTktList.get(tktItem - 1);
 
-					ElectronicEntitlementKey.insertUpgradedEntitlement(itsNbr,
-							aRespTicket, payloadID, entityId);
-
-				}
+		        ElectronicEntitlementKey.insertUpgradedEntitlement(itsNbr,aRespTicket, payloadID, entityId);
+				  } else {
+				    continue;
+				  }
+				} 
 			}
-
-		}
-		else if (dtiTxn.getTransactionType() == TransactionType.VOIDTICKET) {
+		} else if (dtiTxn.getTransactionType() == TransactionType.VOIDTICKET) {
 
 			DTIResponseTO dtiRespTO = dtiTxn.getResponse();
 			CommandBodyTO cmdRespBodyTO = dtiRespTO.getCommandBody();
@@ -125,8 +152,7 @@ public class ElectronicEntitlementRules {
 				logger.sendEvent(
 						"Payload ID " + payloadID + " void did not have only one ticket.  It had " + respTktList
 								.size(), EventType.EXCEPTION, THISOBJ);
-			}
-			else {
+			}	else {
 				aTicket = respTktList.get(0);
 				ElectronicEntitlementKey.insertVoidedEntitlement(itsNbr,
 						aTicket, payloadID, entityId);
