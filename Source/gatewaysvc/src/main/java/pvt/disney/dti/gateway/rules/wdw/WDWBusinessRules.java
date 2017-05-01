@@ -449,14 +449,18 @@ public class WDWBusinessRules {
 
       String productCode = aTicketTO.getProdCode();
       String shellString = getShellStringFromTicket(aTicketTO);
-      if (shellString == null)
+      if (shellString == null) {
         continue;
+      } else { 
+        aTicketTO.setTktShell(shellString);
+      }
       Integer shellNbr = new Integer(shellString);
 
       ArrayList<Integer> validShells = prodShellsXRef.get(productCode);
-      if ((validShells == null) || (!validShells.contains(shellNbr)))
+      if ((validShells == null) || (!validShells.contains(shellNbr))) {
         throw new DTIException(WDWBusinessRules.class, DTIErrorCode.INVALID_SHELL_FOR_PRODUCT, "Shell "
             + shellNbr.toString() + " not associated with product " + productCode + " in the database.");
+      }
     }
 
     return;

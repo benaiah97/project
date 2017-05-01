@@ -372,8 +372,7 @@ public class WDWCreateTicketRules {
 
       // TicketAttribute
       if (aDtiTicket.getTktShell() != null) {
-        otProduct.setTicketAttribute(new BigInteger(aDtiTicket
-            .getTktShell()));
+        otProduct.setTicketAttribute(new BigInteger(aDtiTicket.getTktShell()));
       }
 
       // Add to List
