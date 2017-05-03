@@ -43,7 +43,8 @@ public class ElectronicEntitlementRules {
 	
 	public static final String SHELL78 = "78";
 	public static final String SHELL79 = "79";
-
+  public static final String SHELL11 = "11";  
+  
 	/**
 	 * Constructor for ElectronicEntitlementRules
 	 */
@@ -128,6 +129,7 @@ public class ElectronicEntitlementRules {
 				  ArrayList<String> rfidShellList = new ArrayList<String>();
 				  rfidShellList.add(SHELL78);
 				  rfidShellList.add(SHELL79);
+          rfidShellList.add(SHELL11);				  
 				  
 				  if (rfidShellList.contains(tktShell)) {
 		        int tktItem = aRqstTicket.getTktItem().intValue();
