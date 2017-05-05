@@ -15,12 +15,12 @@ MAINTAINER moons012 <shan.m.moon@disney.com>
 ###############################################################################
 
 RUN echo "Adding config directory so required properties are present."
-ADD config/$CONFIG/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway/
-RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/CONFIG
+ADD config/$CONFIG/ /var/opt/apps/WDPRApps/DTI/gateway/config/
+RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/gateway/config
 
 RUN echo "Creating log directory"
-RUN mkdir -p /var/opt/apps/WDPRApps/DTI/LOGS/Gateway/
-RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/LOGS/Gateway
+RUN mkdir -p /var/opt/apps/WDPRApps/DTI/gateway/logs/
+RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/gateway/logs
 
 ###############################################################################
 # INSTALL REQUIRED CERTS
