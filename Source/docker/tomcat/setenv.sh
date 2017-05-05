@@ -1,2 +1,2 @@
-export CATALINA_OPTS="-DGateway_Config=/var/opt/apps/WDPRApps/DTI/CONFIG/Gateway -DGateway_Logs=/var/opt/apps/WDPRApps/DTI/LOGS/Gateway/"
-export JAVA_OPTS="-Ddeployment.security.revocation.check=NO_CHECK -Dsecurity.overridePropertiesFile=true -Djava.security.properties=* -Djava.security.policy=/var/opt/apps/WDPRApps/DTI/policy/my.policy -Dcom.sun.net.ssl.checkRevocation=false -Dsun.security.ssl.allowUnsafeRenegotiation=true"
+export CATALINA_OPTS=-DGateway_Config=/var/opt/apps/WDPRApps/DTI/gateway/config
+export CATALINA_OPTS="$CATALINA_OPTS -DGateway_Logs=/var/opt/apps/WDPRApps/DTI/gateway/logs"
