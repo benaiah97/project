@@ -255,7 +255,7 @@ public class TestCalmRules {
 	}
 	
 	private static DTITransactionTO helpCreateWDWTransaction() {
-		WDW_TXN = new DTITransactionTO(TransactionType.QUERYTICKET);
+		WDW_TXN = new DTITransactionTO(TransactionType.RESERVATION);
 		WDW_TXN.setProvider(ProviderType.WDWNEXUS);
 		
 		DTIRequestTO dtiRequest = new DTIRequestTO();
@@ -273,12 +273,12 @@ public class TestCalmRules {
 	}	
 	
 	private static DTITransactionTO helpCreateDLRTransaction() {
-		DLR_TXN = new DTITransactionTO(TransactionType.QUERYTICKET);
+		DLR_TXN = new DTITransactionTO(TransactionType.RESERVATION);
 		DLR_TXN.setProvider(ProviderType.DLRGATEWAY);
 		DTIRequestTO dtiRequest = new DTIRequestTO();
 		
 		TktSellerTO tktSellerTO = new TktSellerTO();
-		tktSellerTO.setTsMac("WDPRONAWDW");
+		tktSellerTO.setTsMac("WDPRONADLR");
 		
 		PayloadHeaderTO payloadHdr = new PayloadHeaderTO();
 		payloadHdr.setTktSeller(tktSellerTO);

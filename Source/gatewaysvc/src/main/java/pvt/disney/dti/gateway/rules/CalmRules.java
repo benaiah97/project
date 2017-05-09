@@ -143,14 +143,12 @@ public class CalmRules {
 	public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn) throws DTIException,
 			DTICalmException {
 
-		System.out.println("Checking contingencies");
 		String tpiCode = dtiTxn.getTpiCode();
 		File downFile = null;
 
 		if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW) && wdwCalmActive) {
 
 			downFile = new File(wdwDownFileName);
-			System.out.println("wdwDownFileName '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
 			
 			if (downFile.exists()) {
 				executeWDWDownRules(dtiTxn);
@@ -160,7 +158,6 @@ public class CalmRules {
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR) && dlrCalmActive) {
 
 			downFile = new File(dlrDownFileName);
-			System.out.println("dlrDownFileName '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
 			  
 			if (downFile.exists()) {
 				executeDLRDownRules(dtiTxn);
@@ -169,7 +166,7 @@ public class CalmRules {
 		}
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
 		  downFile = new File(hkdDownFileName);
-		  System.out.println("hkddownfile '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
+
 		  if (downFile.exists()) {
 			  System.out.println("executing HKD calm");
 		    executeHKDDownRules(dtiTxn);
