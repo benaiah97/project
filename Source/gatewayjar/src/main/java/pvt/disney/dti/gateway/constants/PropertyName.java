@@ -19,7 +19,7 @@ public interface PropertyName {
 
 	public static final String CALM_DLR_DOWN_FILENAME = "CALM.DLRDownFileName";
 	public static final String CALM_WDW_DOWN_FILENAME = "CALM.WDWDownFileName";
-  public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3, JTL	
+    public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3, JTL	
 	public static final String CALM_QUERYTICKET_REPLYMACS = "CALM.QueryTicket.ReplyMACs";
 
 	public static final String ATS_SITE_NUMBER = "ATS.SiteNumber";

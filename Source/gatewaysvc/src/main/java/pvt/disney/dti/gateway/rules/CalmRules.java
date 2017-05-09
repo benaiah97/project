@@ -27,8 +27,9 @@ import com.disney.logging.audit.EventType;
 import com.disney.util.PropertyHelper;
 
 /**
- * 
- * @author lewit019
+ * The Class CalmRules.
+ *
+ * @author lewit019, moons012
  * @since 2.16.3
  */
 public class CalmRules {
@@ -36,26 +37,36 @@ public class CalmRules {
 	/** The standard core logging mechanism. */
 	private EventLogger logger = EventLogger.getLogger(this.getClass());
 
+	/** The wdw down file name. */
 	private static String wdwDownFileName = null;
 
+	/** The dlr down file name. */
 	private static String dlrDownFileName = null;
 	
-  private static String hkdDownFileName = null;
+	/** The hkd down file name. */
+	private static String hkdDownFileName = null;
 
+	/** The this obj. */
 	private static CalmRules thisObj = null;
 
+	/** The dlr calm active. */
 	private static boolean dlrCalmActive = false;
 
+	/** The wdw calm active. */
 	private static boolean wdwCalmActive = false;
 	
-  private static boolean hkdCalmActive = false;
+	/** The hkd calm active. */
+	private static boolean hkdCalmActive = false;
 
+	/** The query ticket reply macs. */
 	private static ArrayList<String> queryTicketReplyMacs = new ArrayList<String>();
 
 	/**
-   * 
-   * 
-   */
+	 * Instantiates a new calm rules.
+	 *
+	 * @param props the props
+	 * @throws DTIException the DTI exception
+	 */
 	private CalmRules(Properties props) throws DTIException {
 
 		wdwDownFileName = PropertyHelper.readPropsValue(
@@ -80,10 +91,13 @@ public class CalmRules {
     hkdDownFileName = PropertyHelper.readPropsValue(
         PropertyName.CALM_HKD_DOWN_FILENAME, props, null);
     if (hkdDownFileName == null) {
+    	System.out.println("HKD not calm");
       hkdCalmActive = false;
     }
     else {
       hkdCalmActive = true;
+
+  	System.out.println("HKD  calm");
     }
 
 		String qtMacs = PropertyHelper.readPropsValue(
@@ -104,10 +118,11 @@ public class CalmRules {
 	}
 
 	/**
-	 * 
-	 * @param props
-	 * @return
-	 * @throws DTIException
+	 * Gets the single instance of CalmRules.
+	 *
+	 * @param props the props
+	 * @return single instance of CalmRules
+	 * @throws DTIException the DTI exception
 	 */
 	public static CalmRules getInstance(Properties props) throws DTIException {
 
@@ -119,20 +134,24 @@ public class CalmRules {
 	}
 
 	/**
-	 * Contingency Actions Logic Module (CALM)
-	 * 
-	 * @param dtiTxn
-	 * @throws DTIException
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
 	 */
 	public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn) throws DTIException,
 			DTICalmException {
 
+		System.out.println("Checking contingencies");
 		String tpiCode = dtiTxn.getTpiCode();
 		File downFile = null;
 
 		if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW) && wdwCalmActive) {
 
 			downFile = new File(wdwDownFileName);
+			System.out.println("wdwDownFileName '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
+			
 			if (downFile.exists()) {
 				executeWDWDownRules(dtiTxn);
 			}
@@ -141,6 +160,8 @@ public class CalmRules {
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR) && dlrCalmActive) {
 
 			downFile = new File(dlrDownFileName);
+			System.out.println("dlrDownFileName '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
+			  
 			if (downFile.exists()) {
 				executeDLRDownRules(dtiTxn);
 			}
@@ -148,7 +169,9 @@ public class CalmRules {
 		}
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
 		  downFile = new File(hkdDownFileName);
+		  System.out.println("hkddownfile '" + downFile.getAbsolutePath() + "' exist? "  +downFile.exists());
 		  if (downFile.exists()) {
+			  System.out.println("executing HKD calm");
 		    executeHKDDownRules(dtiTxn);
 		  }
 		}
@@ -157,12 +180,13 @@ public class CalmRules {
 	}
 
 	/**
-	 * Contingency Actions Logic Module (CALM)
-	 * 
-	 * @param dtiTxn
-	 * @throws DTIException
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
 	 */
-	private void executeWDWDownRules(DTITransactionTO dtiTxn) throws DTIException,
+	protected void executeWDWDownRules(DTITransactionTO dtiTxn) throws DTIException,
 			DTICalmException {
 
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
@@ -198,12 +222,13 @@ public class CalmRules {
 	}
 
 	/**
-	 * Contingency Actions Logic Module (CALM)
-	 * 
-	 * @param dtiTxn
-	 * @throws DTIException
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
 	 */
-	private void executeDLRDownRules(DTITransactionTO dtiTxn) throws DTIException,
+	protected void executeDLRDownRules(DTITransactionTO dtiTxn) throws DTIException,
 			DTICalmException {
 
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
@@ -235,9 +260,8 @@ public class CalmRules {
 
 	/**
 	 * Creates a simulated Annual Pass Query WDW Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
-	 * 
-	 * @param dtiTxn
-	 * @return
+	 *
+	 * @param dtiTxn the dti txn
 	 */
 	private void createAPQueryWDWTicketResp(DTITransactionTO dtiTxn) {
 
@@ -303,9 +327,8 @@ public class CalmRules {
 
 	/**
 	 * Creates a simulated Annual Pass Query DLR Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
-	 * 
-	 * @param dtiTxn
-	 * @return
+	 *
+	 * @param dtiTxn the dti txn
 	 */
 	private void createAPQueryDLRTicketResp(DTITransactionTO dtiTxn) {
 
@@ -368,16 +391,45 @@ public class CalmRules {
 	}
 
 	 /**
-   * Contingency Actions Logic Module (CALM)
-   * 
-   * @param dtiTxn
-   * @throws DTIException
-   * TODO:  Define rules
-   */
-  private void executeHKDDownRules(DTITransactionTO dtiTxn) throws DTIException,
+ 	 * Contingency Actions Logic Module (CALM).
+ 	 *
+ 	 * @param dtiTxn the dti txn
+ 	 * @throws DTIException TODO:  Define rules
+ 	 * @throws DTICalmException the DTI calm exception
+ 	 */
+  protected void executeHKDDownRules(DTITransactionTO dtiTxn) throws DTIException,
       DTICalmException {
     
-    return;
+	  DTIRequestTO dtiRequest = dtiTxn.getRequest();
+		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
+		TktSellerTO tktSeller = payloadHdr.getTktSeller();
+		String tsMac = tktSeller.getTsMac();
+
+		logger.sendEvent(
+				"Contingency Actions Logic Module (CALM) being checked for " + tsMac,
+				EventType.DEBUG, this);
+
+		if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
+
+			boolean containsMac = false;
+			for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
+				String replyMac = queryTicketReplyMacs.get(i);
+
+				if (replyMac.compareToIgnoreCase(tsMac) == 0) {
+					containsMac = true;
+					break;
+				}
+			}
+
+			if (containsMac) {
+				createAPQueryWDWTicketResp(dtiTxn);
+				throw new DTICalmException(dtiTxn);
+			}
+		}
+
+		throw new DTIException(BusinessRules.class,
+				DTIErrorCode.INVALID_SALES_DATE_TIME,
+				"HKD Request attempted when HKDDown outage wall file is present (CALM).");
   }
 	
 }
