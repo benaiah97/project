@@ -9,11 +9,19 @@ Build the image locally or get it from the dti docker repository
 if building locally and not pulling from a repo,cd to DTIGateway/Source folder.
 
 This build command defaults to using the configs in dti-gateway-config/LOCAL
+It also defaults to eastern time zone.
+
 docker build -t dtigateway:latest .
 
 If you need to use a different config, the supply the build argument CONFIG and a value, such as DEV_HK
-docker build --build-arg CONFIG=DEV_HK -t dtigateway:DEV_HK .
+If you need to use a differnt timezone, then supply the build argument TIMEZONE and a value such as Asia/Hong_Kong
 
+For example: to use the domestic DEV config:
+
+docker build --build-arg CONFIG=LOCAL -t dtigateway:DEV .
+
+Or to use the Hong Kong DEV configuration and specify the HKDL timezone
+docker build --build-arg CONFIG=DEV_HK --build-arg TIMEZONE=Asia/Hong_Kong -t dtigateway:DEV_HK .
 
 or 
 
