@@ -58,7 +58,7 @@ import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * This class is responsible for three major functions for WDW reservations:<BR>
  * 1. Defining the business rules specific to WDW reservations.<BR>
@@ -67,7 +67,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  * 3. Defining the rules for transforming responses from the provider transfer
  * objects to the DTI transfer objects.<BR>
  * 
- * @author lewit019
+ * @author lewit019, moons012
  * @since 2.16.3
  * 
  */
