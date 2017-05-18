@@ -91,13 +91,10 @@ public class CalmRules {
     hkdDownFileName = PropertyHelper.readPropsValue(
         PropertyName.CALM_HKD_DOWN_FILENAME, props, null);
     if (hkdDownFileName == null) {
-    	System.out.println("HKD not calm");
       hkdCalmActive = false;
     }
     else {
       hkdCalmActive = true;
-
-  	System.out.println("HKD  calm");
     }
 
 		String qtMacs = PropertyHelper.readPropsValue(

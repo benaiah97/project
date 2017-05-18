@@ -20,6 +20,9 @@ For example: to use the domestic DEV config:
 
 docker build --build-arg CONFIG=LOCAL -t dtigateway:DEV .
 
+For example: to use the HKDL Local config:
+docker build --build-arg CONFIG=LOCAL_HK -t dtigateway:LOCAL_HK .
+
 Or to use the Hong Kong DEV configuration and specify the HKDL timezone
 docker build --build-arg CONFIG=DEV_HK --build-arg TIMEZONE=Asia/Hong_Kong -t dtigateway:DEV_HK .
 
@@ -29,13 +32,15 @@ or
 
 
 Run the container and start the default Tomcat server (CMD ["catalina.sh", "run"]):
-(assumes port 8080 and 8000 are free on your box)
+(assumes http and port 8080 and 8000 are free on your box)
 
-$ 
+A few examples running different tagged images:
 docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:latest
 docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:DEV_HK
 
-docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:LOCAL
+docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:DEV_HK
+
+docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:LOCAL_HK
 
 Find the IP of your docker machine 
 $ docker-machine ip
@@ -55,3 +60,15 @@ or
  docker exec -i -t <insert container name> /bin/bash #by Name
  
   docker exec -i -t gateway /bin/bash
+  
+  The default local network ip for dockker images 192.168.99.100, so your
+  endpoint for SOAP  UI testing will probably be http://192.168.99.100:8080/DTIApp/DTIApp
+  (assumming you are using a IAGO.properties endoint that is http.
+  
+  Confirm this by checking the IP address of your docker machine as detailed above.
+  
+  If you want to test with SSL for LOCAL configs you will have to change the
+  IAGO.properties endpoint and change the port mapping when run the tagged image,
+  and we would probably have to modify the Docker file to custome the server.xml
+  for tomcat to specify https. I might add that as a build argument at some point. 
+  
