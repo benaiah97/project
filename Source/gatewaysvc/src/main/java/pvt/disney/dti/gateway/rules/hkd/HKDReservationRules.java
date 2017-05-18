@@ -58,6 +58,7 @@ import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
+// TODO: Auto-generated Javadoc
 /**
  * This class is responsible for three major functions for WDW reservations:<BR>
  * 1. Defining the business rules specific to WDW reservations.<BR>
@@ -72,6 +73,7 @@ import pvt.disney.dti.gateway.util.DTIFormatter;
  */
 public class HKDReservationRules {
 
+  /** The Constant THISOBJECT. */
   private static final Class<HKDReservationRules> THISOBJECT = HKDReservationRules.class;
 
   /** Request type header constant. */
@@ -94,8 +96,13 @@ public class HKDReservationRules {
   /** Constant indicating the item type of ticket. */
   private final static String ITEM_TYPE = "T";
 
+  /** The Constant MANUALMAILORDER. */
   private final static String MANUALMAILORDER = "ManualMailOrder";
+  
+  /** The Constant OFFSITE. */
+  private final static String OFFSITE = "Offsite";
 
+  /** The Constant PRESALE. */
   private final static String PRESALE = "Presale";
 
   /** Constant indicating that in-bound client number was provided. */
@@ -122,21 +129,23 @@ public class HKDReservationRules {
   /** Constant representing the appropriate value for a major client type. */
   private final static String PRIVATE_CLIENT_TYPE = "Private";
 
+  /** The Constant logger. */
   private static final EventLogger logger = EventLogger.getLogger(HKDReservationRules.class.getCanonicalName());
 
   /**
    * Pull in any rule values from the properties file.
-   * 
-   * @param props
+   *
+   * @param props the props
    */
   public static void initHKDReservationRules(Properties props) {
     return;
   }
 
   /**
-   * Apply the Hong Kong Reservation Rules
-   * @param dtiTxn
-   * @throws DTIException
+   * Apply the Hong Kong Reservation Rules.
+   *
+   * @param dtiTxn the dti txn
+   * @throws DTIException the DTI exception
    */
   public static void applyHKDReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
@@ -240,10 +249,13 @@ public class HKDReservationRules {
    */
   static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 
+	boolean isPackage = false; 
+	
     String xmlString = null;
     DTIRequestTO dtiRequest = dtiTxn.getRequest();
     CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
     ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
+
 
     // === Command Level ===
     HkdOTCommandTO atsCommand = new HkdOTCommandTO(HkdOTCommandTO.OTTransactionType.MANAGERESERVATION);
@@ -305,22 +317,38 @@ public class HKDReservationRules {
     ReservationTO dtiRes = dtiResReq.getReservation();
     HkdOTReservationDataTO otRes = new HkdOTReservationDataTO();
 
-    if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0)
-        || (MANUALMAILORDER.compareTo(dtiRes.getResSalesType()) == 0)) {
-      otRes.setPrinted(new Boolean(false));
-      otRes.setValidated(new Boolean(false));
+    
+    //Check if this is a package that should be set as printed and validated
+    // == Is this a packege == //
+    isPackage = helpIsPackage(dtiRes);
+    
+    if (isPackage) { 
+    	//this is a pacage, set printed and validated to true
+    	otRes.setPrinted(new Boolean(true));
+    	otRes.setValidated(new Boolean(true));
     } else {
-
-      if (otPaymentList.size() == 0) { // no payment cannot be printed or
-        // validated
-        otRes.setPrinted(new Boolean(false));
-        otRes.setValidated(new Boolean(false));
-      } else {
-        otRes.setPrinted(new Boolean(false));
-        otRes.setValidated(new Boolean(false));
-      }
-
+    	//this is not a package, set printed and validated to false
+    	 otRes.setPrinted(new Boolean(false));
+         otRes.setValidated(new Boolean(false));
     }
+    
+    //OLD CODE being kept for historical reasons only
+//    if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0)
+//        || (MANUALMAILORDER.compareTo(dtiRes.getResSalesType()) == 0)) {
+//      otRes.setPrinted(new Boolean(false));
+//      otRes.setValidated(new Boolean(false));
+//    } else {
+//
+//      if (otPaymentList.size() == 0) { // no payment cannot be printed or
+//        // validated
+//        otRes.setPrinted(new Boolean(false));
+//        otRes.setValidated(new Boolean(false));
+//      } else {
+//        otRes.setPrinted(new Boolean(false));
+//        otRes.setValidated(new Boolean(false));
+//      }
+//
+//    }
 
     otManageRes.setReservationData(otRes);
 
@@ -494,10 +522,12 @@ public class HKDReservationRules {
   }
 
   /**
-   * @param otManageRes
-   * @param dtiTktList
-   * @param dtiPdtMap
-   * @return
+   * Creates the OT products.
+   *
+   * @param otManageRes the ot manage res
+   * @param dtiTktList the dti tkt list
+   * @param dtiPdtMap the dti pdt map
+   * @return true, if successful
    */
   private static boolean createOTProducts(HkdOTManageReservationTO otManageRes, ArrayList<TicketTO> dtiTktList,
       HashMap<String, DBProductTO> dtiPdtMap) {
@@ -809,10 +839,10 @@ public class HKDReservationRules {
   }
 
   /**
-   * Validate that a reservation doesn't have more than 20 line items
-   * 
-   * @param dtiResReq
-   * @throws DTIException
+   * Validate that a reservation doesn't have more than 20 line items.
+   *
+   * @param dtiResReq the dti res req
+   * @throws DTIException the DTI exception
    */
   private static void validateMaxResLineItems(ReservationRequestTO dtiResReq) throws DTIException {
 
@@ -826,8 +856,9 @@ public class HKDReservationRules {
 
   /**
    * Validate the Client ID.
-   * @param dtiResReq
-   * @throws DTIException
+   *
+   * @param dtiResReq the dti res req
+   * @throws DTIException the DTI exception
    */
   private static void validateHKDClientId(ReservationRequestTO dtiResReq) throws DTIException {
 
@@ -884,11 +915,11 @@ public class HKDReservationRules {
   }
 
   /**
-   * Ensure TP_Lookups have been populated in the database
-   * 
-   * @param dtiTxn
-   * @param dtiResReq
-   * @throws DTIException
+   * Ensure TP_Lookups have been populated in the database.
+   *
+   * @param dtiTxn the dti txn
+   * @param dtiResReq the dti res req
+   * @throws DTIException the DTI exception
    */
   private static void validateAndSaveTPLookups(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq)
       throws DTIException {
@@ -961,10 +992,10 @@ public class HKDReservationRules {
   }
 
   /**
-   * Validate that major clients do not send demographics
-   * 
-   * @param dtiResReq
-   * @throws DTIException
+   * Validate that major clients do not send demographics.
+   *
+   * @param dtiResReq the dti res req
+   * @throws DTIException the DTI exception
    */
   private static void validateMajorClientDemo(ReservationRequestTO dtiResReq) throws DTIException {
 
@@ -984,15 +1015,13 @@ public class HKDReservationRules {
   /**
    * Transforms a reservation response string from the WDW provider and updates
    * the DTITransactionTO object with the response information.
-   * 
-   * @param dtiTxn
-   *          The transaction object for this request.
-   * @param xmlResponse
-   *          The WDW provider's response in string format.
+   *
+   * @param dtiTxn          The transaction object for this request.
+   * @param otCmdTO the ot cmd TO
+   * @param dtiRespTO the dti resp TO
    * @return The DTITransactionTO object, enriched with the response
    *         information.
-   * @throws DTIException
-   *           for any error. Contains enough detail to formulate an error
+   * @throws DTIException           for any error. Contains enough detail to formulate an error
    *           response to the seller.
    */
   static void transformResponseBody(DTITransactionTO dtiTxn, HkdOTCommandTO otCmdTO, DTIResponseTO dtiRespTO)
@@ -1086,4 +1115,51 @@ public class HKDReservationRules {
     return;
   }
 
+  /**
+   * Helper method: isPackage: check if the ResSaleType and ResPickupArea define
+   * the reservation as a package.
+   *
+   * @param dtiTxn the dti txn
+   * @return true, if successful
+   */
+  protected static boolean helpIsPackage(ReservationTO dtiRes) {
+	  boolean isPackage = false;
+	  //get the lists of ResSaleType and ResPickupAreas that define a reservation as a package
+	  ArrayList<String> resSaleTypeList = helpGetPackageResSaleTypeList();
+	  ArrayList<String> resPickupAreaList = helpGetPackageResPickupAreaList();
+	  
+	  //checks if the resSaleType and resPickupArea are both in the respective list of values
+	  //that define a reservation as a packge
+	  if ( resSaleTypeList.contains(dtiRes.getResSalesType()) && resPickupAreaList.contains(dtiRes.getResPickupArea()) ) {
+		  isPackage = true;
+	  }
+
+	  return isPackage;
+  }
+  
+  /**
+   * Helper method: get package res sale type list.
+   *
+   * @return the array list
+   */
+  protected static ArrayList<String> helpGetPackageResSaleTypeList() {
+	  ArrayList<String> resSaleTypeList = new ArrayList<String>();
+	  //TODO: temp hardcoding, recode  to load this from dti.properties
+	  resSaleTypeList.add(PRESALE);
+	  return resSaleTypeList;
+  }
+  
+  /**
+   * Helper method: get package res pickup area list.
+   *
+   * @return the array list
+   */
+  protected static ArrayList<String> helpGetPackageResPickupAreaList() {
+	  ArrayList<String> resPickupAreaList = new ArrayList<String>();
+	  //TODO: temp hardcoding, recode  to load this from dti.properties
+	  resPickupAreaList.add(OFFSITE);
+	  
+	  return resPickupAreaList;
+  }
+  
 }
