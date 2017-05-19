@@ -4,8 +4,10 @@
 #  it is only just good enough for local development deployment/debugging.
 ###############################################################################
 
-FROM tomcat:7.0
+FROM tomcat:7.0.63
 ARG CONFIG=LOCAL
+ARG TIMEZONE=America/New_York
+#OTHER POSSIBLE VALUES Asia/Hong_Kong
 
 MAINTAINER moons012 <shan.m.moon@disney.com>
 
@@ -15,12 +17,19 @@ MAINTAINER moons012 <shan.m.moon@disney.com>
 ###############################################################################
 
 RUN echo "Adding config directory so required properties are present."
-ADD config/$CONFIG/ /var/opt/apps/WDPRApps/DTI/gateway/config/
-RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/gateway/config
+RUN mkdir -p /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway
+add config/$CONFIG/ /var/opt/apps/WDPRApps/DTI/CONFIG/Gateway
 
 RUN echo "Creating log directory"
 RUN mkdir -p /var/opt/apps/WDPRApps/DTI/gateway/logs/
 RUN chmod -R 777 /var/opt/apps/WDPRApps/DTI/gateway/logs
+
+
+# Set the timezone.
+RUN echo "Setting the timezone"
+RUN echo "$TIMEZONE" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
+
 
 ###############################################################################
 # INSTALL REQUIRED CERTS
@@ -87,4 +96,4 @@ ADD docker/tomcat/$CONFIG/context.xml /usr/local/tomcat/conf/context.xml
 # gatewaywar/target directory
 ###############################################################################
 RUN echo "PUTTING GATEWAY WAR INTO WEBAPPS."
-ADD gatewaywar/target/DTIWeb.war /usr/local/tomcat/webapps
+COPY gatewaywar/target/DTIWeb.war /usr/local/tomcat/webapps/DTIApp.war
