@@ -92,18 +92,7 @@ public class LogTransaction {
       // Open a connection to the Oracle Database
       eventLogger.sendEvent("DBTransaction: Connecting to DTIDataSource...", EventType.DEBUG, this);
 
-      // Set Oracle JDBC Driver to be used for connection object
-      DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-
-      // Get the properties.
-      String dataSourceURL = PropertyHelper.readPropsValue(PropertyName.DATA_SOURCE_URL, props, null);
-      String databaseUser = PropertyHelper.readPropsValue(PropertyName.DBUSER, props, null);
-      String databasePassword = PropertyHelper.readPropsValue(PropertyName.DBPASSWORD, props, null);
-
-      // Connect to the database
-      clobConn = DriverManager.getConnection(dataSourceURL, databaseUser, databasePassword);
-
-      clobConn.setAutoCommit(true);
+      clobConn = getClobConnection();
 
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
@@ -193,18 +182,7 @@ public class LogTransaction {
       // Open a connection to the Oracle Database
       eventLogger.sendEvent("DBTransaction: Connecting to DTIDataSource...", EventType.DEBUG, this);
 
-      // Set Oracle JDBC Driver to be used for connection object
-      DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-
-      // Get the properties.
-      String dataSourceURL = PropertyHelper.readPropsValue(PropertyName.DATA_SOURCE_URL, props, null);
-      String databaseUser = PropertyHelper.readPropsValue(PropertyName.DBUSER, props, null);
-      String databasePassword = PropertyHelper.readPropsValue(PropertyName.DBPASSWORD, props, null);
-
-      // Connect to the database
-      clobConn = DriverManager.getConnection(dataSourceURL, databaseUser, databasePassword);
-
-      clobConn.setAutoCommit(true);
+      clobConn = getClobConnection();
       eventLogger.sendEvent("insertITPLog(): " + newXMLString, EventType.DEBUG, this);
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
@@ -263,6 +241,29 @@ public class LogTransaction {
     return;
   }
 
+  
+  /**
+   * Gets the CLOB connection required for large data saves and reads
+   * @return a Clob Connection 
+   * @throws SQLException
+   */
+  private Connection getClobConnection() throws SQLException {
+    Connection clobConn;
+    // Set Oracle JDBC Driver to be used for connection object
+    DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+
+    // Get the properties.
+    String dataSourceURL = PropertyHelper.readPropsValue(PropertyName.DATA_SOURCE_URL, props, null);
+    String databaseUser = PropertyHelper.readPropsValue(PropertyName.DBUSER, props, null);
+    String databasePassword = PropertyHelper.readPropsValue(PropertyName.DBPASSWORD, props, null);
+
+    // Connect to the database
+    clobConn = DriverManager.getConnection(dataSourceURL, databaseUser, databasePassword);
+
+    clobConn.setAutoCommit(true);
+    return clobConn;
+  }
+
   /**
    * Inserts a row into the OUTBOUND_TP_LOG table.
    * 
@@ -294,19 +295,7 @@ public class LogTransaction {
       eventLogger.sendEvent("DBTransaction: Connecting to DTIDataSource...", EventType.DEBUG, this);
 
       // Set Oracle JDBC Driver to be used for connection object
-      DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-
-      // Get the properties.
-      String dataSourceURL = PropertyHelper.readPropsValue(PropertyName.DATA_SOURCE_URL, props, null);
-      String databaseUser = PropertyHelper.readPropsValue(PropertyName.DBUSER, props, null);
-      String databasePassword = PropertyHelper.readPropsValue(PropertyName.DBPASSWORD, props, null);
-
-      eventLogger.sendEvent("Opening a CLOB DB connection.", EventType.DEBUG, this);
-
-      // Connect to the database
-      clobConn = DriverManager.getConnection(dataSourceURL, databaseUser, databasePassword);
-
-      clobConn.setAutoCommit(true);
+      clobConn = getClobConnection();
 
       // Set and Get Oracle CLOB object
       xmlClob = getXMLCLOB(newXMLString, clobConn);
