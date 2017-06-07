@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.ResourceBundle;
-
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
@@ -53,6 +52,9 @@ public class CommonTestUtils {
 	 */
 	public Properties setConfigProperty() {
 		props = new Properties();
+		props.setProperty("DtiApp.dataSourceURL","http://Disney.com.com");
+		props.setProperty("DtiApp.dbUser","USER");
+		props.setProperty("DtiApp.dbPassword","Test");
 		props.setProperty("DtiApp.TSMACExclusion", "WDWADMIN");
 		props.setProperty("DtiApp.FloodControlExceptionTsLoc",
 				"mkl2,VoidStore,97016000002");
@@ -69,6 +71,7 @@ public class CommonTestUtils {
 		props.setProperty("CONNECT_TIMEOUT_MILLIS", "5000");
 		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
 		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
+		
 		return props;
 	}
 
