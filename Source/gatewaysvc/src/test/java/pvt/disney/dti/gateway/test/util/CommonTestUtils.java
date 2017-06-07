@@ -41,7 +41,6 @@ public class CommonTestUtils {
 
 	/** Properties. */
 	Properties props = null;
-	//public static final String hkdXMLURls="/xml/config/Reservation/Reservation_01_Rsp_WDW.xml";
 	public static final String hkdXMLURls="/xml/hkd/Test_01_HKD_01.xml";
 
 	/* for setting up the properties from dtiapp.properties */
