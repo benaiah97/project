@@ -10,7 +10,6 @@
 	<artifactId>gatewaygte</artifactId>
 	<name>gatewaygte</name>
 	<url>http://maven.apache.org</url>
-
 	<reporting>
 		<plugins>
 			<plugin>

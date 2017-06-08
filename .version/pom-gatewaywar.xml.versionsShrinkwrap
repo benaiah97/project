@@ -10,7 +10,6 @@
 	<artifactId>gatewaywar</artifactId>
 	<packaging>war</packaging>
 	<name>gatewaywar</name>
-
 	<reporting>
 		<plugins>
 			<plugin>

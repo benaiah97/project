@@ -10,7 +10,6 @@
 	<artifactId>gatewaysvc</artifactId>
 	<name>gatewaysvc</name>
 	<url>http://maven.apache.org</url>
-	
 	<properties>
         <powermock.version>1.7.0RC2</powermock.version>
         <mockito.version>2.7.22</mockito.version>

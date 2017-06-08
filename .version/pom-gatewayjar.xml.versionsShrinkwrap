@@ -11,7 +11,6 @@
 	<name>gatewayjar</name>
 	<url>http://maven.apache.org</url>
 
-
 	<reporting>
 		<plugins>
 			<plugin>

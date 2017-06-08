@@ -9,9 +9,7 @@
 	<groupId>pvt.disney.dti</groupId>
 	<artifactId>gatewayxsd</artifactId>
 	<name>dti gateway jaxb jars</name>
-
-	<description>xsd packager</description>
-	
+	<description>xsd packager</description>	
 	<build>
 		<plugins>
 			<plugin>
