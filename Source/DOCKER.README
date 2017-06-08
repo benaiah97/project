@@ -1,4 +1,8 @@
 
+This document details how to use the docker images from a docker command line. Work
+is in progress to use a maven docker plugin to build images, but at this time
+we must run docker commands directly from a docker shell.
+
 This assumes you have already built the war and it is in the gatewaywar/target folder.
 
 

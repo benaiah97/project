@@ -29,8 +29,8 @@ import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
  *
  * @author MOONS012
  */
-//@PerfTest(invocations = 10, threads = 1)
-//@Required(max = 1800, average = 850)
+@PerfTest(invocations = 50, threads = 10)
+//@Required(max = 4200, average = 3850)
 public class DuplicationTest {
 	
 

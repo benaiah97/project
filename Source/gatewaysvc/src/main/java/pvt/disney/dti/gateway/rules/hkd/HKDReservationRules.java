@@ -202,41 +202,105 @@ public class HKDReservationRules {
    */
   private static String assignResCode(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq) throws DTIException {
     String resCode = null;
-
+    String sellerResPrefix = null;
     String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
     HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
 	
     boolean isRework = dtiTxn.isRework();
     //no check for RACE override for HKDL needed at this time
     
-    // if this is a re-work, a reservation code should exist
-    if (isRework) {
-      // Get the reservation code array (there should only be one)
-    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-    	
-    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
-    	if (rescodeTO == null) {
+//    // if this is a re-work, a reservation code should exist
+//    if (isRework) {
+//      // Get the reservation code array (there should only be one)
+//    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+//    	
+//    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
+//   	if (rescodeTO == null) {
+//        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+ //       String sellerResPrefix = resPrefixAttr.getAttrValue();
+//        // generate the rescode and insert it into the database payload/rescode
+//        // ref table
+//        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+//        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+//    	} else {
+//    	  resCode = rescodeTO.getRescode();
+//    	}
+//    	
+//    } else { // it is not a rework so generate rescode from RACE utility
+//    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+//    	String sellerResPrefix = resPrefixAttr.getAttrValue();
+//    	// generate the rescode and insert it into the database payload/rescode
+//    	// ref table
+//    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+//    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+//    }
+//    return resCode;
+    
+    if ((isRework)) {
+		  // Get the reservation code array (there should only be one)
+		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+		  
+    // Contingency assignment (should be infrequent that res isn't found in DB for rework)
+    if (rescodeTO == null) {
         AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-        String sellerResPrefix = resPrefixAttr.getAttrValue();
-        // generate the rescode and insert it into the database payload/rescode
-        // ref table
-        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-    	} else {
-    	  resCode = rescodeTO.getRescode();
-    	}
-    	
-    } else { // it is not a rework so generate rescode from RACE utility
-    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-    	String sellerResPrefix = resPrefixAttr.getAttrValue();
-    	// generate the rescode and insert it into the database payload/rescode
-    	// ref table
-    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+        sellerResPrefix = resPrefixAttr.getAttrValue();
+       resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+    } else {
+       resCode = rescodeTO.getRescode();
     }
-    return resCode;
+
+	  } else if ( (!isRework)) { //not rework, and no race override
+		  AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+	      sellerResPrefix = resPrefixAttr.getAttrValue();
+		  resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+	  } else {
+		    // and insert it into the database payload/rescode ref table	      
+	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+		    logger.sendEvent(
+		            "HKD RACE_RES_OVERRIDE present for reservation code generation.",
+		            EventType.INFO, THISOBJECT);
+	  }
+	  
+	  return resCode;
   }
 
+  /**
+  * Creates the reservation code by attempting multiple times if there is an insert problem.
+  * @param dtiTxn
+  * @param resCode
+  * @param payloadId
+  * @return
+  * @throws DTIException
+  */
+ protected static String createReservationCode(DTITransactionTO dtiTxn, String sellerResPrefix, String resCode, String payloadId)
+     throws DTIException {
+   
+   boolean inserted = false;
+    int attemptCount = 0;
+    
+    while (inserted == false) {
+      
+      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+      try {
+        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+        inserted = true;
+      } catch (Exception e) {
+        attemptCount++;
+        logger.sendEvent(
+            "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code.  Attempt: " + attemptCount, EventType.WARN, THISOBJECT);
+        if (attemptCount >= 10) {
+          logger.sendEvent(
+              "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code after 10 attempts.", EventType.WARN, THISOBJECT);
+          throw e;
+        }
+      }
+    }
+    
+   return resCode;
+ }
+  
+  
+  
   /**
    * Transform the DTITransactionTO value object to the provider value objects
    * and then pass those to XML Marshaling routines to create an XML string.
@@ -1013,7 +1077,7 @@ public class HKDReservationRules {
   }
 
   /**
-   * Transforms a reservation response string from the WDW provider and updates
+   * Transforms a reservation response string from the HKD provider and updates
    * the DTITransactionTO object with the response information.
    *
    * @param dtiTxn          The transaction object for this request.
