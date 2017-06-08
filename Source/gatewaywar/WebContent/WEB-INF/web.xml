@@ -4,17 +4,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-       <display-name>DTIGatewayServlet</display-name>
+       <display-name>DTIApp</display-name>
 
        <servlet>
-              <servlet-name>DTIGatewayServlet</servlet-name>
+              <servlet-name>DTIApp</servlet-name>
               <servlet-class>com.dti.app.common.DTIApp</servlet-class>
        </servlet>
 
        <servlet-mapping>
-              <servlet-name>DTIGatewayServlet</servlet-name>
-              <url-pattern>/DTIGatewayServlet</url-pattern>
-       </servlet-mapping>	
+              <servlet-name>DTIApp</servlet-name>
+              <url-pattern>/DTIApp</url-pattern>
+       </servlet-mapping>
        
        <welcome-file-list>
               <welcome-file>index.html</welcome-file>

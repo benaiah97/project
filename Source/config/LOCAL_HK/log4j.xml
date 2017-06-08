@@ -20,6 +20,21 @@
         <param name="File" value="${Gateway_Logs}/DTIGATEWAY.log"/>
         <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
     </appender>
+    <!--BEGIN appenders and logger added for RACE logging and debugging -->
+    <appender class="org.apache.log4j.AsyncAppender" name="RACEASYNC">
+        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+        <appender-ref ref="RACE_FILE"/>
+    </appender>
+    <appender class="org.apache.log4j.FileAppender" name="RACE_FILE">
+        <param name="File" value="${Gateway_Logs}/DTIRACE.log"/>
+        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+    </appender>
+    <logger additivity="false" name="pvt.disney.dti.gateway.rules.race">
+        <level value="DEBUG"/>
+        <appender-ref ref="RACEASYNC"/>
+    </logger>
+    <!--  END appenders added for RACE logging and debugging -->
+    
     <appender class="org.apache.log4j.FileAppender" name="DEVNULL">
         <param name="File" value="/dev/null"/>
         <layout class="com.disney.log4j.EventTextLayout"/>
