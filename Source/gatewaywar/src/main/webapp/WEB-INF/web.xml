@@ -14,6 +14,7 @@
        <servlet-mapping>
               <servlet-name>DTIApp</servlet-name>
               <url-pattern>/DTIApp</url-pattern>
+              <url-pattern>/DTIGatewayServlet</url-pattern>
        </servlet-mapping>
        
        <welcome-file-list>

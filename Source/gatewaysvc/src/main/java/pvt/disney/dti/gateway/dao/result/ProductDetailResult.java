@@ -98,14 +98,16 @@ public class ProductDetailResult implements ResultSetProcessor {
 
 		// MISMATCH_TOL_TYPE
 		String mismatchTolTypeString = rs.getString("MISMATCH_TOL_TYPE");
-		aProduct.setMisMatchTolType(DBProductTO.MismatchToleranceType.UNDEFINED);
+		
 		if (mismatchTolTypeString != null) {
 			if (mismatchTolTypeString.compareTo("Amount") == 0) aProduct
 					.setMisMatchTolType(DBProductTO.MismatchToleranceType.AMOUNT);
 			if (mismatchTolTypeString.compareTo("Percent") == 0) aProduct
 					.setMisMatchTolType(DBProductTO.MismatchToleranceType.PERCENT);
+		} else {
+			aProduct.setMisMatchTolType(DBProductTO.MismatchToleranceType.UNDEFINED);
 		}
-
+		
 		// MISMATCH_TOL
 		BigDecimal mismatchTol = rs.getBigDecimal("MISMATCH_TOL");
 		if (mismatchTol != null) aProduct.setMisMatchTol(mismatchTol);

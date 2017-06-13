@@ -76,3 +76,5 @@ or
   and we would probably have to modify the Docker file to custome the server.xml
   for tomcat to specify https. I might add that as a build argument at some point. 
   
+  
+  NOTE: If you make changes to the docker file use UNIX file format. Some properties with CR/LF can cause issues.

@@ -459,7 +459,7 @@ public class ProductRules {
       }
 
       if ((ticketFromPdtPrice.compareTo(dbFromUnitPrice) != 0) && (ticketFromPdtPrice.compareTo(dbFromSRPrice) != 0)) {
-
+   
         throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Entity " + entityTO.getTsMac() + "/"
             + entityTO.getTsLocation() + " cannot upgrade from product " + dbFromProduct.getPdtCode()
             + " with from price of " + ticketFromPdtPrice.toString() + ".  Valid from prices for upgrade are: "
