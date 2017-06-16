@@ -1,5 +1,11 @@
 package pvt.disney.dti.gateway.service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -211,7 +217,15 @@ public class DTIService {
       logger.sendEvent("Logged the product detail.", EventType.DEBUG, this);
 
       // Send to Provider
-      String xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
+      //if the Transaction Type is not QueryEligbleProduct pass the mocked response for queryEligible
+      String xmlResponse=null;
+      if(requestType!=TransactionType.QUERYELIGIBLEPRODUCTS){
+    	  xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
+      }else{
+    	  InputStream fileName= this.getClass().getResourceAsStream("dtiresponse.xml");
+    	  xmlResponse=getXMLfromFile(fileName);
+      }
+       
       logger.sendEvent("Sent message to provider.", EventType.DEBUG, this);
 
       // Log the Out-bound TP Message
@@ -318,7 +332,8 @@ public class DTIService {
         return null;
     }
 
-    startErrorTag += tagName.length() + 2; // Move pointer to start of the value.
+    startErrorTag += tagName.length() + 2; // Move pointer to start of the
+    // value.
 
     if (startErrorTag == endErrorTag) {
       return "";
@@ -383,7 +398,9 @@ public class DTIService {
     if (compare.equals("VoidReservationRequest")) { // as of 2.16.3, JTL
       return TransactionType.VOIDRESERVATION;
     }
-
+    if (compare.equals("QueryEligibleProductsRequest")) { // added as a part of new AP Upgrade service
+        return TransactionType.QUERYELIGIBLEPRODUCTS;
+      }
     return TransactionType.UNDEFINED;
   }
 
@@ -494,5 +511,31 @@ public class DTIService {
 
       return computerName;
   }
+  
+  /**
+   * Added this temp method to read a XML payload , need to stub out response payload from IAGO 
+   * ::Not hitting IAGO right now as a part of queryEligibleProductResponse 
+ * @param inputStream
+ * @return
+ */
+public static String getXMLfromFile(InputStream inputStream){
+		BufferedInputStream bis = new BufferedInputStream(inputStream);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		int result;
+		try {
+			result = bis.read();
+			while(result != -1) {
+			    buf.write((byte) result);
+			    result = bis.read();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return buf.toString();
+	}
+
+	  
   
 }
