@@ -323,6 +323,9 @@ public class TicketTO implements Serializable, Cloneable {
   /** If this pass has been replaced, then what pass replaced it. */
   private String replacedByPass;
   
+  /** get the eligibility criteria for the current ticket */
+  private ResultStatusTo resultType;
+  
   /**
    * @return the showGroup
    */
@@ -1185,4 +1188,21 @@ public class TicketTO implements Serializable, Cloneable {
   public void setExistingTktID(TicketTO existingTktID) {
     this.existingTktID = existingTktID;
   }
+
+/**
+ * @return the resultType
+ */
+public ResultStatusTo getResultType() {
+	return resultType;
+}
+
+/**
+ * @param resultType the resultType to set
+ */
+public void setResultType(ResultStatusTo resultType) {
+	this.resultType = resultType;
+}
+
+
+  
 }
