@@ -280,7 +280,11 @@ public class WDWBusinessRules {
       
     case VOIDRESERVATION: // As of 2.16.3, JTL
       xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
-      break;      
+      break;  
+      
+    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade Service
+        xmlRequest = WDWQueryEligibleProductsRules.transformRequest(dtiTxn);
+        break;  
 
     default:
       throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
@@ -1332,7 +1336,9 @@ public class WDWBusinessRules {
       case RENEWTICKET: // As of 2.16.1, JTL
         WDWRenewEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
         break;
-
+      case ELIGIBLEPRODUCTS: // added as a part of AP Upgrade Service
+    	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+    	  break;
       // ---------------------------------------------------------
 
       default:

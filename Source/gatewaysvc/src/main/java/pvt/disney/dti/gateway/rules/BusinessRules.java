@@ -69,9 +69,7 @@ import pvt.disney.dti.gateway.rules.wdw.WDWUpgradeEntitlementRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWVoidTicketRules;
 
 /**
- * This class has the responsibility of running all rules (such as pricing,
- * permission to sell a ticket, batch hours, permission to run a transactions,
- * etc.) at both the general and specific transaction level.
+ * This class has the responsibility of running all rules (such as pricing, permission to sell a ticket, batch hours, permission to run a transactions, etc.) at both the general and specific transaction level.
  * 
  * @author lewit019
  * @version 1
@@ -81,7 +79,7 @@ public abstract class BusinessRules {
 
   /** Serial Version ID for Business Rules */
   static final long serialVersionUID = 3206093459760846163L;
-
+  
   /** The standard core logging mechanism. */
   private static EventLogger logger = EventLogger.getLogger(BusinessRules.class);
 
@@ -89,7 +87,7 @@ public abstract class BusinessRules {
 
   /** This holds the contingency rules object. */
   private static CalmRules calmRules = null;
-
+  
   /**
    * Pull in any rule values from the properties file.
    * 
@@ -98,7 +96,7 @@ public abstract class BusinessRules {
   public static void initBusinessRules(Properties props) throws DTIException {
 
     WDWReservationRules.initWDWReservationRules(props);
-
+    
     /** Initialize the Contingency Action Logic Module. */
     calmRules = CalmRules.getInstance(props);
 
@@ -109,12 +107,10 @@ public abstract class BusinessRules {
    * Has the sole responsibility of applying business rules.
    * 
    * @param dtiTxn
-   *          The dtiTxn object containing the request.
-   * @return The DTITransactionTO object with any alterations the business rules
-   *         might have made.
+   *            The dtiTxn object containing the request.
+   * @return The DTITransactionTO object with any alterations the business rules might have made.
    * @throws DTIException
-   *           for any error. Contains enough detail to formulate an error
-   *           response to the seller.
+   *             for any error. Contains enough detail to formulate an error response to the seller.
    */
   public static DTITransactionTO applyBusinessRules(DTITransactionTO dtiTxn) throws DTICalmException, DTIException {
 
@@ -172,13 +168,17 @@ public abstract class BusinessRules {
     case RENEWENTITLEMENT: // As of 2.16.1, JTL
       applyRenewEntitlementRules(dtiTxn);
       break;
-
+      
     case VOIDRESERVATION: // As of 2.16.3, JTL
       applyVoidReservationRules(dtiTxn);
-      break;
+      break;   
+    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
+        //applyVoidReservationRules(dtiTxn);
+        break;   
 
     default:
-      throw new DTIException(BusinessRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.COMMAND_NOT_AUTHORIZED,
           "Transaction not supported in Java version of DTI Gateway.");
       // implicit break;
     }
@@ -194,33 +194,33 @@ public abstract class BusinessRules {
     String endTime = entityTO.getEndValidTime();
 
     boolean withinDate = DateTimeRules.isNowWithinDate(startDate, endDate);
-    boolean withinTime = DateTimeRules.isNowWithinGMTTime(startTime, endTime);
+    boolean withinTime = DateTimeRules.isNowWithinGMTTime(startTime,
+        endTime);
 
     if ((!withinDate) || (!withinTime)) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.INVALID_SALES_DATE_TIME,
           "Request attempted outside of configured time windows.");
     }
-
+    
     // Check Contingency Actions Logic Module (CALM)
     // Moved here from DTIService.makeServiceRequest in 2.16.3, JTL
     calmRules.checkContingencyActionsLogicModule(dtiTxn);
-    logger.sendEvent("Checked Contingency Actions Logic Module (CALM).", EventType.DEBUG, null);
-
+    logger.sendEvent("Checked Contingency Actions Logic Module (CALM).",
+        EventType.DEBUG, null);
+    
+    
     return dtiTxn;
   }
 
   /**
-   * Applies the rules common to all transactions. Validates payload and command
-   * header, the ticket seller entity, the entity attributes, the payment
-   * information, and the entity sales date/time.
+   * Applies the rules common to all transactions. Validates payload and command header, the ticket seller entity, the entity attributes, the payment information, and the entity sales date/time.
    * 
    * @param dtiTxn
-   *          The dtiTxn object containing the request.
-   * @return The DTITransactionTO object with any alterations the business rules
-   *         might have made.
+   *            The dtiTxn object containing the request.
+   * @return The DTITransactionTO object with any alterations the business rules might have made.
    * @throws DTIException
-   *           for any error. Contains enough detail to formulate an error
-   *           response to the seller.
+   *             for any error. Contains enough detail to formulate an error response to the seller.
    */
   private static DTITransactionTO applyCommonRules(DTITransactionTO dtiTxn) throws DTIException {
 
@@ -241,8 +241,11 @@ public abstract class BusinessRules {
     // Validate that the entity is active
     EntityTO entityTO = dtiTxn.getEntityTO();
     if (entityTO.isActive() != true) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.ENTITY_NOT_ACTIVE, "Entity tsmac " + entityTO.getTsMac()
-          + " tslocation " + entityTO.getTsLocation() + " is not active in the DTI database.");
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.ENTITY_NOT_ACTIVE,
+          "Entity tsmac " + entityTO.getTsMac() + " tslocation " + entityTO
+              .getTsLocation() + " is not active in the DTI database.");
     }
 
     // Validate attributes (If this seller is allowed to run this transaction)
@@ -250,22 +253,28 @@ public abstract class BusinessRules {
     String tpiCode = dtiTxn.getTpiCode();
     long entityId = entityTO.getEntityId();
     if (dtiTxn.getRequest().getCommandHeader().getCmdActor() == null) {
-      attributeTOMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId);
-    } else {
+      attributeTOMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
+          entityId);
+    }
+    else {
       String actor = dtiTxn.getRequest().getCommandHeader().getCmdActor();
-      attributeTOMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode, entityId, actor);
+      attributeTOMap = AttributeKey.getEntAttribtues(dtiTxn, tpiCode,
+          entityId, actor);
     }
     if ((attributeTOMap != null) && (attributeTOMap.size() != 0)) {
       dtiTxn.setAttributeTOMap(attributeTOMap);
-    } else {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
+    }
+    else {
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.COMMAND_NOT_AUTHORIZED,
           "Client requesting transaction did not have tags required by attributes.");
     }
 
     // Validate payment information
     long paymentId = entityTO.getDefPymtId();
     if (paymentId != 0) {
-      ArrayList<PaymentLookupTO> paymentLookupTOList = PaymentKey.getPaymentLookup(tpiCode, paymentId);
+      ArrayList<PaymentLookupTO> paymentLookupTOList = PaymentKey
+          .getPaymentLookup(tpiCode, paymentId);
       dtiTxn.setPaymentLookupTOList(paymentLookupTOList);
     }
 
@@ -276,19 +285,23 @@ public abstract class BusinessRules {
     String endTime = entityTO.getEndValidTime();
 
     boolean withinDate = DateTimeRules.isNowWithinDate(startDate, endDate);
-    boolean withinTime = DateTimeRules.isNowWithinGMTTime(startTime, endTime);
+    boolean withinTime = DateTimeRules.isNowWithinGMTTime(startTime,
+        endTime);
 
     if ((!withinDate) || (!withinTime)) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.INVALID_SALES_DATE_TIME,
           "Request attempted outside of configured time windows.");
     }
 
     // Apply only provider-centric, not transaction-centric rules
-    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-      dtiTxn = DLRBusinessRules.applyBusinessRules(dtiTxn);
-    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
+    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) { 
+      dtiTxn = DLRBusinessRules.applyBusinessRules(dtiTxn); 
+    }
+    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) { 
       dtiTxn = WDWBusinessRules.applyBusinessRules(dtiTxn);
-    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
+    } 
+    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
       dtiTxn = HKDBusinessRules.applyBusinessRules(dtiTxn);
     }
 
@@ -297,23 +310,21 @@ public abstract class BusinessRules {
   }
 
   /**
-   * Applies rules specific to query ticket transactions. Makes no changes to
-   * the dtiTxn object. Calls provider-specific rules after applying the common
-   * rules.<BR>
+   * Applies rules specific to query ticket transactions. Makes no changes to the dtiTxn object. Calls provider-specific rules after applying the common rules.<BR>
    * 1. Enforces the rule
    * 
    * @param dtiTxn
-   *          The dtiTxn object containing the request.
+   *            The dtiTxn object containing the request.
    * @throws DTIException
-   *           for any error. Contains enough detail to formulate an error
-   *           response to the seller.
+   *             for any error. Contains enough detail to formulate an error response to the seller.
    */
   public static void applyQueryTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a QueryTicketRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != QueryTicketRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-query class passed to validate.");
     }
 
@@ -324,11 +335,10 @@ public abstract class BusinessRules {
 
     // Apply Transaction-centric, Provider-centric rules
     String tpiCode = dtiTxn.getTpiCode();
-    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-      DLRQueryTicketRules.applyDLRQueryTicketRules(dtiTxn);
-    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
-      WDWQueryTicketRules.applyWDWQueryTicketRules(dtiTxn);
-    }
+    if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) DLRQueryTicketRules
+        .applyDLRQueryTicketRules(dtiTxn);
+    else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) WDWQueryTicketRules
+        .applyWDWQueryTicketRules(dtiTxn);
 
     return;
 
@@ -338,25 +348,29 @@ public abstract class BusinessRules {
    * Apply the upgrade alpha business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyUpgradeAlphaRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a UpgradeAlphaTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != UpgradeAlphaRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-upgrade alpha request class passed to applyUpgradeAlphaRules.");
     }
 
-    UpgradeAlphaRequestTO uaReqTO = (UpgradeAlphaRequestTO) dtiTxn.getRequest().getCommandBody();
+    UpgradeAlphaRequestTO uaReqTO = (UpgradeAlphaRequestTO) dtiTxn
+        .getRequest().getCommandBody();
 
     // Get database information for all products on the order
     ArrayList<TicketTO> tktListTO = uaReqTO.getTktList();
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(tktListTO);
+    ArrayList<DBProductTO> dbProdList = ProductKey
+        .getOrderProducts(tktListTO);
 
     // RULE: Are all products on order known to the database?
     // RULE: Are all products on the order active?
@@ -367,9 +381,12 @@ public abstract class BusinessRules {
     // RULE: Is the entity allowed to sell all products on the order?
     EntityTO entityTO = dtiTxn.getEntityTO();
     ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbProdList));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbProdList));
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList, allowedPdtIdList);
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbProdList));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbProdList));
+    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+        allowedPdtIdList);
 
     // RULE: Are the products being sold at an acceptable price?
     // NOTE: This rule can modify the tktListTO members to indicate price
@@ -383,8 +400,10 @@ public abstract class BusinessRules {
     if (EligibilityRules.eligibilityRequired(dbProdList)) {
       String eligGrpCode = uaReqTO.getEligibilityGroup();
       String eligMemberID = uaReqTO.getEligibilityMember();
-      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList, eligGrpCode, eligMemberID);
-      EligibilityRules.validateEligibility(eligFlag, eligGrpCode, eligMemberID);
+      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList,
+          eligGrpCode, eligMemberID);
+      EligibilityRules.validateEligibility(eligFlag, eligGrpCode,
+          eligMemberID);
     }
 
     // RULE: Are the mapped ticket types valid and active?
@@ -406,11 +425,10 @@ public abstract class BusinessRules {
     dtiTxn.setDbProdList(dbProdList);
 
     // Apply any rules unique to one provider.
-    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
-      DLRUpgradeAlphaRules.applyDLRUpgradeAlphaRules(dtiTxn);
-    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
-      WDWUpgradeAlphaRules.applyWDWUpgradeAlphaRules(dtiTxn);
-    }
+    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) DLRUpgradeAlphaRules
+        .applyDLRUpgradeAlphaRules(dtiTxn);
+    else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) WDWUpgradeAlphaRules
+        .applyWDWUpgradeAlphaRules(dtiTxn);
 
     return;
   }
@@ -419,17 +437,18 @@ public abstract class BusinessRules {
    * Apply void ticket rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           the DTI exception
+   *             the DTI exception
    */
   public static void applyVoidTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a VoidTicketRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != VoidTicketRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-void ticket class passed to applyVoidTicketRules.");
     }
 
@@ -442,7 +461,8 @@ public abstract class BusinessRules {
     String tpiCode = dtiTxn.getTpiCode();
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       WDWVoidTicketRules.applyWDWVoidTicketRules(dtiTxn);
-    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
+    }
+    else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
       DLRVoidTicketRules.applyDLRVoidTicketRules(dtiTxn);
     }
 
@@ -453,33 +473,40 @@ public abstract class BusinessRules {
    * Apply reservation business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a ReservationRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != ReservationRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-reservation class passed to applyReservationRules.");
     }
 
     // RULE: Is the RequestType "Create", as expected?
-    ReservationRequestTO resReqTO = (ReservationRequestTO) dtiTxn.getRequest().getCommandBody();
-    if ((resReqTO.getRequestType() == null) || (resReqTO.getRequestType().length() == 0)) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_ELEMENT, "No RequestType on reservation.");
-    }
-    if (resReqTO.getRequestType().compareTo(CREATETAG) != 0) {
+    ReservationRequestTO resReqTO = (ReservationRequestTO) dtiTxn
+        .getRequest().getCommandBody();
+    if ((resReqTO.getRequestType() == null) || (resReqTO.getRequestType()
+        .length() == 0)) { 
       throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_ELEMENT,
-          "Invalid RequestType on reservation:" + resReqTO.getRequestType());
+        "No RequestType on reservation.");
+    }
+    if (resReqTO.getRequestType().compareTo(CREATETAG) != 0) { 
+      throw new DTIException(
+        BusinessRules.class, DTIErrorCode.INVALID_MSG_ELEMENT,
+        "Invalid RequestType on reservation:" + resReqTO
+            .getRequestType());
     }
 
     // Get database information for all products on the order
     ArrayList<TicketTO> tktListTO = resReqTO.getTktList();
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(tktListTO);
+    ArrayList<DBProductTO> dbProdList = ProductKey
+        .getOrderProducts(tktListTO);
 
     // RULE: Are the correct Ticket Assignment Product quantities provided
     TicketRules.validateTicketAssignment(tktListTO);
@@ -496,14 +523,19 @@ public abstract class BusinessRules {
     // RULE: Is the entity allowed to sell all products on the order?
     EntityTO entityTO = dtiTxn.getEntityTO();
     ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbProdList));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbProdList));
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList, allowedPdtIdList);
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbProdList));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbProdList));
+    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+        allowedPdtIdList);
 
     // RULE: Are the products being sold at an acceptable price?
     String taxExemptCode = resReqTO.getTaxExemptCode();
-    boolean isTaxExempt = PaymentRules.determineTaxExemptStatus(taxExemptCode);
-    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList, isTaxExempt));
+    boolean isTaxExempt = PaymentRules
+        .determineTaxExemptStatus(taxExemptCode);
+    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO,
+        tktListTO, dbProdList, isTaxExempt));
 
     // RULE: Are the products required to have demographics? (As of 2.9)
     ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
@@ -512,12 +544,15 @@ public abstract class BusinessRules {
     if (EligibilityRules.eligibilityRequired(dbProdList)) {
       String eligGrpCode = resReqTO.getEligibilityGroup();
       String eligMemberID = resReqTO.getEligibilityMember();
-      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList, eligGrpCode, eligMemberID);
-      EligibilityRules.validateEligibility(eligFlag, eligGrpCode, eligMemberID);
+      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList,
+          eligGrpCode, eligMemberID);
+      EligibilityRules.validateEligibility(eligFlag, eligGrpCode,
+          eligMemberID);
     }
 
     // RULE: Are validity dates required?
-    TicketRules.validateTicketValidityDates(tktListTO, entityTO, dbProdList);
+    TicketRules
+        .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: The getProductTicketTypes query modifies the dbProdList members to
@@ -528,7 +563,8 @@ public abstract class BusinessRules {
     // RULE: Do the various payments, if provided, cover the products on the
     // order?
     ArrayList<PaymentTO> payListTO = resReqTO.getPaymentList();
-    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(tktListTO, payListTO, entityTO);
+    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(
+        tktListTO, payListTO, entityTO);
     resReqTO.setTotalOrderAmount(totalOrderAmount);
 
     // RULE: Are payments and payment types acceptable?
@@ -541,7 +577,7 @@ public abstract class BusinessRules {
     // Apply any rules unique to one provider.
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
       DLRReservationRules.applyDLRReservationRules(dtiTxn);
-    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
+    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) { 
       WDWReservationRules.applyWDWReservationRules(dtiTxn);
     } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_HKD) == 0) {
       HKDReservationRules.applyHKDReservationRules(dtiTxn);
@@ -550,10 +586,12 @@ public abstract class BusinessRules {
     // RULE: Are the number of products/tickets on the order within tolerance?
     // NOTE: This rule requires provider specific queries to have run before
     // processing to supply the "MaxLimit" lookup.
-    HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> entityAttributes = dtiTxn.getAttributeTOMap();
+    HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> entityAttributes = dtiTxn
+        .getAttributeTOMap();
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     ReservationTO resTO = resReqTO.getReservation();
-    TicketRules.validateReservationTicketCount(tktListTO, tpLookups, entityAttributes, resTO);
+    TicketRules.validateReservationTicketCount(tktListTO, tpLookups,
+        entityAttributes, resTO);
 
     return;
   }
@@ -562,10 +600,10 @@ public abstract class BusinessRules {
    * Apply create ticket business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyCreateTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
@@ -574,16 +612,19 @@ public abstract class BusinessRules {
     // RULE: Is this a CreateTicketRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != CreateTicketRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-createticket class passed to applyCreateTicketRules.");
     }
 
     // RULE: Is the RequestType is "Create", as expected?
-    CreateTicketRequestTO createTktTO = (CreateTicketRequestTO) dtiTxn.getRequest().getCommandBody();
+    CreateTicketRequestTO createTktTO = (CreateTicketRequestTO) dtiTxn
+        .getRequest().getCommandBody();
 
     // Get database information for all products on the order
     ArrayList<TicketTO> tktListTO = createTktTO.getTktList();
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(tktListTO);
+    ArrayList<DBProductTO> dbProdList = ProductKey
+        .getOrderProducts(tktListTO);
 
     // RULE: Are the correct Ticket Assignment Product quantities provided
     TicketRules.validateTicketAssignment(tktListTO);
@@ -600,13 +641,17 @@ public abstract class BusinessRules {
     // RULE: Is the entity allowed to sell all products on the order?
     EntityTO entityTO = dtiTxn.getEntityTO();
     ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbProdList));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbProdList));
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList, allowedPdtIdList);
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbProdList));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbProdList));
+    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+        allowedPdtIdList);
 
     // RULE: Are the products being sold at an acceptable price?
     boolean isTaxExempt = false;
-    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList, isTaxExempt));
+    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO,
+        tktListTO, dbProdList, isTaxExempt));
 
     // RULE: Are the products required to have demographics? (As of 2.9)
     ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
@@ -615,12 +660,15 @@ public abstract class BusinessRules {
     if (EligibilityRules.eligibilityRequired(dbProdList)) {
       String eligGrpCode = createTktTO.getEligibilityGroup();
       String eligMemberID = createTktTO.getEligibilityMember();
-      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList, eligGrpCode, eligMemberID);
-      EligibilityRules.validateEligibility(eligFlag, eligGrpCode, eligMemberID);
+      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList,
+          eligGrpCode, eligMemberID);
+      EligibilityRules.validateEligibility(eligFlag, eligGrpCode,
+          eligMemberID);
     }
 
     // RULE: Are validity dates required?
-    TicketRules.validateTicketValidityDates(tktListTO, entityTO, dbProdList);
+    TicketRules
+        .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: This rule modifies the dbProdList members to include ticket
@@ -650,7 +698,8 @@ public abstract class BusinessRules {
 
     // Get the default TP Lookups
     ArrayList<TPLookupTO> tpLookups = null;
-    tpLookups = LookupKey.getTPCommandLookup(tpiCode, dtiTxn.getTransactionType());
+    tpLookups = LookupKey.getTPCommandLookup(tpiCode,
+        dtiTxn.getTransactionType());
     dtiTxn.setTpLookupTOList(tpLookups);
 
     // Apply any rules unique to one provider.
@@ -671,17 +720,18 @@ public abstract class BusinessRules {
    * Apply update ticket business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyUpdateTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a UpdateTicketRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != UpdateTicketRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-update ticket class passed to applyUpdateTicketRules.");
     }
 
@@ -698,17 +748,19 @@ public abstract class BusinessRules {
    * Apply update transaction business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyUpdateTransactionRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a UpdateTransactionRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != UpdateTransactionRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-update transaction class passed to applyUpdateTransactionRules.");
     }
 
@@ -725,30 +777,36 @@ public abstract class BusinessRules {
    * Apply query reservation business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyQueryReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a QueryReservationRequest TO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != QueryReservationRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-query reservation transaction class passed to applyQueryReservationRules.");
     }
 
     // RULE: Is this type of reservation identifier supported for a query?
-    QueryReservationRequestTO queryResReqTO = (QueryReservationRequestTO) dtiTxn.getRequest().getCommandBody();
-    if ((queryResReqTO.getExternalResCode() != null) || (queryResReqTO.getResNumber() != null)) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+    QueryReservationRequestTO queryResReqTO = (QueryReservationRequestTO) dtiTxn
+        .getRequest().getCommandBody();
+    if ((queryResReqTO.getExternalResCode() != null) || (queryResReqTO
+        .getResNumber() != null)) {
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.INVALID_MSG_CONTENT,
           "Query Reservation attempted with illegal reservation identifier type.  Must be ResCode.");
     }
 
     // Apply any rules unique to one provider.
     String tpiCode = dtiTxn.getTpiCode();
-
+    
     // The only rule, at present, is the payload ID for res code swap
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_HKD) == 0) {
       HKDQueryReservationRules.applyHKDQueryReservationRules(dtiTxn);
@@ -761,24 +819,30 @@ public abstract class BusinessRules {
    * Apply query reservation business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyVoidReservationRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a VoidReservationRequest TO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != VoidReservationRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-void reservation transaction class passed to applyVoidReservationRules.");
     }
 
     // RULE: Is this type of reservation identifier supported for a query?
-    VoidReservationRequestTO queryResReqTO = (VoidReservationRequestTO) dtiTxn.getRequest().getCommandBody();
-    if ((queryResReqTO.getExternalResCode() != null) || (queryResReqTO.getResNumber() != null)) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+    VoidReservationRequestTO queryResReqTO = (VoidReservationRequestTO) dtiTxn
+        .getRequest().getCommandBody();
+    if ((queryResReqTO.getExternalResCode() != null) ||
+        (queryResReqTO.getResNumber() != null)) {
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.INVALID_MSG_CONTENT,
           "Void Reservation attempted with illegal reservation identifier type.  Must be ResCode.");
     }
 
@@ -786,30 +850,33 @@ public abstract class BusinessRules {
     // None at this time.
 
     return;
-  }
-
+  }  
+  
   /**
    * Apply upgrade entitlement business rules.
    * 
    * 2.10
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   private static void applyUpgradeEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a UpgradeEntitlementRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != UpgradeEntitlementRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-upgrade entitlement class passed to applyUpgradeEntitlementRules.");
     }
 
     // RULE: Is the RequestType is "UpgradeEntitlement", as expected?
-    UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+    UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn
+        .getRequest().getCommandBody();
 
     // Get database information for all products and tickets on the order
     ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
@@ -823,13 +890,18 @@ public abstract class BusinessRules {
     // Deals with the "TO" product
     // ////////
 
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(tktListTO, ValueConstants.TYPE_CODE_SELL);
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbProdList, ValueConstants.TYPE_CODE_SELL));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbProdList, ValueConstants.TYPE_CODE_SELL));
+    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(
+        tktListTO, ValueConstants.TYPE_CODE_SELL);
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbProdList, ValueConstants.TYPE_CODE_SELL));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbProdList, ValueConstants.TYPE_CODE_SELL));
 
     // RULE: Is the entity allowed to sell all products on the order?
-    ProductRules.validateProductsAreSellable(tktListTO, dbProdList, ValueConstants.TYPE_CODE_SELL);
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList, allowedPdtIdList);
+    ProductRules.validateProductsAreSellable(tktListTO, dbProdList,
+        ValueConstants.TYPE_CODE_SELL);
+    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+        allowedPdtIdList);
 
     // RULE: Are the products required to have demographics? (As of 2.15, JTL)
     ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
@@ -844,16 +916,17 @@ public abstract class BusinessRules {
     // Clear out the ArrayLists
     allowedPdtIdList.clear();
 
-    ArrayList<DBProductTO> dbUpgrdProdList = ProductKey.getOrderProducts(tktListTO, ValueConstants.TYPE_CODE_UPGRADE);
-    ProductRules.validateUpgradeProducts(dbUpgrdProdList); // This is
-                                                           // essentially an
-                                                           // "is null" check.
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbUpgrdProdList,
-        ValueConstants.TYPE_CODE_UPGRADE));
+    ArrayList<DBProductTO> dbUpgrdProdList = ProductKey.getOrderProducts(
+        tktListTO, ValueConstants.TYPE_CODE_UPGRADE);
+    ProductRules.validateUpgradeProducts(dbUpgrdProdList); // This is essentially an "is null" check.
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
 
     // RULE: Is the entity allowed to upgrade all products on the order?
-    ProductRules.validateEntityCanUpgradeProducts(entityTO, dbUpgrdProdList, allowedPdtIdList);
+    ProductRules.validateEntityCanUpgradeProducts(entityTO,
+        dbUpgrdProdList, allowedPdtIdList);
 
     // RULE: Are the number of products/tickets on the order within tolerance?
     TicketRules.validateMaxEightTicketsOnRequest(tktListTO);
@@ -863,9 +936,9 @@ public abstract class BusinessRules {
     // mismatch.
     ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList);
 
-    // RULE: Are the "FROM" prices either the Unit or Standard Retail Price (as
-    // of 2.12)
-    ProductRules.validateUpgradeProductPrice(entityTO, tktListTO, dbUpgrdProdList);
+    // RULE: Are the "FROM" prices either the Unit or Standard Retail Price (as of 2.12)
+    ProductRules.validateUpgradeProductPrice(entityTO, tktListTO,
+        dbUpgrdProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: This rule modifies the dbProdList members to include ticket
@@ -887,17 +960,15 @@ public abstract class BusinessRules {
     return;
   }
 
-  /**
-   * Applies the associate media to account rules, as required. 
-   * @param dtiTxn
-   * @throws DTIException
-   */
-  private static void applyAssociateMediaToAccountRules(DTITransactionTO dtiTxn) throws DTIException {
+  private static void applyAssociateMediaToAccountRules(
+      DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this an AssociateMediaToAccountRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != AssociateMediaToAccountRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-AssociateMedia class passed to applyAssociateMediaToAccountRules.");
     }
 
@@ -915,22 +986,20 @@ public abstract class BusinessRules {
     // Apply any rules unique to one provider.
     String tpiCode = dtiTxn.getTpiCode();
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
-      WDWAssociateMediaToAccountRules.applyWDWAssociateMediaToAccountRules(dtiTxn);
+      WDWAssociateMediaToAccountRules
+          .applyWDWAssociateMediaToAccountRules(dtiTxn);
     }
     return;
   }
 
-  /**
-   * Applies the tickerate entitlement rules, as required. 
-   * @param dtiTxn
-   * @throws DTIException
-   */
   private static void applyTickerateEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a TickerateEntitlementRequestTO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != TickerateEntitlementRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-TickerateEntitlement class passed to applyTickerateEntitlementRules.");
     }
 
@@ -943,7 +1012,8 @@ public abstract class BusinessRules {
     TicketRules.validateMinOneTicketOnRequest(aTicketList);
 
     // Media Data Rules
-    ArrayList<NewMediaDataTO> aMediaList = tickerateEntitlementReq.getMediaData();
+    ArrayList<NewMediaDataTO> aMediaList = tickerateEntitlementReq
+        .getMediaData();
 
     if ((aMediaList != null) && (aMediaList.size() > 0)) {
       // RULE: Is there no more than 250 media on the request?
@@ -957,26 +1027,30 @@ public abstract class BusinessRules {
    * Apply renew entitlement business rules.
    * 
    * @param dtiTxn
-   *          the DTI transaction
+   *            the DTI transaction
    * 
    * @throws DTIException
-   *           should any rule fail.
+   *             should any rule fail.
    */
   public static void applyRenewEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
     // RULE: Is this a RenewEntitlementRequest TO?
     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
     if (commandBody.getClass() != RenewEntitlementRequestTO.class) {
-      throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+      throw new DTIException(
+          BusinessRules.class,
+          DTIErrorCode.DTI_PROCESS_ERROR,
           "Internal Error:  Non-renew entitlement transaction class passed to applyRenewEntitlementRules.");
     }
 
     // RULE: Is the RequestType is "RenewEntitlement", as expected?
-    RenewEntitlementRequestTO renewEntReqTO = (RenewEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+    RenewEntitlementRequestTO renewEntReqTO = (RenewEntitlementRequestTO) dtiTxn
+        .getRequest().getCommandBody();
 
     // Get database information for all products and tickets on the order
     ArrayList<TicketTO> tktListTO = renewEntReqTO.getTktList();
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(tktListTO);
+    ArrayList<DBProductTO> dbProdList = ProductKey
+        .getOrderProducts(tktListTO);
 
     // RULE: Are all products on order known to the database?
     // RULE: Are all products on the order active?
@@ -987,14 +1061,17 @@ public abstract class BusinessRules {
     // RULE: Is the entity allowed to sell all products on the order?
     EntityTO entityTO = dtiTxn.getEntityTO();
     ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbProdList));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbProdList));
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList, allowedPdtIdList);
+    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+        dbProdList));
+    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+        dbProdList));
+    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+        allowedPdtIdList);
 
     // RULE: Are the products being sold at an acceptable price?
-    boolean isTaxExempt = false; // For renewals, tax exempt status is not
-                                 // supported.
-    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList, isTaxExempt));
+    boolean isTaxExempt = false; // For renewals, tax exempt status is not supported.
+    dtiTxn.setPriceMismatch(ProductRules.validateProductPrice(entityTO,
+        tktListTO, dbProdList, isTaxExempt));
 
     // RULE: Are the products required to have demographics? (As of 2.9)
     ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
@@ -1003,12 +1080,15 @@ public abstract class BusinessRules {
     if (EligibilityRules.eligibilityRequired(dbProdList)) {
       String eligGrpCode = renewEntReqTO.getEligibilityGroup();
       String eligMemberID = renewEntReqTO.getEligibilityMember();
-      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList, eligGrpCode, eligMemberID);
-      EligibilityRules.validateEligibility(eligFlag, eligGrpCode, eligMemberID);
+      Boolean eligFlag = EligibilityKey.getOrderEligibility(dbProdList,
+          eligGrpCode, eligMemberID);
+      EligibilityRules.validateEligibility(eligFlag, eligGrpCode,
+          eligMemberID);
     }
 
     // RULE: Are validity dates required?
-    TicketRules.validateTicketValidityDates(tktListTO, entityTO, dbProdList);
+    TicketRules
+        .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: The getProductTicketTypes query modifies the dbProdList members to
@@ -1019,7 +1099,8 @@ public abstract class BusinessRules {
     // RULE: Do the various payments, if provided, cover the products on the
     // order?
     ArrayList<PaymentTO> payListTO = renewEntReqTO.getPaymentList();
-    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(tktListTO, payListTO, entityTO);
+    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(
+        tktListTO, payListTO, entityTO);
     renewEntReqTO.setTotalOrderAmount(totalOrderAmount);
 
     // RULE: Are payments and payment types acceptable?
@@ -1030,11 +1111,10 @@ public abstract class BusinessRules {
     dtiTxn.setDbProdList(dbProdList);
 
     // Apply any rules unique to one provider.
-    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
-      DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
-    } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
-      WDWRenewEntitlementRules.applyWDWRenewEntitlementRules(dtiTxn);
-    }
+    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) DLRRenewEntitlementRules
+        .applyDLRRenewEntitlementRules(dtiTxn);
+    else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) WDWRenewEntitlementRules
+        .applyWDWRenewEntitlementRules(dtiTxn);
 
     return;
   }

@@ -284,6 +284,9 @@ public class AttributeKey {
     case VOIDRESERVATION: // as of 2.16.3, JTL
       commandCode = VR_DBSTRING;
       break;
+    case QUERYELIGIBLEPRODUCTS: // As a part of new AP Upgrade Service . Need to add entry for queryEligibleProducts in DB
+    commandCode = QT_DBSTRING; // right now keeping the entry for queryTicket
+    break;
 
     default:
       commandCode = new String("");
