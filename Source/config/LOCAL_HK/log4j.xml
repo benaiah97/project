@@ -20,6 +20,16 @@
         <param name="File" value="${Gateway_Logs}/DTIGATEWAY.log"/>
         <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
     </appender>
+    <!--BEGIN appenders added for RACE logging and debugging -->
+    <appender class="org.apache.log4j.AsyncAppender" name="RACEASYNC">
+        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+        <appender-ref ref="RACE_FILE"/>
+    </appender>
+    <appender class="org.apache.log4j.FileAppender" name="RACE_FILE">
+        <param name="File" value="${Gateway_Logs}/DTIRACE.log"/>
+        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+    </appender>
+    <!--  END appenders added for RACE logging and debugging -->
     <appender class="org.apache.log4j.FileAppender" name="DEVNULL">
         <param name="File" value="/dev/null"/>
         <layout class="com.disney.log4j.EventTextLayout"/>
@@ -28,20 +38,26 @@
         <layout class="com.disney.log4j.EventTextLayout"/>
     </appender>
     <logger additivity="false" name="com.disney.jdbc.dao">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <logger additivity="false" name="com.dti.app">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <logger additivity="false" name="pvt.disney.dti">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
+    <!--  BEGIN RACE LOGGER -->
+    <logger additivity="false" name="pvt.disney.dti.gateway.rules.race">
+       <level value="DEBUG"/>
+       <appender-ref ref="RACEASYNC"/>
+    </logger>
+    <!-- END RACE LOGGER -->
     <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
     <logger additivity="false" name="CONFIG_ONLY">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="CONFIG"/>
     </logger>
     <root>

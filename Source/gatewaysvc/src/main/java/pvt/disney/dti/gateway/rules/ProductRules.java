@@ -459,7 +459,7 @@ public class ProductRules {
       }
 
       if ((ticketFromPdtPrice.compareTo(dbFromUnitPrice) != 0) && (ticketFromPdtPrice.compareTo(dbFromSRPrice) != 0)) {
-
+   
         throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Entity " + entityTO.getTsMac() + "/"
             + entityTO.getTsLocation() + " cannot upgrade from product " + dbFromProduct.getPdtCode()
             + " with from price of " + ticketFromPdtPrice.toString() + ".  Valid from prices for upgrade are: "
@@ -500,9 +500,13 @@ public class ProductRules {
 
     if (mismatchType == DBProductTO.MismatchToleranceType.AMOUNT) {
       variance = dbProduct.getMisMatchTol();
-    } else {
+    } 
+    else if (mismatchType == DBProductTO.MismatchToleranceType.PERCENT) {
       BigDecimal percent = dbProduct.getMisMatchTol().divide(new BigDecimal("100.0"));
       variance = basePriceAmount.multiply(percent);
+    } else {
+    	throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Product " + dbProduct.getPdtCode()
+        + " can't be sold off price because of an incomplete mismatch set-up in table.");
     }
 
     highestPriceAllowed = basePriceAmount.add(variance);

@@ -38,7 +38,7 @@
         <layout class="com.disney.log4j.EventTextLayout"/>
     </appender>
     <logger additivity="false" name="com.disney.jdbc.dao">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <logger additivity="false" name="com.dti.app">

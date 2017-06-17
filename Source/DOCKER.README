@@ -1,4 +1,8 @@
 
+This document details how to use the docker images from a docker command line. Work
+is in progress to use a maven docker plugin to build images, but at this time
+we must run docker commands directly from a docker shell.
+
 This assumes you have already built the war and it is in the gatewaywar/target folder.
 
 
@@ -72,3 +76,5 @@ or
   and we would probably have to modify the Docker file to custome the server.xml
   for tomcat to specify https. I might add that as a build argument at some point. 
   
+  
+  NOTE: If you make changes to the docker file use UNIX file format. Some properties with CR/LF can cause issues.

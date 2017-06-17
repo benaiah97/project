@@ -7,11 +7,15 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 import pvt.disney.dti.gateway.rules.race.vo.Step8VO;
 import pvt.disney.dti.gateway.rules.race.vo.Step5VO;
@@ -32,7 +36,12 @@ import pvt.disney.dti.gateway.rules.race.vo.Step2VO;
 public class AlgorithmUtility {
 	
 	/** The logger. */
-	private static final Logger logger = LoggerFactory.getLogger(AlgorithmUtility.class);
+	//private static final Logger logger = LoggerFactory.getLogger(AlgorithmUtility.class);
+	
+	/** The standard core logging mechanism. */
+	private static EventLogger eventLogger = EventLogger.getLogger(AlgorithmUtility.class);
+	// eventLogger.sendEvent("SOMESTRING", EventType.DEBUG, AlgorithmUtility.class);
+	
 	
 	/** The seed counter. Accessor methods are protected as we don't really won't them used outside of the race module.
 	 * Incrementation and reset to zer0 are handled by the buildCounter method. */
@@ -77,7 +86,7 @@ public class AlgorithmUtility {
 		// setup to get the date we will use for step one
 		Calendar theDate = new GregorianCalendar();
 	
-		logger.debug("Begin HKDL generateRescode:{}", theDate.getTime());
+		eventLogger.sendEvent("Begin HKDL generateRescode:{} at " + theDate.getTime(), EventType.DEBUG, AlgorithmUtility.class);
 	
 		// Algorithm Step 1. Perform   matrix multiplication (mm/dd/yy * hh:mm:ss) to derive a 2x2 matrix. 
 		Step1VO stepOneVO = AlgorithmUtility.stepOne(theDate);
@@ -118,17 +127,18 @@ public class AlgorithmUtility {
 		//get the rescode from the last step and finish the rescode to return
 		resCode.append(stepNineVO.getStep9ResCode());
 		
-		//log each step
-		logger.debug("StepOne: {}", stepOneVO);
-		logger.debug("StepTwo: {}", stepTwoVO);
-		logger.debug("StepThree: {}", stepThreeVO);
-		logger.debug("StepFour: {}", stepFourVO);
-		logger.debug("StepFive: {}", stepFiveVO);
-		logger.debug("StepSix: {}", stepSixVO);
-		logger.debug("StepSeven: {}", stepSevenVO);
-		logger.debug("StepEight: {}", stepEightVO);
-		logger.debug("StepNine: {}", stepNineVO);
-		logger.debug("End generateRescode:{}", theDate.getTime());
+		//log each step at the info level
+		eventLogger.sendEvent("StepOne: {} :" + stepOneVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepTwo: {} :" + stepTwoVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepThree: {} :" + stepThreeVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepFour: {} :" + stepFourVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepFive: {} :" + stepFiveVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepSix: {} :" + stepSixVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepSeven: {} :" + stepSevenVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepEight: {} :" + stepEightVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepNine: {} :" + stepNineVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("EnD HKDL generateRescode:{} at " + theDate.getTime(), EventType.INFO, AlgorithmUtility.class);
+		
 		
 		return resCode.toString();
 	}
@@ -355,8 +365,7 @@ public class AlgorithmUtility {
 		//int numericValue = flooredModulo(determinant, buildRandomPrime());
 		
 		
-		//conver to a value from the specified array and return resutls
-		//TODO remove me
+		//convert to a value from the specified array and return resutls
 		stepSix.setStep6Result(String.valueOf(ARRAY_CONSTANT[numericValue]));
 		
 		//convert to a value from the specified array and add result to appropriate arrays
@@ -591,8 +600,24 @@ public class AlgorithmUtility {
 		seedArray[2][0] =  AlgorithmUtility.buildMilliSeconds(calendar);
 		seedArray[2][1] = AlgorithmUtility.buildCounter();
 		seedArray[2][2] = AlgorithmUtility.buildRandomPrime();
-				
+		
+		eventLogger.sendEvent("buildSeedArray using " + buildPrettyCalendarSeedString(calendar) + " Result:" + seedArray, EventType.DEBUG, AlgorithmUtility.class);
 		return seedArray;
+	}
+	
+
+	/**
+	 * Private helper method Builds the pretty calendar seed string for purposes of logging.
+	 *
+	 * @param cal the cal
+	 * @return the string
+	 */
+	private static String buildPrettyCalendarSeedString(Calendar cal) {
+		Date date = cal.getTime();             
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+		String prettyCalString = format1.format(date);   
+		
+		return prettyCalString;
 	}
 	
 	/**
@@ -851,22 +876,24 @@ public class AlgorithmUtility {
 		//if the seed counter has reached the max allowed system value reset it, otherwise increment it
 		seedCounter = (seedCounter == Integer.MAX_VALUE) ? 0 : seedCounter + 1;
 		
+		 eventLogger.sendEvent("builderCounter has set current seedCounter to " + seedCounter, EventType.DEBUG, AlgorithmUtility.class);
 		return seedCounter;
 	}
 	
 	/**
-	 * protected helper method. Calulates a prime number with a bit length of 5 using a secure random seed.
+	 * protected helper method. Calulates a prime number with a bit length of 15 using a secure random seed.
 	 *
 	 * @return a random prime
 	 */
 	protected static int buildRandomPrime() {
 		int randomPrime;
 		
-		final int  BIT_LENGTH = 5; //arbitrary choice for getting probably prime
+		final int  BIT_LENGTH = 16; //arbitrary choice for getting probably prime
 		
 		Random rnd = new SecureRandom(); 
         randomPrime = (BigInteger.probablePrime(BIT_LENGTH, rnd)).intValue();
         
+        eventLogger.sendEvent("buildRandomPrime result == " + randomPrime, EventType.INFO, AlgorithmUtility.class);
 		return randomPrime;		
 	}
 
@@ -878,7 +905,7 @@ public class AlgorithmUtility {
 	 * @return the int[][]
 	 */
 	protected static int[][] multiplyByMatrix(int[][] matrix1, int[][] matrix2) {
-    	logger.debug("entering multiplyMatrix");
+		eventLogger.sendEvent("BEGIN multiplyMatrix", EventType.DEBUG, AlgorithmUtility.class);
 		int[][] matrixResult = new int[matrix1.length][matrix2[0].length];
 
 		Integer matrix1Rows; // rows in matrix1
@@ -888,21 +915,20 @@ public class AlgorithmUtility {
 		for (matrix2Cols = 0; matrix2Cols <= matrix2[0].length - 1; matrix2Cols++) {
 			for (matrix1Rows = 0; matrix1Rows <= matrix1.length - 1; matrix1Rows++) {
 				for (matrix1Cols = 0; matrix1Cols <= matrix1[0].length - 1; matrix1Cols++) {
-
-					logger.debug("matrix1[" + matrix1Rows + "][" + matrix1Cols + "]: " + matrix1[matrix1Rows][matrix1Cols]);
-					logger.debug("matrix2[" + matrix1Cols + "][" + matrix2Cols + "]: " + matrix2[matrix1Cols][matrix2Cols]);
+					eventLogger.sendEvent("multiplyMatrix matrix1[" + matrix1Rows + "][" + matrix1Cols + "]: " + matrix1[matrix1Rows][matrix1Cols], EventType.DEBUG, AlgorithmUtility.class);
+					eventLogger.sendEvent("multiplyMatrix matrix2[" + matrix1Cols + "][" + matrix2Cols + "]: " + matrix2[matrix1Cols][matrix2Cols], EventType.DEBUG, AlgorithmUtility.class);
 					
 					matrixResult[matrix1Rows][matrix2Cols] += matrix1[matrix1Rows][matrix1Cols]
 							* matrix2[matrix1Cols][matrix2Cols];
 					
-					logger.debug("iteration  " + matrix1Cols.toString() + ": " + matrix1[matrix1Rows][matrix1Cols] * matrix2[matrix1Cols][matrix2Cols]);
-					logger.debug("aggregated value: " + matrixResult[matrix1Rows][matrix2Cols]);
+					eventLogger.sendEvent("multiplyMatrix iteration  " + matrix1Cols.toString() + ": " + matrix1[matrix1Rows][matrix1Cols] * matrix2[matrix1Cols][matrix2Cols], EventType.DEBUG, AlgorithmUtility.class);
+					eventLogger.sendEvent("multiplyMatrix aggregated value: " + matrixResult[matrix1Rows][matrix2Cols], EventType.DEBUG, AlgorithmUtility.class);
 				}
-				logger.debug("  *** matrixResult[" + matrix1Rows + "][" + matrix2Cols + "]: " + matrixResult[matrix1Rows][matrix2Cols]);
+				eventLogger.sendEvent("multiplyMatrix matrixResult[" + matrix1Rows + "][" + matrix2Cols + "]: " + matrixResult[matrix1Rows][matrix2Cols], EventType.DEBUG, AlgorithmUtility.class);
 
 			}
 		}
-    	logger.debug("exiting multiplyMatrix");
+		eventLogger.sendEvent("END multiplyMatrix", EventType.DEBUG, AlgorithmUtility.class);
 		return matrixResult;
 	}
 	
@@ -929,7 +955,9 @@ public class AlgorithmUtility {
 	 * @return the int
 	 */
 	protected static int flooredModulo(int a, int n){
-		  return  n<0 ? -flooredModulo(-a, -n) : mod(a, n);
+		int flooredModulo = n<0 ? -flooredModulo(-a, -n) : mod(a, n);
+		eventLogger.sendEvent("flooredModule for " + a + "," + n + " == " + flooredModulo, EventType.DEBUG, AlgorithmUtility.class);
+		return  flooredModulo;
 	}
 	
 	/**
