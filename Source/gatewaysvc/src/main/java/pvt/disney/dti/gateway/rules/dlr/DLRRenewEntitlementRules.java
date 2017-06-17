@@ -52,6 +52,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.UtilityXML;
 import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRespTO.TicketRecord;
 import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
+import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
@@ -809,6 +810,9 @@ public class DLRRenewEntitlementRules implements TransformConstants {
 
     }
 
+    // RULE: Validate ticket level demographics for DLR. (As of 2.17.2, JTL)
+    ProductRules.validateDlrTicketDemo(tktListTO);
+    
     return;
 
   }

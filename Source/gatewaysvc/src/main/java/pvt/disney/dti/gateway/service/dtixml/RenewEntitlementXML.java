@@ -900,23 +900,31 @@ public abstract class RenewEntitlementXML {
           // so we know the length will never be zero.
 
           // FirstName
-          aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+          if (aTktDemographic.getFirstName() != null) {
+             aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+          }
 
           // LastName
-          aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+          if (aTktDemographic.getLastName() != null) {
+             aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+          }
 
           // DateOfBirth
-          XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic
-              .getDateOfBirth();
-          GregorianCalendar tempCalendar = UtilXML
-              .convertFromXML(tXCal);
-          aTicketDemoTO.setDateOfBirth(tempCalendar);
-
+          if (aTktDemographic.getDateOfBirth() != null) {
+             XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic.getDateOfBirth();
+             GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+             aTicketDemoTO.setDateOfBirth(tempCalendar);
+          }
+          
           // Gender
-          aTicketDemoTO.setGender(aTktDemographic.getGender());
+          if (aTktDemographic.getGender() != null) {
+             aTicketDemoTO.setGender(aTktDemographic.getGender());
+          }
 
           // Addr1
-          aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+          if (aTktDemographic.getAddr1() != null) {
+             aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+          }
 
           // Addr2 (opt)
           if (aTktDemographic.getAddr2() != null) {
@@ -924,7 +932,9 @@ public abstract class RenewEntitlementXML {
           }
 
           // City
+          if (aTktDemographic.getCity() != null) {
           aTicketDemoTO.setCity(aTktDemographic.getCity());
+          }
 
           // State (opt)
           if (aTktDemographic.getState() != null) {
@@ -932,15 +942,17 @@ public abstract class RenewEntitlementXML {
           }
 
           // ZIP
-          aTicketDemoTO.setZip(aTktDemographic.getZip());
+          if (aTktDemographic.getZip() != null) {
+             aTicketDemoTO.setZip(aTktDemographic.getZip());
+          }
 
           // Country
+          if (aTktDemographic.getCountry() != null)
           aTicketDemoTO.setCountry(aTktDemographic.getCountry());
 
           // Telephone (opt) as of 2.16.1 APMP (JTL)
           if (aTktDemographic.getTelephone() != null) {
-            aTicketDemoTO.setTelephone(aTktDemographic
-                .getTelephone());
+            aTicketDemoTO.setTelephone(aTktDemographic.getTelephone());
           }
 
           // Email (opt)
@@ -949,11 +961,22 @@ public abstract class RenewEntitlementXML {
           }
 
           // OptInSolicit (2.10)
-          if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
-            aTicketDemoTO.setOptInSolicit(new Boolean(true));
+          if (aTktDemographic.getOptInSolicit() != null) {
+            if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
+              aTicketDemoTO.setOptInSolicit(new Boolean(true));
+            } else {
+              aTicketDemoTO.setOptInSolicit(new Boolean(false));
+            }
           }
-          else {
-            aTicketDemoTO.setOptInSolicit(new Boolean(false));
+
+          // CellPhone (as of 2.16.3, JTL)
+          if (aTktDemographic.getCellPhone() != null) {
+            aTicketDemoTO.setCellPhone(aTktDemographic.getCellPhone());
+          }
+          
+          // Seller Ref (as of 2.16.3, JTL)
+          if (aTktDemographic.getSellerRef() != null) {
+            aTicketDemoTO.setSellerRef(aTktDemographic.getSellerRef());
           }
 
           aTicketTO.addTicketDemographic(aTicketDemoTO);
