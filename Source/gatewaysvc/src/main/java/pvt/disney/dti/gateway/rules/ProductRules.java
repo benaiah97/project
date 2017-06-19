@@ -730,7 +730,7 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 15 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
+          validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 15, true, itemNumber);
 
           // LastName (XSD required, 1 - 20 char)
           validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
@@ -803,7 +803,7 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 30 char)
-          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+          validateStringDemo( park, "FirstName", aDemoTO.getFirstName(), 1, 
               30, true, itemNumber);
 
           
@@ -879,7 +879,7 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 35 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 35, required, itemNumber);
+          validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 35, required, itemNumber);
 
           // LastName (XSD required, 1 - 35 char)
           validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 35, required, itemNumber);
@@ -892,7 +892,7 @@ public class ProductRules {
 
           // DateOfBirth (optional, date) (Type-checked by XSD)
 
-          // Cell Phone (optional, 1 - 35 char)
+          // Cell Phone (optional, 1 - 15 char)
           validateStringDemo(park, "CellPhone", aDemoTO.getCellPhone(), 1, 15, optional, itemNumber);
 
           // Telephone (optional, 1 - 50 char)
