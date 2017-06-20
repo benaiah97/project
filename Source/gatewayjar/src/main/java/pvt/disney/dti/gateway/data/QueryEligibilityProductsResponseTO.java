@@ -9,7 +9,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
  *This class represents the request parameters of a Eligible Products Response.
  *
  */
-public class QueryEligibilityProductsResponseTo extends CommandBodyTO implements Serializable {
+public class QueryEligibilityProductsResponseTO extends CommandBodyTO implements Serializable {
 
 	  /** Standard serial version UID. */
 	  final static long serialVersionUID = 91292311005L;

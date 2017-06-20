@@ -8,7 +8,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
 /**
  * This class represents the request parameters of a Query Eligible request.
  */
-public class QueryEligibleProductsRequestTo extends CommandBodyTO implements Serializable{
+public class QueryEligibleProductsRequestTO extends CommandBodyTO implements Serializable{
 
 	  /** Standard serial version UID. */
 	  final static long serialVersionUID = 91292311005L;

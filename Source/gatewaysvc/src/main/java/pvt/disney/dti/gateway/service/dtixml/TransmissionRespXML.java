@@ -10,7 +10,7 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.AssociateMediaToAccountResponseTO;
 import pvt.disney.dti.gateway.data.CreateTicketResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
-import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTo;
+import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryReservationResponseTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementResponseTO;
@@ -294,8 +294,8 @@ public class TransmissionRespXML {
       cmd.setVoidReservationResponse(vResResp);
       break;    
     case QUERYELIGIBLEPRODUCTS:// for AP Upgrade
-    QueryEligibilityProductsResponseTo queryEligRespTo=(QueryEligibilityProductsResponseTo)responseIn.getResponse().getCommandBody();
-    QueryEligibleProductsResponse qEligResp=QueryEligibleProductsXML.getJaxb(queryEligRespTo, errorTO);
+    QueryEligibilityProductsResponseTO queryEligRespTo = (QueryEligibilityProductsResponseTO)responseIn.getResponse().getCommandBody();
+    QueryEligibleProductsResponse qEligResp = QueryEligibleProductsXML.getJaxb(queryEligRespTo, errorTO);
     cmd.setQueryEligibleProductsResponse(qEligResp);
     break;
 
