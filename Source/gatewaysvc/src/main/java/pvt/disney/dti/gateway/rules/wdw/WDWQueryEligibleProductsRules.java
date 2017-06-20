@@ -10,8 +10,8 @@ import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
-import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTo;
-import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTo;
+import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
+import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.VoidReservationRequestTO;
 import pvt.disney.dti.gateway.data.VoidReservationResponseTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
@@ -101,7 +101,7 @@ public class WDWQueryEligibleProductsRules {
 	    DTIRequestTO dtiRequest = dtiTxn.getRequest();
 	    PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
 	    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
-	    QueryEligibleProductsRequestTo dtiReq = (QueryEligibleProductsRequestTo) dtiCmdBody;
+	    QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiCmdBody;
 
 	    // === Command Level ===
 	    OTCommandTO atsCommand = new OTCommandTO(
@@ -200,77 +200,81 @@ public class WDWQueryEligibleProductsRules {
 	   *             for any error. Contains enough detail to formulate an error response to the seller.
 	   */
 	  static void transformResponseBody(DTITransactionTO dtiTxn,
-	      OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
+			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
 
-	    QueryEligibilityProductsResponseTo dtiResRespTO = new QueryEligibilityProductsResponseTo();
-	    OTQueryEligibleProductsTo otMngResTO = otCmdTO.getQueryEligbleProductsTO();
-	    dtiRespTO.setCommandBody(dtiResRespTO);
+		QueryEligibilityProductsResponseTO dtiResRespTO = new QueryEligibilityProductsResponseTO();
+		OTQueryEligibleProductsTo otMngResTO = otCmdTO
+				.getQueryEligbleProductsTO();
+		dtiRespTO.setCommandBody(dtiResRespTO);
 
-	    // Price mismatch warning (invalid for void res - omitted)    
+		// Price mismatch warning (invalid for void res - omitted)
 
-	    // ResponseType
-	   
+		// ResponseType
 
-	    TicketTO ticketTo=dtiResRespTO.getTicketTO();
-	    ArrayList<OTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
-	    if ((otTicketList != null) && (otTicketList.size() > 0)) {
+		TicketTO ticketTo = dtiResRespTO.getTicketTO();
+		ArrayList<OTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
+		if ((otTicketList != null) && (otTicketList.size() > 0)) {
 
-	      for (OTTicketInfoTO otTicketInfo : otTicketList) {
+			for (OTTicketInfoTO otTicketInfo : otTicketList) {
 
-	        TicketTO dtiTicketTO = new TicketTO();
-	        TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
-	        newStatus.setStatusItem(otTicketInfo.getItem().toString());
-	        newStatus.setStatusValue(otTicketInfo.getItemStatus().toString());
-	        OTTicketTO otTicketTO = otTicketInfo.getTicket();
+				TicketTO dtiTicketTO = new TicketTO();
+				TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
+				newStatus.setStatusItem(otTicketInfo.getItem().toString());
+				newStatus.setStatusValue(otTicketInfo.getItemStatus()
+						.toString());
+				OTTicketTO otTicketTO = otTicketInfo.getTicket();
 
-	        dtiTicketTO.setTktItem(otTicketInfo.getItem());
-	        dtiTicketTO.setProdCode(otTicketInfo.getItem().toString());
-	        dtiTicketTO.setProdPrice(otTicketInfo.getPrice());
-	        
-	        dtiTicketTO.addTicketStatus(newStatus);
-	        GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
-	        String site = otTicketTO.getTdssnSite();
-	        String station = otTicketTO.getTdssnStation();
-	        String number = otTicketTO.getTdssnTicketId();
-	        if(site!=null&&site!=""&&station!=null&&station!=""&&number!=null&&number!=""){
-	        	dtiTicketTO.setDssn(dssnDate, site, station, number);	
-	        }
-	        
-	        if(otTicketTO.getMagTrack()!=null&&otTicketTO.getMagTrack()!=""){
-	        	dtiTicketTO.setMag(otTicketTO.getMagTrack());	
-	        }
-	        if(otTicketTO.getBarCode()!=null&&otTicketTO.getBarCode()!=""){
-	        	dtiTicketTO.setBarCode(otTicketTO.getBarCode());
-	        }
-	        if(otTicketTO.getTCOD()!=null&&otTicketTO.getTCOD()!=""){
-	        	dtiTicketTO.setTktNID(otTicketTO.getTCOD());	
-	        }
-	        if(otTicketTO.getExternalTicketCode()!=null&&otTicketTO.getExternalTicketCode()!=""){
-	        	dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());	
-	        }
-	        
-	        
-	        dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
-	        dtiTicketTO.setTktTax(otTicketInfo.getTax());
+				dtiTicketTO.setTktItem(otTicketInfo.getItem());
+				dtiTicketTO.setProdCode(otTicketInfo.getItem().toString());
+				dtiTicketTO.setProdPrice(otTicketInfo.getPrice());
 
-	        if (otTicketInfo.getValidityStartDate() != null) dtiTicketTO
-	            .setTktValidityValidStart(otTicketInfo
-	                .getValidityStartDate());
+				dtiTicketTO.addTicketStatus(newStatus);
+				GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
+				String site = otTicketTO.getTdssnSite();
+				String station = otTicketTO.getTdssnStation();
+				String number = otTicketTO.getTdssnTicketId();
+				if (site != null && site != "" && station != null
+						&& station != "" && number != null && number != "") {
+					dtiTicketTO.setDssn(dssnDate, site, station, number);
+				}
 
-	        if (otTicketInfo.getValidityEndDate() != null) dtiTicketTO
-	            .setTktValidityValidEnd(otTicketInfo
-	                .getValidityEndDate());
+				if (otTicketTO.getMagTrack() != null
+						&& otTicketTO.getMagTrack() != "") {
+					dtiTicketTO.setMag(otTicketTO.getMagTrack());
+				}
+				if (otTicketTO.getBarCode() != null
+						&& otTicketTO.getBarCode() != "") {
+					dtiTicketTO.setBarCode(otTicketTO.getBarCode());
+				}
+				if (otTicketTO.getTCOD() != null && otTicketTO.getTCOD() != "") {
+					dtiTicketTO.setTktNID(otTicketTO.getTCOD());
+				}
+				if (otTicketTO.getExternalTicketCode() != null
+						&& otTicketTO.getExternalTicketCode() != "") {
+					dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());
+				}
 
-/*	        // AccountId
-	        dtiTicketTO.setAccountId(otTicketInfo.getAccountId());
-*/	        dtiResRespTO.setTicketTO(dtiTicketTO);
+				dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
+				dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
-	      
-	      }
-	      
-	    }
-	    return;
-	  }
+				if (otTicketInfo.getValidityStartDate() != null)
+					dtiTicketTO.setTktValidityValidStart(otTicketInfo
+							.getValidityStartDate());
+
+				if (otTicketInfo.getValidityEndDate() != null)
+					dtiTicketTO.setTktValidityValidEnd(otTicketInfo
+							.getValidityEndDate());
+
+				/*
+				 * // AccountId
+				 * dtiTicketTO.setAccountId(otTicketInfo.getAccountId());
+				 */dtiResRespTO.setTicketTO(dtiTicketTO);
+
+			}
+
+		}
+		return;
+	}
 
 	 
 }

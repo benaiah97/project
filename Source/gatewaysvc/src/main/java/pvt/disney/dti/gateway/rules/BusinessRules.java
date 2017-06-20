@@ -171,10 +171,11 @@ public abstract class BusinessRules {
       
     case VOIDRESERVATION: // As of 2.16.3, JTL
       applyVoidReservationRules(dtiTxn);
-      break;   
+      break;
+      
     case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
-        //applyVoidReservationRules(dtiTxn);
-        break;   
+    	// To Do 
+      break;   
 
     default:
       throw new DTIException(BusinessRules.class,

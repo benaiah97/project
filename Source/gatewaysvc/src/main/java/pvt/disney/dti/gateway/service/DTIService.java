@@ -399,9 +399,9 @@ public class DTIService {
       return TransactionType.VOIDRESERVATION;
     }
     if (compare.equals("QueryEligibleProductsRequest")) { // added as a part of new AP Upgrade service
-        return TransactionType.QUERYELIGIBLEPRODUCTS;
-      }
-    return TransactionType.UNDEFINED;
+      return TransactionType.QUERYELIGIBLEPRODUCTS;
+    }
+      return TransactionType.UNDEFINED;
   }
 
   /**

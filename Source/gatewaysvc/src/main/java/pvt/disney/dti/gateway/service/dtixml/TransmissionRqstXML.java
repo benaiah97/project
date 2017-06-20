@@ -223,10 +223,12 @@ public class TransmissionRqstXML {
       VoidReservationRequest vResReq = payload.getCommand().getVoidReservationRequest();
       commandBodyTO = VoidReservationXML.getTO(vResReq);
       break;  
+      
     case QUERYELIGIBLEPRODUCTS: // as of part of AP Upgrade Service
-        QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand().getQueryEligibleProductsRequest();
-        commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
-        break;  
+	  QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand()
+		   .getQueryEligibleProductsRequest();
+	   commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
+	  break;  
 
     default:
       break;
