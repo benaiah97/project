@@ -730,7 +730,7 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 15 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
+          validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 15, true, itemNumber);
 
           // LastName (XSD required, 1 - 20 char)
           validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
@@ -789,65 +789,68 @@ public class ProductRules {
    * @throws DTIException
    */
   public static void validateDlrTicketDemo(ArrayList<TicketTO> tktListTO) throws DTIException {
-
+    
     for (/* each */TicketTO aTicketTO : /* in */tktListTO) {
-
-      // Telephone
+      
+      // Telephone 
       if (aTicketTO.getTicketDemoList().size() != 0) {
-
+        
         for /* each */(DemographicsTO aDemoTO : /* in */aTicketTO.getTicketDemoList()) {
-
-          String park = "DLR";
+          
+          String park = "DLR"; 
           boolean optional = false;
           boolean required = true;
           BigInteger itemNumber = aTicketTO.getTktItem();
 
-          // FirstName (XSD required, 1 - 15 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
+          // FirstName (XSD required, 1 - 30 char)
+          validateStringDemo( park, "FirstName", aDemoTO.getFirstName(), 1, 
+              30, true, itemNumber);
 
-          // LastName (XSD required, 1 - 20 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
-
-          // DateOfBirth (required, date)
+          
+          // LastName (XSD required, 1 - 30 char)
+          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
+              30, true, itemNumber);
+          
+          // DateOfBirth (required, date) 
           if (aDemoTO.getDateOfBirth() == null) {
-            throwFieldMissExcpt(park, "DateOfBirth", aTicketTO.getTktItem());
+            throwFieldMissExcpt(park,"DateOfBirth",aTicketTO.getTktItem());
           }
-
+          
           // Gender (required, 1 char)
-          validateStringDemo(park, "Gender", aDemoTO.getGender(), 1, 1, required, itemNumber);
-
-          // Addr1 (required, 1 - 35 char)
-          validateStringDemo(park, "Addr1", aDemoTO.getAddr1(), 1, 35, required, itemNumber);
-
-          // Addr2 (optional, 1 - 35 char)
-          validateStringDemo(park, "Addr2", aDemoTO.getAddr2(), 1, 35, optional, itemNumber);
-
-          // City (required, 1 - 20 char)
-          validateStringDemo(park, "City", aDemoTO.getCity(), 1, 20, required, itemNumber);
-
-          // State (optional, 2 char)
-          validateStringDemo(park, "State", aDemoTO.getState(), 2, 2, optional, itemNumber);
-
-          // Zip (required, 1 - 10 char)
-          validateStringDemo(park, "Zip", aDemoTO.getZip(), 1, 10, required, itemNumber);
-
-          // Country (required, 2 char)
+          validateStringDemo( park, "Gender", aDemoTO.getGender(), 1, 1, required, itemNumber); 
+          
+          // Addr1 (required, 1 - 30 char)
+          validateStringDemo( park, "Addr1", aDemoTO.getAddr1(), 1, 30, required, itemNumber);
+          
+          // Addr2 (optional, 1 - 30 char)
+          validateStringDemo( park, "Addr2", aDemoTO.getAddr2(), 1, 30, optional, itemNumber);
+          
+          // City (required, 1 - 40 char)
+          validateStringDemo( park, "City", aDemoTO.getCity(), 1, 40, required, itemNumber);
+          
+          // State (optional, 20 char)
+          validateStringDemo( park, "State", aDemoTO.getState(), 1, 20, optional, itemNumber);          
+          
+          // Zip (required, 1 - 16 char)
+          validateStringDemo( park, "Zip", aDemoTO.getZip(), 1, 16, required, itemNumber);
+          
+          // Country (required, 2 char) 
           // RULE: If tickets have demographics, the country code must be of
           // length = 2. This is an oddity in the galaxy specification, but
           // still compliant to the ISO codes.
-          validateStringDemo(park, "Country", aDemoTO.getCountry(), 2, 2, required, itemNumber);
-
-          // Telephone (required, 1 - 14 char)
-          validateStringDemo(park, "Telephone", aDemoTO.getTelephone(), 1, 14, optional, itemNumber);
-
-          // Email (optional, 1 - 50 char)
-          validateStringDemo(park, "Email", aDemoTO.getEmail(), 1, 50, optional, itemNumber);
-
+          validateStringDemo( park, "Country", aDemoTO.getCountry(), 2, 2, required, itemNumber);          
+          
+          // Telephone (required, 1 - 30 char)
+          validateStringDemo( park, "Telephone", aDemoTO.getTelephone(), 1, 30, optional, itemNumber);
+          
+          // Email (optional, 1 - 128 char) 
+          validateStringDemo( park, "Email", aDemoTO.getEmail(), 1, 128, optional, itemNumber);
+          
           // OptInSolicit (required, enum)
           if (aDemoTO.getOptInSolicit() == null) {
-            throwFieldMissExcpt(park, "OptInSolicit", aTicketTO.getTktItem());
+            throwFieldMissExcpt(park,"OptInSolicit",aTicketTO.getTktItem());
           }
-
+          
         }
       }
     }
@@ -876,7 +879,7 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 35 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 35, required, itemNumber);
+          validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 35, required, itemNumber);
 
           // LastName (XSD required, 1 - 35 char)
           validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 35, required, itemNumber);
@@ -889,7 +892,7 @@ public class ProductRules {
 
           // DateOfBirth (optional, date) (Type-checked by XSD)
 
-          // Cell Phone (optional, 1 - 35 char)
+          // Cell Phone (optional, 1 - 15 char)
           validateStringDemo(park, "CellPhone", aDemoTO.getCellPhone(), 1, 15, optional, itemNumber);
 
           // Telephone (optional, 1 - 50 char)

@@ -187,7 +187,7 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="15"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -195,56 +195,16 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="DateOfBirth" use="required">
+												<xs:attribute name="DateOfBirth">
 													<xs:simpleType>
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Gender" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr1" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr2" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="City" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="State" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="2"/>
-															<xs:maxLength value="2"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Zip" use="required">
+												<xs:attribute name="Gender">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -252,15 +212,63 @@
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Country" use="required">
+												<xs:attribute name="Addr1">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Addr2" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="City">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="State" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Zip">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="16"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Country">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
 												<xs:attribute name="Telephone" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="CellPhone" use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -271,16 +279,24 @@
 												<xs:attribute name="Email" use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
-															<xs:minLength value="5"/>
-															<xs:maxLength value="50"/>
+															<xs:minLength value="1"/>
+															<xs:maxLength value="128"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="OptInSolicit" use="required">
+												<xs:attribute name="OptInSolicit">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:enumeration value="YES"/>
 															<xs:enumeration value="NO"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="SellerRef" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -1394,7 +1410,7 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="10"/>
+															<xs:maxLength value="16"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -1426,7 +1442,7 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="50"/>
+															<xs:maxLength value="128"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -1838,7 +1854,7 @@
 												<xs:attribute name="Country" type="xs:string" use="optional"/>
 												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
 												<xs:attribute name="Email" type="xs:string" use="optional"/>
-												<xs:attribute name="Note" type="xs:string" use="optional"/>												
+												<xs:attribute name="Note" type="xs:string" use="optional"/>
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="Delivery" minOccurs="0">
@@ -2291,7 +2307,7 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="15"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -2299,56 +2315,16 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="DateOfBirth" use="required">
+												<xs:attribute name="DateOfBirth">
 													<xs:simpleType>
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Gender" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr1" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr2" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="City" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="State" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="2"/>
-															<xs:maxLength value="2"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Zip" use="required">
+												<xs:attribute name="Gender">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -2356,15 +2332,63 @@
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Country" use="required">
+												<xs:attribute name="Addr1">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="40"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Telephone">
+												<xs:attribute name="Addr2" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="City">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="State" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Zip">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="16"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Country">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Telephone" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="CellPhone" use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -2376,15 +2400,23 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="5"/>
-															<xs:maxLength value="50"/>
+															<xs:maxLength value="128"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="OptInSolicit" use="required">
+												<xs:attribute name="OptInSolicit">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:enumeration value="YES"/>
 															<xs:enumeration value="NO"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="SellerRef" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -2612,7 +2644,7 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="15"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
@@ -2620,56 +2652,16 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="35"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="DateOfBirth" use="required">
+												<xs:attribute name="DateOfBirth">
 													<xs:simpleType>
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Gender" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="1"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr1" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Addr2" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="35"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="City" use="required">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="State" use="optional">
-													<xs:simpleType>
-														<xs:restriction base="xs:string">
-															<xs:minLength value="2"/>
-															<xs:maxLength value="2"/>
-														</xs:restriction>
-													</xs:simpleType>
-												</xs:attribute>
-												<xs:attribute name="Zip" use="required">
+												<xs:attribute name="Gender">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -2677,15 +2669,63 @@
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Country" use="required">
+												<xs:attribute name="Addr1">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="20"/>
+															<xs:maxLength value="40"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Telephone">
+												<xs:attribute name="Addr2" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="City">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="State" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Zip">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="16"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Country">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="40"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Telephone" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="CellPhone" use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
@@ -2697,15 +2737,23 @@
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
-															<xs:maxLength value="50"/>
+															<xs:maxLength value="128"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="OptInSolicit" use="required">
+												<xs:attribute name="OptInSolicit">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:enumeration value="YES"/>
 															<xs:enumeration value="NO"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="SellerRef" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="50"/>
 														</xs:restriction>
 													</xs:simpleType>
 												</xs:attribute>

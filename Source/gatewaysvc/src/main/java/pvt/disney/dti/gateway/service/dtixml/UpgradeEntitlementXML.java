@@ -152,66 +152,91 @@ public class UpgradeEntitlementXML {
 
 			if (aProdDemoData.getTktDemoData() != null) {
 
-				TktDemoData aTicketDemo = aProdDemoData.getTktDemoData();
+				TktDemoData aTktDemographic = aProdDemoData.getTktDemoData();
 				DemographicsTO aTicketDemoTO = new DemographicsTO();
 
 				// NOTE: In this specific case, the XSD enforces minimum lengths,
 				// so we know the length will never be zero.
 
-				// FirstName
-				aTicketDemoTO.setFirstName(aTicketDemo.getFirstName());
+        // FirstName
+        if (aTktDemographic.getFirstName() != null) {
+           aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+        }
 
-				// LastName
-				aTicketDemoTO.setLastName(aTicketDemo.getLastName());
+        // LastName
+        if (aTktDemographic.getLastName() != null) {
+           aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+        }
 
-				// DateOfBirth
-				XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTicketDemo
-						.getDateOfBirth();
-				GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
-				aTicketDemoTO.setDateOfBirth(tempCalendar);
+        // DateOfBirth
+        if (aTktDemographic.getDateOfBirth() != null) {
+           XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic.getDateOfBirth();
+           GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+           aTicketDemoTO.setDateOfBirth(tempCalendar);
+        }
+        
+        // Gender
+        if (aTktDemographic.getGender() != null) {
+           aTicketDemoTO.setGender(aTktDemographic.getGender());
+        }
 
-				// Gender
-				aTicketDemoTO.setGender(aTicketDemo.getGender());
+        // Addr1
+        if (aTktDemographic.getAddr1() != null) {
+           aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+        }
 
-				// Addr1
-				aTicketDemoTO.setAddr1(aTicketDemo.getAddr1());
+        // Addr2 (opt)
+        if (aTktDemographic.getAddr2() != null) {
+          aTicketDemoTO.setAddr2(aTktDemographic.getAddr2());
+        }
 
-				// Addr2 (opt)
-				if (aTicketDemo.getAddr2() != null) {
-					aTicketDemoTO.setAddr2(aTicketDemo.getAddr2());
-				}
+        // City
+        if (aTktDemographic.getCity() != null) {
+        aTicketDemoTO.setCity(aTktDemographic.getCity());
+        }
 
-				// City
-				aTicketDemoTO.setCity(aTicketDemo.getCity());
+        // State (opt)
+        if (aTktDemographic.getState() != null) {
+          aTicketDemoTO.setState(aTktDemographic.getState());
+        }
 
-				// State (opt)
-				if (aTicketDemo.getState() != null) {
-					aTicketDemoTO.setState(aTicketDemo.getState());
-				}
+        // ZIP
+        if (aTktDemographic.getZip() != null) {
+           aTicketDemoTO.setZip(aTktDemographic.getZip());
+        }
 
-				// ZIP
-				aTicketDemoTO.setZip(aTicketDemo.getZip());
+        // Country
+        if (aTktDemographic.getCountry() != null)
+        aTicketDemoTO.setCountry(aTktDemographic.getCountry());
 
-				// Country
-				aTicketDemoTO.setCountry(aTicketDemo.getCountry());
+        // Telephone (opt) as of 2.16.1 APMP (JTL)
+        if (aTktDemographic.getTelephone() != null) {
+          aTicketDemoTO.setTelephone(aTktDemographic.getTelephone());
+        }
 
-				// Telephone (opt) as of 2.16.1 APMP JTL
-				if (aTicketDemo.getTelephone() != null) {
-					aTicketDemoTO.setTelephone(aTicketDemo.getTelephone());
-				}
+        // Email (opt)
+        if (aTktDemographic.getEmail() != null) {
+          aTicketDemoTO.setEmail(aTktDemographic.getEmail());
+        }
 
-				// Email (opt)
-				if (aTicketDemo.getEmail() != null) {
-					aTicketDemoTO.setEmail(aTicketDemo.getEmail());
-				}
+        // OptInSolicit (2.10)
+        if (aTktDemographic.getOptInSolicit() != null) {
+          if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
+            aTicketDemoTO.setOptInSolicit(new Boolean(true));
+          } else {
+            aTicketDemoTO.setOptInSolicit(new Boolean(false));
+          }
+        }
 
-				// OptInSolicit
-				if (aTicketDemo.getOptInSolicit().compareTo("YES") == 0) {
-					aTicketDemoTO.setOptInSolicit(new Boolean(true));
-				}
-				else {
-					aTicketDemoTO.setOptInSolicit(new Boolean(false));
-				}
+        // CellPhone (as of 2.16.3, JTL)
+        if (aTktDemographic.getCellPhone() != null) {
+          aTicketDemoTO.setCellPhone(aTktDemographic.getCellPhone());
+        }
+        
+        // Seller Ref (as of 2.16.3, JTL)
+        if (aTktDemographic.getSellerRef() != null) {
+          aTicketDemoTO.setSellerRef(aTktDemographic.getSellerRef());
+        }
 
 				aTicketTO.addTicketDemographic(aTicketDemoTO);
 

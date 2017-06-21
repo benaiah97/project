@@ -1056,7 +1056,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
    * @param dtiResReq the dti res req
    * @throws DTIException the DTI exception
    */
-  private static String assignResCode(DTITransactionTO dtiTxn,
+  protected static String assignResCode(DTITransactionTO dtiTxn,
       ReservationRequestTO dtiResReq) throws DTIException {
 	  String resCode = null;
 	  
@@ -1072,17 +1072,13 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 		  
       // Contingency assignment (should be infrequent that res isn't found in DB for rework)
       if (rescodeTO == null) {
-         resCode = WDWAlgorithmUtility.generateResCode();
-         TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+         resCode = createReservationCode(dtiTxn, resCode, payloadId);
       } else {
          resCode = rescodeTO.getRescode();
       }
 
 	  } else if ( (!isRework) && (resOverrideAttr == null)) { //not rework, and no race override	  
-	      //generate the rescode using wdw race algorithm utility
-	      resCode = WDWAlgorithmUtility.generateResCode(); 
-	      // and insert it into the database payload/rescode ref table	      
-	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+      resCode = createReservationCode(dtiTxn, resCode, payloadId);
 	  } else {
 		    // and insert it into the database payload/rescode ref table	      
 	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
@@ -1092,6 +1088,41 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
 	  }
 	  
 	  return resCode;
+  }
+
+  /**
+   * Creates the reservation code by attempting multiple times if there is an insert problem.
+   * @param dtiTxn
+   * @param resCode
+   * @param payloadId
+   * @return
+   * @throws DTIException
+   */
+  protected static String createReservationCode(DTITransactionTO dtiTxn, String resCode, String payloadId)
+      throws DTIException {
+    
+    boolean inserted = false;
+     int attemptCount = 0;
+     
+     while (inserted == false) {
+       
+       resCode = WDWAlgorithmUtility.generateResCode();
+       try {
+         TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+         inserted = true;
+       } catch (Exception e) {
+         attemptCount++;
+         logger.sendEvent(
+             "WDW RACE_RES_OVERRIDE failed to create an insert a valid res code.  Attempt: " + attemptCount, EventType.WARN, THISOBJECT);
+         if (attemptCount >= 10) {
+           logger.sendEvent(
+               "WDW RACE_RES_OVERRIDE failed to create an insert a valid res code after 10 attempts.", EventType.WARN, THISOBJECT);
+           throw e;
+         }
+       }
+     }
+     
+    return resCode;
   }
 
   /**

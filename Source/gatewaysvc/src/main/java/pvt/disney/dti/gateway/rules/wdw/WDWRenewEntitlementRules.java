@@ -32,6 +32,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTransactionDSSNTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 import pvt.disney.dti.gateway.rules.PaymentRules;
+import pvt.disney.dti.gateway.rules.ProductRules;
 
 /**
  * This class is responsible for three major functions for WDW renew entitlement:<BR>
@@ -312,6 +313,11 @@ public class WDWRenewEntitlementRules {
       }
 
     }
+    
+    ArrayList<TicketTO> tktListTO = dtiRenewReq.getTktList();
+    
+    // RULE: Validate ticket level demographics for DLR. (As of 2.17.2, JTL)
+    ProductRules.validateWdwTicketDemo(tktListTO);
 
     return;
 
