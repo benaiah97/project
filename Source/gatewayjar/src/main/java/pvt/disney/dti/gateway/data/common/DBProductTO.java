@@ -250,7 +250,6 @@ public class DBProductTO implements Serializable {
 	 *            the priceMismatchAllowed to set
 	 */
 	public void setPriceMismatchAllowed(boolean mismatchInd) {
-		System.out.println(pdtCode+ " **********************MISMATCH ALLOWED:"+ mismatchInd);
 		this.priceMismatchAllowed = mismatchInd;
 	}
 
@@ -259,7 +258,6 @@ public class DBProductTO implements Serializable {
 	 *            the misMatchTol to set
 	 */
 	public void setMisMatchTol(BigDecimal misMatchTol) {
-		System.out.println(pdtCode+ " **********************MISMATCH TOLERANCE:"+ misMatchTol);
 		this.misMatchTol = misMatchTol;
 	}
 
@@ -268,7 +266,6 @@ public class DBProductTO implements Serializable {
 	 *            the misMatchTolType to set
 	 */
 	public void setMisMatchTolType(MismatchToleranceType misMatchTolType) {
-		System.out.println(pdtCode+ " **********************MISMATCH TOLERANCE Type:"+ misMatchTolType);
 		this.misMatchTolType = misMatchTolType;
 	}
 

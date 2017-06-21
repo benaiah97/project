@@ -61,6 +61,10 @@ public abstract class PayloadHeaderXML {
 		seller.setTsMac(payloadHeader.getTktSeller().getTSMAC());
 		seller.setTsSecurity(payloadHeader.getTktSeller().getTSSecurity());
 		seller.setTsSystem(payloadHeader.getTktSeller().getTSSystem());
+		//check for hkdl only - only set the sellerid (which is optional) if it is present in the request
+		if (payloadHeader.getTktSeller().getSellerId()!=null && payloadHeader.getTktSeller().getSellerId().length() > 0) {
+			seller.setSellerId(payloadHeader.getTktSeller().getSellerId());
+		}
 		payloadHeaderTO.setTktSeller(seller);
 
 		payloadHeaderTO.setCommandCount(payloadHeader.getCommandCount());

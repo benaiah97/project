@@ -36,6 +36,7 @@ import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.ShowTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTCommandTO;
 import pvt.disney.dti.gateway.provider.hkd.data.HkdOTHeaderTO;
@@ -371,8 +372,11 @@ public class HKDReservationRules {
     EntityTO entityTO = dtiTxn.getEntityTO();
     HKDBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 
-    // SellerId
-    Long dtiSalesId = entityTO.getDefSalesRepId();
+    // SellerId - set from TktSeller in request if sent, otherwise set from entity
+    // Note this is HKD only behavior
+    TktSellerTO tktSellerTO =  dtiTxn.getRequest().getPayloadHeader().getTktSeller();
+    Long dtiSalesId = helpGetSellerId(tktSellerTO, entityTO); 
+
     if (dtiSalesId != null) {
       otManageRes.setSellerId(new Long(dtiSalesId.longValue()));
     }
@@ -1208,7 +1212,7 @@ public class HKDReservationRules {
    */
   protected static ArrayList<String> helpGetPackageResSaleTypeList() {
 	  ArrayList<String> resSaleTypeList = new ArrayList<String>();
-	  //TODO: temp hardcoding, recode  to load this from dti.properties
+	  //temp solution, if more than 1 in the future, recode  to load this from dti.properties or db
 	  resSaleTypeList.add(PRESALE);
 	  return resSaleTypeList;
   }
@@ -1220,10 +1224,31 @@ public class HKDReservationRules {
    */
   protected static ArrayList<String> helpGetPackageResPickupAreaList() {
 	  ArrayList<String> resPickupAreaList = new ArrayList<String>();
-	  //TODO: temp hardcoding, recode  to load this from dti.properties
+	  //temp solution, if more than 1 in the future, recode  to load this from dti.properties or db
 	  resPickupAreaList.add(OFFSITE);
 	  
 	  return resPickupAreaList;
+  }
+  
+  /**
+   * Helper method: determine the seller id. If passed in the request, use value from request,
+   * otherwise load it from the seller entity.
+   *
+   * @param to the to
+   * @return the long
+   */
+  protected static Long helpGetSellerId(TktSellerTO tktSellerTO,  EntityTO entityTO) {
+	  //HKDL only logic to support distinguishing e-tick using sellerId
+	  //if sellerid passed in then set it here, otherwise load from entity
+	  Long dtiSalesId = null;
+	  
+	  String requestSellerId = tktSellerTO.getSellerId();
+	  if (requestSellerId!=null && requestSellerId.length() > 0) {
+		  dtiSalesId = Long.parseLong(requestSellerId);
+	  } else {
+		  dtiSalesId = entityTO.getDefSalesRepId();
+	  }
+	  return dtiSalesId;
   }
   
 }
