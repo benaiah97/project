@@ -296,7 +296,6 @@ public class WDWReservationRules {
         entityTO);
 
     // SellerId
-    //TODO for HKDL phase 2 req#12 allow optional passed in SellerId
     Long dtiSalesId = entityTO.getDefSalesRepId();
     if (dtiSalesId != null) {
       otManageRes.setSellerId(new Long(dtiSalesId.longValue()));
