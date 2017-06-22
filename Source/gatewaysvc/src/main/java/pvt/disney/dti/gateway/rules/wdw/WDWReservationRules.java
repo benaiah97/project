@@ -1038,7 +1038,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    //RULE: Apply reservateCode rules - if command/entity/attribute doesn't specify an override, use RACE for rescode generation
+    //RULE: Generate the reservation code
     String resCode = assignResCode(dtiTxn,dtiResReq);
     dtiResReq.getReservation().setResCode(resCode);
     
