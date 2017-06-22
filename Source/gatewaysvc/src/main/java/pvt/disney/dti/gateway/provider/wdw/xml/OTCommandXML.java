@@ -161,13 +161,7 @@ public class OTCommandXML implements TransformConstants {
       OTRenewTicketTO otRenewTktTO = otCommandTO.getRenewTicketTO();
       OTRenewTicketXML.addTxnBodyElement(otRenewTktTO, commandStanza);
       break;
-      
-    case ELIGIBLEPRODUCTS: // Adding new parameter for AP Upgrade // will remove if not needed
-    	xsi = new FlyweightAttribute(XSINONSSCHLOC,
-    	          "dtigatewayrequest.xsd");
-    	OTQueryEligibleProductsTo otQryEligPrds=otCommandTO.getQueryEligbleProductsTO();
-    	OTQueryEligibleProductsXML.addTxnBodyElement(otQryEligPrds, commandStanza);
-    	break;
+    
     default:
       throw new DTIException(OTCommandXML.class,
           DTIErrorCode.INVALID_COMMAND,
@@ -259,10 +253,6 @@ public class OTCommandXML implements TransformConstants {
           OT_MULTI_ENTITLEMENT_ACCOUNT) == 0) {
         otCmdTO.setTxnType(OTCommandTO.OTTransactionType.MULTIENTITLEMENTACCOUNT);
       }
-      else if (otHdrTO.getRequestSubType().compareTo(
-              OT_QUERY_ELIG_PRDS) == 0) {
-            otCmdTO.setTxnType(OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
-          }
       else {
         StringBuffer errorBuffer = new StringBuffer(
             "Ticket provider returned unknown Header,Message type: ");
@@ -363,17 +353,7 @@ public class OTCommandXML implements TransformConstants {
         otCmdTO.setRenewTicketTO(otRenewTktRes);
         bodyElementFound = true;
       }
-      // Added as a part of 
-      // QueryEligbleProducts 
-        Node queryEligPrdsNode = commandStanza
-          .selectSingleNode("QueryEligibleProducts");
-      if (queryEligPrdsNode != null) {
-        OTQueryEligibleProductsTo otQueryPrds = OTQueryEligibleProductsXML
-            .getTO(queryEligPrdsNode);
-        otCmdTO.setQueryEligbleProductsTO(otQueryPrds);
-        bodyElementFound = true;
-      }
-
+      
       // if no body found, error out.
       if (!bodyElementFound) throw new DTIException(OTCommandXML.class,
           DTIErrorCode.TP_INTERFACE_FAILURE,

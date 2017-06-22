@@ -197,8 +197,5 @@ public interface TransformConstants {
 
   /** The OT_UPGRADE_ENTITLEMENT. */
   String OT_RENEW_TICKET = "RenewTicket"; // as of 2.16.1, JTL
-  
-  /** The OT_QUERY ELIGIBLE PRODUCTS. */
-  String OT_QUERY_ELIG_PRDS="QueryEligibleProducts";
 
 }

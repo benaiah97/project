@@ -217,15 +217,7 @@ public class DTIService {
       logger.sendEvent("Logged the product detail.", EventType.DEBUG, this);
 
       // Send to Provider
-      //if the Transaction Type is not QueryEligbleProduct pass the mocked response for queryEligible
-      String xmlResponse=null;
-      if(requestType!=TransactionType.QUERYELIGIBLEPRODUCTS){
-    	  xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
-      }else{
-    	  InputStream fileName= this.getClass().getResourceAsStream("dtiresponse.xml");
-    	  xmlResponse=getXMLfromFile(fileName);
-      }
-       
+      String xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
       logger.sendEvent("Sent message to provider.", EventType.DEBUG, this);
 
       // Log the Out-bound TP Message
@@ -511,31 +503,5 @@ public class DTIService {
 
       return computerName;
   }
-  
-  /**
-   * Added this temp method to read a XML payload , need to stub out response payload from IAGO 
-   * ::Not hitting IAGO right now as a part of queryEligibleProductResponse 
- * @param inputStream
- * @return
- */
-public static String getXMLfromFile(InputStream inputStream){
-		BufferedInputStream bis = new BufferedInputStream(inputStream);
-		ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		int result;
-		try {
-			result = bis.read();
-			while(result != -1) {
-			    buf.write((byte) result);
-			    result = bis.read();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return buf.toString();
-	}
-
-	  
   
 }

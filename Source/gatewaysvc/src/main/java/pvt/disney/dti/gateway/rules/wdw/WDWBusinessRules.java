@@ -1201,13 +1201,27 @@ public class WDWBusinessRules {
 
       String payloadId = null;
       OTTransactionType requestType = otCmdTO.getTxnType();
+      TransactionType dtiTransType = dtiTxn.getTransactionType();
 
       switch (requestType) {
 
       case QUERYTICKET:
-
-        WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+    	  
+    	  switch(dtiTransType){
+    	  //When the transaction type is QUERYTICKET
+    	  case QUERYTICKET: 	  
+    		WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+    	        break;
+    	     // added as a part of AP Upgrade Service
+    	  case QUERYELIGIBLEPRODUCTS:
+    		WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+        	  break;
+		
+    	  default:
+			
+			break;
+    	  }
+    	  break;
 
       case VOIDTICKET:
 
@@ -1236,8 +1250,22 @@ public class WDWBusinessRules {
       switch (requestType) {
 
       case QUERYTICKET:
-        WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+    	  
+    	  switch(dtiTransType){
+    	  
+    	  case QUERYTICKET: 	  
+    		  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+    	        break;
+    	  
+    	  case QUERYELIGIBLEPRODUCTS:
+    		// added as a part of AP Upgrade Service
+        	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+        	  break;
+		
+    	  default:
+			break;
+    	  }
+    	  break;
 
       case UPGRADETICKET:
 

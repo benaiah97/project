@@ -50,11 +50,11 @@ import com.disney.logging.EventLogger;
  */
 public class WDWQueryEligibleProductsRules {
 
-	  /** Request type header constant. */
+	 /** Request type header constant. */
 	 private final static String REQUEST_TYPE_QUERY = "Query";
 
-	  /** Request sub-type header constant. */
-	 private final static String REQUEST_SUBTYPE_QUERY_ELIGBLE_PRODUCTS = "QueryEligibleProducts";
+	 /** Request subtype header constant. */
+	  private final static String REQUEST_SUBTYPE_QUERYTICKET = "QueryTicket";
 
 	  /** Constant indicating all tags should be created. */
 	  private final static String ALL_TAGS = "All";
@@ -62,12 +62,7 @@ public class WDWQueryEligibleProductsRules {
 	  /** Constant indicating the Manage Reservation XSD. */
 	  private final static String NO_NAMESPACE_SCHEMA_LOCATION = "dtigatewayrequest.xsd";
 
-	  /**
-	   * Constant indicating the Void variant of the Manage Reservation command.
-	   */
-	  private final static String COMMAND_TYPE = "Void";
-	  
-	   /** Constant indicating limited tags should be created. */
+	  /** Constant indicating limited tags should be created. */
 	  private final static String[] QT_TAGS = { "Tax",
 	      "VoidCode",
 	      "TicketFlag",
@@ -81,10 +76,11 @@ public class WDWQueryEligibleProductsRules {
 	  
 	  /** Constant text for ITEM ONE (1). */
 	  private final static String ITEMONE = "1";
-
+	  
 	  @SuppressWarnings("unused")
 	  private static final EventLogger logger = EventLogger
 	      .getLogger(WDWQueryEligibleProductsRules.class.getCanonicalName());
+
 
 	  /**
 	   * Transform the DTITransactionTO value object to the provider value objects and then pass those to XML Marshaling routines to create an XML string.
@@ -95,98 +91,90 @@ public class WDWQueryEligibleProductsRules {
 	   * @throws DTIException
 	   *             when any transformation error is encountered.
 	   */
-	  static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
+	static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 
-	    String xmlString = null;
-	    DTIRequestTO dtiRequest = dtiTxn.getRequest();
-	    PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
-	    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
-	    QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiCmdBody;
+		String xmlString = null;
+		DTIRequestTO dtiRequest = dtiTxn.getRequest();
+		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
+		CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiCmdBody;
 
-	    // === Command Level ===
-	    OTCommandTO atsCommand = new OTCommandTO(
-	        OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
-	    atsCommand.setXmlSchemaInstance(WDWBusinessRules.XML_SCHEMA_INSTANCE);
-	    atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
+		// === Command Level ===
+		OTCommandTO atsCommand = new OTCommandTO(
+				OTCommandTO.OTTransactionType.QUERYTICKET);
+		atsCommand.setXmlSchemaInstance(WDWBusinessRules.XML_SCHEMA_INSTANCE);
+		atsCommand.setNoNamespaceSchemaLocation(NO_NAMESPACE_SCHEMA_LOCATION);
 
-	    // === Header Level ===
-	    OTHeaderTO hdr = WDWBusinessRules.transformOTHeader(dtiTxn,
-	    		REQUEST_TYPE_QUERY, REQUEST_SUBTYPE_QUERY_ELIGBLE_PRODUCTS);
-	    atsCommand.setHeaderTO(hdr);
+		// === Header Level ===
+		OTHeaderTO hdr = WDWBusinessRules.transformOTHeader(dtiTxn,
+				REQUEST_TYPE_QUERY, REQUEST_SUBTYPE_QUERYTICKET);
+		atsCommand.setHeaderTO(hdr);
 
-	    // === Manage Reservation Level ===
-	    OTQueryEligibleProductsTo otQryEligPrd = new OTQueryEligibleProductsTo();
+		// === Query Ticket Level ===
+		OTQueryTicketTO otQryTkt = new OTQueryTicketTO();
 
-	    // Tags
-	    ArrayList<String> tagList = otQryEligPrd.getTagsList();
-	    if (EXCEPTION_TSMAC.compareTo(payloadHdr.getTktSeller().getTsMac()) == 0) {
-	      for (int i = 0; i < QT_TAGS.length; i++) {
-	        tagList.add(QT_TAGS[i]);
-	      }
-	    }
-	    else {
-	      tagList.add(ALL_TAGS);
-	    }
+		// Tags
+		ArrayList<String> tagList = otQryTkt.getTagsList();
+		if (EXCEPTION_TSMAC.compareTo(payloadHdr.getTktSeller().getTsMac()) == 0) {
+			for (int i = 0; i < QT_TAGS.length; i++) {
+				tagList.add(QT_TAGS[i]);
+			}
+		} else {
+			tagList.add(ALL_TAGS);
+		}
 
+		// SiteNumber
+		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn
+				.getAttributeTOMap();
+		AttributeTO anAttributeTO = aMap
+				.get(AttributeTO.CmdAttrCodeType.SITE_NUMBER);
+		if (anAttributeTO == null) {
+			otQryTkt.setSiteNumber(WDWBusinessRules.getSiteNumberProperty());
+		} else {
+			otQryTkt.setSiteNumber(Integer.parseInt(anAttributeTO
+					.getAttrValue()));
+		}
+		// Ticket Information
+		ArrayList<TicketTO> dtiTicketList = dtiReq.getTktList();
+		TicketTO dtiTicket = dtiTicketList.get(0);
+		ArrayList<OTTicketInfoTO> otTicketList = otQryTkt.getTicketInfoList();
+		OTTicketTO otTicket = new OTTicketTO();
+		OTTicketInfoTO otTicketInfo = new OTTicketInfoTO();
+		otTicketInfo.setItem(new BigInteger(ITEMONE));
+		ArrayList<TicketIdType> dtiTicketTypeList = dtiTicket.getTicketTypes();
+		TicketIdType dtiTicketType = dtiTicketTypeList.get(0);
 
-	    // SiteNumber
-	    HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn
-	        .getAttributeTOMap();
-	    AttributeTO anAttributeTO = aMap
-	        .get(AttributeTO.CmdAttrCodeType.SITE_NUMBER);
-	    if (anAttributeTO == null) {
-	      otQryEligPrd.setSiteNumber(WDWBusinessRules.getSiteNumberProperty());
-	    }
-	    else {
-	      otQryEligPrd.setSiteNumber(Integer.parseInt(anAttributeTO
-	          .getAttrValue()));
-	    }
-	    // SalesType
-	    otQryEligPrd.setSaletype(dtiReq.getSaleType());
+		switch (dtiTicketType) {
 
-	    // Ticket Information
-	    TicketTO dtiTicket = dtiReq.getTicketTO();
-	    //TicketTO dtiTicket = dtiTicketList.get(0);
-	    ArrayList<OTTicketInfoTO> otTicketList = otQryEligPrd.getTicketInfoList();
-	    OTTicketTO otTicket = new OTTicketTO();
+		case DSSN_ID:
+			otTicket.setTDssn(dtiTicket.getDssnDate(), dtiTicket.getDssnSite(),
+					dtiTicket.getDssnStation(), dtiTicket.getDssnNumber());
+			break;
+		case TKTNID_ID:
+			otTicket.setTCOD(dtiTicket.getTktNID());
+			break;
+		case BARCODE_ID:
+			otTicket.setBarCode(dtiTicket.getBarCode());
+			break;
+		case MAG_ID:
+			otTicket.setMagTrack(dtiTicket.getMagTrack1());
+			break;
+		case EXTERNAL_ID:
+			otTicket.setExternalTicketCode(dtiTicket.getExternal());
+			break;
+		}
 
-	    OTTicketInfoTO otTicketInfo = new OTTicketInfoTO();
-	    otTicketInfo.setItem(new BigInteger(ITEMONE));
+		otTicketInfo.setTicketSearchMode(otTicket);
+		otTicketList.add(otTicketInfo);
 
-	    ArrayList<TicketIdType> dtiTicketTypeList = dtiTicket.getTicketTypes();
-	    TicketIdType dtiTicketType = dtiTicketTypeList.get(0);
+		// Set the Query Ticket TO on the command
+		atsCommand.setQueryTicketTO(otQryTkt);
 
-	    switch (dtiTicketType) {
+		// Get the XML String
+		xmlString = OTCommandXML.getXML(atsCommand);
 
-	    case DSSN_ID:
-	      otTicket.setTDssn(dtiTicket.getDssnDate(), dtiTicket.getDssnSite(),
-	          dtiTicket.getDssnStation(), dtiTicket.getDssnNumber());
-	      break;
-	    case TKTNID_ID:
-	      otTicket.setTCOD(dtiTicket.getTktNID());
-	      break;
-	    case BARCODE_ID:
-	      otTicket.setBarCode(dtiTicket.getBarCode());
-	      break;
-	    case MAG_ID:
-	      otTicket.setMagTrack(dtiTicket.getMagTrack1());
-	      break;
-	    case EXTERNAL_ID:
-	      otTicket.setExternalTicketCode(dtiTicket.getExternal());
-	      break;
-	    }
-
-	    otTicketInfo.setTicketSearchMode(otTicket);
-	    otTicketList.add(otTicketInfo);
-
-	    // Set the Query Eligible Products TO on the command
-	    atsCommand.setQueryEligbleProductsTO(otQryEligPrd);
-
-	    // Get the XML String
-	    xmlString = OTCommandXML.getXML(atsCommand);
-
-	    return xmlString;
-	  }
+		return xmlString;
+	}
 
 	  /**
 	   * Transforms a QueryEligibleResponse response string from the WDW provider and updates the DTITransactionTO object with the response information.
@@ -201,33 +189,27 @@ public class WDWQueryEligibleProductsRules {
 	   */
 	  static void transformResponseBody(DTITransactionTO dtiTxn,
 			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
-
+		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiTxn
+				.getRequest().getCommandBody();
 		QueryEligibilityProductsResponseTO dtiResRespTO = new QueryEligibilityProductsResponseTO();
-		OTQueryEligibleProductsTo otMngResTO = otCmdTO
-				.getQueryEligbleProductsTO();
+		OTQueryTicketTO otQryTicketTO = otCmdTO.getQueryTicketTO();
 		dtiRespTO.setCommandBody(dtiResRespTO);
 
-		// Price mismatch warning (invalid for void res - omitted)
-
 		// ResponseType
-
-		TicketTO ticketTo = dtiResRespTO.getTicketTO();
-		ArrayList<OTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
+		ArrayList<TicketTO> ticketListTo = dtiResRespTO.getTicketList();
+		ArrayList<OTTicketInfoTO> otTicketList = otQryTicketTO
+				.getTicketInfoList();
 		if ((otTicketList != null) && (otTicketList.size() > 0)) {
-
 			for (OTTicketInfoTO otTicketInfo : otTicketList) {
-
 				TicketTO dtiTicketTO = new TicketTO();
 				TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
 				newStatus.setStatusItem(otTicketInfo.getItem().toString());
 				newStatus.setStatusValue(otTicketInfo.getItemStatus()
 						.toString());
 				OTTicketTO otTicketTO = otTicketInfo.getTicket();
-
 				dtiTicketTO.setTktItem(otTicketInfo.getItem());
 				dtiTicketTO.setProdCode(otTicketInfo.getItem().toString());
 				dtiTicketTO.setProdPrice(otTicketInfo.getPrice());
-
 				dtiTicketTO.addTicketStatus(newStatus);
 				GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
 				String site = otTicketTO.getTdssnSite();
@@ -237,7 +219,6 @@ public class WDWQueryEligibleProductsRules {
 						&& station != "" && number != null && number != "") {
 					dtiTicketTO.setDssn(dssnDate, site, station, number);
 				}
-
 				if (otTicketTO.getMagTrack() != null
 						&& otTicketTO.getMagTrack() != "") {
 					dtiTicketTO.setMag(otTicketTO.getMagTrack());
@@ -253,25 +234,19 @@ public class WDWQueryEligibleProductsRules {
 						&& otTicketTO.getExternalTicketCode() != "") {
 					dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());
 				}
-
 				dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
 				dtiTicketTO.setTktTax(otTicketInfo.getTax());
-
 				if (otTicketInfo.getValidityStartDate() != null)
 					dtiTicketTO.setTktValidityValidStart(otTicketInfo
 							.getValidityStartDate());
-
 				if (otTicketInfo.getValidityEndDate() != null)
 					dtiTicketTO.setTktValidityValidEnd(otTicketInfo
 							.getValidityEndDate());
-
 				/*
 				 * // AccountId
 				 * dtiTicketTO.setAccountId(otTicketInfo.getAccountId());
-				 */dtiResRespTO.setTicketTO(dtiTicketTO);
-
+				 */dtiResRespTO.add(dtiTicketTO);
 			}
-
 		}
 		return;
 	}
