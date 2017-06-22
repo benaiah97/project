@@ -17,6 +17,7 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
+import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
@@ -31,6 +32,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTransactionDSSNTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUpgradeTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTVoucherTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
+import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
 
 /**
@@ -345,6 +347,10 @@ public class WDWUpgradeEntitlementRules {
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
     ProductRules.validateWdwTicketDemo(tktListTO);
+    
+    // RULE: Validate that if the "installment" type of payment is present,
+    ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
+    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
   }
 
