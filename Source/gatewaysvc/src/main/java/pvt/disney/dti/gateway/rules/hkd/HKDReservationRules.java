@@ -97,9 +97,6 @@ public class HKDReservationRules {
   /** Constant indicating the item type of ticket. */
   private final static String ITEM_TYPE = "T";
 
-  /** The Constant MANUALMAILORDER. */
-  private final static String MANUALMAILORDER = "ManualMailOrder";
-  
   /** The Constant OFFSITE. */
   private final static String OFFSITE = "Offsite";
 
@@ -190,6 +187,7 @@ public class HKDReservationRules {
   }
 
   /**
+   * TODO:  After the new approach is validated, please remove. 
    * Assign a reservation code based on reservation code rules. If it is not a
    * rework, and the attribute is not set to not use race rescode generation,
    * then create a new rescode and insert it into the the transaction id rescode
@@ -204,72 +202,133 @@ public class HKDReservationRules {
    * @throws DTIException
    *           the DTI exception
    */
-  private static String assignResCode(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq) throws DTIException {
-    String resCode = null;
-    String sellerResPrefix = null;
-    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
-    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
-	
-    boolean isRework = dtiTxn.isRework();
-    //no check for RACE override for HKDL needed at this time
-    
-//    // if this is a re-work, a reservation code should exist
-//    if (isRework) {
-//      // Get the reservation code array (there should only be one)
-//    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-//    	
-//    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
-//   	if (rescodeTO == null) {
+//  private static String assignResCode(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq) throws DTIException {
+//    String resCode = null;
+//    String sellerResPrefix = null;
+//    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+//    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+//	
+//    boolean isRework = dtiTxn.isRework();
+//    //no check for RACE override for HKDL needed at this time
+//    
+////    // if this is a re-work, a reservation code should exist
+////    if (isRework) {
+////      // Get the reservation code array (there should only be one)
+////    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+////    	
+////    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
+////   	if (rescodeTO == null) {
+////        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+// //       String sellerResPrefix = resPrefixAttr.getAttrValue();
+////        // generate the rescode and insert it into the database payload/rescode
+////        // ref table
+////        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+////        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+////    	} else {
+////    	  resCode = rescodeTO.getRescode();
+////    	}
+////    	
+////    } else { // it is not a rework so generate rescode from RACE utility
+////    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+////    	String sellerResPrefix = resPrefixAttr.getAttrValue();
+////    	// generate the rescode and insert it into the database payload/rescode
+////    	// ref table
+////    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+////    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+////    }
+////    return resCode;
+//    
+//    if ((isRework)) {
+//		  // Get the reservation code array (there should only be one)
+//		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+//		  
+//    // Contingency assignment (should be infrequent that res isn't found in DB for rework)
+//    if (rescodeTO == null) {
 //        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
- //       String sellerResPrefix = resPrefixAttr.getAttrValue();
-//        // generate the rescode and insert it into the database payload/rescode
-//        // ref table
-//        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-//        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-//    	} else {
-//    	  resCode = rescodeTO.getRescode();
-//    	}
-//    	
-//    } else { // it is not a rework so generate rescode from RACE utility
-//    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-//    	String sellerResPrefix = resPrefixAttr.getAttrValue();
-//    	// generate the rescode and insert it into the database payload/rescode
-//    	// ref table
-//    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-//    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+//        sellerResPrefix = resPrefixAttr.getAttrValue();
+//       resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+//    } else {
+//       resCode = rescodeTO.getRescode();
 //    }
-//    return resCode;
+//
+//	  } else if ( (!isRework)) { //not rework, and no race override
+//		  AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+//	      sellerResPrefix = resPrefixAttr.getAttrValue();
+//		  resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+//	  } else {
+//		    // and insert it into the database payload/rescode ref table	      
+//	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+//		    logger.sendEvent(
+//		            "HKD RACE_RES_OVERRIDE present for reservation code generation.",
+//		            EventType.INFO, THISOBJECT);
+//	  }
+//	  
+//	  return resCode;
+//  }
+
+  private static String assignResCode(DTITransactionTO dtiTxn,
+      ReservationRequestTO dtiResReq) throws DTIException {
     
-    if ((isRework)) {
-		  // Get the reservation code array (there should only be one)
-		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-		  
-    // Contingency assignment (should be infrequent that res isn't found in DB for rework)
-    if (rescodeTO == null) {
-        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-        sellerResPrefix = resPrefixAttr.getAttrValue();
-       resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
-    } else {
-       resCode = rescodeTO.getRescode();
+    String resCode = null;
+    String candidateResCode = null;
+    String sellerResPrefix = null;
+
+    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+    AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
+    
+    AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+    sellerResPrefix = resPrefixAttr.getAttrValue();
+    
+    if (resOverrideAttr != null) {
+      return resCode; // null
+    }
+    
+    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+    boolean isRework = dtiTxn.isRework();
+    
+    // If this is a rework, there is likely a res code already logged.
+    // Attempt to get it.
+    if (isRework) {
+      TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      if (rescodeTO != null) {
+         resCode = rescodeTO.getRescode();
+      }
+    } 
+
+    // If this isn't rework, then it is likely you need to create a res code.
+    // Attempt to do so.
+    if (!isRework) {     
+       candidateResCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+       resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
+    } 
+    
+    // If you get here with no resCode, it's likely that there wasn't one 
+    // when you were expecting it or a res code duplicate was found.
+    // Try 10 times to create.  If you can, great.  If not, error.
+    if (resCode == null) {
+      
+      logger.sendEvent("Initial reservation code generation failure.  Reattempting for payload ID: " + payloadId,EventType.WARN, THISOBJECT);
+    
+      int counter = 0;
+      while ((resCode == null) && (counter < 10)) {
+        candidateResCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+        resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
+        counter++;
+      }
+      
+      // After 10 times, you weren't able to create a res code and store it. Error out.
+      if (resCode == null) {
+        throw new DTIException(HKDReservationRules.class, DTIErrorCode.CANNOT_GEN_RESCODE,
+            "Cannot generate reservation code after ten attempts.");
+      }
     }
 
-	  } else if ( (!isRework)) { //not rework, and no race override
-		  AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
-	      sellerResPrefix = resPrefixAttr.getAttrValue();
-		  resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
-	  } else {
-		    // and insert it into the database payload/rescode ref table	      
-	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-		    logger.sendEvent(
-		            "HKD RACE_RES_OVERRIDE present for reservation code generation.",
-		            EventType.INFO, THISOBJECT);
-	  }
-	  
-	  return resCode;
+    return resCode;
   }
-
+  
   /**
   * Creates the reservation code by attempting multiple times if there is an insert problem.
+  * TODO:  Address the fact that this method is no longer called. 
   * @param dtiTxn
   * @param resCode
   * @param payloadId
@@ -390,11 +449,11 @@ public class HKDReservationRules {
 
     
     //Check if this is a package that should be set as printed and validated
-    // == Is this a packege == //
+    // == Is this a package == //
     isPackage = helpIsPackage(dtiRes);
     
     if (isPackage) { 
-    	//this is a pacage, set printed and validated to true
+    	//this is a package, set printed and validated to true
     	otRes.setPrinted(new Boolean(true));
     	otRes.setValidated(new Boolean(true));
     } else {
