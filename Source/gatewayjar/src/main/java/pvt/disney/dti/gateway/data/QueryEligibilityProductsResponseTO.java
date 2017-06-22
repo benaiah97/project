@@ -1,6 +1,7 @@
 package pvt.disney.dti.gateway.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -14,23 +15,24 @@ public class QueryEligibilityProductsResponseTO extends CommandBodyTO implements
 	  /** Standard serial version UID. */
 	  final static long serialVersionUID = 91292311005L;
 	  /**
-	   * An array list of tickets (although generally there should only be one, this matches the XML specification.
-	   */
-	  private TicketTO ticketTO = new TicketTO();
+		 * An array list to hold the ticket response. Note that there is generally only one, but that the object allows for more since the XSD supports it.
+		 */
+		private ArrayList<TicketTO> ticketList = new ArrayList<TicketTO>();
 	  private String saleType;
 
+	
 	/**
-	 * @return the ticketTO
+	 * @return the ticketList
 	 */
-	public TicketTO getTicketTO() {
-		return ticketTO;
+	public ArrayList<TicketTO> getTicketList() {
+		return ticketList;
 	}
 
 	/**
-	 * @param ticketTO the ticketTO to set
+	 * @param ticketList the ticketList to set
 	 */
-	public void setTicketTO(TicketTO ticketTO) {
-		this.ticketTO = ticketTO;
+	public void add(TicketTO ticketTO) {
+		this.ticketList.add(ticketTO);
 	}
 
 	/**
