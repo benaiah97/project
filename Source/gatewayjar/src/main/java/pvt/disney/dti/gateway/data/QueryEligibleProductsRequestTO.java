@@ -1,6 +1,7 @@
 package pvt.disney.dti.gateway.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -15,39 +16,23 @@ public class QueryEligibleProductsRequestTO extends CommandBodyTO implements Ser
 	  /**
 	   * An array list of tickets (although generally there should only be one, this matches the XML specification.
 	   */
-	  private TicketTO ticketTO = new TicketTO();
-	  private String saleType;
+	  /**
+	   * An array list of tickets (although generally there should only be one, this matches the XML specification.
+	   */
+	  private ArrayList<TicketTO> tktList = new ArrayList<TicketTO>();
 
 	/**
-	 * @return the ticketTO
+	 * @return the tktList
 	 */
-	public TicketTO getTicketTO() {
-		return ticketTO;
+	public ArrayList<TicketTO> getTktList() {
+		return tktList;
 	}
 
 	/**
-	 * @param ticketTO the ticketTO to set
+	 * @param tktList the tktList to set
 	 */
-	public void setTicketTO(TicketTO ticketTO) {
-		this.ticketTO = ticketTO;
+	public void add(TicketTO ticketTO) {
+		this.tktList.add(ticketTO);
 	}
-
-	/**
-	 * @return the saleType
-	 */
-	public String getSaleType() {
-		return saleType;
-	}
-
-	/**
-	 * @param saleType the saleType to set
-	 */
-	public void setSaleType(String saleType) {
-		this.saleType = saleType;
-	}
-
-	 
-	 
-
-	  
+		  
 }

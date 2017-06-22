@@ -326,6 +326,9 @@ public class TicketTO implements Serializable, Cloneable {
   /** get the eligibility criteria for the current ticket */
   private ResultStatusTo resultType;
   
+  /** get the sale Type for the current ticket */
+  private String saleType;
+  
   /**
    * @return the showGroup
    */
@@ -1202,6 +1205,21 @@ public ResultStatusTo getResultType() {
 public void setResultType(ResultStatusTo resultType) {
 	this.resultType = resultType;
 }
+
+/**
+ * @return the saleType
+ */
+public String getSaleType() {
+	return saleType;
+}
+
+/**
+ * @param saleType the saleType to set
+ */
+public void setSaleType(String saleType) {
+	this.saleType = saleType;
+}
+
 
 
   
