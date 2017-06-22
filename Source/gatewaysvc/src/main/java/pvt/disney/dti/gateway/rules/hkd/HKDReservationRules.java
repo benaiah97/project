@@ -179,9 +179,12 @@ public class HKDReservationRules {
     // RULE: Validate that reservation notes are valid for ATS (JTL, as of 2.17.2)
     ContentRules.validateATSNoteDetails(dtiResReq);
 
-    // RULE: assignResCode
-    String resCode = assignResCode(dtiTxn, dtiResReq);
-    dtiResReq.getReservation().setResCode(resCode);
+    //RULE: If the reservation code wasn't supplied, attempt to assign one. (2.17.2 - JTL)
+    if (dtiResReq.getReservation().getResCode() == null) {
+       String resCode = assignResCode(dtiTxn,dtiResReq);
+       dtiResReq.getReservation().setResCode(resCode);
+    }
+    
 
     return;
   }
