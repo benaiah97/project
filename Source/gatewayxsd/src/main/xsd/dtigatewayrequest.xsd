@@ -3293,7 +3293,7 @@
 	<xs:element name="QueryEligibleProductsRequest">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Ticket" minOccurs="1" maxOccurs="1">
+				<xs:element name="Ticket" minOccurs="1" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="TktItem" type="xs:integer"/>
