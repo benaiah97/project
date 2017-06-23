@@ -2217,8 +2217,7 @@
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
-												<!-- consider making this an optional string -->
-												<xs:attribute name="Gender">
+												<xs:attribute name="Gender" use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>

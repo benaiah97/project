@@ -1201,28 +1201,13 @@ public class WDWBusinessRules {
 
       String payloadId = null;
       OTTransactionType requestType = otCmdTO.getTxnType();
-      TransactionType dtiTransType = dtiTxn.getTransactionType();
-
+      
       switch (requestType) {
 
       case QUERYTICKET:
-    	  
-    	  switch(dtiTransType){
-    	  //When the transaction type is QUERYTICKET
-    	  case QUERYTICKET: 	  
-    		WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-    	        break;
-    	     // added as a part of AP Upgrade Service
-    	     // TODO this may not be necessary as we may not need to even return the response back to the client
-    	  case QUERYELIGIBLEPRODUCTS:
-    		WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        	  break;
-		
-    	  default:
-			
-			break;
-    	  }
-    	  break;
+    	 
+    	WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+    	   break;
 
       case VOIDTICKET:
 
@@ -1249,24 +1234,17 @@ public class WDWBusinessRules {
       TransactionType dtiTransType = dtiTxn.getTransactionType();
 
       switch (requestType) {
-      // TODO potential changes of style from switch/case to if/else or vice versa (see how UPGRADETICKET is done)
+      
       case QUERYTICKET:
-    	  
-    	  switch(dtiTransType){
-    	  
-    	  case QUERYTICKET: 	  
-    		  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-    	        break;
-    	  
-    	  case QUERYELIGIBLEPRODUCTS:
-    		// added as a part of AP Upgrade Service
-        	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        	  break;
-		
-    	  default:
-			break;
-    	  }
-    	  break;
+    	  // Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
+       if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYTICKET){
+    	  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+       }
+    	// if the transaction type is of Query Eligible Products
+       else if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS){
+    	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+       }
+       break;
 
       case UPGRADETICKET:
 

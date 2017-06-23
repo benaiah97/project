@@ -24,6 +24,7 @@ import pvt.disney.dti.gateway.data.AssociateMediaToAccountRequestTO;
 import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.QueryReservationRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementRequestTO;
@@ -174,8 +175,7 @@ public abstract class BusinessRules {
       break;
       
     case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
-    	// TODO a couple of small items - like type checks
-    	// a couple of small checks, like in "applyVoidReservationRules" e.g. type of TO etc.
+    	applyEligibleProductRules(dtiTxn); // Adding the 
       break;   
 
     default:
@@ -853,6 +853,40 @@ public abstract class BusinessRules {
 
     return;
   }  
+  /**
+   * Apply Query Eligible Product business rules.
+   * 
+   * @param dtiTxn
+   *            the DTI transaction
+   * 
+   * @throws DTIException
+   *             should any rule fail.
+   */
+public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTIException{
+
+	    // RULE: Is this a QueryEligibleProducts Rule TO?
+	    CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
+	    if (commandBody.getClass() != QueryEligibleProductsRequestTO.class) {
+	      throw new DTIException(
+	          BusinessRules.class,
+	          DTIErrorCode.DTI_PROCESS_ERROR,
+	          "Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
+	    }
+
+	    // RULE: Is this type of reservation identifier supported for a query?
+	    QueryEligibleProductsRequestTO queryEligibleProducts = (QueryEligibleProductsRequestTO) dtiTxn
+	        .getRequest().getCommandBody();
+	    if ((queryEligibleProducts.getTktList() == null)||queryEligibleProducts.getTktList().size()==0) {
+	      throw new DTIException(
+	          BusinessRules.class,
+	          DTIErrorCode.INVALID_MSG_CONTENT,
+	          "Query Eligible Product attempted with no ticket");
+	    }
+
+	    return;
+	  
+	  
+  }
   
   /**
    * Apply upgrade entitlement business rules.
