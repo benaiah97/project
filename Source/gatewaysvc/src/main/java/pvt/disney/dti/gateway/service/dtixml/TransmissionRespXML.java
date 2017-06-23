@@ -375,10 +375,12 @@ public class TransmissionRespXML {
       RenewEntitlementResponse qRenewResp = new RenewEntitlementResponse();
       cmd.setRenewEntitlementResponse(qRenewResp);
       break;
+      
     case QUERYELIGIBLEPRODUCTS:
     	QueryEligibleProductsResponse qEligResp=new QueryEligibleProductsResponse();
     	cmd.setQueryEligibleProductsResponse(qEligResp);
-
+    	break;
+    	
     default:
       break;
 

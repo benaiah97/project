@@ -872,19 +872,7 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
 	          DTIErrorCode.DTI_PROCESS_ERROR,
 	          "Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
 	    }
-
-	    // RULE: Is this type of reservation identifier supported for a query?
-	    QueryEligibleProductsRequestTO queryEligibleProducts = (QueryEligibleProductsRequestTO) dtiTxn
-	        .getRequest().getCommandBody();
-	    if ((queryEligibleProducts.getTktList() == null)||queryEligibleProducts.getTktList().size()==0) {
-	      throw new DTIException(
-	          BusinessRules.class,
-	          DTIErrorCode.INVALID_MSG_CONTENT,
-	          "Query Eligible Product attempted with no ticket");
-	    }
-
 	    return;
-	  
 	  
   }
   
