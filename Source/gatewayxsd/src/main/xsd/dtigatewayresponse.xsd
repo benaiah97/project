@@ -2200,6 +2200,7 @@
 									<xs:sequence>
 										<xs:element name="DemoData" minOccurs="0">
 											<xs:complexType>
+												<!-- include all demographics, looks like optin/out is missing -->
 												<xs:attribute name="Name" type="xs:string" use="optional"/>
 												<xs:attribute name="LastName" type="xs:string" use="optional"/>
 												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
@@ -2216,6 +2217,7 @@
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
+												<!-- consider making this an optional string -->
 												<xs:attribute name="Gender">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">

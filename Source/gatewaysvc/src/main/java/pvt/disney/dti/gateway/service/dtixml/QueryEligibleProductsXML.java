@@ -51,6 +51,7 @@ public class QueryEligibleProductsXML {
 			 * order: barcode, external, nid, mag, dssn
 			 */
 			//Ticket
+			// TODO formatting/commenting for each if statement to space it out and comment on logic
 			if (tktId.getBarcode() != null) {
 				aTicketTO.setBarCode(tktId.getBarcode());
 			} else {
@@ -72,6 +73,7 @@ public class QueryEligibleProductsXML {
 								aTicketTO.setMag(mag1);
 							}
 						} else {
+							// TODO can this be broken out into separate method?
 							if (tktId.getTktDSSN() != null) {
 								QueryEligibleProductsRequest.Ticket.TktID.TktDSSN tktDssn = tktId
 										.getTktDSSN();
@@ -137,6 +139,7 @@ public class QueryEligibleProductsXML {
 				}
 			}
 			// Ticket Demographics
+			// TODO add all demographic including optin/out
 			if ((aTicketTO.getTicketDemoList() != null)
 					&& (aTicketTO.getTicketDemoList().size() == 1)) {
 
@@ -240,24 +243,8 @@ public class QueryEligibleProductsXML {
 			if (typeList.size() > 0) {
 
 				QueryEligibleProductsResponse.Ticket.TktID tktIdObj = new QueryEligibleProductsResponse.Ticket.TktID();
-
-				/*
-				 * // Mag Code? if
-				 * (typeList.contains(TicketTO.TicketIdType.MAG_ID)) { String
-				 * tktMagTO = aTicketTO.getMagTrack1(); qName = new
-				 * QName("Mag"); JAXBElement<String> tktMag = new
-				 * JAXBElement(qName, tktMagTO.getClass(), tktMagTO);
-				 * tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktMag); }
-				 */
-
-				/*
-				 * // Bar Code? if
-				 * (typeList.contains(TicketTO.TicketIdType.BARCODE_ID)) {
-				 * String tktBarTO = aTicketTO.getBarCode(); qName = new
-				 * QName("Barcode"); JAXBElement<String> tktBar = new
-				 * JAXBElement(qName, tktBarTO.getClass(), tktBarTO);
-				 * tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktBar); }
-				 */
+				
+				// MagCode and Barcode are intentionally omitted				
 
 				// Tkt DSSN?
 				if (typeList.contains(TicketTO.TicketIdType.DSSN_ID)) {

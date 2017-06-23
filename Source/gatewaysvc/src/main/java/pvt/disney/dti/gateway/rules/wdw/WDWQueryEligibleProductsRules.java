@@ -92,7 +92,6 @@ public class WDWQueryEligibleProductsRules {
 	   *             when any transformation error is encountered.
 	   */
 	static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
-
 		String xmlString = null;
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
 		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
@@ -189,6 +188,7 @@ public class WDWQueryEligibleProductsRules {
 	   */
 	  static void transformResponseBody(DTITransactionTO dtiTxn,
 			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
+		// TODO space this out, need to change format/style, Todd will share the formatter with everyone
 		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiTxn
 				.getRequest().getCommandBody();
 		QueryEligibilityProductsResponseTO dtiResRespTO = new QueryEligibilityProductsResponseTO();
