@@ -174,7 +174,8 @@ public abstract class BusinessRules {
       break;
       
     case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
-    	// To Do 
+    	// TODO a couple of small items - like type checks
+    	// a couple of small checks, like in "applyVoidReservationRules" e.g. type of TO etc.
       break;   
 
     default:

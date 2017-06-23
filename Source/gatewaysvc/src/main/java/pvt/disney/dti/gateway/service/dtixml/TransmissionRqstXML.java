@@ -122,8 +122,17 @@ public class TransmissionRqstXML {
     return getDtiTransactionTo(requestType, tktBroker, jaxbReq);
 
   }
-
-  public static DTITransactionTO getDtiTransactionTo(
+  
+ 
+  /**
+   * TODO Complete JavaDoc
+ * @param requestType
+ * @param tktBroker
+ * @param jaxbReq
+ * @return
+ * @throws JAXBException
+ */
+private static DTITransactionTO getDtiTransactionTo(
 		TransactionType requestType, String tktBroker, Transmission jaxbReq)
 		throws JAXBException {
 	DTITransactionTO dtiTransTO;
