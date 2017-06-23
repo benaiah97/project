@@ -300,7 +300,7 @@ public class TransmissionRespXML {
 	  QueryEligibleProductsResponse qEligResp = QueryEligibleProductsXML
 		  .getJaxb(queryEligRespTo, errorTO);
 	  cmd.setQueryEligibleProductsResponse(qEligResp);
-    break;
+      break;
 
     default:
       break;

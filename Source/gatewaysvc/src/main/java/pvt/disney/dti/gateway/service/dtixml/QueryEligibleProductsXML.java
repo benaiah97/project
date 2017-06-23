@@ -38,65 +38,90 @@ public class QueryEligibleProductsXML {
 	 */
 	public static QueryEligibleProductsRequestTO getTO(
 			QueryEligibleProductsRequest queryReq) throws JAXBException {
-		QueryEligibleProductsRequestTO queryEligTo = new QueryEligibleProductsRequestTO();
-		List<QueryEligibleProductsRequest.Ticket> ticketList = queryReq.getTicket();
+		
+	 QueryEligibleProductsRequestTO queryEligTo = new QueryEligibleProductsRequestTO();
+		
+	 List<QueryEligibleProductsRequest.Ticket> ticketList = queryReq.getTicket();
 				
-		for /* each */(QueryEligibleProductsRequest.Ticket aTicket : /* in */ticketList){
-			TicketTO aTicketTO = new TicketTO();
-			aTicketTO.setTktItem(aTicket.getTktItem());
-			QueryEligibleProductsRequest.Ticket.TktID tktId = aTicket.getTktID();
-			/*
-			 * According to XML Specification, only one ticket identity is to be
-			 * passed. If multiple or present, then accept the first one in this
-			 * order: barcode, external, nid, mag, dssn
-			 */
-			//Ticket
-			// TODO formatting/commenting for each if statement to space it out and comment on logic
-			if (tktId.getBarcode() != null) {
-				aTicketTO.setBarCode(tktId.getBarcode());
-			} else {
-				if (tktId.getExternal() != null) {
-					aTicketTO.setExternal(tktId.getExternal());
-				} else {
-					if (tktId.getTktNID() != null) {
-						aTicketTO.setTktNID(tktId.getTktNID());
-					} else {
-						if (tktId.getMag() != null) {
-							QueryEligibleProductsRequest.Ticket.TktID.Mag tktMag = tktId
-									.getMag();
-							String mag1 = tktMag.getMagTrack1();
-							String mag2 = tktMag.getMagTrack2();
+	 for /* each */(QueryEligibleProductsRequest.Ticket aTicket : /* in */ticketList){
+			
+	  TicketTO aTicketTO = new TicketTO();
+			
+	  aTicketTO.setTktItem(aTicket.getTktItem());
+			
+	  /* According to XML Specification, only one ticket identity is to be  passed. If multiple or present, then accept the first one in this
+			 * order: barcode, external, nid, mag, dssn	 */
+	  //Ticket
+	  // Barcode
+	  if(aTicket.getTktID().getBarcode()!=null){
+		 aTicketTO.setBarCode(aTicket.getTktID().getBarcode());
+	  }
+	  // External
+	  else if(aTicket.getTktID().getExternal() != null){
+		 aTicketTO.setExternal(aTicket.getTktID().getExternal());
+	  }
+	  // TCod
+	  else if(aTicket.getTktID().getTktNID() != null){
+		 aTicketTO.setTktNID(aTicket.getTktID().getTktNID());
+	  }
+	  // MagCode (looking for both MagTrack1, MagTrack2)
+	  else if(aTicket.getTktID().getMag() != null){
+		 setTicketMag(aTicketTO, aTicket);
+	  }
+	  // DSSN
+	  else if(aTicket.getTktID().getTktDSSN()!=null){
+		 setTicketDSSN(aTicketTO, aTicket);
+	  }
+	 
+	  aTicketTO.setSaleType(aTicket.getSaleType());
+	  //Adding aTicketTO to the EligibleProductRequestTO
+	  queryEligTo.add(aTicketTO);
+	 }
 
-							if (mag2 != null) {
-								aTicketTO.setMag(mag1, mag2);
-							} else {
-								aTicketTO.setMag(mag1);
-							}
-						} else {
-							// TODO can this be broken out into separate method?
-							if (tktId.getTktDSSN() != null) {
-								QueryEligibleProductsRequest.Ticket.TktID.TktDSSN tktDssn = tktId
-										.getTktDSSN();
-								XMLGregorianCalendar tXCal = tktDssn.getTktDate();
-								GregorianCalendar tempCalendar = new GregorianCalendar(
-										tXCal.getEonAndYear().intValue(),
-										(tXCal.getMonth() - 1), tXCal.getDay());
-								aTicketTO.setDssn(tempCalendar,
-										tktDssn.getTktSite(),
-										tktDssn.getTktStation(),
-										tktDssn.getTktNbr());
-							}
-						}
-					}
-				}
-			}
-			aTicketTO.setSaleType(aTicket.getSaleType());
-			//Adding aTicketTO to the EligibleProductRequestTO
-			queryEligTo.add(aTicketTO);
-		}
+	  return queryEligTo;
 
-		return queryEligTo;
+	}
+	/**
+	 * if ticket is of type DSSN 
+	 * @param aTicketTO
+	 * @param tktId
+	 */
+	private static void setTicketDSSN(TicketTO aTicketTO,QueryEligibleProductsRequest.Ticket aTicket){
+	  
+	  //fetching the value of TktDSSN from ticket
+	  QueryEligibleProductsRequest.Ticket.TktID.TktDSSN tktDssn = aTicket.getTktID()
+		 	.getTktDSSN();
+		
+	  XMLGregorianCalendar tXCal = tktDssn.getTktDate();
+	  GregorianCalendar tempCalendar = new GregorianCalendar(
+					tXCal.getEonAndYear().intValue(),
+					(tXCal.getMonth() - 1), tXCal.getDay());
+		
+	  aTicketTO.setDssn(tempCalendar,
+					tktDssn.getTktSite(),
+					tktDssn.getTktStation(),
+					tktDssn.getTktNbr());
+    }
+	
+	/**
+	 * When the ticket if of type DSSN
+	 * @param aTicketTO
+	 * @param aTicket
+	 */
+	private static void setTicketMag(TicketTO aTicketTO,QueryEligibleProductsRequest.Ticket aTicket){
+		
+	  //fetching the value of TktDSSN from ticket
+	  QueryEligibleProductsRequest.Ticket.TktID.Mag tktMag = aTicket.getTktID().getMag();
+	        
+	  String mag1 = tktMag.getMagTrack1();
+	  String mag2 = tktMag.getMagTrack2();
 
+	  if (mag2 != null) {
+	   aTicketTO.setMag(mag1, mag2);
+	  } 
+	  else {
+	   aTicketTO.setMag(mag1);
+	  }
 	}
 
 	/**
@@ -114,85 +139,94 @@ public class QueryEligibleProductsXML {
 	public static QueryEligibleProductsResponse getJaxb(
 			QueryEligibilityProductsResponseTO qryResRespTO, DTIErrorTO errorTO)
 			throws JAXBException {
-		QueryEligibleProductsResponse resp = new QueryEligibleProductsResponse();
+		
+		QueryEligibleProductsResponse queryEligPrdResp = new QueryEligibleProductsResponse();
+		
 		ArrayList<TicketTO> aTicketTOList = qryResRespTO.getTicketList();
+		
 		QueryEligibleProductsResponse.Ticket aTicket = new QueryEligibleProductsResponse.Ticket();
+		
 		QName qName = null;
-		List<QueryEligibleProductsResponse.Ticket> ticketList = resp
-				.getTicket();
+		
+		// Can have multiple Ticket
 		for /* each */(TicketTO aTicketTO : /* in */aTicketTOList) {
-			// TktStatus?
-			ArrayList<TktStatusTO> statusListTO = aTicketTO.getTktStatusList();
-			if (statusListTO != null) {
-				if (statusListTO.size() > 0) {
-					for /* each */(TktStatusTO aStatusTO : /* in */statusListTO) {
-						QueryEligibleProductsResponse.Ticket.TktStatus tktStatus = new QueryEligibleProductsResponse.Ticket.TktStatus();
-						tktStatus.setStatusItem(aStatusTO.getStatusItem());
-						tktStatus.setStatusValue(aStatusTO.getStatusValue());
-						qName = new QName("TktStatus");
-						JAXBElement<String> tktStatusElement = new JAXBElement(
-								qName, tktStatus.getClass(), tktStatus);
-						aTicket.getTktItemOrTktIDOrProdCode().add(
+		 // TktStatus?
+		 ArrayList<TktStatusTO> statusListTO = aTicketTO.getTktStatusList();
+		 if (statusListTO != null) {
+				
+		  if (statusListTO.size() > 0) {
+		
+		   for /* each */(TktStatusTO aStatusTO : /* in */statusListTO) {
+	
+			QueryEligibleProductsResponse.Ticket.TktStatus tktStatus = new QueryEligibleProductsResponse.Ticket.TktStatus();
+			
+			// Setting up the status item  
+			tktStatus.setStatusItem(aStatusTO.getStatusItem());
+			tktStatus.setStatusValue(aStatusTO.getStatusValue());
+			qName = new QName("TktStatus");
+			
+			JAXBElement<String> tktStatusElement = new JAXBElement(
+			qName, tktStatus.getClass(), tktStatus);
+			aTicket.getTktItemOrTktIDOrProdCode().add(
 								tktStatusElement);
 
-					}
-				}
-			}
+		   }
+		  }
+		 }
 			// Ticket Demographics
 			// TODO add all demographic including optin/out
-			if ((aTicketTO.getTicketDemoList() != null)
-					&& (aTicketTO.getTicketDemoList().size() == 1)) {
+		 if ((aTicketTO.getTicketDemoList() != null)
+			&& (aTicketTO.getTicketDemoList().size() == 1)) {
 
-				if (aTicketTO.getTicketDemoList().get(0) != null) {
+		  if (aTicketTO.getTicketDemoList().get(0) != null) {
 
-					DemographicsTO aDemoTO = aTicketTO.getTicketDemoList().get(
-							0);
-					QueryEligibleProductsResponse.Ticket.TktDemographics tktDemo = new QueryEligibleProductsResponse.Ticket.TktDemographics();
-					QueryEligibleProductsResponse.Ticket.TktDemographics.DemoData demoData = new QueryEligibleProductsResponse.Ticket.TktDemographics.DemoData();
+		   DemographicsTO aDemoTO = aTicketTO.getTicketDemoList().get(0);
+		   
+		   QueryEligibleProductsResponse.Ticket.TktDemographics tktDemo = new QueryEligibleProductsResponse.Ticket.TktDemographics();
+		   QueryEligibleProductsResponse.Ticket.TktDemographics.DemoData demoData = new QueryEligibleProductsResponse.Ticket.TktDemographics.DemoData();
+           
+		   if (aDemoTO.getName() != null) {
+			 	demoData.setName(aDemoTO.getName());
+		   }
+  		    if (aDemoTO.getFirstName() != null) {
+				 demoData.setFirstName(aDemoTO.getFirstName());
+			}
 
-					if (aDemoTO.getName() != null) {
-						demoData.setName(aDemoTO.getName());
-					}
+			 if (aDemoTO.getLastName() != null) {
+				  demoData.setLastName(aDemoTO.getLastName());
+			 }
 
-					if (aDemoTO.getFirstName() != null) {
-						demoData.setFirstName(aDemoTO.getFirstName());
-					}
+			  if (aDemoTO.getAddr1() != null) {
+				   demoData.setAddr1(aDemoTO.getAddr1());
+			  }
 
-					if (aDemoTO.getLastName() != null) {
-						demoData.setLastName(aDemoTO.getLastName());
-					}
+			   if (aDemoTO.getAddr2() != null) {
+					demoData.setAddr2(aDemoTO.getAddr2());
+			   }
 
-					if (aDemoTO.getAddr1() != null) {
-						demoData.setAddr1(aDemoTO.getAddr1());
-					}
+				if (aDemoTO.getCity() != null) {
+					 demoData.setCity(aDemoTO.getCity());
+				}
 
-					if (aDemoTO.getAddr2() != null) {
-						demoData.setAddr2(aDemoTO.getAddr2());
-					}
+				 if (aDemoTO.getState() != null) {
+					  demoData.setState(aDemoTO.getState());
+				 }
 
-					if (aDemoTO.getCity() != null) {
-						demoData.setCity(aDemoTO.getCity());
-					}
+				  if (aDemoTO.getZip() != null) {
+					   demoData.setZip(aDemoTO.getZip());
+				  }
 
-					if (aDemoTO.getState() != null) {
-						demoData.setState(aDemoTO.getState());
-					}
-
-					if (aDemoTO.getZip() != null) {
-						demoData.setZip(aDemoTO.getZip());
-					}
-
-					if (aDemoTO.getCountry() != null) {
+				   if (aDemoTO.getCountry() != null) {
 						demoData.setCountry(aDemoTO.getCountry());
-					}
+				   }
 
 					if (aDemoTO.getTelephone() != null) {
-						demoData.setTelephone(aDemoTO.getTelephone());
+						 demoData.setTelephone(aDemoTO.getTelephone());
 					}
 
-					if (aDemoTO.getEmail() != null) {
-						demoData.setEmail(aDemoTO.getEmail());
-					}
+					 if (aDemoTO.getEmail() != null) {
+						 demoData.setEmail(aDemoTO.getEmail());
+					 }
 
 					// As of 2.16.1, JTL 052316
 					if (aDemoTO.getDateOfBirth() != null) {
@@ -219,10 +253,12 @@ public class QueryEligibleProductsXML {
 			// TktValidity?
 			if ((aTicketTO.getTktValidityValidStart() != null)
 					&& (aTicketTO.getTktValidityValidEnd() != null)) {
+				
 				QueryEligibleProductsResponse.Ticket.TktValidity tktValidity = new QueryEligibleProductsResponse.Ticket.TktValidity();
 
 				XMLGregorianCalendar xCalDate = UtilXML.convertToXML(aTicketTO
 						.getTktValidityValidStart());
+				
 				tktValidity.setValidStart(xCalDate);
 
 				xCalDate = UtilXML.convertToXML(aTicketTO
@@ -230,8 +266,10 @@ public class QueryEligibleProductsXML {
 				tktValidity.setValidEnd(xCalDate);
 
 				qName = new QName("TktValidity");
+				
 				JAXBElement<String> tktValidityElement = new JAXBElement(qName,
 						tktValidity.getClass(), tktValidity);
+				
 				aTicket.getTktItemOrTktIDOrProdCode().add(tktValidityElement);
 
 			}
@@ -248,20 +286,27 @@ public class QueryEligibleProductsXML {
 
 				// Tkt DSSN?
 				if (typeList.contains(TicketTO.TicketIdType.DSSN_ID)) {
+			
 					QueryEligibleProductsResponse.Ticket.TktID.TktDSSN tktDssn = new QueryEligibleProductsResponse.Ticket.TktID.TktDSSN();
 					tktDssn.setTktDate(aTicketTO.getDssnDateString());
 					tktDssn.setTktNbr(aTicketTO.getDssnNumber());
 					tktDssn.setTktSite(aTicketTO.getDssnSite());
 					tktDssn.setTktStation(aTicketTO.getDssnStation());
+					
 					qName = new QName("TktDSSN");
+					
 					JAXBElement<String> tktDssnElement = new JAXBElement(qName,
 							tktDssn.getClass(), tktDssn);
+					
 					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktDssnElement);
 				}
 				// Tkt NID ?
 				if (typeList.contains(TicketTO.TicketIdType.TKTNID_ID)) {
+					
 					String tktNidTO = aTicketTO.getTktNID();
+					
 					qName = new QName("TktNID");
+					
 					JAXBElement<String> tktNid = new JAXBElement(qName,
 							tktNidTO.getClass(), tktNidTO);
 					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktNid);
@@ -270,8 +315,11 @@ public class QueryEligibleProductsXML {
 
 				// External?
 				if (typeList.contains(TicketTO.TicketIdType.EXTERNAL_ID)) {
+					
 					String tktExtTO = aTicketTO.getExternal();
+					
 					qName = new QName("External");
+					
 					JAXBElement<String> tktExt = new JAXBElement(qName,
 							tktExtTO.getClass(), tktExtTO);
 					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktExt);
@@ -279,33 +327,46 @@ public class QueryEligibleProductsXML {
 
 				// Add whatever ticket versions were found to the response.
 				qName = new QName("TktID");
+				
 				JAXBElement<String> tktId = new JAXBElement(qName,
 						tktIdObj.getClass(), tktIdObj);
+				
 				aTicket.getTktItemOrTktIDOrProdCode().add(tktId);
 
 			}
 			// SRPPrice
 			if (aTicketTO.getTktPrice() != null) {
+				
 				BigDecimal tktPriceTO = aTicketTO.getTktPrice();
+				
 				qName = new QName("SRPPrice");
+				
 				JAXBElement<String> sRPPrice = new JAXBElement(qName,
 						tktPriceTO.getClass(), tktPriceTO);
 				aTicket.getTktItemOrTktIDOrProdCode().add(sRPPrice);
 
 			}
+			
 			// ResultStatus
 			ResultStatusTo result = null;
+			
 			if (aTicketTO.getResultType() != null) {
+			
 				result = aTicketTO.getResultType();
+				
 				qName = new QName("ResultStatus");
+				
 				JAXBElement<String> resultStatus = new JAXBElement(qName,
 						result.getClass(), result);
 				aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 			}
+			
 			// EligibleProducts
 			if (aTicketTO.getProdCode() != null
 					&& aTicketTO.getProdPrice() != null) {
+			
 				String prodCode = aTicketTO.getProdCode();
+				
 				QueryEligibleProductsResponse.Ticket.EligibleProducts eligibleproduct = new QueryEligibleProductsResponse.Ticket.EligibleProducts();
 				eligibleproduct.setProdCode(prodCode);
 				eligibleproduct.setProdPrice(String.valueOf(aTicketTO
@@ -315,14 +376,16 @@ public class QueryEligibleProductsXML {
 						.getUpgrdPrice()));
 				// eligibleproduct.setUpgrdTax(aTicketTO.get);
 				qName = new QName("EligibleProducts");
+				
 				JAXBElement<String> eligible = new JAXBElement(qName,
 						eligibleproduct.getClass(), eligibleproduct);
+				
 				aTicket.getTktItemOrTktIDOrProdCode().add(eligible);
 			}
-			resp.getTicket().add(aTicket);
+			queryEligPrdResp.getTicket().add(aTicket);
 		}
 
-		return resp;
+		return queryEligPrdResp;
 
 	}
 
