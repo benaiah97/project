@@ -18,6 +18,9 @@ import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.GiftCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
+import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
@@ -415,7 +418,81 @@ public class UpgradeEntitlementXML {
 
 				aPaymentTO.setGiftCard(giftCardTO);
 			}
-		}
+		} else if (payType.getInstallment() != null) { // (As of 2.17.3, JTL)
+
+      InstallmentTO instTO = new InstallmentTO();
+      UpgradeEntitlementRequest.Payment.PayType.Installment installment = payType.getInstallment();
+      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentCreditCard installCard = installment
+          .getInstallmentCreditCard();
+
+      InstallmentCreditCardTO installCCTO = instTO.getCreditCard();
+
+      if (installCard.getCCManual() != null) {
+        installCCTO.setCcNbr(installCard.getCCManual().getCCNbr());
+        installCCTO.setCcExpiration(installCard.getCCManual().getCCExpiration());
+        installCCTO.setCcName(installCard.getCCManual().getCCName());
+      } else {
+        installCCTO.setCcTrack1(installCard.getCCSwipe().getCCTrack1());
+        installCCTO.setCcTrack2(installCard.getCCSwipe().getCCTrack2());
+      }
+
+      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentDemoData installDemo = installment
+          .getInstallmentDemoData();
+      InstallmentDemographicsTO installDemoTO = instTO.getInstllDemo();
+
+      // First Name
+      installDemoTO.setFirstName(installDemo.getFirstName());
+
+      // Middle Name (opt)
+      if (installDemo.getMiddleName() != null) {
+        installDemoTO.setMiddleName(installDemo.getMiddleName());
+      }
+
+      // Last Name
+      installDemoTO.setLastName(installDemo.getLastName());
+
+      // DOB (opt)
+      if (installDemo.getDateOfBirth() != null) {
+        XMLGregorianCalendar tXCal = (XMLGregorianCalendar) installDemo.getDateOfBirth();
+        GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+        installDemoTO.setDateOfBirth(tempCalendar);
+      }
+
+      // Addr1
+      installDemoTO.setAddr1(installDemo.getAddr1());
+
+      // Addr2 (opt)
+      if (installDemo.getAddr2() != null) {
+        installDemoTO.setAddr2(installDemo.getAddr2());
+      }
+
+      // City
+      installDemoTO.setCity(installDemo.getCity());
+
+      // State
+      installDemoTO.setState(installDemo.getState());
+
+      // ZIP
+      installDemoTO.setZip(installDemo.getZip());
+
+      // Country
+      installDemoTO.setCountry(installDemo.getCountry());
+
+      // Telephone
+      installDemoTO.setTelephone(installDemo.getTelephone());
+
+      // AltTelephone (opt)
+      if (installDemo.getAltTelephone() != null) {
+        installDemoTO.setAltTelephone(installDemo.getAltTelephone());
+      }
+
+      // Email
+      installDemoTO.setEmail(installDemo.getEmail());
+
+      // Set the installment
+      aPaymentTO.setInstallment(instTO);
+
+    }
 
 		// PayAmount
 		if (aPayment.getPayAmount() != null) aPaymentTO

@@ -296,7 +296,6 @@ public class WDWReservationRules {
         entityTO);
 
     // SellerId
-    //TODO for HKDL phase 2 req#12 allow optional passed in SellerId
     Long dtiSalesId = entityTO.getDefSalesRepId();
     if (dtiSalesId != null) {
       otManageRes.setSellerId(new Long(dtiSalesId.longValue()));
@@ -1038,9 +1037,11 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
     PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
 
-    //RULE: Apply reservateCode rules - if command/entity/attribute doesn't specify an override, use RACE for rescode generation
-    String resCode = assignResCode(dtiTxn,dtiResReq);
-    dtiResReq.getReservation().setResCode(resCode);
+    //RULE: If the reservation code wasn't supplied, attempt to assign one. (2.17.2 - JTL)
+    if (dtiResReq.getReservation().getResCode() == null) {
+       String resCode = assignResCode(dtiTxn,dtiResReq);
+       dtiResReq.getReservation().setResCode(resCode);
+    }
     
     return ;
   }
@@ -1056,38 +1057,60 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
    * @param dtiResReq the dti res req
    * @throws DTIException the DTI exception
    */
-  protected static String assignResCode(DTITransactionTO dtiTxn,
+  private static String assignResCode(DTITransactionTO dtiTxn,
       ReservationRequestTO dtiResReq) throws DTIException {
-	  String resCode = null;
-	  
-	  String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
-	  HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+    
+    String resCode = null;
+    String candidateResCode = null;
 
-	  boolean isRework = dtiTxn.isRework();
-	  AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
-	
-	  if ((isRework) && (resOverrideAttr == null)) {
-		  // Get the reservation code array (there should only be one)
-		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
-		  
-      // Contingency assignment (should be infrequent that res isn't found in DB for rework)
-      if (rescodeTO == null) {
-         resCode = createReservationCode(dtiTxn, resCode, payloadId);
-      } else {
+    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+    AttributeTO resOverrideAttr = attribMap.get(CmdAttrCodeType.RACE_RES_OVERRIDE);
+    
+    if (resOverrideAttr != null) {
+      return resCode; // null
+    }
+    
+    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+    boolean isRework = dtiTxn.isRework();
+    
+    // If this is a rework, there is likely a res code already logged.
+    // Attempt to get it.
+    if (isRework) {
+      TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+      if (rescodeTO != null) {
          resCode = rescodeTO.getRescode();
       }
+    } 
 
-	  } else if ( (!isRework) && (resOverrideAttr == null)) { //not rework, and no race override	  
-      resCode = createReservationCode(dtiTxn, resCode, payloadId);
-	  } else {
-		    // and insert it into the database payload/rescode ref table	      
-	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-		    logger.sendEvent(
-		            "WDW RACE_RES_OVERRIDE present for reservation code generation.",
-		            EventType.INFO, THISOBJECT);
-	  }
-	  
-	  return resCode;
+    // If this isn't rework, then it is likely you need to create a res code.
+    // Attempt to do so.
+    if (!isRework) {     
+       candidateResCode = WDWAlgorithmUtility.generateResCode(); 
+       resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
+    } 
+    
+    // If you get here with no resCode, it's likely that there wasn't one 
+    // when you were expecting it or a res code duplicate was found.
+    // Try 10 times to create.  If you can, great.  If not, error.
+    if (resCode == null) {
+      
+      logger.sendEvent("Initial reservation code generation failure.  Reattempting for payload ID: " + payloadId,EventType.WARN, THISOBJECT);
+    
+      int counter = 0;
+      while ((resCode == null) && (counter < 10)) {
+        candidateResCode = WDWAlgorithmUtility.generateResCode(); 
+        resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
+        counter++;
+      }
+      
+      // After 10 times, you weren't able to create a res code and store it. Error out.
+      if (resCode == null) {
+        throw new DTIException(WDWReservationRules.class, DTIErrorCode.CANNOT_GEN_RESCODE,
+            "Cannot generate reservation code after ten attempts.");
+      }
+    }
+
+    return resCode;
   }
 
   /**

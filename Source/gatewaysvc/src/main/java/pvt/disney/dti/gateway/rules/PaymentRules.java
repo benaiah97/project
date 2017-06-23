@@ -11,6 +11,7 @@ import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.ReservationRequestTO;
+import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO.CreditCardType;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
@@ -621,7 +622,6 @@ public class PaymentRules {
    * JTL)
    * 
    * @param dtiTxn
-   * @param dtiResReq
    * @param tpLookups
    * @throws DTIException
    */
@@ -762,7 +762,6 @@ public class PaymentRules {
    * down-payment matches the required amount. (As of 2.16.1, JTL)
    * 
    * @param dtiTxn
-   * @param dtiResReq
    * @param tpLookups
    * @throws DTIException
    */
@@ -845,4 +844,147 @@ public class PaymentRules {
     return;
   }
 
+  /**
+   * RULE: Validate that if the "installment" type of payment is present, the
+   * down-payment matches the required amount. (As of 2.16.1, JTL) RULE: If
+   * Installment Payment type is present, only one additional form of payment is
+   * allowed and it must be the same credit card as installment. (as of 2.16.1
+   * JTL)
+   * 
+   * @param dtiTxn
+   * @param tpLookups
+   * @throws DTIException
+   */
+  public static void validateUpgrdEntInstallDownpayment(DTITransactionTO dtiTxn, ArrayList<TPLookupTO> tpLookups)
+      throws DTIException {
+
+    DTIRequestTO dtiRequest = dtiTxn.getRequest();
+    CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
+    UpgradeEntitlementRequestTO dtiUpgrdEnt = (UpgradeEntitlementRequestTO) dtiCmdBody;
+
+    // RULE: Validate that if the "installment" type of payment is present,
+    // the down-payment matches the required amount. (As of 2.16.1, JTL)
+    // Although other rules allow only one other form of payment
+    // this rule doesn't enforce that clause and can adapt to
+    // multiple FOPs on the down payment.
+    ArrayList<PaymentTO> paymentList = dtiUpgrdEnt.getPaymentList();
+
+    BigDecimal installmentDownpayment = new BigDecimal("0.00");
+    String installmentCreditCard = null;
+    String downpaymentCreditCard = null;
+    int downpaymentCreditCardCount = 0;
+
+    for (/* each */PaymentTO aPaymentTO : /* in */paymentList) {
+
+      if (aPaymentTO.getPayType() == PaymentTO.PaymentType.INSTALLMENT) {
+        dtiUpgrdEnt.setInstallmentRequest(true);
+
+        if (installmentCreditCard != null) {
+          throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
+              "Only one installment credit card permitted on an installment transaction.");
+        }
+
+        if (aPaymentTO.getInstallment().getCreditCard().getCcManualOrSwipe() == CreditCardTO.CreditCardType.CCMANUAL) {
+          installmentCreditCard = aPaymentTO.getInstallment().getCreditCard().getCcNbr();
+        } else {
+          installmentCreditCard = aPaymentTO.getInstallment().getCreditCard().getCcTrack1();
+        }
+
+        // RULE: On installment payments, CCName cannot exceed 25 characters (As
+        // of 2.16.2, JTL)
+        if (aPaymentTO.getInstallment().getCreditCard().getCcName().length() > MAXCARDHOLDERNAME) {
+          throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+              "Installment Credit Card CC Name exceeded maximum character length of " + MAXCARDHOLDERNAME
+                  + " (length of what was sent was " + aPaymentTO.getInstallment().getCreditCard().getCcName().length()
+                  + ").");
+        }
+
+      } else if (aPaymentTO.getPayType() == PaymentTO.PaymentType.CREDITCARD) {
+
+        downpaymentCreditCardCount++;
+
+        if (aPaymentTO.getCreditCard().getCcManualOrSwipe() == CreditCardTO.CreditCardType.CCMANUAL) {
+          downpaymentCreditCard = aPaymentTO.getCreditCard().getCcNbr();
+        } else {
+          downpaymentCreditCard = aPaymentTO.getCreditCard().getCcTrack1();
+        }
+
+        installmentDownpayment = aPaymentTO.getPayAmount();
+
+      }
+
+    }
+
+    if (dtiUpgrdEnt.isInstallmentRequest() == false) {
+      return;
+    }
+
+    if (downpaymentCreditCardCount > 1) {
+      throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
+          "Installment must be accompanied by only one additional credit card.");
+    }
+
+    if (installmentCreditCard == null) {
+      throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
+          "Installment transaction missing installment credit card.");
+    }
+    if (downpaymentCreditCard == null) {
+      throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
+          "Installment transaction missing downpayment credit card.");
+    }
+    if (!downpaymentCreditCard.equalsIgnoreCase(installmentCreditCard)) {
+      throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_PAYMENT_TYPE,
+          "Installment must be the SAME credit card as the other credit card on the purchase.");
+    }
+
+    // Calculate how much of a down payment should have been provided.
+    BigDecimal singleStandardDownpayment = null;
+    for (/* each */TPLookupTO aTPLookup : /* in */tpLookups) {
+      if ((aTPLookup.getLookupDesc().compareToIgnoreCase("Downpayment") == 0)
+          && (aTPLookup.getLookupType() == TPLookupTO.TPLookupType.INSTALLMENT)) {
+
+        try {
+          singleStandardDownpayment = new BigDecimal(aTPLookup.getLookupValue());
+        } catch (NumberFormatException nfe) {
+          throw new DTIException(DLRReservationRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+              "PaymentRules.validateInstallmentDownpayment attempted to read downpayment from DB, and it wasn't a number:"
+                  + aTPLookup.getLookupValue());
+        }
+      }
+    }
+    if (singleStandardDownpayment == null) {
+      throw new DTIException(DLRReservationRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+          "PaymentRules.validateInstallmentDownpayment Installmnt Downpayment TP_LOOKUP for provider not populated.");
+    }
+
+    // Determine the quantity of non-shipping product on the order
+    HashMap<String, DBProductTO> productCodeMap = dtiTxn.getDbProdMap();
+    ArrayList<TicketTO> tktList = dtiUpgrdEnt.getTicketList();
+    int quantity = 0;
+
+    for (/* each */TicketTO aTicketTO : /* in */tktList) {
+      String pdtCode = aTicketTO.getProdCode();
+      String dayClass = productCodeMap.get(pdtCode).getDayClass();
+      if (dayClass.compareToIgnoreCase("SHIP") != 0) {
+        quantity = quantity + aTicketTO.getProdQty().intValue();
+      }
+    }
+
+    // Determine how much down payment should be provided.
+    BigDecimal stdPayTotal = singleStandardDownpayment.multiply(new BigDecimal(quantity));
+
+    // Compare expected down payment to actual down payment.
+    if (stdPayTotal.compareTo(installmentDownpayment) != 0) {
+      throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_PAYMENT_AMOUNT,
+          "The total downpayment expected of " + stdPayTotal + " does not equal what was on the upgrade entitlement: "
+              + installmentDownpayment);
+    }
+
+    // Preserve down-payment amount for later use in the out-bound transaction
+    // to eGalaxy.
+    dtiUpgrdEnt.setInstallmentDownpayment(installmentDownpayment);
+
+    return;
+  }
+  
 }
