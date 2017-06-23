@@ -280,7 +280,11 @@ public class WDWBusinessRules {
       
     case VOIDRESERVATION: // As of 2.16.3, JTL
       xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
-      break;      
+      break;  
+      
+    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade Service
+        xmlRequest = WDWQueryEligibleProductsRules.transformRequest(dtiTxn);
+        break;  
 
     default:
       throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
@@ -1197,13 +1201,13 @@ public class WDWBusinessRules {
 
       String payloadId = null;
       OTTransactionType requestType = otCmdTO.getTxnType();
-
+      
       switch (requestType) {
 
       case QUERYTICKET:
-
-        WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+    	 
+    	WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+    	   break;
 
       case VOIDTICKET:
 
@@ -1230,10 +1234,17 @@ public class WDWBusinessRules {
       TransactionType dtiTransType = dtiTxn.getTransactionType();
 
       switch (requestType) {
-
+      
       case QUERYTICKET:
-        WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+    	  // Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
+       if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYTICKET){
+    	  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+       }
+    	// if the transaction type is of Query Eligible Products
+       else if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS){
+    	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+       }
+       break;
 
       case UPGRADETICKET:
 
@@ -1332,8 +1343,6 @@ public class WDWBusinessRules {
       case RENEWTICKET: // As of 2.16.1, JTL
         WDWRenewEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
         break;
-
-      // ---------------------------------------------------------
 
       default:
         throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,

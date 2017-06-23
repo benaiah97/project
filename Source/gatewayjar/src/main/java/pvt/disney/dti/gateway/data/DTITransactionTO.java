@@ -38,6 +38,7 @@ public class DTITransactionTO implements Serializable {
     ASSOCIATEMEDIATOACCOUNT, // 2.16.1 BIEST001
     TICKERATEENTITLEMENT, // 2.16.1 BIEST001
     VOIDRESERVATION, // 2.16.3, JTL
+    QUERYELIGIBLEPRODUCTS, // as a part of AP Upgrade
     UNDEFINED
   };
 

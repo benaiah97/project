@@ -27,6 +27,7 @@
 										<xs:element ref="AssociateMediaToAccountResponse" minOccurs="0"/>
 										<xs:element ref="TickerateEntitlementResponse" minOccurs="0"/>
 										<xs:element ref="VoidReservationResponse" minOccurs="0"/>
+										<xs:element ref="QueryEligibleProductsResponse" minOccurs="0"/>
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -2152,6 +2153,131 @@
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="QueryEligibleProductsResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Ticket" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:choice minOccurs="2" maxOccurs="unbounded">
+							<xs:element name="TktItem" type="xs:integer"/>
+							<xs:element name="TktID" minOccurs="0">
+								<xs:complexType>
+									<xs:choice maxOccurs="unbounded">
+										<xs:element name="TktDSSN" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TktDate" type="xs:string"/>
+													<xs:element name="TktSite" type="xs:string"/>
+													<xs:element name="TktStation" type="xs:string"/>
+													<xs:element name="TktNbr" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TktNID" type="xs:string" minOccurs="0"/>
+										<xs:element name="External" type="xs:string" minOccurs="0"/>
+										<xs:element name="VisualID" type="xs:string" minOccurs="0"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ProdCode" type="xs:string"/>
+							<xs:element name="ProdGuestType" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Adult"/>
+										<xs:enumeration value="Child"/>
+										<xs:enumeration value="Any"/>
+										<xs:enumeration value="Unknown"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TktDemographics" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="DemoData" minOccurs="0">
+											<xs:complexType>
+												<!-- include all demographics, looks like optin/out is missing -->
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:anySimpleType" use="optional"/>
+												<xs:attribute name="DateOfBirth">
+													<xs:simpleType>
+														<xs:restriction base="xs:date"/>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Gender" use="optional">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1"/>
+															<xs:maxLength value="1"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TktValidity" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ValidStart" type="xs:date"/>
+										<xs:element name="ValidEnd" type="xs:date"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SRPPrice" type="xs:decimal" minOccurs="0"/>
+							<xs:element name="SRPTax" type="xs:decimal" minOccurs="0"/>
+							<xs:element name="TktStatus" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StatusItem" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>PAYPLAN, BIOMET, PHOTO</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="StatusValue" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>YES, NO</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ResultStatus" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="INELIGIBLE"/>
+										<xs:enumeration value="NOPRODUCTS"/>
+										<xs:enumeration value="ELIGIBLE"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="EligibleProducts" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ProdCode"/>
+										<xs:element name="ProdPrice" type="xs:string"/>
+										<xs:element name="ProdTax" type="xs:decimal"/>
+										<xs:element name="UpgrdPrice" type="xs:string" minOccurs="0"/>
+										<xs:element name="UpgrdTax" type="xs:string" minOccurs="0"/>
+										<xs:element name="ValidEnd" type="xs:date" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>

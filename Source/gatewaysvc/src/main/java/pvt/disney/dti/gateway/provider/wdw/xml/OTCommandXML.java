@@ -21,6 +21,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.OTCreateTransactionTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTMultiEntitlementAccountTO;
+import pvt.disney.dti.gateway.provider.wdw.data.OTQueryEligibleProductsTo;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTRenewTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTUpdateTicketTO;
@@ -160,7 +161,7 @@ public class OTCommandXML implements TransformConstants {
       OTRenewTicketTO otRenewTktTO = otCommandTO.getRenewTicketTO();
       OTRenewTicketXML.addTxnBodyElement(otRenewTktTO, commandStanza);
       break;
-
+    
     default:
       throw new DTIException(OTCommandXML.class,
           DTIErrorCode.INVALID_COMMAND,
@@ -352,7 +353,7 @@ public class OTCommandXML implements TransformConstants {
         otCmdTO.setRenewTicketTO(otRenewTktRes);
         bodyElementFound = true;
       }
-
+      
       // if no body found, error out.
       if (!bodyElementFound) throw new DTIException(OTCommandXML.class,
           DTIErrorCode.TP_INTERFACE_FAILURE,

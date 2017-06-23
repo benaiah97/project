@@ -26,6 +26,7 @@
 										<xs:element ref="AssociateMediaToAccountRequest" minOccurs="0"/>
 										<xs:element ref="TickerateEntitlementRequest" minOccurs="0"/>
 										<xs:element ref="VoidReservationRequest" minOccurs="0"/>
+										<xs:element ref="QueryEligibleProductsRequest" minOccurs="0"/>
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -3406,4 +3407,53 @@
 			<xs:element name="Ticket" type="Ticket"/>
 		</xs:choice>
 	</xs:complexType>
+	<xs:element name="QueryEligibleProductsRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Ticket" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TktItem" type="xs:integer"/>
+							<xs:element name="TktID">
+								<xs:complexType>
+									<xs:choice>
+										<xs:element name="Mag">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MagTrack1" type="xs:string"/>
+													<xs:element name="MagTrack2" type="xs:string" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Barcode" type="xs:string"/>
+										<xs:element name="TktDSSN">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TktDate" type="xs:date"/>
+													<xs:element name="TktSite" type="xs:string"/>
+													<xs:element name="TktStation" type="xs:string"/>
+													<xs:element name="TktNbr" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TktNID" type="xs:string"/>
+										<xs:element name="External" type="xs:string"/>
+										<xs:element name="VisualID" type="xs:string"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SaleType" minOccurs="1" maxOccurs="1">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="UPGRADE"/>
+										<xs:enumeration value="RENEW"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
