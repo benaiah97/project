@@ -15,6 +15,7 @@ import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo;
+import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.request.xsd.QueryEligibleProductsRequest;
@@ -174,7 +175,7 @@ public class QueryEligibleProductsXML {
 		  }
 		 }
 			// Ticket Demographics
-			// TODO add all demographic including optin/out
+			// TODO 06-23-2017 JTL all demographic including optin/out
 		 if ((aTicketTO.getTicketDemoList() != null)
 			&& (aTicketTO.getTicketDemoList().size() == 1)) {
 
@@ -348,24 +349,29 @@ public class QueryEligibleProductsXML {
 			}
 			
 			// ResultStatus
-			ResultStatusTo result = null;
+			String result = null;
 			
 			if (aTicketTO.getResultType() != null) {
-			
-				result = aTicketTO.getResultType();
-				
-				qName = new QName("ResultStatus");
-				
-				JAXBElement<String> resultStatus = new JAXBElement(qName,
-						result.getClass(), result);
-				aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
+				result = aTicketTO.getResultType().toString();
 			}
+			else{
+				// adding result status as ELIGIBLE intentionally  
+				result="ELIGIBLE";
+			}
+			qName = new QName("ResultStatus");
+			
+			JAXBElement<String> resultStatus = new JAXBElement(qName,
+					result.getClass(), result);
+			aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 			
 			// EligibleProducts
 			if (aTicketTO.getProdCode() != null
 					&& aTicketTO.getProdPrice() != null) {
 			
 				String prodCode = aTicketTO.getProdCode();
+				if(prodCode.equals(null)){
+					prodCode="1";
+				}
 				
 				QueryEligibleProductsResponse.Ticket.EligibleProducts eligibleproduct = new QueryEligibleProductsResponse.Ticket.EligibleProducts();
 				eligibleproduct.setProdCode(prodCode);

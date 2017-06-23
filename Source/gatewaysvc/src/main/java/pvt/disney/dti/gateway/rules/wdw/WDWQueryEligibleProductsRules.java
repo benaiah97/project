@@ -114,11 +114,10 @@ public class WDWQueryEligibleProductsRules {
 
 		// Tags
 		ArrayList<String> tagList = otQryTkt.getTagsList();
-		// need to confirm this with Todd
-		for (int i = 0; i < QT_TAGS.length; i++) {
-				tagList.add(QT_TAGS[i]);
-			}
-
+		
+		// Adding ALL_Tag in case of Query Eligible
+		tagList.add(ALL_TAGS);
+		
 		// SiteNumber
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn
 				.getAttributeTOMap();
@@ -194,7 +193,7 @@ public class WDWQueryEligibleProductsRules {
 		@SuppressWarnings("unused")
 	  static void transformResponseBody(DTITransactionTO dtiTxn,
 			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
-		// TODO space this out, need to change format/style, Todd will share the formatter with everyone
+		// TODO space this out, need to change format/style, Todd  06-23-2017 JTL will share the formatter with everyone
 
 		// Adding QueryEligibleProductsRequestTO to look if this can be used 
 		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiTxn

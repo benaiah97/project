@@ -288,7 +288,7 @@ public class AttributeKey {
       commandCode = VR_DBSTRING;
       break; 
       
-    case QUERYELIGIBLEPRODUCTS: // TODO As a part of new AP Upgrade Service. Need to add entry for queryEligibleProducts in DB
+    case QUERYELIGIBLEPRODUCTS: // TODO 06-23-2017 JTL As a part of new AP Upgrade Service. Need to add entry for queryEligibleProducts in DB
       commandCode = QT_DBSTRING; // right now keeping the entry for queryTicket
      break;
 
