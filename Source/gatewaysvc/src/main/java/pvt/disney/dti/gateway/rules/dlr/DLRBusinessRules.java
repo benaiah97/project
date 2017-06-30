@@ -77,6 +77,10 @@ public class DLRBusinessRules {
     case RENEWENTITLEMENT: // As of 2.16.1, JTL
       xmlRequest = DLRRenewEntitlementRules.transformRequest(dtiTxn);
       break;
+      
+    case QUERYELIGIBLEPRODUCTS:
+      xmlRequest=DLRQueryEligibilityProductsRules.transformRequest(dtiTxn);
+      break;
 
     default:
       throw new DTIException(TransformRules.class,
@@ -130,6 +134,11 @@ public class DLRBusinessRules {
     case RENEWENTITLEMENT:
       dtiTxn = DLRRenewEntitlementRules.transformResponse(dtiTxn,
           xmlResponse);
+      break;
+    
+    case QUERYELIGIBLEPRODUCTS:
+      dtiTxn=DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
+    	  xmlResponse);
       break;
 
     default:
