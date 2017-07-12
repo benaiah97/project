@@ -81,6 +81,9 @@ public class DLRBusinessRules {
     case QUERYELIGIBLEPRODUCTS:
       xmlRequest=DLRQueryEligibilityProductsRules.transformRequest(dtiTxn);
       break;
+      
+    case UPGRADEENTITLEMENT:
+      xmlRequest=DLRUpgradeEntitlementRules.transformRequest(dtiTxn);
 
     default:
       throw new DTIException(TransformRules.class,
@@ -141,6 +144,10 @@ public class DLRBusinessRules {
     	  xmlResponse);
       break;
 
+    case UPGRADEENTITLEMENT:
+        dtiTxn=DLRUpgradeEntitlementRules.transformResponse(dtiTxn,
+      	  xmlResponse);
+        break;
     default:
       throw new DTIException(
           TransformRules.class,
