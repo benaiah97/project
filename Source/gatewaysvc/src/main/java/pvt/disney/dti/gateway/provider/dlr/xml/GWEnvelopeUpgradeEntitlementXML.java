@@ -94,20 +94,9 @@ public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants{
 			if (element.getName().compareTo("Header") == 0) {
 				gwHdrTO = GWHeaderXML.getTO(element);
 
-				if (gwHdrTO.getMessageType().compareTo(GW_QRY_TKT_RSP_MSG_TYPE) == 0) {
-					gwEnvTO.setTxnType(GWEnvelopeTO.GWTransactionType.QUERYTICKET);
-				}
-				else if (gwHdrTO.getMessageType().compareTo(
-						GW_TKT_ACTIVATE_MSG_TYPE) == 0) {
-					gwEnvTO.setTxnType(GWEnvelopeTO.GWTransactionType.TICKETACTIVATION);
-				}
-				else if (gwHdrTO.getMessageType().compareTo(
+				if (gwHdrTO.getMessageType().compareTo(
 						GW_ORDERS_RESPONSE_MESSAGE_TYPE) == 0) { // responses have a different msg typ in the header than requests
 					gwEnvTO.setTxnType(GWEnvelopeTO.GWTransactionType.ORDERS);
-				}
-				else if (gwHdrTO.getMessageType().compareTo(
-						GW_QUERY_ORDER_RESPONSE_MESSAGE_TYPE) == 0) {
-					gwEnvTO.setTxnType(GWEnvelopeTO.GWTransactionType.QUERYORDER);
 				}
 				else {
 					StringBuffer errorBuffer = new StringBuffer(

@@ -73,18 +73,11 @@ public class GWBodyUpgradeEntitlementXML {
 					"Ticket provider returned Body without Header, or Body before Header clause in XML.");
 		}
 
-		if (txnType == GWEnvelopeTO.GWTransactionType.QUERYTICKET) {
-			GWQueryTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
-		else if (txnType == GWEnvelopeTO.GWTransactionType.TICKETACTIVATION) {
-			GWTicketActivationXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
+		
 		else if (txnType == GWEnvelopeTO.GWTransactionType.ORDERS) {
 			GWOrderUpgradeEntitlementXML.setRespBodyTO(gwBodyTO, bodyElement);
 		}
-		else if (txnType == GWEnvelopeTO.GWTransactionType.QUERYORDER) {
-			GWQueryOrderXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
+		
 		else {
 			throw new DTIException(GWBodyXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
