@@ -53,6 +53,7 @@ import pvt.disney.dti.gateway.rules.dlr.DLRQueryTicketRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRRenewEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRReservationRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeAlphaRules;
+import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRVoidTicketRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDBusinessRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDQueryReservationRules;
@@ -979,6 +980,8 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
     // Apply any rules unique to one provider.
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
+    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
+    	DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
     }
 
     return;
@@ -1142,5 +1145,5 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
 
     return;
   }
-
+  
 }
