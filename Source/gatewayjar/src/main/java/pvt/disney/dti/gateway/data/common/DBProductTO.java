@@ -106,7 +106,15 @@ public class DBProductTO implements Serializable {
 
 	/** Standard retail price of the product. */
 	private BigDecimal standardRetailPrice;
+	
+	/**  ResidentInd  */
+	private String residentInd;
 
+	/** Standard retail tax of the product. */
+	private BigDecimal standardRetailTax;
+	
+	private BigInteger upgrdPathId;
+	
 	/**
 	 * 
 	 * @return
@@ -537,4 +545,47 @@ public class DBProductTO implements Serializable {
 		this.daySubclass = daySubclass;
 	}
 
+	/**
+	 * @return residentInd
+	 */
+	public String getResidentInd() {
+		return residentInd;
+	}
+
+	/**
+	 * @param residentInd
+	 */
+	public void setResidentInd(String residentInd) {
+		this.residentInd = residentInd;
+	}
+
+	/**
+	 * @return standardRetailTax
+	 */
+	public BigDecimal getStandardRetailTax() {
+		return standardRetailTax;
+	}
+
+	/**
+	 * @param standardRetailTax
+	 */
+	public void setStandardRetailTax(BigDecimal standardRetailTax) {
+		this.standardRetailTax = standardRetailTax;
+	}
+
+	/**
+	 * @return upgrdPathId
+	 */
+	public BigInteger getUpgrdPathId() {
+		return upgrdPathId;
+	}
+
+	/**
+	 * @param upgrdPathId
+	 */
+	public void setUpgrdPathId(BigInteger upgrdPathId) {
+		this.upgrdPathId = upgrdPathId;
+	}
+	
+	
 }
