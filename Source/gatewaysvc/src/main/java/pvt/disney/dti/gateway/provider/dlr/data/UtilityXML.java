@@ -5,11 +5,14 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
+
+import pvt.disney.dti.gateway.rules.DateTimeRules;
 
 /**
  * General format and conversion utility. Methods and attributes in this class are used to format String and convert datatypes and should be static.
@@ -121,13 +124,14 @@ public abstract class UtilityXML {
 		return dataString;
 	}
 
-	/**
-	 * Returns an eGalaxy formatted date for the current date/time.
-	 * 
-	 * @return
-	 */
+  /**
+   * Returns an eGalaxy formatted date for the current date/time.
+   * 
+   * Changing eGalaxy time to PT as of 2.17.2.1 (JTL)
+   * @return
+   */
 	public static String getCurrentEgalaxyDate() {
-		Date now = new Date();
+		Date now = DateTimeRules.getPTNow();
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss.SS");
 
@@ -179,7 +183,7 @@ public abstract class UtilityXML {
 
 		ArrayList<String> recurringTags = new ArrayList<String>();
 
-		// Locate the first occurence of the tag in the string.
+		// Locate the first occurrence of the tag in the string.
 		String searchString = xml;
 		int startTag = searchString.indexOf("<" + tagName + ">");
 

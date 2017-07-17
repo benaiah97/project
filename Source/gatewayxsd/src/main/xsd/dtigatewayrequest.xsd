@@ -2714,6 +2714,73 @@
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
+				<xs:element name="Reservation" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Required for DLR transactions</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:choice maxOccurs="unbounded">
+							<xs:element name="ResCode" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Required for DLR transactions</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ResCreateDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupArea" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResSalesType" type="xs:string" minOccurs="0"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ClientData" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Required for DLR transactions</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ClientType" type="xs:string" minOccurs="0"/>
+							<xs:element name="ClientCategory" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoLanguage" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoData" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Bill" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:anySimpleType" use="optional"/>
+												<xs:attribute name="SellerResNbr" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Ship" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -3286,6 +3353,55 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="QueryEligibleProductsRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Ticket" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TktItem" type="xs:integer"/>
+							<xs:element name="TktID">
+								<xs:complexType>
+									<xs:choice>
+										<xs:element name="Mag">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="MagTrack1" type="xs:string"/>
+													<xs:element name="MagTrack2" type="xs:string" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Barcode" type="xs:string"/>
+										<xs:element name="TktDSSN">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TktDate" type="xs:date"/>
+													<xs:element name="TktSite" type="xs:string"/>
+													<xs:element name="TktStation" type="xs:string"/>
+													<xs:element name="TktNbr" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TktNID" type="xs:string"/>
+										<xs:element name="External" type="xs:string"/>
+										<xs:element name="VisualID" type="xs:string"/>
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SaleType">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="UPGRADE"/>
+										<xs:enumeration value="RENEW"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:complexType name="ExternalReferenceType">
 		<xs:sequence>
 			<xs:element name="ExternalReferenceType">
@@ -3407,53 +3523,4 @@
 			<xs:element name="Ticket" type="Ticket"/>
 		</xs:choice>
 	</xs:complexType>
-	<xs:element name="QueryEligibleProductsRequest">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="Ticket" minOccurs="1" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="TktItem" type="xs:integer"/>
-							<xs:element name="TktID">
-								<xs:complexType>
-									<xs:choice>
-										<xs:element name="Mag">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:element name="MagTrack1" type="xs:string"/>
-													<xs:element name="MagTrack2" type="xs:string" minOccurs="0"/>
-												</xs:sequence>
-											</xs:complexType>
-										</xs:element>
-										<xs:element name="Barcode" type="xs:string"/>
-										<xs:element name="TktDSSN">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:element name="TktDate" type="xs:date"/>
-													<xs:element name="TktSite" type="xs:string"/>
-													<xs:element name="TktStation" type="xs:string"/>
-													<xs:element name="TktNbr" type="xs:string"/>
-												</xs:sequence>
-											</xs:complexType>
-										</xs:element>
-										<xs:element name="TktNID" type="xs:string"/>
-										<xs:element name="External" type="xs:string"/>
-										<xs:element name="VisualID" type="xs:string"/>
-									</xs:choice>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="SaleType" minOccurs="1" maxOccurs="1">
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:enumeration value="UPGRADE"/>
-										<xs:enumeration value="RENEW"/>
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
 </xs:schema>

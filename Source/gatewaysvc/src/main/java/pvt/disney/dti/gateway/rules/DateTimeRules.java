@@ -47,7 +47,7 @@ public class DateTimeRules {
    * Gets the current Pacific Time.
    * @return GMT date set to "now".
    */
-  private static Date getPTNow() {
+  public static Date getPTNow() {
 
     // Starting in 2007, most of the United States and Canada observe DST from
     // the second Sunday in March to the first Sunday in November, almost
