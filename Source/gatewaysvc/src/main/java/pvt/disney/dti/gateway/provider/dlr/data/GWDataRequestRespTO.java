@@ -93,6 +93,8 @@ public class GWDataRequestRespTO implements Serializable {
   private String passKindName;
 
   private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
+  
+  private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
 
   private String kind; // Added as of 2.11
 
@@ -182,6 +184,71 @@ public class GWDataRequestRespTO implements Serializable {
     }
 
   } // End class LineageRecord
+  
+  public class UpgradePLUList{
+	  
+	  private String PLU;
+	  
+	  private BigDecimal price;
+	  
+	  private BigDecimal upgradePrice;
+
+	/**
+	 * @return the pLU
+	 */
+	public String getPLU() {
+		return PLU;
+	}
+
+	/**
+	 * @param pLU the pLU to set
+	 */
+	public void setPLU(String pLU) {
+		PLU = pLU;
+	}
+
+	/**
+	 * @return the price
+	 */
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	/**
+	 * @return the upgradePrice
+	 */
+	public BigDecimal getUpgradePrice() {
+		return upgradePrice;
+	}
+
+	/**
+	 * @param upgradePrice the upgradePrice to set
+	 */
+	public void setUpgradePrice(BigDecimal upgradePrice) {
+		this.upgradePrice = upgradePrice;
+	}
+	  
+	public String toString() {
+
+	      StringBuffer sb = new StringBuffer("UpgradePluList: ");
+	      sb.append(" PLU: " + PLU);
+	      sb.append(" Price: " + price);
+	      sb.append(" Upgrade Price: " + upgradePrice);
+	     
+	      String resp = sb.toString();
+
+	      return resp;
+	    }
+	  
+	  
+  }
 
   /**
    * @return the dateOpened
@@ -565,8 +632,28 @@ public class GWDataRequestRespTO implements Serializable {
   public void addLineageRecord(LineageRecord inRecord) {
     lineageArray.add(inRecord);
   }
+  
+  
 
   /**
+ * @return the upgradePLUList
+ */
+public ArrayList<UpgradePLUList> getUpgradePLUList() {
+	return upgradePLUList;
+}
+
+/**
+ * @param upgradePLUList the upgradePLUList to set
+ */
+public void setUpgradePLUList(ArrayList<UpgradePLUList> upgradePLUList) {
+	this.upgradePLUList = upgradePLUList;
+}
+
+public void addUpgradePLUList(UpgradePLUList inRecord) {
+	upgradePLUList.add(inRecord);
+  }
+
+/**
    * @return the kind
    */
   public String getKind() {
