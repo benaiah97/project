@@ -1145,4 +1145,14 @@ public class DLRUpgradeEntitlementRules implements TransformConstants{
 	    return dtiTxn;
 	  }
 
+
+	/**
+	 * Apply DLR upgrade entitlement rules.
+	 *
+	 * @param dtiTxn the dti txn
+	 */
+	public static void applyDLRUpgradeEntitlementRules(DTITransactionTO dtiTxn) {
+		// TODO TBD
+	}
+
 }
