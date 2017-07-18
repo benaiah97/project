@@ -910,16 +910,10 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
     String tpiCode = dtiTxn.getTpiCode();
     EntityTO entityTO = dtiTxn.getEntityTO();
 
- // RULE: Do the various payments, if provided, cover the products on the
-    // order?
-    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(
-        tktListTO, payListTO, entityTO);
-    upgrdEntReqTO.setTotalOrderAmount(totalOrderAmount);
-    
     // ////////
     // Deals with the "TO" product
     // ////////
-    
+
     ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(
         tktListTO, ValueConstants.TYPE_CODE_SELL);
     allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
@@ -985,8 +979,6 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
     // Apply any rules unique to one provider.
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
-    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-    	//DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
     }
 
     return;
@@ -1150,5 +1142,5 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
 
     return;
   }
-  
+
 }
