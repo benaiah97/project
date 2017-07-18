@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementResponseTO;
+import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
@@ -22,6 +23,7 @@ import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
 import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
+import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.data.common.VoucherTO;
@@ -39,7 +41,7 @@ import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse.Payment;
  */
 
 public class UpgradeEntitlementXML {
-
+	
 	/**
 	 * Gets the DTI transfer object from the JAXB version of the Upgrade Entitlement Request.
 	 * 
@@ -74,9 +76,169 @@ public class UpgradeEntitlementXML {
 			uEntReqTO.setAuditNotation(uEntReq.getAuditNotation());
 		}
 
-		return uEntReqTO;
+		// Reservation
+	    if (uEntReq.getReservation() != null) {
+	    	UpgradeEntitlementRequest.Reservation renewEnt = uEntReq
+	          .getReservation();
+	      ReservationTO resvTO = new ReservationTO();
+	      List<JAXBElement<?>> aReservationList = renewEnt
+	          .getResCodeOrResCreateDateOrResPickupDate();
+	      for /* each */(JAXBElement<?> aReservationEntry : /* in */aReservationList) {
+	        setTOReservation(resvTO, aReservationEntry);
+	      }
+	      uEntReqTO.setReservation(resvTO);
+	    }
 
+	    // ClientData
+	    if (uEntReq.getClientData() != null) {
+	    	UpgradeEntitlementRequest.ClientData clientData = uEntReq
+	          .getClientData();
+	      ClientDataTO clientDataTO = new ClientDataTO();
+	      setTOClientData(clientData, clientDataTO);
+	      uEntReqTO.setClientData(clientDataTO);
+	    }
+	    
+		return uEntReqTO;
 	}
+	
+	/**
+	   * Sets the to reservation.
+	   * 
+	   * @param resvTO
+	   *            the resv transfer object
+	   * @param aReservationEntry
+	   *            a JAXB reservation entry
+	   */
+	  private static void setTOReservation(ReservationTO resvTO,
+	      JAXBElement<?> aReservationEntry) {
+
+	    QName fieldName = aReservationEntry.getName();
+
+	    if (fieldName.getLocalPart().equalsIgnoreCase("ResCode")) {
+	      resvTO.setResCode((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResNumber")) {
+	      resvTO.setResNumber((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResCreateDate")) {
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
+	          .getValue();
+	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+	      resvTO.setResCreateDate(tempCalendar);
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResPickupDate")) {
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
+	          .getValue();
+	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+	      resvTO.setResPickupDate(tempCalendar);
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResPickupArea")) {
+	      resvTO.setResPickupArea((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResSalesType")) {
+	      resvTO.setResSalesType((String) aReservationEntry.getValue());
+	    }
+
+	    return;
+	  }
+	  
+	  /**
+	   * Sets the to client data.
+	   * 
+	   * @param clientData
+	   *            the client data parsed from JAXB
+	   * @param clientDataTO
+	   *            the client data transfer object
+	   */
+	  private static void setTOClientData(
+			  UpgradeEntitlementRequest.ClientData clientData,
+	      ClientDataTO clientDataTO) {
+
+	    // Optional fields
+	    if (clientData.getClientType() != null) clientDataTO
+	        .setClientType(clientData.getClientType());
+	    if (clientData.getClientCategory() != null) clientDataTO
+	        .setClientCategory(clientData.getClientCategory());
+	    if (clientData.getDemoLanguage() != null) clientDataTO
+	        .setDemoLanguage(clientData.getDemoLanguage());
+
+	    // Optional Demographics
+	    if (clientData.getDemoData() != null) {
+
+	    	UpgradeEntitlementRequest.ClientData.DemoData demoData = clientData
+	          .getDemoData();
+
+	      if (demoData.getBill() != null) {
+	        DemographicsTO demoTO = new DemographicsTO();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Bill billData = demoData
+	            .getBill();
+
+	        // Optional Attributes
+	        if (billData.getName() != null) demoTO.setName(billData
+	            .getName());
+	        if (billData.getLastName() != null) demoTO.setLastName(billData
+	            .getLastName());
+	        if (billData.getFirstName() != null) demoTO
+	            .setFirstName(billData.getFirstName());
+	        if (billData.getAddr1() != null) demoTO.setAddr1(billData
+	            .getAddr1());
+	        if (billData.getAddr2() != null) demoTO.setAddr2(billData
+	            .getAddr2());
+	        if (billData.getCity() != null) demoTO.setCity(billData
+	            .getCity());
+	        if (billData.getState() != null) demoTO.setState(billData
+	            .getState());
+	        if (billData.getZip() != null) demoTO.setZip(billData.getZip());
+	        if (billData.getCountry() != null) demoTO.setCountry(billData
+	            .getCountry());
+	        if (billData.getTelephone() != null) demoTO
+	            .setTelephone(billData.getTelephone());
+	        if (billData.getEmail() != null) demoTO.setEmail(billData
+	            .getEmail());
+	        if (billData.getSellerResNbr() != null) demoTO
+	            .setSellerResNbr(billData.getSellerResNbr());
+
+	        clientDataTO.setBillingInfo(demoTO);
+
+	      }
+
+	      if (demoData.getShip() != null) {
+
+	        DemographicsTO demoTO = new DemographicsTO();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Ship shipData = demoData
+	            .getShip();
+
+	        // Optional Attributes
+	        if (shipData.getName() != null) demoTO.setName(shipData
+	            .getName());
+	        if (shipData.getLastName() != null) demoTO.setLastName(shipData
+	            .getLastName());
+	        if (shipData.getFirstName() != null) demoTO
+	            .setFirstName(shipData.getFirstName());
+	        if (shipData.getAddr1() != null) demoTO.setAddr1(shipData
+	            .getAddr1());
+	        if (shipData.getAddr2() != null) demoTO.setAddr2(shipData
+	            .getAddr2());
+	        if (shipData.getCity() != null) demoTO.setCity(shipData
+	            .getCity());
+	        if (shipData.getState() != null) demoTO.setState(shipData
+	            .getState());
+	        if (shipData.getZip() != null) demoTO.setZip(shipData.getZip());
+	        if (shipData.getCountry() != null) demoTO.setCountry(shipData
+	            .getCountry());
+	        if (shipData.getTelephone() != null) demoTO
+	            .setTelephone(shipData.getTelephone());
+	        if (shipData.getEmail() != null) demoTO.setEmail(shipData
+	            .getEmail());
+
+	        clientDataTO.setShippingInfo(demoTO);
+
+	      }
+
+	    }
+
+	    return;
+	  }
 
 	/**
 	 * 

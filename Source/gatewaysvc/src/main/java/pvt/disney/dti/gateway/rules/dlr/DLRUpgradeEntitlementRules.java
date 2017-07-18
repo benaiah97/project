@@ -18,8 +18,6 @@ import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
-import pvt.disney.dti.gateway.data.RenewEntitlementRequestTO;
-import pvt.disney.dti.gateway.data.RenewEntitlementResponseTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementResponseTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
@@ -57,7 +55,7 @@ import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
 
 public class DLRUpgradeEntitlementRules implements TransformConstants {
-
+	
 	/**
 	 * Transforms the request in the DTI transfer object into a valid eGalaxy
 	 * request string.
@@ -82,7 +80,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		// CREATE the ORDER TO
 		GWOrderTO orderTO = createOrderTO(dtiTxn);
 
-		// Installment Fields - Set Contract clause and sales program in the Order
+		// Installment Fields - Set Contract clause and sales program in the
+		// Order
 		// clause
 		if (upgradeRequest.isInstallmentRequest()) {
 
@@ -199,20 +198,22 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 		GWOrderTO orderTO = new GWOrderTO();
 
-		RenewEntitlementRequestTO resReq = (RenewEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+		UpgradeEntitlementRequestTO resReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
 
 		// OrderID
 		orderTO.setOrderID(resReq.getReservation().getResCode());
-
+		
 		// CustomerID
 		// if the override customer ID is present, use it, otherwise use what's
 		// in the database
-		if (resReq.getEligibilityGroup() != null
+		// TODO resReq.getEligibilityGroup()
+		/*if (resReq.getEligibilityGroup() != null
 				&& resReq.getEligibilityGroup().equalsIgnoreCase(TransformConstants.GW_ORDERS_DLR_ELIGIBILITY_GROUP)) {
 			orderTO.setCustomerID(resReq.getEligibilityMember());
 		} else {
 			orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
-		}
+		}*/
+		orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
 
 		// OrderDate
 		orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getGMTDateNow()));
@@ -229,7 +230,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		// Also, since values will be required later, put together a map of keys
 		// and values for ready access.
 		HashMap<String, String> instTPLookupMap = new HashMap<String, String>();
-		if (resReq.isInstallmentRenewRequest()) {
+		if (resReq.isInstallmentRequest()) {
 
 			ArrayList<TPLookupTO> tpLookupList = dtiTxn.getTpLookupTOList();
 			String salesProgram = null;
@@ -254,23 +255,24 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		} // If is installment request
 
 		// OrderTotal (as of 2.16.1, JTL)
-		if (resReq.isInstallmentRenewRequest()) {
+		if (resReq.isInstallmentRequest()) {
 			orderTO.setOrderTotal(resReq.getTotalOrderAmount());
 		}
 
 		// OrderReference
 		// If the order is a "BOLT" order, then put the LMS number in Order
 		// Reference.
-		if (resReq.getEligibilityGroup() != null) {
+		// TODO resReq.getEligibilityGroup()
+		/*if (resReq.getEligibilityGroup() != null) {
 			if (resReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
 				if (resReq.getEligibilityMember() != null) {
 					orderTO.setOrderReference(resReq.getEligibilityMember());
 				}
 			}
-		}
+		}*/
 
 		// PaymentContracts (as of 2.16.1, JTL)
-		if (resReq.isInstallmentRenewRequest()) {
+		if (resReq.isInstallmentRequest()) {
 
 			GWPaymentContractTO payContract = new GWPaymentContractTO();
 
@@ -297,7 +299,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 			// PaymentPlanID
 			String paymentPlan = null;
-			if (resReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
+			// TODO resReq.getEligibilityGroup()
+			/*if (resReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
 				paymentPlan = instTPLookupMap.get(GW_ORDERS_SOCARENEWPLAN);
 			} else {
 				paymentPlan = instTPLookupMap.get(GW_ORDERS_CARENEWPLAN);
@@ -305,7 +308,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 			if (paymentPlan == null) {
 				throw new DTIException(DLRReservationRules.class, DTIErrorCode.UNDEFINED_FAILURE, "GWTPLookup for "
 						+ GW_ORDERS_SOCARENEWPLAN + " or " + GW_ORDERS_CARENEWPLAN + " is missing in the database.");
-			}
+			}*/
 			payContract.setPaymentPlanID(paymentPlan);
 
 			// Renew Contract
@@ -331,13 +334,14 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		}
 
 		// Since 2.11 - If group is "BOLT", then "org name" goes to Street 3.
-		if (resReq.getEligibilityGroup() != null) {
+		// TODO resReq.getEligibilityGroup()
+		/*if (resReq.getEligibilityGroup() != null) {
 			if (resReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
 				if (demoTO.getName() != null) {
 					orderContactTO.setStreet3(demoTO.getName());
 				}
 			}
-		}
+		}*/
 
 		orderContactTO.setCity(demoTO.getCity());
 		// WDPRO FIX
@@ -371,13 +375,14 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 			// Since 2.11 - If group is "BOLT", then "org name" goes to Street
 			// 3.
-			if (resReq.getEligibilityGroup() != null) {
+			// TODO resReq.getEligibilityGroup()
+			/*if (resReq.getEligibilityGroup() != null) {
 				if (resReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
 					if (shippingTO.getName() != null) {
 						shipContactTO.setStreet3(shippingTO.getName());
 					}
 				}
-			}
+			}*/
 
 			shipContactTO.setCity(shippingTO.getCity());
 			// WDPROFIX
@@ -392,7 +397,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 			orderTO.setShipToContact(shipContactTO);
 			// END ShipToContact field
 		} else { // as of 2.16.1, JTL
-			if (resReq.isInstallmentRenewRequest()) {
+			if (resReq.isInstallmentRequest()) {
 				shipContactTO.setSameAsOrderContact(true);
 			}
 		}
@@ -420,9 +425,10 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 				orderTO.setGroupVisitDescription(resReq.getClientData().getBillingInfo().getName());
 
 				// Populate Group Visit Reference only for BOLT style orders.
-				if (resReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
+				// TODO resReq.getEligibilityGroup()
+				/*if (resReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
 					orderTO.setGroupVisitReference(resReq.getClientData().getBillingInfo().getName());
-				}
+				}*/
 
 			}
 
@@ -571,7 +577,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 	}
 
 	/**
-	 * Apply DLR renew entitlement rules.
+	 * Apply DLR Upgrade entitlement rules.
 	 * 
 	 * @param dtiTxn
 	 *            the DTI transaction
@@ -583,23 +589,23 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
 		CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
-		RenewEntitlementRequestTO dtiRenewReq = (RenewEntitlementRequestTO) dtiCmdBody;
+		UpgradeEntitlementRequestTO dtiUpgradeReq = (UpgradeEntitlementRequestTO) dtiCmdBody;
 
-		// DLR renewal transactions must have a Reservation Section
-		if (dtiRenewReq.getReservation() == null) {
+		// DLR upgrade transactions must have a Reservation Section
+		if (dtiUpgradeReq.getReservation() == null) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitlement transaction did not have a Reservation section.");
+					"DLR Upgrade Entitlement transaction did not have a Reservation section.");
 		}
 
-		// DLR renewal transaction must have Client Data
-		if (dtiRenewReq.getClientData() == null) {
+		// DLR upgrade transaction must have Client Data
+		if (dtiUpgradeReq.getClientData() == null) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitlement transaction did not have a ClientData section.");
+					"DLR Upgrade Entitlement transaction did not have a ClientData section.");
 		}
 
 		// Validate that resCode is not null and not 0 length
-		if (dtiRenewReq.getReservation() != null) {
-			String resCode = dtiRenewReq.getReservation().getResCode();
+		if (dtiUpgradeReq.getReservation() != null) {
+			String resCode = dtiUpgradeReq.getReservation().getResCode();
 
 			if (resCode == null || resCode.length() == 0 || resCode.length() > 20) {
 				throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
@@ -609,7 +615,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 		// Validate that billing demographics are present
 		// FirstName, LastName, Street1, City, ZIP, Country, Phone, Email
-		DemographicsTO billingTO = dtiRenewReq.getClientData().getBillingInfo();
+		DemographicsTO billingTO = dtiUpgradeReq.getClientData().getBillingInfo();
 		String firstName = billingTO.getFirstName();
 		String lastName = billingTO.getLastName();
 		String street1 = billingTO.getAddr1();
@@ -621,41 +627,41 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 		if ((firstName == null) || (firstName.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing first name.");
+					"DLR Upgrade Entitelment missing required billing first name.");
 		}
 		if ((lastName == null) || (lastName.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing last name.");
+					"DLR Upgrade Entitelment missing required billing last name.");
 		}
 		if ((street1 == null) || (street1.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing street address 1.");
+					"DLR Upgrade Entitelment missing required billing street address 1.");
 		}
 		if ((city == null) || (city.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing city.");
+					"DLR Upgrade Entitelment missing required billing city.");
 		}
 		if ((zip == null) || (zip.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing ZIP.");
+					"DLR Upgrade Entitelment missing required billing ZIP.");
 		}
 		if ((country == null) || (country.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing country.");
+					"DLR Upgrade Entitelment missing required billing country.");
 		}
 		if ((phone == null) || (phone.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing phone.");
+					"DLR Upgrade Entitelment missing required billing phone.");
 		}
 		if ((email == null) || (email.length() == 0)) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-					"DLR Renew Entitelment missing required billing email.");
+					"DLR Upgrade Entitelment missing required billing email.");
 		}
 
 		// max limit is enforced in TicketRules
 		String tpiCode = dtiTxn.getTpiCode();
 		TransactionType txnType = dtiTxn.getTransactionType();
-		ReservationTO dtiResTO = dtiRenewReq.getReservation();
+		ReservationTO dtiResTO = dtiUpgradeReq.getReservation();
 		String shipDetail = dtiResTO.getResSalesType();
 		String shipMethod = dtiResTO.getResSalesType();
 
@@ -673,17 +679,17 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 		if (tpLookups.size() == 0) {
 			throw new DTIException(DLRReservationRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"TPCommandLookup query on renew entitlement did not return with responses as expected (set-up incomplete): "
+					"TPCommandLookup query on Upgrade entitlement did not return with responses as expected (set-up incomplete): "
 							+ tpLookups.size());
 		}
 		dtiTxn.setTpLookupTOList(tpLookups);
 
-		// Note: Renewals don't have a down payment.
+		// Note: Upgrade don't have a down payment.
 
 		// RULE: If tickets have demographics, the country code must be of
 		// length = 2. This is an oddity in the galaxy specification, but
 		// still compliant to the ISO codes.
-		ArrayList<TicketTO> tktListTO = dtiRenewReq.getTktList();
+		ArrayList<TicketTO> tktListTO = dtiUpgradeReq.getTicketList();
 		for /* each */ (TicketTO aTicketTO : /* in */tktListTO) {
 
 			if (aTicketTO.getTicketDemoList() != null) {
@@ -705,11 +711,11 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		// Determine if this is an installment transaction, and if so, mark it
 		// in
 		// the transfer object.
-		ArrayList<PaymentTO> payListTO = dtiRenewReq.getPaymentList();
+		ArrayList<PaymentTO> payListTO = dtiUpgradeReq.getPaymentList();
 		for (/* each */PaymentTO aPayment : /* in */payListTO) {
 
 			if (aPayment.getPayType() == PaymentType.INSTALLMENT) {
-				dtiRenewReq.setInstallmentRenewRequest(true);
+				dtiUpgradeReq.setInstallmentRequest(true);
 			}
 
 		}
@@ -788,7 +794,10 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 			// only one expected per line). (As of 2.16.1, JTL)
 			if (dtiTicket.getTicketDemoList().size() != 0) {
 
-				DemographicsTO dtiDemo = dtiTicket.getTicketDemoList().get(0); // One and only one.
+				DemographicsTO dtiDemo = dtiTicket.getTicketDemoList().get(0); // One
+				// and
+				// only
+				// one.
 
 				GWMemberDemographicsTO gwDemo = new GWMemberDemographicsTO();
 
@@ -1017,8 +1026,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.COMMAND) {
 
 			if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.TICKET) {
-				RenewEntitlementRequestTO resReq = (RenewEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
-				RenewEntitlementResponseTO resResp = new RenewEntitlementResponseTO();
+				UpgradeEntitlementRequestTO resReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+				UpgradeEntitlementResponseTO resResp = new UpgradeEntitlementResponseTO();
 
 				TicketTO dtiTktTO = new TicketTO();
 
@@ -1026,8 +1035,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 				dtiTktTO.setTktItem(new BigInteger(ITEM_1));
 
 				// Ticket Identity
-				if (resReq.getTktList().size() != 0) {
-					TicketTO dtiTktTOReq = resReq.getTktList().get(0);
+				if (resReq.getTicketList().size() != 0) {
+					TicketTO dtiTktTOReq = resReq.getTicketList().get(0);
 					if (dtiTktTOReq != null)
 						dtiTktTO.setExternal(dtiTktTOReq.getExternal());
 				}

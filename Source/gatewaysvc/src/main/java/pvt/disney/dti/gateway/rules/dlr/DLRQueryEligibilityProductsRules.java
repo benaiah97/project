@@ -18,21 +18,20 @@ import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
-import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeQueryProductXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
@@ -637,7 +636,5 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 
 	    return;
 	  }
-
-
 
 }

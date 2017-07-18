@@ -20,7 +20,7 @@ public class DLRErrorRules {
 	/** Event logger. */
 	private static final EventLogger logger = EventLogger
 			.getLogger(DLRErrorRules.class.getCanonicalName());
-
+	
 	private static final String CRITICAL_ERROR = "-1";
 
 	/**
@@ -63,6 +63,9 @@ public class DLRErrorRules {
     case RENEWENTITLEMENT:
       errorCode = processRenewEntitlementErrorStatus(xmlResponse,
           statusCode);
+    case UPGRADEENTITLEMENT:
+        errorCode = processRenewEntitlementErrorStatus(xmlResponse,
+            statusCode);
       break;			
 		}
 		return errorCode;
@@ -267,8 +270,8 @@ public class DLRErrorRules {
   protected static String processRenewEntitlementErrorStatus(
       String xmlResponse, String statusCode) {
     String errorCode = null;
-    // TO DO until code to peek deeper into eGalaxy VoidTicketErrors element
-    // is done,
+    // TODO until code to peek deeper into eGalaxy VoidTicketErrors element
+    // is done, also for Upgrade Entitlement
     // we will just set the errorCode to the statusCode
     errorCode = statusCode;
     return errorCode;

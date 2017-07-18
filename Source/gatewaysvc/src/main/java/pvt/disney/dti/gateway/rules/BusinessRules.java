@@ -53,7 +53,6 @@ import pvt.disney.dti.gateway.rules.dlr.DLRQueryTicketRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRRenewEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRReservationRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeAlphaRules;
-import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRVoidTicketRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDBusinessRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDQueryReservationRules;
@@ -911,10 +910,16 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
     String tpiCode = dtiTxn.getTpiCode();
     EntityTO entityTO = dtiTxn.getEntityTO();
 
+ // RULE: Do the various payments, if provided, cover the products on the
+    // order?
+    BigDecimal totalOrderAmount = PaymentRules.validatePaymentsOnOrder(
+        tktListTO, payListTO, entityTO);
+    upgrdEntReqTO.setTotalOrderAmount(totalOrderAmount);
+    
     // ////////
     // Deals with the "TO" product
     // ////////
-
+    
     ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(
         tktListTO, ValueConstants.TYPE_CODE_SELL);
     allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
@@ -981,7 +986,7 @@ public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTI
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
     } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-    	DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
+    	//DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
     }
 
     return;

@@ -20,7 +20,7 @@
 
 	<build>
 		<plugins>
-			<!-- REQUIRED FOR JAVA 5 -->
+			<!-- REQUIRED FOR JAVA 5 --> 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -64,6 +64,27 @@
              <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
         </dependency>
+        
+        <dependency>
+			<groupId>org.easymock</groupId>
+		    <artifactId>easymock</artifactId>
+		    <version>3.0</version>
+		    <type>jar</type>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-easymock</artifactId>
+			<version>1.4.9</version>
+			<scope>test</scope>
+		</dependency>
+        
+        <dependency>
+	        <groupId>org.jmockit</groupId>
+		    <artifactId>jmockit</artifactId>
+		    <version>1.9</version>
+		</dependency>
         
         <dependency>
            <groupId>org.powermock</groupId>

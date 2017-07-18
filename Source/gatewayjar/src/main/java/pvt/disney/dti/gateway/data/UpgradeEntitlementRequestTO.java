@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
+import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 
 /**
@@ -14,7 +16,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
  * 
  */
 public class UpgradeEntitlementRequestTO extends CommandBodyTO implements Serializable {
-
+	
 	/** Standard serial Version UID */
 	private static final long serialVersionUID = -5390027434972940288L;
 
@@ -40,6 +42,17 @@ public class UpgradeEntitlementRequestTO extends CommandBodyTO implements Serial
    */
   private BigDecimal installmentDownpayment = null;
 
+  /** Reservation */
+  private ReservationTO reservation;
+
+  /** ClientData */
+  private ClientDataTO clientData;
+  
+  /**
+   * The total order amount (as summarized by the business rules). {@link BusinessRules.applyUpgradeEntitlementRules() }
+   */
+  private BigDecimal totalOrderAmount;
+  
 	/* -------------------------------------------------------------------------------- */
 
 	/**
@@ -115,4 +128,49 @@ public class UpgradeEntitlementRequestTO extends CommandBodyTO implements Serial
     this.installmentDownpayment = installmentDownpayment;
   }
 
+	/**
+	 * @return the reservation
+	 */
+	public ReservationTO getReservation() {
+		return reservation;
+	}
+
+	/**
+	 * @param reservation
+	 *            the reservation to set
+	 */
+	public void setReservation(ReservationTO reservation) {
+		this.reservation = reservation;
+	}
+
+	/**
+	 * @return the clientData
+	 */
+	public ClientDataTO getClientData() {
+		return clientData;
+	}
+
+	/**
+	 * @param clientData
+	 *            the clientData to set
+	 */
+	public void setClientData(ClientDataTO clientData) {
+		this.clientData = clientData;
+	}
+
+	/**
+	 * @return the clientData
+	 */
+	public BigDecimal getTotalOrderAmount() {
+		return totalOrderAmount;
+	}
+
+	/**
+	 * @param totalOrderAmount
+	 *            the totalOrderAmount to set
+	 */
+	public void setTotalOrderAmount(BigDecimal totalOrderAmount) {
+		this.totalOrderAmount = totalOrderAmount;
+	}
+	
 }
