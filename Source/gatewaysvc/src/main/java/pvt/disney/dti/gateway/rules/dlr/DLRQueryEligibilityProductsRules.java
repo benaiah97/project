@@ -600,14 +600,15 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 	    			ProductKey.insertGuId(gwDataRespTO.getVisualID(),guid);
 	    		}
 	    		//Need to add exception block here 
-	    		
+	    		ResultStatusTo resultStatusTo=new ResultStatusTo(ResultType.ELIGIBLE);
+	    		dtiTktTO.setResultType(resultStatusTo.toString());
 	    	}else{
 	    		ResultStatusTo resultStatusTo=new ResultStatusTo(ResultType.INELIGIBLE);
-	    		dtiTktTO.setResultType(resultStatusTo);
+	    		dtiTktTO.setResultType(resultStatusTo.toString());
 	    	}
 	    }else{
 	    	ResultStatusTo resultStatusTo=new ResultStatusTo(ResultType.INELIGIBLE);
-    		dtiTktTO.setResultType(resultStatusTo);
+    		dtiTktTO.setResultType(resultStatusTo.toString());
 	    }
 
 	    //Pass the information fetched in form of ticket to response 

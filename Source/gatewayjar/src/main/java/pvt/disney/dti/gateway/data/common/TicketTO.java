@@ -324,7 +324,7 @@ public class TicketTO implements Serializable, Cloneable {
   private String replacedByPass;
   
   /** get the eligibility criteria for the current ticket */
-  private ResultStatusTo resultType;
+  private String resultType;
   
   /** get the sale Type for the current ticket */
   private String saleType;
@@ -1205,14 +1205,14 @@ public class TicketTO implements Serializable, Cloneable {
 /**
  * @return the resultType
  */
-public ResultStatusTo getResultType() {
+public String getResultType() {
 	return resultType;
 }
 
 /**
  * @param resultType the resultType to set
  */
-public void setResultType(ResultStatusTo resultType) {
+public void setResultType(String resultType) {
 	this.resultType = resultType;
 }
 
