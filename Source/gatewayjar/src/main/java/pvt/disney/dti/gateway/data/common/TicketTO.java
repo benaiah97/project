@@ -329,6 +329,16 @@ public class TicketTO implements Serializable, Cloneable {
   /** get the sale Type for the current ticket */
   private String saleType;
   
+  /** get the plu info */
+  private String plu;
+  
+  /** get price information  */
+  private BigDecimal price; 
+  
+  /** get upgraded information  */
+  private BigDecimal upgradePrice;
+  
+  
   /**
    * @return the showGroup
    */
@@ -1218,6 +1228,48 @@ public String getSaleType() {
  */
 public void setSaleType(String saleType) {
 	this.saleType = saleType;
+}
+
+/**
+ * @return the plu
+ */
+public String getPlu() {
+	return plu;
+}
+
+/**
+ * @param plu the plu to set
+ */
+public void setPlu(String plu) {
+	this.plu = plu;
+}
+
+/**
+ * @return the price
+ */
+public BigDecimal getPrice() {
+	return price;
+}
+
+/**
+ * @param price the price to set
+ */
+public void setPrice(BigDecimal price) {
+	this.price = price;
+}
+
+/**
+ * @return the upgradePrice
+ */
+public BigDecimal getUpgradePrice() {
+	return upgradePrice;
+}
+
+/**
+ * @param upgradePrice the upgradePrice to set
+ */
+public void setUpgradePrice(BigDecimal upgradePrice) {
+	this.upgradePrice = upgradePrice;
 }
 
 
