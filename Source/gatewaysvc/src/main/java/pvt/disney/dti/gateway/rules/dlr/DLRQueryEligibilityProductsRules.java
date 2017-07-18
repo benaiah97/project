@@ -599,6 +599,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 	    			//Inserting the visual id in table ENTTL_GUID
 	    			ProductKey.insertGuId(gwDataRespTO.getVisualID(),guid);
 	    		}
+	    		//Need to add exception block here 
 	    		
 	    	}else{
 	    		ResultStatusTo resultStatusTo=new ResultStatusTo(ResultType.INELIGIBLE);

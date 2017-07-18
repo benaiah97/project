@@ -335,7 +335,7 @@ public class TicketTO implements Serializable, Cloneable {
   /** get price information  */
   private BigDecimal price; 
   
-  /** get upgraded information  */
+  /** get upgraded information */
   private BigDecimal upgradePrice;
   
   
