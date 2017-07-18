@@ -144,10 +144,10 @@ public class DLRBusinessRules {
     	  xmlResponse);
       break;
 
-		case UPGRADEENTITLEMENT:
-			dtiTxn = DLRUpgradeEntitlementRules.transformResponse(dtiTxn, xmlResponse);
-			break;
-      
+    case UPGRADEENTITLEMENT:
+        dtiTxn=DLRUpgradeEntitlementRules.transformResponse(dtiTxn,
+      	  xmlResponse);
+        break;
     default:
       throw new DTIException(
           TransformRules.class,

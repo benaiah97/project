@@ -14,7 +14,8 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
-public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants {
+public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants{
+
 
 	/**
 	 * Process the request from DTI to the provider
@@ -34,8 +35,10 @@ public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants {
 		if (gwEnvTO != null) {
 			gwHdrTO = gwEnvTO.getHeaderTO();
 			gwBodyTO = gwEnvTO.getBodyTO();
-		} else {
-			throw new DTIException(GWEnvelopeXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+		}
+		else {
+			throw new DTIException(GWEnvelopeXML.class,
+					DTIErrorCode.INVALID_MSG_CONTENT,
 					"Null GWEnvelopeTO passed to getXML.  Can't render XML.");
 		}
 
@@ -43,7 +46,8 @@ public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants {
 		Element envelopeStanza = document.addElement("Envelope");
 
 		GWHeaderXML.addHeaderElement(gwHdrTO, envelopeStanza);
-		GWBodyUpgradeEntitlementXML.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getTxnType());
+		GWBodyUpgradeEntitlementXML
+				.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getTxnType());
 		xmlString = document.asXML();
 
 		return xmlString;
@@ -62,50 +66,47 @@ public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants {
 	public static GWEnvelopeTO getTO(String xmlResponse) throws DTIException {
 
 		Document document = null;
-		GWEnvelopeTO gwEnvTO = new GWEnvelopeTO(GWEnvelopeTO.GWTransactionType.UNDEFINED);
+		GWEnvelopeTO gwEnvTO = new GWEnvelopeTO(
+				GWEnvelopeTO.GWTransactionType.UNDEFINED);
 		GWHeaderTO gwHdrTO = null;
 		GWBodyTO gwBodyTO = null;
 
 		try {
 			document = DocumentHelper.parseText(xmlResponse);
-		} catch (DocumentException de) {
-			throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+		}
+		catch (DocumentException de) {
+			throw new DTIException(GWHeaderTO.class,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Unable to parse XML from provider: " + de.toString());
 		}
 
 		Element envelope = document.getRootElement();
 
-		if (envelope.getName().compareTo("Envelope") != 0)
-			throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Ticket provider returned XML without a Envelope element.");
+		if (envelope.getName().compareTo("Envelope") != 0) throw new DTIException(
+				GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+				"Ticket provider returned XML without a Envelope element.");
 
 		// Locate the Header and Body Sections
-		for (Iterator<org.dom4j.Element> i = envelope.elementIterator(); i.hasNext();) {
+		for (Iterator<org.dom4j.Element> i = envelope.elementIterator(); i
+				.hasNext();) {
 			Element element = i.next();
 
 			if (element.getName().compareTo("Header") == 0) {
 				gwHdrTO = GWHeaderXML.getTO(element);
 
-				if (gwHdrTO.getMessageType().compareTo(GW_ORDERS_RESPONSE_MESSAGE_TYPE) == 0) { // responses
-																								// have
-																								// a
-																								// different
-																								// msg
-																								// typ
-																								// in
-																								// the
-																								// header
-																								// than
-																								// requests
+				if (gwHdrTO.getMessageType().compareTo(
+						GW_ORDERS_RESPONSE_MESSAGE_TYPE) == 0) { // responses have a different msg typ in the header than requests
 					gwEnvTO.setTxnType(GWEnvelopeTO.GWTransactionType.ORDERS);
-				} else {
+				}
+				else {
 					StringBuffer errorBuffer = new StringBuffer(
 							"Ticket provider returned unknown Header,Message type: ");
-					if (gwHdrTO.getMessageType() == null)
-						errorBuffer.append("null");
-					else
-						errorBuffer.append(gwHdrTO.getMessageType());
-					throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE, errorBuffer.toString());
+					if (gwHdrTO.getMessageType() == null) errorBuffer
+							.append("null");
+					else errorBuffer.append(gwHdrTO.getMessageType());
+					throw new DTIException(GWHeaderTO.class,
+							DTIErrorCode.TP_INTERFACE_FAILURE,
+							errorBuffer.toString());
 				}
 			}
 
@@ -117,22 +118,24 @@ public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants {
 		}
 
 		// if header found, add to envelope. If not found, error out.
-		if (gwHdrTO != null)
-			gwEnvTO.setHeaderTO(gwHdrTO);
+		if (gwHdrTO != null) gwEnvTO.setHeaderTO(gwHdrTO);
 		else {
-			throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+			throw new DTIException(GWHeaderTO.class,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a Header element.");
 		}
 
 		// if body found, add to envelope. If not found, error out.
-		if (gwBodyTO != null)
-			gwEnvTO.setBodyTO(gwBodyTO);
+		if (gwBodyTO != null) gwEnvTO.setBodyTO(gwBodyTO);
 		else {
-			throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+			throw new DTIException(GWHeaderTO.class,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned XML without a Body element.");
 		}
 
 		return gwEnvTO;
 	}
+
+
 
 }
