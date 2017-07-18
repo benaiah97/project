@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -840,7 +841,7 @@ public class ProductKey {
 	 */
 	@SuppressWarnings("unchecked")
 	public static ArrayList<DBProductTO> getProductsForSeller(
-			ArrayList<String> upgrdTypCode) throws DTIException {
+			ArrayList<String> upgrdTypCode,Date startSaleDate) throws DTIException {
 
 		logger.sendEvent("Entering getProductsForSeller()", EventType.DEBUG,
 				THISINSTANCE);
@@ -859,7 +860,7 @@ public class ProductKey {
 
 		Object[] queryParms = { DBUtil.createSQLInList(upgrdTypSet) };
 		// Replaces "?"
-		Object[] values = {};
+		Object[] values = {startSaleDate};
 
 		// Get instance of Query Builder (Replaces "%")
 		DBQueryBuilder qBuilder = new DBQueryBuilder();
