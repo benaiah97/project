@@ -125,14 +125,14 @@ public class TransmissionRqstXML {
   
  
   /**
-   * TODO Complete JavaDoc
+ * This will call the actual logic of converting the Transmission object to the required DTiTransaction Object  
  * @param requestType
  * @param tktBroker
  * @param jaxbReq
  * @return
  * @throws JAXBException
  */
-private static DTITransactionTO getDtiTransactionTo(
+public static DTITransactionTO getDtiTransactionTo(
 		TransactionType requestType, String tktBroker, Transmission jaxbReq)
 		throws JAXBException {
 	DTITransactionTO dtiTransTO;
