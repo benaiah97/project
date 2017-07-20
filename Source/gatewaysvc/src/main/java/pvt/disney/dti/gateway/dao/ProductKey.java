@@ -18,6 +18,7 @@ import pvt.disney.dti.gateway.dao.data.DBUtil;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
+import pvt.disney.dti.gateway.data.common.GuestProductTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
 
@@ -716,13 +717,13 @@ public class ProductKey {
 	 * @throws DTIException
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<DBProductTO> getProductsByTktName(
+	public static ArrayList<GuestProductTO> getProductsByTktName(
 			ArrayList<String> tktName) throws DTIException {
 
 		logger.sendEvent("Entering getProductsByTktName()", EventType.DEBUG,
 				THISINSTANCE);
 
-		ArrayList<DBProductTO> result = null;
+		ArrayList<GuestProductTO> result = null;
 		// Retrieve and validate the parameters
 		if ((tktName == null || tktName.size()==0)) {
 			throw new DTIException("getProductsByTktName tktName is null.");
@@ -751,7 +752,7 @@ public class ProductKey {
 			// Run the SQL
 			logger.sendEvent("About to processQuery:  GET_PRODUCTS_FROM_NAME",
 					EventType.DEBUG, THISINSTANCE);
-			result = (ArrayList<DBProductTO>) helper.processQuery(values,
+			result = (ArrayList<GuestProductTO>) helper.processQuery(values,
 					queryParms, qBuilder);
 
 			// Debug
