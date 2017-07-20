@@ -1,11 +1,9 @@
 package pvt.disney.dti.gateway.rules.dlr;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -16,30 +14,28 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
-import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
-import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
+import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
+import pvt.disney.dti.gateway.data.common.GuestProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
-import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeQueryProductXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
@@ -215,20 +211,15 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 	    // Verifying for UpgradedPLU Based on this will , decide for eligible and inellegible 
 	    
 	    if(gwDataRespTO.getUpgradePLUList()!=null && gwDataRespTO.getUpgradePLUList().size()>0){
-	    	 ArrayList<String> pluList=new ArrayList<String>();
+	    	
 	    	 
-	    	ArrayList<UpgradePLUList> upgradePluList=gwDataRespTO.getUpgradePLUList();
-	    	
-	    	
-	    		String plu=upgradePluList.get(0).getPLU();
-	    		BigDecimal upgradePrice=upgradePluList.get(0).getUpgradePrice();;
-	    		pluList.add(plu);
+	    
 	    	
 	    	// Verify from the DB to validate the PLU 
-	    	ArrayList<DBProductTO> upgradedProduct=ProductKey.getProductsByTktName(pluList);
+	    	ArrayList<GuestProductTO> upgradedProduct=setGuestProductDetails(gwDataRespTO);
 	    	// Check the size of the product List
-	    	if(upgradedProduct!=null&&upgradedProduct.size()>0){
-	    		for(DBProductTO dbProductTO:upgradedProduct){
+	    	if(upgradedProduct!=null && upgradedProduct.size()>0){
+	    		for(GuestProductTO dbProductTO:upgradedProduct){
 	    			
 	    			 // If the provider had no error, transform the response.
 	    		    dtiTktTO = new TicketTO();
@@ -241,13 +232,13 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 		    	    
 		    	    dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 		    	    
-		    	    dtiTktTO.setProdQty(dbProductTO.getQuantity());
+		    	    //dtiTktTO.setProdQty(dbProductTO.getQuantity());
 		    	    
 		    	    dtiTktTO.setTktTax(dbProductTO.getTax());
 		    	    
 		    	    dtiTktTO.setProdPrice(dbProductTO.getPrintedPrice());
 		    	    
-		    	    dtiTktTO.setUpgradePrice(upgradePrice);
+		    	    //dtiTktTO.setUpgradePrice(upgradePrice);
 		    	    
 		    	    		    	    
 		    	    dtiTktTO.setShowGroup(String.valueOf(dbProductTO.getEligGrpid()));
@@ -607,8 +598,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 	    		dtiTktTO.setResultType(resultStatusTo.toString());
 	    	}
 	    }else{
-	    	ResultStatusTo resultStatusTo=new ResultStatusTo(ResultType.INELIGIBLE);
-    		dtiTktTO.setResultType(resultStatusTo.toString());
+	    	//transformError
+	    	throw new DTIException(DTIErrorCode.TICKET_INVALID);
 	    }
 
 	    //Pass the information fetched in form of ticket to response 
@@ -700,7 +691,37 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants{
 
 	    return;
 	  }
+/*
+public ArrayList getGuestProductDetails(){
+	 ArrayList<String> pluList=new ArrayList<String>();
+	// Verify from the DB to validate the PLU 
+	try {
+		ArrayList<DBProductTO> upgradedProduct=ProductKey.getProductsByTktName(pluList);
+	} catch (DTIException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+}*/
 
-
-
+	  
+private static ArrayList<GuestProductTO> setGuestProductDetails(GWDataRequestRespTO gwDataRespTO) throws DTIException{
+	
+	ArrayList<GuestProductTO> upgradedProduct=null;
+	ArrayList<UpgradePLUList> upgradePluList=gwDataRespTO.getUpgradePLUList();
+	 if( gwDataRespTO.getUpgradePLUList().size()>0 && gwDataRespTO.getUpgradePLUList()!=null){
+    String plu=upgradePluList.get(0).getPLU();
+    
+	ArrayList<String> pluList=new ArrayList<String>();
+	pluList.add(plu);
+	 upgradedProduct=ProductKey.getProductsByTktName(pluList);
+	if(upgradedProduct!=null && upgradedProduct.size()>0){
+		String Upgradedresult=upgradedProduct.toString();
+		// Add in logger
+	}else{
+			// put inelligible
+	}
+}
+	return upgradedProduct; 
+}
 }
