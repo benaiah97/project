@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
+/**
+ * The Class GuestProductTO.
+ * 
+ */
 public class GuestProductTO {
 
 	/** The product code. */
@@ -26,7 +30,7 @@ public class GuestProductTO {
 
 	/** Tax value 1. */
 	private BigDecimal tax1;
-
+	
 	/** Tax value 2. */
 	private BigDecimal tax2;
 
@@ -448,7 +452,5 @@ public class GuestProductTO {
 				+ ", validitydatesInd=" + validitydatesInd + ", consumableInd="
 				+ consumableInd + ", demographicInd=" + demographicInd + "]";
 	}
-	
-	
 
 }
