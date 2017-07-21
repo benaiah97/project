@@ -313,7 +313,7 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	@SuppressWarnings("unused")
 	private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
-			OTQueryTicketTO infoTO) throws DTIException {
+			OTQueryTicketTO infoTO,ArrayList<GuestProductTO> productTOs) throws DTIException {
 
 		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 		Integer voidCode = null;
@@ -337,11 +337,10 @@ public class WDWQueryEligibleProductsRules {
 				date = fmt.parse(otUsagesTO.getDate());
 			} catch (ParseException e) {
 			}
-			useDates.add(date);
+			useDates.add(date); 
 		} 
 		Date latsUsesDate = Collections.min(useDates);
-		ArrayList<GuestProductTO> productTOs = ProductKey
-				.getProductsTktNbr(tktNbr);
+		
 		if (productTOs != null && productTOs.size() != 0) {
 			for (GuestProductTO guestProductTO : productTOs) {
 				try {
@@ -362,7 +361,7 @@ public class WDWQueryEligibleProductsRules {
 									/ 86400000 > 185) {
 					}
 
-				} catch (NullPointerException e) {
+				} catch (Exception e) {
 				}
 			}
 		}
