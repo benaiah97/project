@@ -749,12 +749,58 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 */
 	private static ArrayList<GuestProductTO> setGuestProductDetails(
 			GWDataRequestRespTO gwDataRespTO) throws DTIException {
+		
+		/*This method is used for processing step 1 */
+		
 		ArrayList<GuestProductTO> upgradedProduct = null;
+		
 		ArrayList<UpgradePLUList> upgradePluList = gwDataRespTO
 				.getUpgradePLUList();
+		
 		ArrayList<String> pluList = new ArrayList<String>();
 		pluList.add(upgradePluList.get(0).getPLU());
+		
 		upgradedProduct = ProductKey.getProductsByTktName(pluList);
+		if(upgradedProduct!=null&&upgradedProduct.size()>0){
+			
+		}else{
+			logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.WARN,null);
+		}
+		
 		return upgradedProduct;
 	}
-}
+	
+	/**
+	 * Process GUID.
+	 *
+	 * @param guid the guid
+	 * @param visualid the visualid
+	 * @throws DTIException the DTI exception
+	 */
+	private void processGUID(String guid,String visualid) throws DTIException{
+	  /*Step 3B*/
+	  try{
+		// Checking for the visual Id in ENTTL_GUID insert if no visualid is present
+		EnttlGuidTO entGuid=ProductKey.getGuId(visualid);
+		 if(entGuid==null){
+		  //Inserting the visual id in table ENTTL_GUID
+		  ProductKey.insertGuId(visualid,guid);
+		 }
+	  }catch(Exception dtie){
+		  throw new DTIException(TransformRules.class,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
+					"Provider responded with a non-numeric status code.");
+	   }
+	}
+	
+	private void getUpgradedProduct()throws DTIException{
+		
+	}
+	
+	private void setQueryEligibleResponseCommand() throws DTIException{
+		
+	}
+}	
+	
+
+
