@@ -159,6 +159,8 @@ public class GWDataRequestRespTO implements Serializable {
   
   /** The upgrade PLU list. */
   private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
+  
+  private ArrayList<Contact> contact=new ArrayList<Contact>();
 
   /** The kind. */
   private String kind; // Added as of 2.11
@@ -1516,6 +1518,21 @@ public void setUpgradePLUList(ArrayList<UpgradePLUList> upgradePLUList) {
 public void addUpgradePLUList(UpgradePLUList inRecord) {
 	upgradePLUList.add(inRecord);
   }
+
+
+/**
+ * @return the contact
+ */
+public ArrayList<Contact> getContact() {
+	return contact;
+}
+
+/**
+ * @param contact the contact to set
+ */
+public void addContact(ArrayList<Contact> contact) {
+	this.contact = contact;
+}
 
 /**
  * Gets the kind.
