@@ -94,7 +94,7 @@ public class GWDataRequestRespTO implements Serializable {
 
   private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
   
-  private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
+  private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>(); // Added as of 2.17.3, AR
 
   private String kind; // Added as of 2.11
 
