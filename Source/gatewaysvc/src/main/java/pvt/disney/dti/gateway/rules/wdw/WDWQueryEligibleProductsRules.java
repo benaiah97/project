@@ -1,39 +1,34 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-
+import java.util.List;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.EntityKey;
+import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
-import pvt.disney.dti.gateway.data.VoidReservationRequestTO;
-import pvt.disney.dti.gateway.data.VoidReservationResponseTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
-import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
+import pvt.disney.dti.gateway.data.common.GuestProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
-import pvt.disney.dti.gateway.data.common.PaymentTO;
-import pvt.disney.dti.gateway.data.common.ProductTO;
-import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
-import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTManageReservationTO;
-import pvt.disney.dti.gateway.provider.wdw.data.OTQueryEligibleProductsTo;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTClientDataTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTProductTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 
 import com.disney.logging.EventLogger;
@@ -204,21 +199,45 @@ public class WDWQueryEligibleProductsRules {
 		OTQueryTicketTO otQryTicketTO = otCmdTO.getQueryTicketTO();
 		
 		dtiRespTO.setCommandBody(dtiResRespTO);
+        ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 
 		// ResponseType
 		ArrayList<TicketTO> ticketListTo = dtiResRespTO.getTicketList();
-		
+			
 		//Query Ticket InfoInlist
 		ArrayList<OTTicketInfoTO> otTicketList = otQryTicketTO
 				.getTicketInfoList();
+		
+		for (OTTicketInfoTO otTicketInfoTO : otTicketList) {
+			 tktNbr.add(otTicketInfoTO.getTicketType());
+		}
+		
+	//	ArrayList<DBProductTO> dbProductTOs  =	ProductKey.getProductsTktNbr(tktNbr);
+		
 		if ((otTicketList != null) && (otTicketList.size() > 0)) {
+		
+			// Verify from the DB to validate the PLU
+		//	ArrayList<GuestProductTO> upgradedProduct = setGuestProductDetails(gwDataRespTO);
+			
 			
 		 for (OTTicketInfoTO otTicketInfo : otTicketList) {
-			
-			TicketTO dtiTicketTO = new TicketTO();
+			 
+			 TicketTO dtiTicketTO = new TicketTO();
+				TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
 				
-			TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
-				
+			/* BigInteger upgrade = null;
+				for (DBProductTO dbProductTO : dbProductTOs) {
+					upgrade=dbProductTO.getUpgrdPathId();
+				}
+				if(upgrade.intValue()==0)
+				{
+					newStatus.setStatusValue(otTicketInfo.getItemStatus().toString());
+				}
+			Integer voidCode=otTicketInfo.getVoidCode();
+			if(voidCode==0&&voidCode<=100)
+			{
+				newStatus.setStatusValue(otTicketInfo.getItemStatus().toString());
+			}*/
 			// Status Item 
 			newStatus.setStatusItem(otTicketInfo.getItem().toString());
 				
@@ -286,5 +305,71 @@ public class WDWQueryEligibleProductsRules {
 		return;
 	  } 
 
-	 
+	
+	/**
+	 * @param gwDataRespTO
+	 * @param infoTO
+	 * @throws DTIException
+	 */
+	@SuppressWarnings("unused")
+	private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
+			OTQueryTicketTO infoTO) throws DTIException {
+
+		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+		Integer voidCode = null;
+		GregorianCalendar endDate = null;
+		ArrayList<OTUsagesTO> usagesTOs = null;
+		Integer biometricLevel = null;
+
+		for (OTTicketInfoTO otTicketInfoTO : infoTO.getTicketInfoList()) {
+			tktNbr.add(otTicketInfoTO.getTicketType());
+			voidCode = otTicketInfoTO.getVoidCode();
+			endDate = otTicketInfoTO.getValidityEndDate();
+			usagesTOs = otTicketInfoTO.getUsagesList();
+			biometricLevel = otTicketInfoTO.getBiometricLevel();
+		}
+		Date date = null;
+		List<Date> useDates = new ArrayList<>();
+		for (OTUsagesTO otUsagesTO : usagesTOs) {
+
+			SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
+			try {
+				date = fmt.parse(otUsagesTO.getDate());
+			} catch (ParseException e) {
+			}
+			useDates.add(date);
+		}
+		Date latsUsesDate = Collections.min(useDates);
+		ArrayList<GuestProductTO> productTOs = ProductKey
+				.getProductsTktNbr(tktNbr);
+		if (productTOs != null && productTOs.size() != 0) {
+			for (GuestProductTO guestProductTO : productTOs) {
+				try {
+					if (guestProductTO.isResidentInd() == false
+							&& (new Date().getTime() - endDate.getTime()
+									.getTime()) / 86400000 > 0) {
+					}
+					if (guestProductTO.isResidentInd() == true
+							&& Integer.parseInt(guestProductTO.getDayCount()) == 1
+							&& new Date().getTime() - latsUsesDate.getTime()
+									/ 86400000 > 14) {
+
+					}
+
+					if (guestProductTO.isResidentInd() == true
+							&& Integer.parseInt(guestProductTO.getDayCount()) > 1
+							&& new Date().getTime() - latsUsesDate.getTime()
+									/ 86400000 > 185) {
+					}
+
+				} catch (NullPointerException e) {
+				}
+			}
+		}
+		if (voidCode > 0 && voidCode <= 100 && usagesTOs.size() > 0
+				&& biometricLevel > 0) {
+ 
+		}
+
+	}
 }
