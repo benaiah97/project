@@ -219,7 +219,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		}
 		// If the provider had no error, transform the response.
 		TicketTO dtiTktTO = new TicketTO();
-		DemographicsTO ticketDemo = null;
 		GWQueryTicketRespTO gwQryTktRespTO = gwBodyTO
 				.getQueryTicketResponseTO();
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
@@ -249,10 +248,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					processGUID(visualId,contactGUID);
 				}
 				
+				/*Setting up the Upgraded Product Detail*/
 				getUpgradedProduct();
 				
 				/*Setting up the response Detail*/
 				setQueryEligibleResponseCommand(upgradedGuestProduct,dtiTktTO,gwDataRespTO);
+				
+			}else{
+				logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
 			}
 			
 			// Check the size of the product List
@@ -386,12 +389,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		upgradedProduct = ProductKey.getProductsByTktName(pluList);
 		if(upgradedProduct!=null&&upgradedProduct.size()>0){
 			
-		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.WARN,upgradedProduct.toString());
+		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,upgradedProduct.toString());
 		  ResultStatusTo resultStatusTo = new ResultStatusTo(
 					ResultType.ELIGIBLE);
 		  dtiTktTO.setResultType(resultStatusTo.toString());
 		}else{
-		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.WARN,null);
+		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
 		  ResultStatusTo resultStatusTo = new ResultStatusTo(
 					ResultType.INELIGIBLE);
 		  dtiTktTO.setResultType(resultStatusTo.toString());
@@ -830,17 +833,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		}
 
-		// Checking for the visual Id in ENTTL_GUID insert if no
-		// visualid is present
-		Amit
-		EnttlGuidTO entGuid = ProductKey.getGuId(gwDataRespTO
-				.getVisualID());
-
-		if (entGuid == null) {
-			String guid = null;
-			// Inserting the visual id in table ENTTL_GUID
-			ProductKey.insertGuId(gwDataRespTO.getVisualID(), guid);
-		}
+		
 		// Need to add exception block here
 		ResultStatusTo resultStatusTo = new ResultStatusTo(
 				ResultType.ELIGIBLE);
