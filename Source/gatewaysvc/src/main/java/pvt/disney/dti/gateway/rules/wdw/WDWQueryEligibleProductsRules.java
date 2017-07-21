@@ -339,7 +339,7 @@ public class WDWQueryEligibleProductsRules {
 			}
 			useDates.add(date);  
 		} 
-		Date latsUsesDate = Collections.min(useDates);
+		Date latsUsesDate = Collections.min(useDates); 
 		
 		if (productTOs != null && productTOs.size() != 0) {
 			for (GuestProductTO guestProductTO : productTOs) {
