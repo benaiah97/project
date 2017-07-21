@@ -337,7 +337,7 @@ public class WDWQueryEligibleProductsRules {
 				date = fmt.parse(otUsagesTO.getDate());
 			} catch (ParseException e) {
 			}
-			useDates.add(date); 
+			useDates.add(date);  
 		} 
 		Date latsUsesDate = Collections.min(useDates);
 		
