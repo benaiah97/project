@@ -338,7 +338,7 @@ public class WDWQueryEligibleProductsRules {
 			} catch (ParseException e) {
 			}
 			useDates.add(date);
-		}
+		} 
 		Date latsUsesDate = Collections.min(useDates);
 		ArrayList<GuestProductTO> productTOs = ProductKey
 				.getProductsTktNbr(tktNbr);
