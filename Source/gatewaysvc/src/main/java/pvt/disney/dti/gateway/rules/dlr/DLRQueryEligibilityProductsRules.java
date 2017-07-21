@@ -13,6 +13,7 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
+import pvt.disney.dti.gateway.dao.result.VisualIdResult;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
@@ -218,7 +219,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		}
 		// If the provider had no error, transform the response.
 		TicketTO dtiTktTO = new TicketTO();
-		DemographicsTO ticketDemo = null;
 		GWQueryTicketRespTO gwQryTktRespTO = gwBodyTO
 				.getQueryTicketResponseTO();
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
@@ -228,412 +228,38 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		if (gwDataRespTO.getUpgradePLUList() != null
 				&& gwDataRespTO.getUpgradePLUList().size() > 0) {
-			// Verify from the DB to validate the PLU
-			ArrayList<GuestProductTO> upgradedProduct = setGuestProductDetails(gwDataRespTO);
+			
+			/*Get the list of GuestProductTO , transacation will stop in case if no product is found*/
+			ArrayList<GuestProductTO> upgradedGuestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO);
+			
+			if (upgradedGuestProduct != null && upgradedGuestProduct.size() > 0) {
+				
+				/* visualId*/
+				String visualId=gwDataRespTO.getVisualID();
+				
+				/* contact GUID*/
+				String contactGUID=null;
+				if(gwDataRespTO.getContact()!=null&&gwDataRespTO.getContact().size()>0){
+					contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
+				}
+				
+				/*Insert the GUID in table if GUID is not present */
+				if(contactGUID!=null){
+					processGUID(visualId,contactGUID);
+				}
+				
+				/*Setting up the Upgraded Product Detail*/
+				getUpgradedProduct();
+				
+				/*Setting up the response Detail*/
+				setQueryEligibleResponseCommand(upgradedGuestProduct,dtiTktTO,gwDataRespTO);
+				
+			}else{
+				logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+			}
+			
 			// Check the size of the product List
-			if (upgradedProduct != null && upgradedProduct.size() > 0) {
-				for (GuestProductTO dbProductTO : upgradedProduct) {
-
-					// If the provider had no error, transform the response.
-					dtiTktTO = new TicketTO();
-
-					// Set TktItem: Always only one.
-					dtiTktTO.setTktItem(new BigInteger(ITEM_1));
-
-					// Tkt Price
-					dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
-
-					dtiTktTO.setProdCode(dbProductTO.getPdtCode());
-
-					// dtiTktTO.setProdQty(dbProductTO.getQuantity());
-
-					dtiTktTO.setTktTax(dbProductTO.getTax());
-
-					dtiTktTO.setProdPrice(dbProductTO.getPrintedPrice());
-
-					// dtiTktTO.setUpgradePrice(upgradePrice);
-
-					dtiTktTO.setShowGroup(String.valueOf(dbProductTO
-							.getEligGrpid()));
-
-					// Set TktID (for DLR it's External)
-					String visualId = gwDataRespTO.getVisualID();
-					dtiTktTO.setExternal(visualId);
-
-					// Tkt Status (Voidable YES or NO)
-					// Note: Locked out must be false for ticket to be voidable.
-					// Note: Use count must be zero for ticket to be voidable.
-					ArrayList<TktStatusTO> tktStatusList = dtiTktTO
-							.getTktStatusList();
-					TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
-					tktStatus.setStatusItem(VOIDABLE);
-					if ((gwDataRespTO.getReturnable().booleanValue() == true)
-							&& (gwDataRespTO.getLockedOut().booleanValue() == false)
-							&& (gwDataRespTO.getUseCount().intValue() == 0))
-						tktStatus.setStatusValue(YES);
-					else {
-						tktStatus.setStatusValue(NO);
-					}
-					tktStatusList.add(tktStatus);
-
-					// Tkt Status (Active YES or NO)
-					// Note: Locked out must be false for ticket to be active.
-					if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
-
-						tktStatus = dtiTktTO.new TktStatusTO();
-						tktStatus.setStatusItem(ACTIVE);
-
-						GregorianCalendar startDateCal = gwDataRespTO
-								.getDateOpened();
-
-						// V 2.4 - 2011-12-05; CUS - date adjusted for validity,
-						// but
-						// original end date returned
-						GregorianCalendar endDateCal = (GregorianCalendar) gwDataRespTO
-								.getValidUntil().clone();
-
-						// V 2.2 - JTL - 12/13/2010 - Adjust calendar by a grace
-						// period
-						// (add)
-						// to account for east-coast/west-coast plus late park
-						// closings.
-						endDateCal.add(Calendar.HOUR_OF_DAY,
-								DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS);
-
-						// Is the pass within the dates established?
-						if ((startDateCal != null) && (endDateCal != null)) {
-
-							if (DateTimeRules.isNowWithinDate(
-									startDateCal.getTime(),
-									endDateCal.getTime())) {
-
-								if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.VALID)
-										&& (gwDataRespTO.getLockedOut()
-												.booleanValue() == false))
-									tktStatus.setStatusValue(YES);
-								else
-									tktStatus.setStatusValue(NO);
-
-							} else
-								tktStatus.setStatusValue(NO);
-						} else {
-							tktStatus.setStatusValue(NO);
-						}
-						tktStatusList.add(tktStatus);
-					}
-
-					// TktValidity ValidStart and ValidEnd
-					boolean startDateSet = false;
-					if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
-						if (gwDataRespTO.getDateSold() != null) {
-							dtiTktTO.setTktValidityValidStart(dbProductTO
-									.getStartSaleDate());
-							startDateSet = true;
-						} else if (gwDataRespTO.getTicketDate() != null) {
-							dtiTktTO.setTktValidityValidStart(dbProductTO
-									.getStartValidDate());
-							startDateSet = true;
-						} else if (gwDataRespTO.getStartDateTime() != null) {
-							dtiTktTO.setTktValidityValidStart(dbProductTO
-									.getStartValidDate());
-							startDateSet = true;
-						}
-
-						boolean endDateSet = false;
-						if (gwDataRespTO.getExpirationDate() != null) {
-							dtiTktTO.setTktValidityValidEnd(dbProductTO
-									.getEndValidDate());
-							endDateSet = true;
-						} else if (gwDataRespTO.getEndDateTime() != null) {
-							dtiTktTO.setTktValidityValidEnd(dbProductTO
-									.getEndValidDate());
-							endDateSet = true;
-						}
-
-						// Note: HARD CODED!!! Arbitrarily set the end date if
-						// the start
-						// date is
-						// set.
-						// This maintains conformance with the other provider.
-						if ((startDateSet == true) && (endDateSet == false)) {
-							dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(
-									2099, 11, 31));
-						}
-
-					} else {
-						if (gwDataRespTO.getDateOpened() != null) {
-							dtiTktTO.setTktValidityValidStart(dbProductTO
-									.getStartValidDate());
-						}
-
-						if (gwDataRespTO.getValidUntil() != null) {
-							dtiTktTO.setTktValidityValidEnd(dbProductTO
-									.getStartValidDate());
-						}
-					}
-
-					// TktAttributes
-					// PassType
-					// TO DO need to add the code for UPGRADE
-					if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
-
-						if (gwDataRespTO.getKind() != null) {
-
-							String passType = LookupKey.getSimpleTPLookup(
-									DLR_ID, gwDataRespTO.getKind(), PASS_KIND);
-							dtiTktTO.setPassType(passType);
-
-							String renewable = PASSRENEW_INELIGIBLE;
-
-							if ((gwDataRespTO.getRenewable() != null)
-									&& (gwDataRespTO.getRenewable())) {
-
-								String passRenew = LookupKey.getSimpleTPLookup(
-										DLR_ID, gwDataRespTO.getKind(),
-										PASS_RENEW);
-
-								if (passRenew == null) {
-									renewable = PASSRENEW_STANDARD;
-								} else if (passRenew.equalsIgnoreCase(PARKING)) {
-									renewable = PASSRENEW_PARKING;
-								} else {
-									renewable = PASSRENEW_STANDARD;
-								}
-							}
-
-							dtiTktTO.setPassRenew(renewable);
-
-						} else {
-							dtiTktTO.setPassType(ANNUAL_ATTR);
-						}
-
-					}
-
-					// PassName
-					if (gwDataRespTO.getPassKindName() != null) {
-						dtiTktTO.setPassName(gwDataRespTO.getPassKindName());
-					}
-
-					// LastDateUsed
-					if (gwDataRespTO.getDateUsed() != null) {
-						dtiTktTO.setLastDateUsed(gwDataRespTO.getDateUsed());
-					}
-
-					// TimesUsed
-					// Most of these don't have to be checked against the
-					// request,
-					// since they are not returned by eGalaxy. However, UseCount
-					// is
-					// called all the time, and it cannot be allowed to display
-					// unless
-					// explicitly requested.
-					if (gwDataRespTO.getUseCount() != null) {
-						int x = gwDataRespTO.getUseCount().intValue();
-						String value = Integer.toString(x);
-						dtiTktTO.setTimesUsed(new BigInteger(value));
-					}
-
-					// FirstName
-					if (gwDataRespTO.getFirstName() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setFirstName(gwDataRespTO.getFirstName());
-					}
-
-					// LastName
-					if (gwDataRespTO.getLastName() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setLastName(gwDataRespTO.getLastName());
-					}
-
-					// Addr1
-					if (gwDataRespTO.getStreet1() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setAddr1(gwDataRespTO.getStreet1());
-					}
-
-					// Addr2
-					if (gwDataRespTO.getStreet2() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setAddr2(gwDataRespTO.getStreet2());
-					}
-
-					// City
-					if (gwDataRespTO.getCity() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setCity(gwDataRespTO.getCity());
-					}
-
-					// State
-					if (gwDataRespTO.getState() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setState(gwDataRespTO.getState());
-					}
-
-					// ZIP
-					if (gwDataRespTO.getZip() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setZip(gwDataRespTO.getZip());
-					}
-
-					// Country
-					if (gwDataRespTO.getCountryCode() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setCountry(gwDataRespTO.getCountryCode());
-					}
-
-					// Telephone
-					if (gwDataRespTO.getPhone() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setTelephone(gwDataRespTO.getPhone());
-					}
-
-					// Email
-					if (gwDataRespTO.getEmail() != null) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-						ticketDemo.setEmail(gwDataRespTO.getEmail());
-					}
-
-					// Gender (as of 2.16.1, JTL) only returned if Demographics
-					// "ALL" specified.
-					// Note: We're using Gender Resp String here because Galaxy
-					// types vary between
-					// request (Integer) and response (String)
-					if ((gwDataRespTO.getGenderRespString() != null)) {
-						if (ticketDemo == null)
-							ticketDemo = new DemographicsTO();
-
-						if (gwDataRespTO.getGenderRespString()
-								.equalsIgnoreCase("Male")) {
-							ticketDemo.setGender(GenderType.MALE);
-						} else if (gwDataRespTO.getGenderRespString()
-								.equalsIgnoreCase("Female")) {
-							ticketDemo.setGender(GenderType.FEMALE);
-						} else {
-							ticketDemo.setGender(GenderType.UNSPECIFIED);
-						}
-					}
-
-					// DOB (as of 2.16.1, JTL) only returned if Demographics
-					// "ALL" specified.
-					if ((gwDataRespTO.getDateOfBirth() != null)) {
-						ticketDemo
-								.setDateOfBirth(gwDataRespTO.getDateOfBirth());
-					}
-
-					// ReplacedByPass
-					if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPLACED)
-							|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
-
-						// DLR Business rule - non-validated AP's are 19 digits
-						// in length and then
-						// get converted to 18 digits once ID is shown at the
-						// gate.
-						if ((gwDataRespTO.getVisualID().length() == 19)
-								&& (gwDataRespTO.getLineageArray().size() > 0)) {
-
-							ArrayList<LineageRecord> lineageList = gwDataRespTO
-									.getLineageArray();
-
-							for (/* each */LineageRecord aLineage : /* in */lineageList) {
-
-								if ((aLineage.getStatus() == GWDataRequestRespTO.Status.BLOCKED)
-										|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
-
-									if (aLineage.getVisualID().length() == 18) {
-										dtiTktTO.setReplacedByPass(aLineage
-												.getVisualID());
-										break;
-									}
-								}
-							}
-						}
-					}
-
-					if (ticketDemo != null) {
-						dtiTktTO.addTicketDemographic(ticketDemo);
-					}
-
-					tktStatus = dtiTktTO.new TktStatusTO();
-					tktStatus.setStatusItem(BLOCKED);
-					if (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.BLOCKED) {
-						tktStatus.setStatusValue(YES);
-					} else {
-						tktStatus.setStatusValue(NO);
-					}
-					tktStatusList.add(tktStatus);
-
-					// Map "REDEEMABLE" to a status (as of 2.14)
-					if (gwDataRespTO.getItemKind() == ItemKind.REGULAR_TICKET) {
-						tktStatus = dtiTktTO.new TktStatusTO();
-						tktStatus.setStatusItem(REDEEMABLE);
-
-						boolean redeemable = true;
-
-						// Has it been used?
-						if (gwDataRespTO.getUseCount().intValue() > 0) {
-							redeemable = false;
-						}
-
-						// Is it expired?
-						if (gwDataRespTO.getExpirationDate() != null) {
-							GregorianCalendar expirationDate = gwDataRespTO
-									.getExpirationDate();
-							GregorianCalendar todaysDate = new GregorianCalendar();
-
-							if (expirationDate.compareTo(todaysDate) < 0) {
-								redeemable = false;
-							}
-						}
-
-						// Is its status valid?
-						if (gwDataRespTO.getStatus() != Status.VALID) {
-							redeemable = false;
-						}
-
-						// Does it have any remaining use?
-						if (gwDataRespTO.getRemainingUse().intValue() <= 0) {
-							redeemable = false;
-						}
-
-						if (redeemable) {
-							tktStatus.setStatusValue(YES);
-						} else {
-							tktStatus.setStatusValue(NO);
-						}
-						tktStatusList.add(tktStatus);
-					}
-
-				}
-
-				// Checking for the visual Id in ENTTL_GUID insert if no
-				// visualid is present
-				EnttlGuidTO entGuid = ProductKey.getGuId(gwDataRespTO
-						.getVisualID());
-
-				if (entGuid == null) {
-					String guid = null;
-					// Inserting the visual id in table ENTTL_GUID
-					ProductKey.insertGuId(gwDataRespTO.getVisualID(), guid);
-				}
-				// Need to add exception block here
-				ResultStatusTo resultStatusTo = new ResultStatusTo(
-						ResultType.ELIGIBLE);
-				dtiTktTO.setResultType(resultStatusTo.toString());
-				// logger
-				logger.sendEvent("Setting all the data in GuestProductTo",
-						EventType.DEBUG, dtiTktTO.toString());
-
-			} else {
+			if (upgradedGuestProduct != null && upgradedGuestProduct.size() > 0) {} else {
 				ResultStatusTo resultStatusTo = new ResultStatusTo(
 						ResultType.INELIGIBLE);
 				dtiTktTO.setResultType(resultStatusTo.toString());
@@ -748,13 +374,478 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 *             the DTI exception
 	 */
 	private static ArrayList<GuestProductTO> setGuestProductDetails(
-			GWDataRequestRespTO gwDataRespTO) throws DTIException {
+			GWDataRequestRespTO gwDataRespTO,TicketTO dtiTktTO) throws DTIException {
+		
+		/*This method is used for processing step 1 */
+		
 		ArrayList<GuestProductTO> upgradedProduct = null;
+		
 		ArrayList<UpgradePLUList> upgradePluList = gwDataRespTO
 				.getUpgradePLUList();
+		
 		ArrayList<String> pluList = new ArrayList<String>();
 		pluList.add(upgradePluList.get(0).getPLU());
+		
 		upgradedProduct = ProductKey.getProductsByTktName(pluList);
+		if(upgradedProduct!=null&&upgradedProduct.size()>0){
+			
+		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,upgradedProduct.toString());
+		  ResultStatusTo resultStatusTo = new ResultStatusTo(
+					ResultType.ELIGIBLE);
+		  dtiTktTO.setResultType(resultStatusTo.toString());
+		}else{
+		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+		  ResultStatusTo resultStatusTo = new ResultStatusTo(
+					ResultType.INELIGIBLE);
+		  dtiTktTO.setResultType(resultStatusTo.toString());
+			
+		}
+		/*Return the upgradedProduct*/
 		return upgradedProduct;
 	}
-}
+	
+	/**
+	 * Process GUID.
+	 *
+	 * @param guid the guid
+	 * @param visualid the visualid
+	 * @throws DTIException the DTI exception
+	 */
+	private static void processGUID(String guid,String visualid) throws DTIException{
+	  /*Step 3B*/
+	  try{
+		// Checking for the visual Id in ENTTL_GUID insert if no visualid is present
+		EnttlGuidTO entGuid=ProductKey.getGuId(visualid);
+		 if(entGuid==null){
+		  //Inserting the visual id in table ENTTL_GUID
+		  ProductKey.insertGuId(visualid,guid);
+		 }
+	  }catch(Exception dtie){
+		  throw new DTIException(TransformRules.class,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
+					"Provider responded with a non-numeric status code.");
+	   }
+	}
+	
+	/**
+	 * Gets the upgraded product.
+	 *
+	 * @return the upgraded product
+	 * @throws DTIException the DTI exception
+	 */
+	private static void getUpgradedProduct()throws DTIException{
+		
+	}
+	
+	/**
+	 * Sets the query eligible response command.
+	 *
+	 * @param upgradedProduct the upgraded product
+	 * @param dtiTktTO the dti tkt TO
+	 * @param gwDataRespTO the gw data resp TO
+	 * @throws DTIException the DTI exception
+	 */
+	private static void setQueryEligibleResponseCommand(
+			ArrayList<GuestProductTO> upgradedProduct, TicketTO dtiTktTO,GWDataRequestRespTO gwDataRespTO)
+			throws DTIException {
+		DemographicsTO ticketDemo = null;
+
+		for (GuestProductTO dbProductTO : upgradedProduct) {
+
+			// If the provider had no error, transform the response.
+			dtiTktTO = new TicketTO();
+
+			// Set TktItem: Always only one.
+			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+
+			// Tkt Price
+			dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
+
+			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
+
+			// dtiTktTO.setProdQty(dbProductTO.getQuantity());
+
+			dtiTktTO.setTktTax(dbProductTO.getTax());
+
+			dtiTktTO.setProdPrice(dbProductTO.getPrintedPrice());
+
+			// dtiTktTO.setUpgradePrice(upgradePrice);
+
+			dtiTktTO.setShowGroup(String.valueOf(dbProductTO
+					.getEligGrpid()));
+
+			// Set TktID (for DLR it's External)
+			String visualId = gwDataRespTO.getVisualID();
+			dtiTktTO.setExternal(visualId);
+
+			// Tkt Status (Voidable YES or NO)
+			// Note: Locked out must be false for ticket to be voidable.
+			// Note: Use count must be zero for ticket to be voidable.
+			ArrayList<TktStatusTO> tktStatusList = dtiTktTO
+					.getTktStatusList();
+			TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
+			tktStatus.setStatusItem(VOIDABLE);
+			if ((gwDataRespTO.getReturnable().booleanValue() == true)
+					&& (gwDataRespTO.getLockedOut().booleanValue() == false)
+					&& (gwDataRespTO.getUseCount().intValue() == 0))
+				tktStatus.setStatusValue(YES);
+			else {
+				tktStatus.setStatusValue(NO);
+			}
+			tktStatusList.add(tktStatus);
+
+			// Tkt Status (Active YES or NO)
+			// Note: Locked out must be false for ticket to be active.
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
+
+				tktStatus = dtiTktTO.new TktStatusTO();
+				tktStatus.setStatusItem(ACTIVE);
+
+				GregorianCalendar startDateCal = gwDataRespTO
+						.getDateOpened();
+
+				// V 2.4 - 2011-12-05; CUS - date adjusted for validity,
+				// but
+				// original end date returned
+				GregorianCalendar endDateCal = (GregorianCalendar) gwDataRespTO
+						.getValidUntil().clone();
+
+				// V 2.2 - JTL - 12/13/2010 - Adjust calendar by a grace
+				// period
+				// (add)
+				// to account for east-coast/west-coast plus late park
+				// closings.
+				endDateCal.add(Calendar.HOUR_OF_DAY,
+						DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS);
+
+				// Is the pass within the dates established?
+				if ((startDateCal != null) && (endDateCal != null)) {
+
+					if (DateTimeRules.isNowWithinDate(
+							startDateCal.getTime(),
+							endDateCal.getTime())) {
+
+						if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.VALID)
+								&& (gwDataRespTO.getLockedOut()
+										.booleanValue() == false))
+							tktStatus.setStatusValue(YES);
+						else
+							tktStatus.setStatusValue(NO);
+
+					} else
+						tktStatus.setStatusValue(NO);
+				} else {
+					tktStatus.setStatusValue(NO);
+				}
+				tktStatusList.add(tktStatus);
+			}
+
+			// TktValidity ValidStart and ValidEnd
+			boolean startDateSet = false;
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
+				if (gwDataRespTO.getDateSold() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartSaleDate());
+					startDateSet = true;
+				} else if (gwDataRespTO.getTicketDate() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartValidDate());
+					startDateSet = true;
+				} else if (gwDataRespTO.getStartDateTime() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartValidDate());
+					startDateSet = true;
+				}
+
+				boolean endDateSet = false;
+				if (gwDataRespTO.getExpirationDate() != null) {
+					dtiTktTO.setTktValidityValidEnd(dbProductTO
+							.getEndValidDate());
+					endDateSet = true;
+				} else if (gwDataRespTO.getEndDateTime() != null) {
+					dtiTktTO.setTktValidityValidEnd(dbProductTO
+							.getEndValidDate());
+					endDateSet = true;
+				}
+
+				// Note: HARD CODED!!! Arbitrarily set the end date if
+				// the start
+				// date is
+				// set.
+				// This maintains conformance with the other provider.
+				if ((startDateSet == true) && (endDateSet == false)) {
+					dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(
+							2099, 11, 31));
+				}
+
+			} else {
+				if (gwDataRespTO.getDateOpened() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartValidDate());
+				}
+
+				if (gwDataRespTO.getValidUntil() != null) {
+					dtiTktTO.setTktValidityValidEnd(dbProductTO
+							.getStartValidDate());
+				}
+			}
+
+			// TktAttributes
+			// PassType
+			// TO DO need to add the code for UPGRADE
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
+
+				if (gwDataRespTO.getKind() != null) {
+
+					String passType = LookupKey.getSimpleTPLookup(
+							DLR_ID, gwDataRespTO.getKind(), PASS_KIND);
+					dtiTktTO.setPassType(passType);
+
+					String renewable = PASSRENEW_INELIGIBLE;
+
+					if ((gwDataRespTO.getRenewable() != null)
+							&& (gwDataRespTO.getRenewable())) {
+
+						String passRenew = LookupKey.getSimpleTPLookup(
+								DLR_ID, gwDataRespTO.getKind(),
+								PASS_RENEW);
+
+						if (passRenew == null) {
+							renewable = PASSRENEW_STANDARD;
+						} else if (passRenew.equalsIgnoreCase(PARKING)) {
+							renewable = PASSRENEW_PARKING;
+						} else {
+							renewable = PASSRENEW_STANDARD;
+						}
+					}
+
+					dtiTktTO.setPassRenew(renewable);
+
+				} else {
+					dtiTktTO.setPassType(ANNUAL_ATTR);
+				}
+
+			}
+
+			// PassName
+			if (gwDataRespTO.getPassKindName() != null) {
+				dtiTktTO.setPassName(gwDataRespTO.getPassKindName());
+			}
+
+			// LastDateUsed
+			if (gwDataRespTO.getDateUsed() != null) {
+				dtiTktTO.setLastDateUsed(gwDataRespTO.getDateUsed());
+			}
+
+			// TimesUsed
+			// Most of these don't have to be checked against the
+			// request,
+			// since they are not returned by eGalaxy. However, UseCount
+			// is
+			// called all the time, and it cannot be allowed to display
+			// unless
+			// explicitly requested.
+			if (gwDataRespTO.getUseCount() != null) {
+				int x = gwDataRespTO.getUseCount().intValue();
+				String value = Integer.toString(x);
+				dtiTktTO.setTimesUsed(new BigInteger(value));
+			}
+
+			// FirstName
+			if (gwDataRespTO.getFirstName() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setFirstName(gwDataRespTO.getFirstName());
+			}
+
+			// LastName
+			if (gwDataRespTO.getLastName() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setLastName(gwDataRespTO.getLastName());
+			}
+
+			// Addr1
+			if (gwDataRespTO.getStreet1() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setAddr1(gwDataRespTO.getStreet1());
+			}
+
+			// Addr2
+			if (gwDataRespTO.getStreet2() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setAddr2(gwDataRespTO.getStreet2());
+			}
+
+			// City
+			if (gwDataRespTO.getCity() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setCity(gwDataRespTO.getCity());
+			}
+
+			// State
+			if (gwDataRespTO.getState() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setState(gwDataRespTO.getState());
+			}
+
+			// ZIP
+			if (gwDataRespTO.getZip() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setZip(gwDataRespTO.getZip());
+			}
+
+			// Country
+			if (gwDataRespTO.getCountryCode() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setCountry(gwDataRespTO.getCountryCode());
+			}
+
+			// Telephone
+			if (gwDataRespTO.getPhone() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setTelephone(gwDataRespTO.getPhone());
+			}
+
+			// Email
+			if (gwDataRespTO.getEmail() != null) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+				ticketDemo.setEmail(gwDataRespTO.getEmail());
+			}
+
+			// Gender (as of 2.16.1, JTL) only returned if Demographics
+			// "ALL" specified.
+			// Note: We're using Gender Resp String here because Galaxy
+			// types vary between
+			// request (Integer) and response (String)
+			if ((gwDataRespTO.getGenderRespString() != null)) {
+				if (ticketDemo == null)
+					ticketDemo = new DemographicsTO();
+
+				if (gwDataRespTO.getGenderRespString()
+						.equalsIgnoreCase("Male")) {
+					ticketDemo.setGender(GenderType.MALE);
+				} else if (gwDataRespTO.getGenderRespString()
+						.equalsIgnoreCase("Female")) {
+					ticketDemo.setGender(GenderType.FEMALE);
+				} else {
+					ticketDemo.setGender(GenderType.UNSPECIFIED);
+				}
+			}
+
+			// DOB (as of 2.16.1, JTL) only returned if Demographics
+			// "ALL" specified.
+			if ((gwDataRespTO.getDateOfBirth() != null)) {
+				ticketDemo
+						.setDateOfBirth(gwDataRespTO.getDateOfBirth());
+			}
+
+			// ReplacedByPass
+			if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPLACED)
+					|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
+
+				// DLR Business rule - non-validated AP's are 19 digits
+				// in length and then
+				// get converted to 18 digits once ID is shown at the
+				// gate.
+				if ((gwDataRespTO.getVisualID().length() == 19)
+						&& (gwDataRespTO.getLineageArray().size() > 0)) {
+
+					ArrayList<LineageRecord> lineageList = gwDataRespTO
+							.getLineageArray();
+
+					for (/* each */LineageRecord aLineage : /* in */lineageList) {
+
+						if ((aLineage.getStatus() == GWDataRequestRespTO.Status.BLOCKED)
+								|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
+
+							if (aLineage.getVisualID().length() == 18) {
+								dtiTktTO.setReplacedByPass(aLineage
+										.getVisualID());
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if (ticketDemo != null) {
+				dtiTktTO.addTicketDemographic(ticketDemo);
+			}
+
+			tktStatus = dtiTktTO.new TktStatusTO();
+			tktStatus.setStatusItem(BLOCKED);
+			if (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.BLOCKED) {
+				tktStatus.setStatusValue(YES);
+			} else {
+				tktStatus.setStatusValue(NO);
+			}
+			tktStatusList.add(tktStatus);
+
+			// Map "REDEEMABLE" to a status (as of 2.14)
+			if (gwDataRespTO.getItemKind() == ItemKind.REGULAR_TICKET) {
+				tktStatus = dtiTktTO.new TktStatusTO();
+				tktStatus.setStatusItem(REDEEMABLE);
+
+				boolean redeemable = true;
+
+				// Has it been used?
+				if (gwDataRespTO.getUseCount().intValue() > 0) {
+					redeemable = false;
+				}
+
+				// Is it expired?
+				if (gwDataRespTO.getExpirationDate() != null) {
+					GregorianCalendar expirationDate = gwDataRespTO
+							.getExpirationDate();
+					GregorianCalendar todaysDate = new GregorianCalendar();
+
+					if (expirationDate.compareTo(todaysDate) < 0) {
+						redeemable = false;
+					}
+				}
+
+				// Is its status valid?
+				if (gwDataRespTO.getStatus() != Status.VALID) {
+					redeemable = false;
+				}
+
+				// Does it have any remaining use?
+				if (gwDataRespTO.getRemainingUse().intValue() <= 0) {
+					redeemable = false;
+				}
+
+				if (redeemable) {
+					tktStatus.setStatusValue(YES);
+				} else {
+					tktStatus.setStatusValue(NO);
+				}
+				tktStatusList.add(tktStatus);
+			}
+
+		}
+
+		
+		// Need to add exception block here
+		ResultStatusTo resultStatusTo = new ResultStatusTo(
+				ResultType.ELIGIBLE);
+		dtiTktTO.setResultType(resultStatusTo.toString());
+		// logger
+		logger.sendEvent("Setting all the data in GuestProductTo",
+				EventType.DEBUG, dtiTktTO.toString());
+
+	
+		
+	}
+}	
+	
+
+
