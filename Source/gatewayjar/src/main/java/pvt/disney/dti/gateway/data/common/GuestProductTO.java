@@ -107,6 +107,9 @@ public class GuestProductTO {
 	
 	/** The upgrade path id. */
 	private String upgradePathId;
+	
+	/** The dayCount. */
+	private String dayCount;
 
 	/**
 	 * @return the activeInd
@@ -503,6 +506,20 @@ public class GuestProductTO {
 		this.upgradePathId = upgradePathId;
 	}
 
+	/**
+	 * @return dayCount
+	 */
+	public String getDayCount() {
+		return dayCount;
+	}
+
+	/**
+	 * @param dayCount
+	 */
+	public void setDayCount(String dayCount) {
+		this.dayCount = dayCount;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -522,9 +539,9 @@ public class GuestProductTO {
 				+ ", misMatchTolType=" + misMatchTolType
 				+ ", validitydatesInd=" + validitydatesInd + ", consumableInd="
 				+ consumableInd + ", demographicInd=" + demographicInd
-				+ ", residentind=" + residentInd + ", standardRetailTax="
-				+ standardRetailTax + ", upgradePathId=" + upgradePathId + "]";
+				+ ", residentInd=" + residentInd + ", standardRetailTax="
+				+ standardRetailTax + ", upgradePathId=" + upgradePathId
+				+ ", dayCount=" + dayCount + "]";
 	}
-
 	
 }

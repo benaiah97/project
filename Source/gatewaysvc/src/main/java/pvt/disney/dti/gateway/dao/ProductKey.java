@@ -779,13 +779,13 @@ public class ProductKey {
 	 * @throws DTIException
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<DBProductTO> getProductsTktNbr(
+	public static ArrayList<GuestProductTO> getProductsTktNbr(
 			ArrayList<BigInteger> tktNbr) throws DTIException {
 
 		logger.sendEvent("Entering getProductsTktNbr()", EventType.DEBUG,
 				THISINSTANCE);
 
-		ArrayList<DBProductTO> result = null;
+		ArrayList<GuestProductTO> result = null;
 
 		// Retrieve and validate the parameters
 		if ((tktNbr == null)) {
@@ -815,7 +815,7 @@ public class ProductKey {
 			// Run the SQL
 			logger.sendEvent("About to processQuery:  GET_PRODUCTS_FROM_NBR",
 					EventType.DEBUG, THISINSTANCE);
-			result = (ArrayList<DBProductTO>) helper.processQuery(values,
+			result = (ArrayList<GuestProductTO>) helper.processQuery(values,
 					queryParms, qBuilder);
 
 			// Debug
