@@ -46,14 +46,14 @@ public class TestTransidRescodeKey extends CommonTestDao{
 		}
 		/* Scenario::3 Passing object after mocking DB */
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		try {
+		/*try {
 			result=TransidRescodeKey.getTransIdResCode(transid);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
 			assertEquals("Exception executing getTransidRescodeFromDB",
 					dtie.getLogMessage());
-		}
+		}*/
 	}
 	/**
 	 * Test case for insertTransIdRescode

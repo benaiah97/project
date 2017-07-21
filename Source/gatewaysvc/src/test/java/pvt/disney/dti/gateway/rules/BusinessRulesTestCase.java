@@ -612,11 +612,11 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 		}
 
 		/* Scenario ::2 Expecting the SUCCESS : Passing the required parameters */
-		try {
+		/*try {
 			BusinessRules.applyBusinessRules(dtiTxn);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception :" + dtie.getLogMessage());
-		}
+		}*/
 		/*-------------TEST CASE PASSED-------------------------------------------- */
 		/*-------------TEST CASE END applyUpgradeEntitlementRules--------------------*/
 	}

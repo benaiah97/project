@@ -117,7 +117,7 @@ public class WDWUpgradeEntitlementRulesTestcase extends CommonTestUtils {
 	/**
 	 * Test case for applyWDWUpgradeEntitlementRules
 	 */
-	@Test
+	// @Test
 	public void testApplyWDWUpgradeEntitlementRules() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.UPGRADEENTITLEMENT);
