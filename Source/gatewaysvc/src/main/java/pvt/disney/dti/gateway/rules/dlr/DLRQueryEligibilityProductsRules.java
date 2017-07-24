@@ -17,6 +17,7 @@ import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.data.GuestProductTO;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.dao.result.VisualIdResult;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -236,6 +237,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			
 			/*Count of upgradedPLUList*/
 			int upGradedPLUList=gwDataRespTO.getUpgradePLUList().size();
+			ArrayList<String> upGradePluList=new ArrayList<String>();
+			
+			for(UpgradePLUList upgradePLU:gwDataRespTO.getUpgradePLUList()){
+				upGradePluList.add(upgradePLU.getPLU());
+			}
 			
 			/*PLU*/
 			String plu=gwDataRespTO.getUpgradePLUList().get(0).getPLU();
@@ -254,13 +260,18 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
 				}
 				
+				
 				/*Insert the GUID in table if GUID is not present */
 				if(contactGUID!=null){
 					processGUID(visualId,contactGUID);
 				}
 				
+				ArrayList<UpgradeCatalogTO> upgradedProductTOList=new ArrayList<UpgradeCatalogTO>();
+				
+				/*TODO waiting for Todd to finish Step , will integrate his code for STEP 2*/
+				
 				/*Setting up the Upgraded Product Detail*/
-				getUpgradedProduct(guestProduct,plu,dtiTktTO,dtiTxn);
+				getUpgradedProduct(upGradePluList,upgradedProductTOList,dtiTktTO,dtiTxn);
 				
 				/*Setting up the response Detail*/
 				setQueryEligibleResponseCommand(guestProduct,dtiTktTO,gwDataRespTO);
@@ -396,7 +407,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		dbProductTO = ProductKey.getProductsByTktName(pluList);
 		if(dbProductTO!=null&&dbProductTO.size()>0){
 			
-		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,dbProductTO.toString());
+		  logger.sendEvent(dbProductTO.toString(), EventType.DEBUG,null);
 		  ResultStatusTo resultStatusTo = new ResultStatusTo(
 					ResultType.ELIGIBLE);
 		  dtiTktTO.setResultType(resultStatusTo.toString());
@@ -445,21 +456,15 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * @return the upgraded product
 	 * @throws DTIException the DTI exception
 	 */
-	private static void getUpgradedProduct(GuestProductTO uestproductList,String plu,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{/*
+	private static ArrayList<UpgradeCatalogTO> getUpgradedProduct(ArrayList<String> listfUpgradedPLUs,ArrayList<UpgradeCatalogTO> upgradedProductTOList,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{
+		ArrayList<UpgradeCatalogTO> newProductCatalogTO=null;
 		
-		ArrayList<UpgradeCatalogTO> upgradedProductTOList=new ArrayList<UpgradeCatalogTO>();
-		ArrayList<String> listfUpgradedPLUs=new ArrayList<String>();
-		
-		Entity Id
-		Long entityId = new Long(dtiTxn.getEntityTO().getEntityId());
-	
-		 DB call to fetch list of salable Product from seller 
-		ArrayList<UpgradeCatalogTO> upGradeCatalogTO=ProductKey.getProductsForSeller(entityId);
-		
-		if(upGradeCatalogTO!=null&&upGradeCatalogTO.size()>0){
-			
-		
-			
+		if(upgradedProductTOList!=null&&upgradedProductTOList.size()>0){
+			if(matchUpgradedProductSize(listfUpgradedPLUs.size(),upgradedProductTOList.size())){
+				ResultStatusTo resultStatusTo = new ResultStatusTo(
+						ResultType.ELIGIBLE);
+			}
+			newProductCatalogTO=retainDLRPLUs(listfUpgradedPLUs,upgradedProductTOList);
 		}else{
 			logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
 			  ResultStatusTo resultStatusTo = new ResultStatusTo(
@@ -467,8 +472,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			  dtiTktTO.setResultType(resultStatusTo.toString());
 		}
 		
-		
-	*/}
+		return newProductCatalogTO;
+	}
 	
 	/**
 	 * Match upgraded product size.
@@ -488,22 +493,26 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	}
 	
 	/**
-	 * Retain DLRPL us.
+	 * Retain DLRPLU's for the product.
 	 *
 	 * @param listOfUpgradableDLRPLUs the list of upgradable DLRPL us
 	 */
-	/*private static void> retainDLRPLUs(ArrayList<String> listOfUpgradableDLRPLUs){
-		
-		ArrayList<UpgradeCatalogTO> upGradedProductList=new ArrayList<UpgradeCatalogTO>();
-		for(String pdtCode:listOfUpgradableDLRPLUs){
-			UpgradeCatalogTO upGradedPoductTO=new UpgradeCatalogTO();
-			upGradedPoductTO.setPdtCode(pdtCode);
-			upGradedProductList.add(upGradedPoductTO);
+	private static ArrayList<UpgradeCatalogTO> retainDLRPLUs(
+			ArrayList<String> listOfUpgradableDLRPLUs,
+			ArrayList<UpgradeCatalogTO> oldUpgradeCatalog) {
+
+		ArrayList<UpgradeCatalogTO> newProductCatalogTO = new ArrayList<UpgradeCatalogTO>();
+
+		for (String plu : listOfUpgradableDLRPLUs) {
+			for (UpgradeCatalogTO tempCatalogTO : oldUpgradeCatalog) {
+				if (tempCatalogTO.getPlu().compareToIgnoreCase(plu) == 0) {
+					newProductCatalogTO.add(tempCatalogTO);
+				}
+			}
 		}
-		return upGradedProductList;
-		
-		
-	}*/
+		return newProductCatalogTO;
+
+	}
 	
 	
 	/**

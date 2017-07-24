@@ -304,15 +304,19 @@ public class WDWQueryEligibleProductsRules {
 		return;
 	  } 
 
-	
 		/**
-		 * @param gwDataRespTO
-		 * @param infoTO
-		 * @throws DTIException
+		 * Validate eligible products.
+		 *
+		 * @param infoTO the info TO
+		 * @param productTO the product TO
+		 * @return true, if successful
+		 * @throws DTIException the DTI exception
 		 */
 		@SuppressWarnings("unused")
-		private static void validateProducts(OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
-
+		private static boolean validateEligibleProducts(OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
+			boolean productEligibleFlag=false;
+			
+			boolean isEligible=false;
 			ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 			Integer voidCode = null;
 			GregorianCalendar endDate = null;
@@ -340,10 +344,10 @@ public class WDWQueryEligibleProductsRules {
 			Date fisrtUsesDate = Collections.min(useDates); 
 				long currentDateMiliSec = new Date().getTime();
 					try {
-						if(productTO.getUpgrdPathId().intValue()==0)
-						{
-									
+						if(productTO.getUpgrdPathId()!=null&&productTO.getUpgrdPathId()==new BigInteger("0")){
+							
 						}
+						
 						if (productTO.isResidentInd() == false
 								&& (currentDateMiliSec - endDate.getTime()
 										.getTime()) / 86400000 > 0) {
@@ -370,5 +374,7 @@ public class WDWQueryEligibleProductsRules {
 			{
 				
 			}
+			return productEligibleFlag;
 		}
+		
 }
