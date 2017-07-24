@@ -311,8 +311,7 @@ public class WDWQueryEligibleProductsRules {
 		 * @throws DTIException
 		 */
 		@SuppressWarnings("unused")
-		private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
-				OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
+		private static void validateProducts(OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
 
 			ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 			Integer voidCode = null;
