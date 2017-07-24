@@ -12,8 +12,10 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.ValueConstants;
 import pvt.disney.dti.gateway.dao.data.DBQueryBuilder;
 import pvt.disney.dti.gateway.dao.data.DBUtil;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.connection.DAOHelper;
 
@@ -56,9 +58,15 @@ public class ProductKey {
 
   /** Constant representing the get ticket to product query. */
   private static final String GET_TKT_TO_PRODUCT = "GET_TKT_TO_PRODUCT";
-
+  
   /** Constant representing the get product from ticket number query . */
   private static final String GET_PRD_FROM_TKTNBR = "GET_PRD_FROM_TKTNBR";
+  
+  /** Constant representing the get product catalog query. */
+  private static final String GET_UPGRD_PRD_CATALOG = "GET_UPGRD_PRD_CATALOG";
+  
+  /** Constant indicating the Annual Pass day class. */
+  private static final String AP_DAY_SUBCLASS = "AP";
 
   /**
    * Returns an array of products found on the order.
@@ -602,5 +610,57 @@ public class ProductKey {
     return result;
 
   }
+  
+  /**
+   * GET_PRD_CATALOG_ARGUMENTS=1 (ENTITYID) + 1 (DAY_CLASS) +  1 (TPS_CODE) AP_DAY_SUBCLASS
+   * @param entityTO
+   * @param tpsCode
+   * @return
+   * @throws DTIException
+   */
+  public static UpgradeCatalogTO getAPUpgradeCatalog(EntityTO entityTO, String tpsCode) throws DTIException {
+     
+     UpgradeCatalogTO result = new UpgradeCatalogTO(); 
 
+     logger.sendEvent("Entering getAPUpgradeCatalog()", EventType.DEBUG, THISINSTANCE);
+
+     // Retrieve and validate the parameters
+     if ((entityTO == null) || (tpsCode == null)) {
+       throw new DTIException(ProductKey.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+           "getAPUpgradeCatalog DB routine found missing parameters.");
+     }
+
+     try {
+       // Retrieve and validate the parameters
+       // 1 (ENTITYID) + 1 (DAY_CLASS) +  1 (TPS_CODE) 
+       Long entityIdLong = Long.valueOf(entityTO.getEntityId());
+       Object[] values = { entityIdLong, AP_DAY_SUBCLASS, tpsCode};
+
+       // Prepare query
+       logger.sendEvent("About to getInstance from DAOHelper", EventType.DEBUG, THISINSTANCE);
+       DAOHelper helper = DAOHelper.getInstance(GET_UPGRD_PRD_CATALOG);
+
+       // Run the SQL
+       logger.sendEvent("About to processQuery:  GET_UPGRD_PRD_CATALOG", EventType.DEBUG, THISINSTANCE);
+       @SuppressWarnings("unchecked")
+       ArrayList<DBProductTO> resultSet = (ArrayList<DBProductTO>) helper.processQuery(values);
+       if (resultSet != null) {
+          result.setProductList(resultSet);
+       }
+
+     } catch (Exception e) {
+       logger.sendEvent("Exception executing getAPUpgradeCatalog: " + e.toString(), EventType.WARN, THISINSTANCE);
+       throw new DTIException(ProductKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
+           "Exception executing getAPUpgradeCatalog", e);
+     }
+
+     if (result != null) {
+       logger.sendEvent("getAPUpgradeCatalog found " + result.getProductListCount() + " products.", EventType.DEBUG, THISINSTANCE, result,
+           null);
+     }
+
+     return result;
+ 
+  }  
+  
 }

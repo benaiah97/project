@@ -122,6 +122,15 @@ public class UpgradeCatalogTO implements Serializable {
    public ArrayList<DBProductTO> getProductList() {
       return productList;
    }
+   
+   /**
+    * A simple method to set the product list.
+    * @param The product list to set
+    */
+   public void setProductList(ArrayList<DBProductTO> aProdList) {
+      productList = aProdList;
+      return;
+   }
 
    /**
     * A simple method to get the product list size/length.
