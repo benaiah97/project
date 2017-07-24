@@ -9,8 +9,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
+import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -18,7 +20,7 @@ import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
-import pvt.disney.dti.gateway.data.common.GuestProductTO;
+import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
@@ -313,7 +315,7 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	@SuppressWarnings("unused")
 	private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
-			OTQueryTicketTO infoTO,ArrayList<GuestProductTO> productTOs) throws DTIException {
+			OTQueryTicketTO infoTO,DBProductTO guestProductTO) throws DTIException {
 
 		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 		Integer voidCode = null;
@@ -341,8 +343,8 @@ public class WDWQueryEligibleProductsRules {
 		} 
 		Date latsUsesDate = Collections.min(useDates); 
 		
-		if (productTOs != null && productTOs.size() != 0) {
-			for (GuestProductTO guestProductTO : productTOs) {
+		if (guestProductTO != null) {
+			
 				try {
 					if (guestProductTO.isResidentInd() == false
 							&& (new Date().getTime() - endDate.getTime()
@@ -363,7 +365,7 @@ public class WDWQueryEligibleProductsRules {
 
 				} catch (Exception e) {
 				}
-			}
+			
 		}
 		if (voidCode > 0 && voidCode <= 100 && usagesTOs.size() > 0
 				&& biometricLevel > 0) {

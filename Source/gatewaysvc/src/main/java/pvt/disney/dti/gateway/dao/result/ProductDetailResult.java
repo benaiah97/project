@@ -200,16 +200,25 @@ public class ProductDetailResult implements ResultSetProcessor {
 		
         //RESIDENT_IND
 		String residentIndString = rs.getString("RESIDENT_IND");
-		aProduct.setResidentInd(residentIndString);
+		if(residentIndString.compareToIgnoreCase("T")==0){
+			aProduct.setResidentInd(true);
+		}else{
+			aProduct.setResidentInd(false);
+		}
+
 		
 		//STANDARD_RETAIL_TAX
 		BigDecimal standardRetailTax = rs.getBigDecimal("STANDARD_RETAIL_TAX");
-		if (standardRetailPrice != null) {
-			aProduct.setStandardRetailTax(standardRetailTax);
-		}
-		
+			if (standardRetailTax != null) {
+					aProduct.setStandardRetailTax(standardRetailTax);
+			}
+				
 		//UPGRD_PATH_ID
-		aProduct.setUpgrdPathId(new BigInteger(rs.getString("UPGRD_PATH_ID")));
+		BigInteger upGrdPathId=new BigInteger(rs.getString("UPGRD_PATH_ID"));
+		aProduct.setUpgrdPathId(upGrdPathId);
+				
+				/* Adding the result set to result*/
+
 		results.add(aProduct);
 
 		return;

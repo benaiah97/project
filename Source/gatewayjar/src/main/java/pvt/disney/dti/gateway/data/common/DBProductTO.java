@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
+// TODO: Auto-generated Javadoc
 /**
  * This class represents the database version of the ticket products.
  * 
@@ -13,13 +14,19 @@ import java.util.GregorianCalendar;
  */
 public class DBProductTO implements Serializable {
 
-	/** Serial Version UID */
+	/**  Serial Version UID. */
 	public final static long serialVersionUID = 9129231995L;
 
 	/** The enumeration of possible mismatch types in DTI. */
 	public enum MismatchToleranceType {
+		
+		/** The amount. */
 		AMOUNT,
+		
+		/** The percent. */
 		PERCENT,
+		
+		/** The undefined. */
 		UNDEFINED
 	};
 
@@ -35,7 +42,7 @@ public class DBProductTO implements Serializable {
 	/** The Eligibility group ID. */
 	private BigInteger eligGrpid;
 
-	/** Tax value */
+	/**  Tax value. */
 	private BigDecimal tax;
 
 	/** Tax value 1. */
@@ -92,10 +99,10 @@ public class DBProductTO implements Serializable {
 	/** Quantity of this product on the order. */
 	private BigInteger quantity;
 
-	/** If product is consumable */
+	/**  If product is consumable. */
 	private boolean consumableInd;
 
-	/** If demographics are required */
+	/**  If demographics are required. */
 	private boolean demographicsInd;
 
 	/** Day Class - class of the product (as of 2.12) */
@@ -107,31 +114,39 @@ public class DBProductTO implements Serializable {
 	/** Standard retail price of the product. */
 	private BigDecimal standardRetailPrice;
 	
-	/**  ResidentInd  */
-	private String residentInd;
+	/**   ResidentInd. */
+	private boolean residentInd;
 
 	/** Standard retail tax of the product. */
 	private BigDecimal standardRetailTax;
 	
+	/** The upgrd path id. */
 	private BigInteger upgrdPathId;
 	
+	/** The dayCount. */
+	private String dayCount;
+	
 	/**
-	 * 
-	 * @return
+	 * Gets the quantity.
+	 *
+	 * @return the quantity
 	 */
 	public BigInteger getQuantity() {
 		return quantity;
 	}
 
 	/**
-	 * 
-	 * @param quantity
+	 * Sets the quantity.
+	 *
+	 * @param quantity the new quantity
 	 */
 	public void setQuantity(BigInteger quantity) {
 		this.quantity = quantity;
 	}
 
 	/**
+	 * Checks if is active.
+	 *
 	 * @return the active
 	 */
 	public boolean isActive() {
@@ -139,6 +154,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the elig grpid.
+	 *
 	 * @return the eligGrpid
 	 */
 	public BigInteger getEligGrpid() {
@@ -146,6 +163,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the end sale date.
+	 *
 	 * @return the endSaleDate
 	 */
 	public GregorianCalendar getEndSaleDate() {
@@ -153,6 +172,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Checks if is price mismatch allowed.
+	 *
 	 * @return the priceMismatchAllowed
 	 */
 	public boolean isPriceMismatchAllowed() {
@@ -160,6 +181,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the mis match tol.
+	 *
 	 * @return the misMatchTol
 	 */
 	public BigDecimal getMisMatchTol() {
@@ -167,6 +190,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the mis match tol type.
+	 *
 	 * @return the misMatchTolType
 	 */
 	public MismatchToleranceType getMisMatchTolType() {
@@ -174,6 +199,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the pdt code.
+	 *
 	 * @return the pdtCode
 	 */
 	public String getPdtCode() {
@@ -181,6 +208,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the pdtid.
+	 *
 	 * @return the pdtid
 	 */
 	public BigInteger getPdtid() {
@@ -188,6 +217,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the printed price.
+	 *
 	 * @return the printedPrice
 	 */
 	public BigDecimal getPrintedPrice() {
@@ -195,6 +226,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Checks if is sold out.
+	 *
 	 * @return the soldOut
 	 */
 	public boolean isSoldOut() {
@@ -202,6 +235,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the start sale date.
+	 *
 	 * @return the startSaleDate
 	 */
 	public GregorianCalendar getStartSaleDate() {
@@ -209,6 +244,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the tax 1.
+	 *
 	 * @return the tax1
 	 */
 	public BigDecimal getTax1() {
@@ -216,6 +253,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the tax 2.
+	 *
 	 * @return the tax2
 	 */
 	public BigDecimal getTax2() {
@@ -223,6 +262,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Checks if is validity date info required.
+	 *
 	 * @return the validityDateInfoRequired
 	 */
 	public boolean isValidityDateInfoRequired() {
@@ -230,118 +271,134 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param active
-	 *            the active to set
+	 * Sets the active.
+	 *
+	 * @param activeInd the new active
 	 */
 	public void setActive(boolean activeInd) {
 		this.active = activeInd;
 	}
 
 	/**
-	 * @param eligGrpid
-	 *            the eligGrpid to set
+	 * Sets the elig grpid.
+	 *
+	 * @param eligGrpid            the eligGrpid to set
 	 */
 	public void setEligGrpid(BigInteger eligGrpid) {
 		this.eligGrpid = eligGrpid;
 	}
 
 	/**
-	 * @param endSaleDate
-	 *            the endSaleDate to set
+	 * Sets the end sale date.
+	 *
+	 * @param endSaleDate            the endSaleDate to set
 	 */
 	public void setEndSaleDate(GregorianCalendar endSaleDate) {
 		this.endSaleDate = endSaleDate;
 	}
 
 	/**
-	 * @param priceMismatchAllowed
-	 *            the priceMismatchAllowed to set
+	 * Sets the price mismatch allowed.
+	 *
+	 * @param mismatchInd the new price mismatch allowed
 	 */
 	public void setPriceMismatchAllowed(boolean mismatchInd) {
 		this.priceMismatchAllowed = mismatchInd;
 	}
 
 	/**
-	 * @param misMatchTol
-	 *            the misMatchTol to set
+	 * Sets the mis match tol.
+	 *
+	 * @param misMatchTol            the misMatchTol to set
 	 */
 	public void setMisMatchTol(BigDecimal misMatchTol) {
 		this.misMatchTol = misMatchTol;
 	}
 
 	/**
-	 * @param misMatchTolType
-	 *            the misMatchTolType to set
+	 * Sets the mis match tol type.
+	 *
+	 * @param misMatchTolType            the misMatchTolType to set
 	 */
 	public void setMisMatchTolType(MismatchToleranceType misMatchTolType) {
 		this.misMatchTolType = misMatchTolType;
 	}
 
 	/**
-	 * @param pdtCode
-	 *            the pdtCode to set
+	 * Sets the pdt code.
+	 *
+	 * @param pdtCode            the pdtCode to set
 	 */
 	public void setPdtCode(String pdtCode) {
 		this.pdtCode = pdtCode;
 	}
 
 	/**
-	 * @param pdtid
-	 *            the pdtid to set
+	 * Sets the pdtid.
+	 *
+	 * @param pdtid            the pdtid to set
 	 */
 	public void setPdtid(BigInteger pdtid) {
 		this.pdtid = pdtid;
 	}
 
 	/**
-	 * @param printedPrice
-	 *            the printedPrice to set
+	 * Sets the printed price.
+	 *
+	 * @param printedPrice            the printedPrice to set
 	 */
 	public void setPrintedPrice(BigDecimal printedPrice) {
 		this.printedPrice = printedPrice;
 	}
 
 	/**
-	 * @param soldOut
-	 *            the soldOut to set
+	 * Sets the sold out.
+	 *
+	 * @param soldOut            the soldOut to set
 	 */
 	public void setSoldOut(boolean soldOut) {
 		this.soldOut = soldOut;
 	}
 
 	/**
-	 * @param startSaleDate
-	 *            the startSaleDate to set
+	 * Sets the start sale date.
+	 *
+	 * @param startSaleDate            the startSaleDate to set
 	 */
 	public void setStartSaleDate(GregorianCalendar startSaleDate) {
 		this.startSaleDate = startSaleDate;
 	}
 
 	/**
-	 * @param tax1
-	 *            the tax1 to set
+	 * Sets the tax 1.
+	 *
+	 * @param tax1            the tax1 to set
 	 */
 	public void setTax1(BigDecimal tax1) {
 		this.tax1 = tax1;
 	}
 
 	/**
-	 * @param tax2
-	 *            the tax2 to set
+	 * Sets the tax 2.
+	 *
+	 * @param tax2            the tax2 to set
 	 */
 	public void setTax2(BigDecimal tax2) {
 		this.tax2 = tax2;
 	}
 
 	/**
-	 * @param validityDateInfoRequired
-	 *            the validityDateInfoRequired to set
+	 * Sets the validity date info required.
+	 *
+	 * @param validityDatesInd the new validity date info required
 	 */
 	public void setValidityDateInfoRequired(boolean validityDatesInd) {
 		this.validityDateInfoRequired = validityDatesInd;
 	}
 
 	/**
+	 * Gets the pdt desc.
+	 *
 	 * @return the pdtDesc
 	 */
 	public String getPdtDesc() {
@@ -349,14 +406,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param pdtDesc
-	 *            the pdtDesc to set
+	 * Sets the pdt desc.
+	 *
+	 * @param pdtDesc            the pdtDesc to set
 	 */
 	public void setPdtDesc(String pdtDesc) {
 		this.pdtDesc = pdtDesc;
 	}
 
 	/**
+	 * Checks if is mapped provider tkt active.
+	 *
 	 * @return the mappedProviderTktActive
 	 */
 	public boolean isMappedProviderTktActive() {
@@ -364,6 +424,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the mapped provider tkt name.
+	 *
 	 * @return the mappedProviderTktName
 	 */
 	public String getMappedProviderTktName() {
@@ -371,6 +433,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Gets the mapped provider tkt nbr.
+	 *
 	 * @return the mappedProviderTktNbr
 	 */
 	public BigInteger getMappedProviderTktNbr() {
@@ -378,30 +442,35 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param mappedProviderTktActive
-	 *            the mappedProviderTktActive to set
+	 * Sets the mapped provider tkt active.
+	 *
+	 * @param mappedProviderTktActive            the mappedProviderTktActive to set
 	 */
 	public void setMappedProviderTktActive(boolean mappedProviderTktActive) {
 		this.mappedProviderTktActive = mappedProviderTktActive;
 	}
 
 	/**
-	 * @param mappedProviderTktName
-	 *            the mappedProviderTktName to set
+	 * Sets the mapped provider tkt name.
+	 *
+	 * @param mappedProviderTktName            the mappedProviderTktName to set
 	 */
 	public void setMappedProviderTktName(String mappedProviderTktName) {
 		this.mappedProviderTktName = mappedProviderTktName;
 	}
 
 	/**
-	 * @param mappedProviderTktNbr
-	 *            the mappedProviderTktNbr to set
+	 * Sets the mapped provider tkt nbr.
+	 *
+	 * @param mappedProviderTktNbr            the mappedProviderTktNbr to set
 	 */
 	public void setMappedProviderTktNbr(BigInteger mappedProviderTktNbr) {
 		this.mappedProviderTktNbr = mappedProviderTktNbr;
 	}
 
 	/**
+	 * Gets the tax.
+	 *
 	 * @return the tax
 	 */
 	public BigDecimal getTax() {
@@ -409,15 +478,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param tax
-	 *            the tax to set
+	 * Sets the tax.
+	 *
+	 * @param tax            the tax to set
 	 */
 	public void setTax(BigDecimal tax) {
 		this.tax = tax;
 	}
 
 	/**
-	 * 
+	 * Gets the unit price.
+	 *
 	 * @return the unit price
 	 */
 	public BigDecimal getUnitPrice() {
@@ -435,7 +506,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Gets the start valid date.
+	 *
 	 * @return the start valid date
 	 */
 	public GregorianCalendar getStartValidDate() {
@@ -443,17 +515,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * Sets the start valid date
-	 * 
-	 * @param startValidDate
-	 *            the start valid date to set.
+	 * Sets the start valid date.
+	 *
+	 * @param startValidDate            the start valid date to set.
 	 */
 	public void setStartValidDate(GregorianCalendar startValidDate) {
 		this.startValidDate = startValidDate;
 	}
 
 	/**
-	 * 
+	 * Gets the end valid date.
+	 *
 	 * @return the end valid date
 	 */
 	public GregorianCalendar getEndValidDate() {
@@ -471,14 +543,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param consumable
-	 *            the consumable to set
+	 * Sets the consumable.
+	 *
+	 * @param consumable            the consumable to set
 	 */
 	public void setConsumable(boolean consumable) {
 		this.consumableInd = consumable;
 	}
 
 	/**
+	 * Checks if is consumable.
+	 *
 	 * @return the consumable
 	 */
 	public boolean isConsumable() {
@@ -486,6 +561,8 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
+	 * Are demographics required.
+	 *
 	 * @return the demographicsInd
 	 */
 	public boolean areDemographicsRequired() {
@@ -493,14 +570,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param demographicsInd
-	 *            the demographicsInd to set
+	 * Sets the demographics ind.
+	 *
+	 * @param demographicsInd            the demographicsInd to set
 	 */
 	public void setDemographicsInd(boolean demographicsInd) {
 		this.demographicsInd = demographicsInd;
 	}
 
 	/**
+	 * Gets the day class.
+	 *
 	 * @return the dayClass
 	 */
 	public String getDayClass() {
@@ -508,14 +588,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param dayClass
-	 *            the dayClass to set
+	 * Sets the day class.
+	 *
+	 * @param dayClass            the dayClass to set
 	 */
 	public void setDayClass(String dayClass) {
 		this.dayClass = dayClass;
 	}
 
 	/**
+	 * Gets the standard retail price.
+	 *
 	 * @return the standardRetailPrice
 	 */
 	public BigDecimal getStandardRetailPrice() {
@@ -523,14 +606,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param standardRetailPrice
-	 *            the standardRetailPrice to set
+	 * Sets the standard retail price.
+	 *
+	 * @param standardRetailPrice            the standardRetailPrice to set
 	 */
 	public void setStandardRetailPrice(BigDecimal standardRetailPrice) {
 		this.standardRetailPrice = standardRetailPrice;
 	}
 
 	/**
+	 * Gets the day subclass.
+	 *
 	 * @return the daySubclass
 	 */
 	public String getDaySubclass() {
@@ -538,28 +624,35 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param daySubclass
-	 *            the daySubclass to set
+	 * Sets the day subclass.
+	 *
+	 * @param daySubclass            the daySubclass to set
 	 */
 	public void setDaySubclass(String daySubclass) {
 		this.daySubclass = daySubclass;
 	}
 
 	/**
-	 * @return residentInd
+	 * Checks if is resident ind.
+	 *
+	 * @return the residentInd
 	 */
-	public String getResidentInd() {
+	public boolean isResidentInd() {
 		return residentInd;
 	}
 
 	/**
-	 * @param residentInd
+	 * Sets the resident ind.
+	 *
+	 * @param residentInd the residentInd to set
 	 */
-	public void setResidentInd(String residentInd) {
+	public void setResidentInd(boolean residentInd) {
 		this.residentInd = residentInd;
 	}
 
 	/**
+	 * Gets the standard retail tax.
+	 *
 	 * @return standardRetailTax
 	 */
 	public BigDecimal getStandardRetailTax() {
@@ -567,13 +660,17 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param standardRetailTax
+	 * Sets the standard retail tax.
+	 *
+	 * @param standardRetailTax the new standard retail tax
 	 */
 	public void setStandardRetailTax(BigDecimal standardRetailTax) {
 		this.standardRetailTax = standardRetailTax;
 	}
 
 	/**
+	 * Gets the upgrd path id.
+	 *
 	 * @return upgrdPathId
 	 */
 	public BigInteger getUpgrdPathId() {
@@ -581,10 +678,53 @@ public class DBProductTO implements Serializable {
 	}
 
 	/**
-	 * @param upgrdPathId
+	 * Sets the upgrd path id.
+	 *
+	 * @param upgrdPathId the new upgrd path id
 	 */
 	public void setUpgrdPathId(BigInteger upgrdPathId) {
 		this.upgrdPathId = upgrdPathId;
+	}
+	/**
+	 * @return dayCount
+	 */
+	public String getDayCount() {
+		return dayCount;
+	}
+
+	/**
+	 * @param dayCount
+	 */
+	public void setDayCount(String dayCount) {
+		this.dayCount = dayCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DBProductTO [pdtCode=" + pdtCode + ", pdtid=" + pdtid
+				+ ", pdtDesc=" + pdtDesc + ", eligGrpid=" + eligGrpid
+				+ ", tax=" + tax + ", tax1=" + tax1 + ", tax2=" + tax2
+				+ ", printedPrice=" + printedPrice + ", unitPrice=" + unitPrice
+				+ ", active=" + active + ", soldOut=" + soldOut
+				+ ", priceMismatchAllowed=" + priceMismatchAllowed
+				+ ", misMatchTolType=" + misMatchTolType + ", misMatchTol="
+				+ misMatchTol + ", startSaleDate=" + startSaleDate
+				+ ", endSaleDate=" + endSaleDate + ", startValidDate="
+				+ startValidDate + ", endValidDate=" + endValidDate
+				+ ", validityDateInfoRequired=" + validityDateInfoRequired
+				+ ", mappedProviderTktNbr=" + mappedProviderTktNbr
+				+ ", mappedProviderTktName=" + mappedProviderTktName
+				+ ", mappedProviderTktActive=" + mappedProviderTktActive
+				+ ", quantity=" + quantity + ", consumableInd=" + consumableInd
+				+ ", demographicsInd=" + demographicsInd + ", dayClass="
+				+ dayClass + ", daySubclass=" + daySubclass
+				+ ", standardRetailPrice=" + standardRetailPrice
+				+ ", residentInd=" + residentInd + ", standardRetailTax="
+				+ standardRetailTax + ", upgrdPathId=" + upgrdPathId
+				+ ", dayCount=" + dayCount + "]";
 	}
 	
 	
