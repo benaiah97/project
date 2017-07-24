@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -21,7 +23,6 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
@@ -31,12 +32,16 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 
 import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 /**
- * This class is responsible for three major functions for WDW query reservation:<BR>
+ * This class is responsible for three major functions for WDW query
+ * reservation:<BR>
  * 1. Defining the business rules specific to WDW query Eligible Products.<BR>
- * 2. Defining the rules for transforming requests from the DTI transfer objects to the provider transfer objects.<BR>
- * 3. Defining the rules for transforming responses from the provider transfer objects to the DTI transfer objects.<BR>
+ * 2. Defining the rules for transforming requests from the DTI transfer objects
+ * to the provider transfer objects.<BR>
+ * 3. Defining the rules for transforming responses from the provider transfer
+ * objects to the DTI transfer objects.<BR>
  * 
  * @author JTL
  * @since 2.16.3
@@ -44,47 +49,47 @@ import com.disney.logging.EventLogger;
  */
 public class WDWQueryEligibleProductsRules {
 
-	 /** Request type header constant. */
-	 private final static String REQUEST_TYPE_QUERY = "Query";
+	/** Object instance used for logging. */
+	private static final WDWQueryEligibleProductsRules THISINSTANCE = new WDWQueryEligibleProductsRules();
+	/** Request type header constant. */
+	private final static String REQUEST_TYPE_QUERY = "Query";
 
-	 /** Request subtype header constant. */
-	  private final static String REQUEST_SUBTYPE_QUERYTICKET = "QueryTicket";
+	/** Request subtype header constant. */
+	private final static String REQUEST_SUBTYPE_QUERYTICKET = "QueryTicket";
 
-	  /** Constant indicating all tags should be created. */
-	  private final static String ALL_TAGS = "All";
+	/** Constant indicating all tags should be created. */
+	private final static String ALL_TAGS = "All";
 
-	  /** Constant indicating the Manage Reservation XSD. */
-	  private final static String NO_NAMESPACE_SCHEMA_LOCATION = "dtigatewayrequest.xsd";
+	/** Constant indicating the Manage Reservation XSD. */
+	private final static String NO_NAMESPACE_SCHEMA_LOCATION = "dtigatewayrequest.xsd";
 
-	  /** Constant indicating limited tags should be created. */
-	  private final static String[] QT_TAGS = { "Tax",
-	      "VoidCode",
-	      "TicketFlag",
-	      "TicketAttribute",
-	      "AlreadyUsed" };
-	  
-	  /**
-	   * Tag exception -- This is hard-coded, but when TDS gets rid of their old system, we'll be able to remove this. JTL
-	   */
-	  private final static String EXCEPTION_TSMAC = "TDSNA";
-	  
-	  /** Constant text for ITEM ONE (1). */
-	  private final static String ITEMONE = "1";
-	  
-	  @SuppressWarnings("unused")
-	  private static final EventLogger logger = EventLogger
-	      .getLogger(WDWQueryEligibleProductsRules.class.getCanonicalName());
+	/** Constant indicating limited tags should be created. */
+	private final static String[] QT_TAGS = { "Tax", "VoidCode", "TicketFlag",
+			"TicketAttribute", "AlreadyUsed" };
 
+	/**
+	 * Tag exception -- This is hard-coded, but when TDS gets rid of their old
+	 * system, we'll be able to remove this. JTL
+	 */
+	private final static String EXCEPTION_TSMAC = "TDSNA";
 
-	  /**
-	   * Transform the DTITransactionTO value object to the provider value objects and then pass those to XML Marshaling routines to create an XML string.
-	   * 
-	   * @param dtiTxn
-	   *            the DTI Transaction object.
-	   * @return the XML string version of the provider request.
-	   * @throws DTIException
-	   *             when any transformation error is encountered.
-	   */
+	/** Constant text for ITEM ONE (1). */
+	private final static String ITEMONE = "1";
+
+	@SuppressWarnings("unused")
+	private static final EventLogger logger = EventLogger
+			.getLogger(WDWQueryEligibleProductsRules.class.getCanonicalName());
+
+	/**
+	 * Transform the DTITransactionTO value object to the provider value objects
+	 * and then pass those to XML Marshaling routines to create an XML string.
+	 * 
+	 * @param dtiTxn
+	 *            the DTI Transaction object.
+	 * @return the XML string version of the provider request.
+	 * @throws DTIException
+	 *             when any transformation error is encountered.
+	 */
 	static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 		String xmlString = null;
 		DTIRequestTO dtiRequest = dtiTxn.getRequest();
@@ -108,10 +113,10 @@ public class WDWQueryEligibleProductsRules {
 
 		// Tags
 		ArrayList<String> tagList = otQryTkt.getTagsList();
-		
+
 		// Adding ALL_Tag in case of Query Eligible
 		tagList.add(ALL_TAGS);
-		
+
 		// SiteNumber
 		HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> aMap = dtiTxn
 				.getAttributeTOMap();
@@ -173,202 +178,214 @@ public class WDWQueryEligibleProductsRules {
 		return xmlString;
 	}
 
-	  /**
-	   * Transforms a QueryEligibleResponse response string from the WDW provider and updates the DTITransactionTO object with the response information.
-	   * 
-	   * @param dtiTxn
-	   *            The transaction object for this request.
-	   * @param xmlResponse
-	   *            The WDW provider's response in string format.
-	   * @return The DTITransactionTO object, enriched with the response information.
-	   * @throws DTIException
-	   *             for any error. Contains enough detail to formulate an error response to the seller.
-	   */
-		@SuppressWarnings("unused")
-	  static void transformResponseBody(DTITransactionTO dtiTxn,
+	/**
+	 * Transforms a QueryEligibleResponse response string from the WDW provider
+	 * and updates the DTITransactionTO object with the response information.
+	 * 
+	 * @param dtiTxn
+	 *            The transaction object for this request.
+	 * @param xmlResponse
+	 *            The WDW provider's response in string format.
+	 * @return The DTITransactionTO object, enriched with the response
+	 *         information.
+	 * @throws DTIException
+	 *             for any error. Contains enough detail to formulate an error
+	 *             response to the seller.
+	 */
+	@SuppressWarnings("unused")
+	static void transformResponseBody(DTITransactionTO dtiTxn,
 			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
-		// TODO space this out, need to change format/style, Todd  06-23-2017 JTL will share the formatter with everyone
+		// TODO space this out, need to change format/style, Todd 06-23-2017 JTL
+		// will share the formatter with everyone
 
-		// Adding QueryEligibleProductsRequestTO to look if this can be used 
+		// Adding QueryEligibleProductsRequestTO to look if this can be used
 		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiTxn
 				.getRequest().getCommandBody();
-		
+
 		QueryEligibilityProductsResponseTO dtiResRespTO = new QueryEligibilityProductsResponseTO();
-		
+
 		OTQueryTicketTO otQryTicketTO = otCmdTO.getQueryTicketTO();
-		
+
 		dtiRespTO.setCommandBody(dtiResRespTO);
-        ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 
 		// ResponseType
 		ArrayList<TicketTO> ticketListTo = dtiResRespTO.getTicketList();
-			
-		//Query Ticket InfoInlist
+
+		// Query Ticket InfoInlist
 		ArrayList<OTTicketInfoTO> otTicketList = otQryTicketTO
 				.getTicketInfoList();
-		
+
 		for (OTTicketInfoTO otTicketInfoTO : otTicketList) {
-			 tktNbr.add(otTicketInfoTO.getTicketType());
+			tktNbr.add(otTicketInfoTO.getTicketType());
 		}
-		
-	//	ArrayList<DBProductTO> dbProductTOs  =	ProductKey.getProductsTktNbr(tktNbr);
-		
+
 		if ((otTicketList != null) && (otTicketList.size() > 0)) {
-		
-			// Verify from the DB to validate the PLU
-		//	ArrayList<GuestProductTO> upgradedProduct = setGuestProductDetails(gwDataRespTO);
-			
-			
-		 for (OTTicketInfoTO otTicketInfo : otTicketList) {
-			 
-			 TicketTO dtiTicketTO = new TicketTO();
+
+			for (OTTicketInfoTO otTicketInfo : otTicketList) {
+
+				ArrayList<DBProductTO> productList = ProductKey
+						.getProductsTktNbr(tktNbr);
+
+				boolean inElegibleProduct = validateInEligibleProducts(otQryTicketTO, productList);
+
+				TicketTO dtiTicketTO = new TicketTO();
 				TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
-				
-			/* BigInteger upgrade = null;
-				for (DBProductTO dbProductTO : dbProductTOs) {
-					upgrade=dbProductTO.getUpgrdPathId();
+
+				// Status Item
+				newStatus.setStatusItem(otTicketInfo.getItem().toString());
+
+				// Ticket Status Value
+				newStatus.setStatusValue(otTicketInfo.getItemStatus()
+						.toString());
+
+				OTTicketTO otTicketTO = otTicketInfo.getTicket();
+
+				// Tkt Item
+				dtiTicketTO.setTktItem(otTicketInfo.getItem());
+
+				// Prod Code
+				dtiTicketTO.setProdCode(otTicketInfo.getItem().toString());
+
+				// Prod Price
+				dtiTicketTO.setProdPrice(otTicketInfo.getPrice());
+
+				// Ticket status
+				dtiTicketTO.addTicketStatus(newStatus);
+
+				GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
+
+				String site = otTicketTO.getTdssnSite();
+				String station = otTicketTO.getTdssnStation();
+				String number = otTicketTO.getTdssnTicketId();
+
+				// DSSN
+				if (site != null && site != "" && station != null
+						&& station != "" && number != null && number != "") {
+					dtiTicketTO.setDssn(dssnDate, site, station, number);
 				}
-				if(upgrade.intValue()==0)
-				{
-					newStatus.setStatusValue(otTicketInfo.getItemStatus().toString());
+				if (otTicketTO.getMagTrack() != null
+						&& otTicketTO.getMagTrack() != "") {
+					dtiTicketTO.setMag(otTicketTO.getMagTrack());
 				}
-			Integer voidCode=otTicketInfo.getVoidCode();
-			if(voidCode==0&&voidCode<=100)
-			{
-				newStatus.setStatusValue(otTicketInfo.getItemStatus().toString());
-			}*/
-			// Status Item 
-			newStatus.setStatusItem(otTicketInfo.getItem().toString());
-				
-			// Ticket Status Value
-			newStatus.setStatusValue(otTicketInfo.getItemStatus()
-				.toString());
-				
-			OTTicketTO otTicketTO = otTicketInfo.getTicket();
-			
-			// Tkt Item	
-			dtiTicketTO.setTktItem(otTicketInfo.getItem());
-			
-			//Prod Code
-			dtiTicketTO.setProdCode(otTicketInfo.getItem().toString());
-			
-			// Prod Price
-			dtiTicketTO.setProdPrice(otTicketInfo.getPrice());
-			
-			// Ticket status
-			dtiTicketTO.addTicketStatus(newStatus);
-				
-			GregorianCalendar dssnDate = otTicketTO.getTdssnDate();
-			
-			String site = otTicketTO.getTdssnSite();
-			String station = otTicketTO.getTdssnStation();
-			String number = otTicketTO.getTdssnTicketId();
-	
-			// DSSN 
-			if (site != null && site != "" && station != null
-				&& station != "" && number != null && number != "") {
-				dtiTicketTO.setDssn(dssnDate, site, station, number);
-			}
-			 if (otTicketTO.getMagTrack() != null
-				 && otTicketTO.getMagTrack() != "") {
-				 dtiTicketTO.setMag(otTicketTO.getMagTrack());
-			 }
-			  if (otTicketTO.getBarCode() != null
-				  && otTicketTO.getBarCode() != "") {
-				  dtiTicketTO.setBarCode(otTicketTO.getBarCode());
-			  }
-			   if (otTicketTO.getTCOD() != null && otTicketTO.getTCOD() != "") {
-				   dtiTicketTO.setTktNID(otTicketTO.getTCOD());
-			   }
+				if (otTicketTO.getBarCode() != null
+						&& otTicketTO.getBarCode() != "") {
+					dtiTicketTO.setBarCode(otTicketTO.getBarCode());
+				}
+				if (otTicketTO.getTCOD() != null && otTicketTO.getTCOD() != "") {
+					dtiTicketTO.setTktNID(otTicketTO.getTCOD());
+				}
 				if (otTicketTO.getExternalTicketCode() != null
-				    && otTicketTO.getExternalTicketCode() != "") {
+						&& otTicketTO.getExternalTicketCode() != "") {
 					dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());
 				}
-				
-			dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
-			dtiTicketTO.setTktTax(otTicketInfo.getTax());
-				
-			if (otTicketInfo.getValidityStartDate() != null){
-				dtiTicketTO.setTktValidityValidStart(otTicketInfo
-				  .getValidityStartDate());
-						
-			}
-			if (otTicketInfo.getValidityEndDate() != null){
-			   dtiTicketTO.setTktValidityValidEnd(otTicketInfo
-			      .getValidityEndDate());
-			}
-				  
-			dtiResRespTO.add(dtiTicketTO);
-			}
-		 }
-		return;
-	  } 
 
-	
-		/**
-		 * @param gwDataRespTO
-		 * @param infoTO
-		 * @throws DTIException
-		 */
-		@SuppressWarnings("unused")
-		private static void validateProducts(OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
+				dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
+				dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
-			ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
-			Integer voidCode = null;
-			GregorianCalendar endDate = null;
-			ArrayList<OTUsagesTO> usagesTOs = null;
-			String biometricTemplet = null;
+				if (otTicketInfo.getValidityStartDate() != null) {
+					dtiTicketTO.setTktValidityValidStart(otTicketInfo
+							.getValidityStartDate());
 
-			for (OTTicketInfoTO otTicketInfoTO : infoTO.getTicketInfoList()) {
-				tktNbr.add(otTicketInfoTO.getTicketType());
-				voidCode = otTicketInfoTO.getVoidCode();
-				endDate = otTicketInfoTO.getValidityEndDate();
-				usagesTOs = otTicketInfoTO.getUsagesList();
-				biometricTemplet = otTicketInfoTO.getBiometricTemplate();
-			}
-			Date date = null;
-			List<Date> useDates = new ArrayList<>();
-			for (OTUsagesTO otUsagesTO : usagesTOs) {
-
-				SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
-				try {
-					date = fmt.parse(otUsagesTO.getDate());
-				} catch (ParseException e) {
 				}
-				useDates.add(date);  
-			} 
-			Date fisrtUsesDate = Collections.min(useDates); 
-				long currentDateMiliSec = new Date().getTime();
-					try {
-						if(productTO.getUpgrdPathId().intValue()==0)
-						{
-									
-						}
-						if (productTO.isResidentInd() == false
-								&& (currentDateMiliSec - endDate.getTime()
-										.getTime()) / 86400000 > 0) {
-							
-						}
-						if (productTO.isResidentInd() == true
-								&& Integer.parseInt(productTO.getDayCount()) == 1
-								&& currentDateMiliSec - fisrtUsesDate.getTime()
-										/ 86400000 > 14) {
-							
-						}
-						if (productTO.isResidentInd() == true
-								&& Integer.parseInt(productTO.getDayCount()) > 1
-								&& new Date().getTime() - fisrtUsesDate.getTime()/ 86400000 > 185) {
-							
-						}
-					} catch (Exception e) {
-					}
-			if (voidCode > 0 || voidCode <= 100) {
-				
-			}
-			
-			if(usagesTOs.size() == 0 || biometricTemplet==null)
-			{
-				
+				if (otTicketInfo.getValidityEndDate() != null) {
+					dtiTicketTO.setTktValidityValidEnd(otTicketInfo
+							.getValidityEndDate());
+				}
+
+				dtiResRespTO.add(dtiTicketTO);
 			}
 		}
+		return;
+	}
+
+	/**
+	 * @param infoTO
+	 * @param productTOs
+	 * @return
+	 * @throws DTIException
+	 */
+	private static boolean validateInEligibleProducts(OTQueryTicketTO infoTO,
+			ArrayList<DBProductTO> productTOs) throws DTIException {
+		logger.sendEvent("Entering validateInEligibleProducts", EventType.DEBUG,
+				THISINSTANCE);
+		boolean isInEligibleProductFlag = false;
+		Date date = null;
+		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+		Integer voidCode = null;
+		GregorianCalendar endDate = null;
+		ArrayList<OTUsagesTO> usagesTOs = null;
+		String biometricTemplet = null;
+		/* Getting Ticket details */
+		for (OTTicketInfoTO otTicketInfoTO : infoTO.getTicketInfoList()) {
+			tktNbr.add(otTicketInfoTO.getTicketType());
+			voidCode = otTicketInfoTO.getVoidCode();
+			endDate = otTicketInfoTO.getValidityEndDate();
+			usagesTOs = otTicketInfoTO.getUsagesList();
+			biometricTemplet = otTicketInfoTO.getBiometricTemplate();
+		}
+		/* Getting the uses details */
+		List<Date> useDates = new ArrayList<>();
+		for (OTUsagesTO otUsagesTO : usagesTOs) {
+			SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
+			try {
+				date = fmt.parse(otUsagesTO.getDate());
+			} catch (ParseException e) {
+			}
+			useDates.add(date);
+		}
+		/* First use date */
+		Date fisrtUsesDate = Collections.min(useDates);
+		long currentDateMiliSec = new Date().getTime();
+		for (DBProductTO productTO : productTOs) {
+			try {
+				/* UpgrdPathId is 0 */
+				if (productTO.getUpgrdPathId() != null
+						&& productTO.getUpgrdPathId().intValue() == 0) {
+					isInEligibleProductFlag = true;
+				}
+				/* ResidentInd is N and Validity EndDate less than today */
+				if (endDate!=null && productTO.isResidentInd() == false
+						&& (currentDateMiliSec - endDate.getTime().getTime()) / 86400000 > 0) {
+					isInEligibleProductFlag = true;
+				}
+				/*
+				 * ResidentInd is Y and DayCount = 1 and the first use date is
+				 * older than 14 days
+				 */
+				if (fisrtUsesDate!= null && productTO.isResidentInd() == true
+						&& Integer.parseInt(productTO.getDayCount()) == 1
+						&& currentDateMiliSec - fisrtUsesDate.getTime()
+								/ 86400000 > 14) {
+					isInEligibleProductFlag = true;
+				}
+				/*
+				 * resident flag is 'Y' and DayCount > 1, and the first use date
+				 * is older than six months (185 days).
+				 */
+				if (fisrtUsesDate!= null && productTO.isResidentInd() == true
+						&& Integer.parseInt(productTO.getDayCount()) > 1
+						&& new Date().getTime() - fisrtUsesDate.getTime()
+								/ 86400000 > 185) {
+					isInEligibleProductFlag = true;
+				}
+			} catch (Exception e) {
+				logger.sendEvent(
+						"Exception executing validateInEligibleProducts: " + e.toString(),
+						EventType.WARN, THISINSTANCE);
+			}
+		}
+		/*
+		 * VoidCode in the ATS Query Ticket response greater than 0 or less than
+		 * or equal to 100
+		 */
+		if (voidCode > 0 || voidCode <= 100) {
+			isInEligibleProductFlag = true;
+		}
+		/* Usages must have one entry and BiometricTemplate must have one entry */
+		if (usagesTOs != null && usagesTOs.size() == 0 || biometricTemplet == null) {
+			isInEligibleProductFlag = true;
+		}
+		return isInEligibleProductFlag;
+	}
 }
