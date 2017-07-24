@@ -300,9 +300,8 @@ public class WDWQueryEligibleProductsRules {
 	}
 
 	/**
+	 * @param gwDataRespTO
 	 * @param infoTO
-	 * @param productTOs
-	 * @return
 	 * @throws DTIException
 	 */
 	private static boolean validateInEligibleProducts(OTQueryTicketTO infoTO,
