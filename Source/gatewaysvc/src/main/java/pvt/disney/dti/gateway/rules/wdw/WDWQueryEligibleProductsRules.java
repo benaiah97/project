@@ -9,10 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.ProductKey;
-import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -308,69 +305,71 @@ public class WDWQueryEligibleProductsRules {
 	  } 
 
 	
-	/**
-	 * @param gwDataRespTO
-	 * @param infoTO
-	 * @throws DTIException
-	 */
-	@SuppressWarnings("unused")
-	private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
-			OTQueryTicketTO infoTO,DBProductTO guestProductTO) throws DTIException {
+		/**
+		 * @param gwDataRespTO
+		 * @param infoTO
+		 * @throws DTIException
+		 */
+		@SuppressWarnings("unused")
+		private static void validateProducts(GWDataRequestRespTO gwDataRespTO,
+				OTQueryTicketTO infoTO,DBProductTO productTO) throws DTIException {
 
-		ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
-		Integer voidCode = null;
-		GregorianCalendar endDate = null;
-		ArrayList<OTUsagesTO> usagesTOs = null;
-		Integer biometricLevel = null;
+			ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+			Integer voidCode = null;
+			GregorianCalendar endDate = null;
+			ArrayList<OTUsagesTO> usagesTOs = null;
+			String biometricTemplet = null;
 
-		for (OTTicketInfoTO otTicketInfoTO : infoTO.getTicketInfoList()) {
-			tktNbr.add(otTicketInfoTO.getTicketType());
-			voidCode = otTicketInfoTO.getVoidCode();
-			endDate = otTicketInfoTO.getValidityEndDate();
-			usagesTOs = otTicketInfoTO.getUsagesList();
-			biometricLevel = otTicketInfoTO.getBiometricLevel();
-		}
-		Date date = null;
-		List<Date> useDates = new ArrayList<>();
-		for (OTUsagesTO otUsagesTO : usagesTOs) {
-
-			SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
-			try {
-				date = fmt.parse(otUsagesTO.getDate());
-			} catch (ParseException e) {
+			for (OTTicketInfoTO otTicketInfoTO : infoTO.getTicketInfoList()) {
+				tktNbr.add(otTicketInfoTO.getTicketType());
+				voidCode = otTicketInfoTO.getVoidCode();
+				endDate = otTicketInfoTO.getValidityEndDate();
+				usagesTOs = otTicketInfoTO.getUsagesList();
+				biometricTemplet = otTicketInfoTO.getBiometricTemplate();
 			}
-			useDates.add(date);  
-		} 
-		Date latsUsesDate = Collections.min(useDates); 
-		
-		if (guestProductTO != null) {
-			
+			Date date = null;
+			List<Date> useDates = new ArrayList<>();
+			for (OTUsagesTO otUsagesTO : usagesTOs) {
+
+				SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
 				try {
-					if (guestProductTO.isResidentInd() == false
-							&& (new Date().getTime() - endDate.getTime()
-									.getTime()) / 86400000 > 0) {
-					}
-					if (guestProductTO.isResidentInd() == true
-							&& Integer.parseInt(guestProductTO.getDayCount()) == 1
-							&& new Date().getTime() - latsUsesDate.getTime()
-									/ 86400000 > 14) {
-
-					}
-
-					if (guestProductTO.isResidentInd() == true
-							&& Integer.parseInt(guestProductTO.getDayCount()) > 1
-							&& new Date().getTime() - latsUsesDate.getTime()
-									/ 86400000 > 185) {
-					}
-
-				} catch (Exception e) {
+					date = fmt.parse(otUsagesTO.getDate());
+				} catch (ParseException e) {
 				}
+				useDates.add(date);  
+			} 
+			Date fisrtUsesDate = Collections.min(useDates); 
+				long currentDateMiliSec = new Date().getTime();
+					try {
+						if(productTO.getUpgrdPathId().intValue()==0)
+						{
+									
+						}
+						if (productTO.isResidentInd() == false
+								&& (currentDateMiliSec - endDate.getTime()
+										.getTime()) / 86400000 > 0) {
+							
+						}
+						if (productTO.isResidentInd() == true
+								&& Integer.parseInt(productTO.getDayCount()) == 1
+								&& currentDateMiliSec - fisrtUsesDate.getTime()
+										/ 86400000 > 14) {
+							
+						}
+						if (productTO.isResidentInd() == true
+								&& Integer.parseInt(productTO.getDayCount()) > 1
+								&& new Date().getTime() - fisrtUsesDate.getTime()/ 86400000 > 185) {
+							
+						}
+					} catch (Exception e) {
+					}
+			if (voidCode > 0 || voidCode <= 100) {
+				
+			}
 			
+			if(usagesTOs.size() == 0 || biometricTemplet==null)
+			{
+				
+			}
 		}
-		if (voidCode > 0 && voidCode <= 100 && usagesTOs.size() > 0
-				&& biometricLevel > 0) {
- 
-		}
-
-	}
 }

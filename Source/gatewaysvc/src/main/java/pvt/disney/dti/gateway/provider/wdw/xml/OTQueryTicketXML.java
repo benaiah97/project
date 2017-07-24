@@ -316,7 +316,18 @@ public class OTQueryTicketXML {
         String inText = accountIdNode.getText();
         otTktInfoTO.setAccountId(inText);
       }
-
+      
+      // BiometricInfo AP Upgrade  
+      Node biometricInfo = aNode.selectSingleNode("BiometricInfo");
+      if (biometricInfo != null) {
+    	  // BiometricTemplate AP Upgrade  
+    	  Node biometricTemplate = biometricInfo.selectSingleNode("BiometricTemplate");
+        if(biometricTemplate !=null) {
+        String bioTmpleString = biometricTemplate.getText();
+        otTktInfoTO.setBiometricTemplate(bioTmpleString);
+        }
+      }
+      
       otTktList.add(otTktInfoTO);
     }
 

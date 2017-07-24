@@ -104,6 +104,9 @@ public class OTTicketInfoTO implements Serializable {
 
   /** ticket response demographics (as of 2.16.1) */
   private OTDemographicData seasonPassDemo;
+  
+  /** AP Upgrade  */
+  private String biometricTemplate;
 
   /**
    * Gets the item.
@@ -573,5 +576,21 @@ public class OTTicketInfoTO implements Serializable {
   public void setItemAlphaCode(String itemAlphaCode) {
     this.itemAlphaCode = itemAlphaCode;
   }
+	
+  	/**
+	 * @return biometricTemplate
+	 */
+	public String getBiometricTemplate() {
+		return biometricTemplate;
+	}
+
+	/**
+	 * @param biometricTemplate
+	 */
+	public void setBiometricTemplate(String biometricTemplate) {
+		this.biometricTemplate = biometricTemplate;
+	}
+  
+  
   
 }
