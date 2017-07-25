@@ -17,6 +17,7 @@ import pvt.disney.dti.gateway.dao.ErrorKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.data.GuestProductTO;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.dao.result.VisualIdResult;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -236,38 +237,57 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			
 			/*Count of upgradedPLUList*/
 			int upGradedPLUList=gwDataRespTO.getUpgradePLUList().size();
+			ArrayList<String> upGradePluList=new ArrayList<String>();
 			
-			/*PLU*/
-			String plu=gwDataRespTO.getUpgradePLUList().get(0).getPLU();
-			
-			/*Get the list of GuestProductTO , transaction will stop in case if no product is found*/
-			GuestProductTO guestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO);
-			
-			if (guestProduct != null) {
-				
-				/* visualId*/
-				String visualId=gwDataRespTO.getVisualID();
-				
-				/* contact GUID*/
-				String contactGUID=null;
-				if(gwDataRespTO.getContact()!=null&&gwDataRespTO.getContact().size()>0){
-					contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
-				}
-				
-				/*Insert the GUID in table if GUID is not present */
-				if(contactGUID!=null){
-					processGUID(visualId,contactGUID);
-				}
-				
-				/*Setting up the Upgraded Product Detail*/
-				getUpgradedProduct(guestProduct,plu,dtiTktTO,dtiTxn);
-				
-				/*Setting up the response Detail*/
-				setQueryEligibleResponseCommand(guestProduct,dtiTktTO,gwDataRespTO);
-				
-			}else{
-				logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+			for(UpgradePLUList upgradePLU:gwDataRespTO.getUpgradePLUList()){
+				upGradePluList.add(upgradePLU.getPLU());
 			}
+			
+			for(UpgradePLUList upgradePLU:gwDataRespTO.getUpgradePLUList()){
+				String plu=upgradePLU.getPLU();
+				
+				/*Get the list of GuestProductTO , transaction will stop in case if no product is found*/
+				GuestProductTO guestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO,plu);
+				if (guestProduct != null) {
+					
+					/* visualId*/
+					String visualId=gwDataRespTO.getVisualID();
+					
+					/* contact GUID*/
+					String contactGUID=null;// need to see if contact tag is present throw exception if contact is not there
+					
+					if(gwDataRespTO.getContact()!=null&&gwDataRespTO.getContact().size()>0){
+						contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
+					}
+					
+					
+					/*Insert the GUID in table if GUID is not present */
+					if(contactGUID!=null){
+						processGUID(visualId,contactGUID);
+					}else{
+						
+					}
+					
+					ArrayList<DBProductTO> upgradedProductTOList=new ArrayList<DBProductTO>();
+					
+					/*TODO waiting for Todd to finish Step , will integrate his code for STEP 2*/
+					
+					/*Setting up the Upgraded Product Detail*/
+					ArrayList<DBProductTO> newProductcatalogList=
+							getUpgradedProduct(upGradePluList, upgradedProductTOList, dtiTktTO, dtiTxn);
+					
+					/*Setting up the respArrayList<UpgradeCatalogTO>onse Detail*/
+					setQueryEligibleResponseCommand(guestProduct,dtiTktTO,newProductcatalogList);
+					
+				}else{
+					logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+				}
+			}
+			
+			
+			
+			
+			
 			
 		
 		} else {
@@ -380,7 +400,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 *             the DTI exception
 	 */
 	private static GuestProductTO setGuestProductDetails(
-			GWDataRequestRespTO gwDataRespTO,TicketTO dtiTktTO) throws DTIException {
+			GWDataRequestRespTO gwDataRespTO,TicketTO dtiTktTO, String plu) throws DTIException {
 		
 		/*This method is used for processing step 1 */
 		GuestProductTO guestProductTO=new GuestProductTO();
@@ -391,12 +411,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				.getUpgradePLUList();
 		
 		ArrayList<String> pluList = new ArrayList<String>();
-		pluList.add(upgradePluList.get(0).getPLU());
+		pluList.add(plu);// TODO for each of the PLU List
 		
 		dbProductTO = ProductKey.getProductsByTktName(pluList);
 		if(dbProductTO!=null&&dbProductTO.size()>0){
 			
-		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,dbProductTO.toString());
+		  logger.sendEvent(dbProductTO.toString(), EventType.DEBUG,null);
 		  ResultStatusTo resultStatusTo = new ResultStatusTo(
 					ResultType.ELIGIBLE);
 		  dtiTktTO.setResultType(resultStatusTo.toString());
@@ -445,21 +465,18 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * @return the upgraded product
 	 * @throws DTIException the DTI exception
 	 */
-	private static void getUpgradedProduct(GuestProductTO uestproductList,String plu,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{/*
+	private static ArrayList<DBProductTO> getUpgradedProduct(ArrayList<String> listfUpgradedPLUs,ArrayList<DBProductTO> upgradedProductTOList,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{
+		ArrayList<DBProductTO> newProductCatalogTO=null;
 		
-		ArrayList<UpgradeCatalogTO> upgradedProductTOList=new ArrayList<UpgradeCatalogTO>();
-		ArrayList<String> listfUpgradedPLUs=new ArrayList<String>();
-		
-		Entity Id
-		Long entityId = new Long(dtiTxn.getEntityTO().getEntityId());
-	
-		 DB call to fetch list of salable Product from seller 
-		ArrayList<UpgradeCatalogTO> upGradeCatalogTO=ProductKey.getProductsForSeller(entityId);
-		
-		if(upGradeCatalogTO!=null&&upGradeCatalogTO.size()>0){
+		if(upgradedProductTOList!=null&&upgradedProductTOList.size()>0){
 			
-		
-			
+			if(matchUpgradedProductSize(listfUpgradedPLUs.size(),upgradedProductTOList.size())){
+				ResultStatusTo resultStatusTo = new ResultStatusTo(
+						ResultType.ELIGIBLE);
+			}
+			UpgradeCatalogTO upGradeCatalog=new UpgradeCatalogTO();
+			upGradeCatalog.retainDLRPLUs(listfUpgradedPLUs);
+			newProductCatalogTO=upGradeCatalog.getProductList();
 		}else{
 			logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
 			  ResultStatusTo resultStatusTo = new ResultStatusTo(
@@ -467,8 +484,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			  dtiTktTO.setResultType(resultStatusTo.toString());
 		}
 		
-		
-	*/}
+		return newProductCatalogTO;
+	}
 	
 	/**
 	 * Match upgraded product size.
@@ -487,23 +504,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		return eligibleFlag;
 	}
 	
-	/**
-	 * Retain DLRPL us.
-	 *
-	 * @param listOfUpgradableDLRPLUs the list of upgradable DLRPL us
-	 */
-	/*private static void> retainDLRPLUs(ArrayList<String> listOfUpgradableDLRPLUs){
-		
-		ArrayList<UpgradeCatalogTO> upGradedProductList=new ArrayList<UpgradeCatalogTO>();
-		for(String pdtCode:listOfUpgradableDLRPLUs){
-			UpgradeCatalogTO upGradedPoductTO=new UpgradeCatalogTO();
-			upGradedPoductTO.setPdtCode(pdtCode);
-			upGradedProductList.add(upGradedPoductTO);
-		}
-		return upGradedProductList;
-		
-		
-	}*/
+	
 	
 	
 	/**
@@ -515,11 +516,13 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * @throws DTIException the DTI exception
 	 */
 	private static void setQueryEligibleResponseCommand(
-			GuestProductTO guestProductTO, TicketTO dtiTktTO,GWDataRequestRespTO gwDataRespTO)
+			GuestProductTO guestProductTO, TicketTO dtiTktTO,ArrayList<DBProductTO> upgradedProductTOList)
 			throws DTIException {
 		DemographicsTO ticketDemo = null;
 
 		DBProductTO dbProductTO=guestProductTO.getDbproductTO();
+		GWDataRequestRespTO gwDataRespTO=guestProductTO.getGwDataRespTO();
+		
 		if(dbProductTO!=null) {
 
 			// If the provider had no error, transform the response.

@@ -160,6 +160,9 @@ public class GWDataRequestRespTO implements Serializable {
   /** The upgrade PLU list. */
   private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
   
+  /** The picture. */
+  private String picture;
+  
   private ArrayList<Contact> contact=new ArrayList<Contact>();
 
   /** The kind. */
