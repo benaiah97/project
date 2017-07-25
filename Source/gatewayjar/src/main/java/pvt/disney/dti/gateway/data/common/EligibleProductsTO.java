@@ -5,8 +5,7 @@ import java.math.BigDecimal;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /***
- * 
- * 
+ * Entity class to store the queried eligible products information 
  * 
  * @author GANDV005
  *

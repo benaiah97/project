@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
  * @author lewit019
  */
 public class TicketTO implements Serializable, Cloneable {
-
+	
   /** Serial Version UID */
   public final static long serialVersionUID = 9129231995L;
 

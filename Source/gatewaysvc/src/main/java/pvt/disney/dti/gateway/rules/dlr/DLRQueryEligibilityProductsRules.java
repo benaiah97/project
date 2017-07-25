@@ -57,7 +57,7 @@ import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
 
 public class DLRQueryEligibilityProductsRules implements TransformConstants {
-
+	
 	/**
 	 * The number of hours to add to a pass expiration to ensure that
 	 * east-coast/west-coast time differences are accounted for (3) and the
