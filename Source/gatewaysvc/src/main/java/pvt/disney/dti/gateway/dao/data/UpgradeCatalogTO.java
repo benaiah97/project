@@ -10,10 +10,8 @@ import java.util.Iterator;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 
 /**
- * This class is the representation of the upgrade possibilities. NOTE: THIS IS
- * IN DRAFT; while it compiles and provides the interface calls as a reference,
- * it may not actually WORK! Also, this class is NOT threadsafe. Each thread
- * should create its own copy.
+ * This class is the representation of the upgrade possibilities. This class is
+ * NOT threadsafe. Each thread should create its own copy.
  * 
  * @author lewit019
  * @since 2.17.3
@@ -100,9 +98,10 @@ public class UpgradeCatalogTO implements Serializable {
 
    /**
     * A less preferred method for adding a product to the catalog, as it relies
-    * on the caller to know the correct fields.
-    * STEP 2 - S283274 As a client of the DTI, my identity provides a limited
-    * set of AP products I have access to.
+    * on the caller to know the correct fields. STEP 2 - S283274 As a client of
+    * the DTI, my identity provides a limited set of AP products I have access
+    * to.
+    * 
     * @param aProduct
     * @return Size of the catalog after the add.
     */
@@ -122,10 +121,12 @@ public class UpgradeCatalogTO implements Serializable {
    public ArrayList<DBProductTO> getProductList() {
       return productList;
    }
-   
+
    /**
     * A simple method to set the product list.
-    * @param The product list to set
+    * 
+    * @param The
+    *           product list to set
     */
    public void setProductList(ArrayList<DBProductTO> aProdList) {
       productList = aProdList;
@@ -150,24 +151,36 @@ public class UpgradeCatalogTO implements Serializable {
     */
    public int removeDaySubclass(String subclass) {
 
+      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
       if (productList.size() == 0) {
          return productList.size();
       } else {
-         ArrayList<String> daySubclassList = new ArrayList<String>();
-         daySubclassList.add(subclass);
-         return removeDaySubclasses(daySubclassList);
+
+         for (/* each */DBProductTO aProduct : /* in */productList) {
+            if (!subclass.equalsIgnoreCase(aProduct.getDaySubclass())) {
+               newList.add(aProduct);
+            }
+         }
+
+         productList = newList;
+
+         return productList.size();
       }
 
    }
 
    /**
-    * Remove all of the day subclasses from the upgrade catalog. If a null or
-    * empty list is passed in, there are no changes to the upgrade catalog. If
-    * the catalog is empty, there are no changes to the catalog. STEP 4A WDW
+    * Keep all of the day subclasses in the upgrade catalog that are also in the
+    * day subclass list. If a null or empty list is passed in, there are no
+    * changes to the upgrade catalog. If the catalog is empty, there are no
+    * changes to the catalog. STEP 4A WDW
     * 
     * @param daySubclassList
     */
-   public int removeDaySubclasses(ArrayList<String> daySubclassList) {
+   public int keepDaySubclasses(ArrayList<String> daySubclassList) {
+
+      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
 
       if ((daySubclassList == null) || (daySubclassList.size() == 0) || (productList.size() == 0)) {
          return productList.size();
@@ -180,9 +193,11 @@ public class UpgradeCatalogTO implements Serializable {
 
       for (/* each */DBProductTO aProduct : /* in */productList) {
          if (subclasses.contains(aProduct.getDaySubclass())) {
-            productList.remove(aProduct);
+            newList.add(aProduct);
          }
       }
+
+      productList = newList;
 
       return productList.size();
    }
@@ -231,13 +246,17 @@ public class UpgradeCatalogTO implements Serializable {
     */
    public int removeProductsLowerThan(BigDecimal minimumPrice) {
 
+      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
       for (/* each */DBProductTO aProduct : /* in */productList) {
 
-         if (aProduct.getUnitPrice().compareTo(minimumPrice) == -1) {
-            productList.remove(aProduct);
+         if (aProduct.getUnitPrice().compareTo(minimumPrice) > -1) {
+            newList.add(aProduct);
          }
 
       }
+
+      productList = newList;
 
       return productList.size();
    }
@@ -252,15 +271,20 @@ public class UpgradeCatalogTO implements Serializable {
     */
    public int retainDLRPLUs(ArrayList<String> listOfUpgradeablePLUs) {
 
+      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
       HashSet<String> upgradablePLUset = new HashSet<String>();
       for (/* each */String upgradeablePLU : /* in */listOfUpgradeablePLUs) {
          upgradablePLUset.add(upgradeablePLU);
       }
 
-      for (/* each */DBProductTO aProduct : /* in */productList)
-         if (!upgradablePLUset.contains(aProduct.getMappedProviderTktName())) {
-            productList.remove(aProduct);
+      for (/* each */DBProductTO aProduct : /* in */productList) {
+         if (upgradablePLUset.contains(aProduct.getMappedProviderTktName())) {
+            newList.add(aProduct);
          }
+      }
+
+      productList = newList;
 
       return productList.size();
    }
