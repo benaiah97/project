@@ -608,6 +608,11 @@ public class GWQueryEligibleProductsTicketXML {
 		    	  extractUplgradePlU(dataRespTO, i, element);
 		      }
 
+		      // Adding new Tag Contact
+		      if(element.getName().compareTo("Contact")==0){
+		    	  extractContact(dataRespTO, i, element);
+		      }
+
 		    }
 
 		    qtRespTO.setDataRespTO(dataRespTO);
@@ -673,6 +678,203 @@ public class GWQueryEligibleProductsTicketXML {
 		  
 	  }
 
+
+	private static void extractContact(GWDataRequestRespTO dataRespTO,
+		      Iterator<org.dom4j.Element> i, Element lineageRequestResponse) throws DTIException{
+		
+		 // LineageRequestResponse
+	    Node linReqResp = lineageRequestResponse;
+		
+	    List linRecordList = linReqResp.selectNodes("Contact");
+
+	    for (int index = 0; index < linRecordList.size(); index++) {
+
+	      Node linRecord = (Node) linRecordList.get(index);
+	      
+	      // Create the inner class
+	      GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
+	      
+	      // FirstName
+	      Node firstNameNode = linRecord.selectSingleNode("FirstName");
+	      if (firstNameNode != null) {
+	    	  contact.setFirstName(firstNameNode.getText());
+	      }
+	      
+	      // MiddleName
+	      Node middleNameNode = linRecord.selectSingleNode("MiddleName");
+	      if (middleNameNode != null) {
+	    	  contact.setMiddleName(middleNameNode.getText());
+	      }
+	      
+	      // LastName
+	      Node lastNameNode = linRecord.selectSingleNode("LastName");
+	      if (lastNameNode != null) {
+	    	  contact.setLastName(lastNameNode.getText());
+	      } 
+	      
+	      // IdentificationNo
+	      Node identificatioNo = linRecord.selectSingleNode("IdentificationNo");
+	      if (identificatioNo != null) {
+	    	  contact.setIdentificationNo(identificatioNo.getText());
+	      }
+	      
+	      // Street1
+	      Node street1 = linRecord.selectSingleNode("Street1");
+	      if (street1 != null) {
+	    	  contact.setStreet1(street1.getText());
+	      }
+	      
+	      // Street2
+	      Node street2 = linRecord.selectSingleNode("Street2");
+	      if (street2 != null) {
+	    	  contact.setStreet2(street2.getText());
+	      } 
+	      
+	      // Street3
+	      Node street3 = linRecord.selectSingleNode("Street3");
+	      if (street3 != null) {
+	    	  contact.setStreet3(street3.getText());
+	      }
+	      
+	      // City
+	      Node cityNode = linRecord.selectSingleNode("City");
+	      if (cityNode != null) {
+	    	  contact.setCity(cityNode.getText());
+	      }
+	      
+	      // State
+	      Node stateNode = linRecord.selectSingleNode("State");
+	      if (stateNode != null) {
+	    	  contact.setState(stateNode.getText());
+	      }
+	      
+	      //ZIP
+	      Node zipNode = linRecord.selectSingleNode("ZIP");
+	      if (zipNode != null) {
+	    	  contact.setZip(zipNode.getText());
+	      }
+	      
+	      //CountryCode
+	      Node countryCodeNode = linRecord.selectSingleNode("CountryCode");
+	      if (countryCodeNode != null) {
+	    	  contact.setCountryCode(countryCodeNode.getText());
+	      }
+	      
+	      //Phone
+	      Node phoneNode = linRecord.selectSingleNode("Phone");
+	      if (phoneNode != null) {
+	    	  contact.setPhone(phoneNode.getText());
+	      }
+	      
+	      //Fax
+	      Node faxNode = linRecord.selectSingleNode("FaxNode");
+	      if (faxNode != null) {
+	    	  contact.setFax(faxNode.getText());
+	      }
+	      
+	      //Cell
+	      Node cellNode = linRecord.selectSingleNode("Cell");
+	      if (cellNode != null) {
+	    	  contact.setCell(cellNode.getText());
+	      }
+	      
+	      //Email
+	      Node emailNode = linRecord.selectSingleNode("Email");
+	      if (emailNode != null) {
+	    	  contact.setEmail(emailNode.getText());
+	      }
+	      
+	      //ExternalID
+	      Node externalIDNode = linRecord.selectSingleNode("ExternalID");
+	      if (externalIDNode != null) {
+	    	  contact.setExternalId(externalIDNode.getText());
+	      }
+	      
+	      //ContactGUID
+	      Node contactGUIDNode = linRecord.selectSingleNode("ContactGUID");
+	      if (contactGUIDNode != null) {
+	    	  contact.setContactGUID(contactGUIDNode.getText());
+	      } 
+	      
+	      //GalaxyContactID
+	      Node galaxyContactIDNode = linRecord.selectSingleNode("GalaxyContactID");
+	      if (galaxyContactIDNode != null) {
+	    	  contact.setGalaxyContactId(galaxyContactIDNode.getText());
+	      } 
+	      
+	      //JobTitle
+	      Node jobTitleNode = linRecord.selectSingleNode("JobTitle");
+	      if (jobTitleNode != null) {
+	    	  contact.setJobTitle(jobTitleNode.getText());
+	      }  
+	      
+	      //Primary
+	      Node pimaryNode = linRecord.selectSingleNode("Primary");
+	      if (pimaryNode != null) {
+	    	  contact.setPrimary(pimaryNode.getText());
+	      } 
+	      
+	      //ContactNote
+	      Node contactNoteNode = linRecord.selectSingleNode("ContactNote");
+	      if (contactNoteNode != null) {
+	    	  contact.setContactNote(contactNoteNode.getText());
+	      }  
+	      
+	      //NameTitleID
+	      Node nameTitleIDNode = linRecord.selectSingleNode("NameTitleID");
+	      if (nameTitleIDNode != null) {
+	    	  contact.setNameTitleId(nameTitleIDNode.getText());
+	      }  
+	      
+	      //NameSuffixID
+	      Node nameSuffixIDNode = linRecord.selectSingleNode("NameSuffixID");
+	      if (nameSuffixIDNode != null) {
+	    	  contact.setNameSuffixId(nameSuffixIDNode.getText());
+	      }  
+	      
+	      //TotalPaymentContracts
+	      Node totalPaymentContractsNode = linRecord.selectSingleNode("TotalPaymentContracts");
+	      if (totalPaymentContractsNode != null) {
+	    	  contact.setTotalPaymentContracts(totalPaymentContractsNode.getText());
+	      } 
+	      
+	      //AllowEmail
+	      Node allowEmailNode = linRecord.selectSingleNode("AllowEmail");
+	      if (allowEmailNode != null) {
+	    	  contact.setAllowMail(allowEmailNode.getText());
+	      }  
+	      
+	      //AllowMailings
+	      Node allowMailingsNode = linRecord.selectSingleNode("AllowMailings");
+	      if (allowMailingsNode != null) {
+	    	  contact.setAllowMailing(allowMailingsNode.getText());
+	      }  
+	      
+	      //DOB
+	      Node DOBNode = linRecord.selectSingleNode("DOB");
+	      if (DOBNode != null) {
+	    	  contact.setDob(DOBNode.getText());
+	      }  
+	      
+	      //AgeGroup
+	      Node ageGroupNode = linRecord.selectSingleNode("AgeGroup");
+	      if (ageGroupNode != null) {
+	    	  contact.setAgeGroup(ageGroupNode.getText());
+	      }
+	      
+	      
+	      //Gender
+	      Node genderNode = linRecord.selectSingleNode("Gender");
+	      if (genderNode != null) {
+	    	  contact.setGender(genderNode.getText());
+	      }
+	      
+	      // Save it to the array
+	      dataRespTO.addContactList(contact);
+
+	    }
+	    }
+	    
 	  /**
 	   * Extracts the lineage info (this structure is complex).
 	   * 

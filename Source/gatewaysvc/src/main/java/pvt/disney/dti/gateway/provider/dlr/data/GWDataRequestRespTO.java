@@ -163,7 +163,7 @@ public class GWDataRequestRespTO implements Serializable {
   /** The picture. */
   private String picture;
   
-  private ArrayList<Contact> contact=new ArrayList<Contact>();
+  private ArrayList<Contact> contactList=new ArrayList<Contact>();
 
   /** The kind. */
   private String kind; // Added as of 2.11
@@ -1527,16 +1527,20 @@ public void addUpgradePLUList(UpgradePLUList inRecord) {
  * @return the contact
  */
 public ArrayList<Contact> getContact() {
-	return contact;
+	return contactList;
 }
 
 /**
  * @param contact the contact to set
  */
 public void addContact(ArrayList<Contact> contact) {
-	this.contact = contact;
+	this.contactList = contact;
 }
 
+
+public void addContactList(Contact contact){
+	contactList.add(contact);
+}
 /**
  * Gets the kind.
  *

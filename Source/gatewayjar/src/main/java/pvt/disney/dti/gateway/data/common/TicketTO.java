@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
  * @author lewit019
  */
 public class TicketTO implements Serializable, Cloneable {
-
+	
   /** Serial Version UID */
   public final static long serialVersionUID = 9129231995L;
 
@@ -338,6 +338,8 @@ public class TicketTO implements Serializable, Cloneable {
   /** get upgraded information */
   private BigDecimal upgradePrice;
   
+  /** get upgraded information */
+  private ArrayList<EligibleProductsTO> eligibleProducts;
   
   /**
    * @return the showGroup
@@ -1272,7 +1274,11 @@ public void setUpgradePrice(BigDecimal upgradePrice) {
 	this.upgradePrice = upgradePrice;
 }
 
-
-
+/**
+ * Adds products to the list.
+ */
+public void addEligibleProducts(EligibleProductsTO eligibleProductsTO) {
+	eligibleProducts.add(eligibleProductsTO);
+  }
   
 }
