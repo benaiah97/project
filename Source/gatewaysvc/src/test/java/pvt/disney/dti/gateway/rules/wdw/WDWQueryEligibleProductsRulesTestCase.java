@@ -34,10 +34,8 @@ public class WDWQueryEligibleProductsRulesTestCase {
       dbProductTO.setUpgrdPathId(new BigInteger("0"));
       dbProductTO.setResidentInd(true);
       dbProductTO.setDayCount("1");
-      ArrayList<DBProductTO> productTOs = new ArrayList<>();
-      productTOs.add(dbProductTO);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otUsagesTO.setDate("17-07-22");
@@ -47,12 +45,12 @@ public class WDWQueryEligibleProductsRulesTestCase {
       infoT.getTicketInfoList().add(otTicketInfoTO);
       
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otTicketInfoTO.setBiometricTemplate(null);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       try {
@@ -64,7 +62,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
      // otTicketInfoTO.setValidityEndDate(new GregorianCalendar());
       dbProductTO.setResidentInd(false);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otUsagesTO.setDate("17-07-06");
@@ -72,7 +70,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
       otTicketInfoTO.setBiometricTemplate("biometricTemplate");
       dbProductTO.setResidentInd(true);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otUsagesTO.setDate("14-07-06");
@@ -81,19 +79,18 @@ public class WDWQueryEligibleProductsRulesTestCase {
       dbProductTO.setDayCount("2");
       dbProductTO.setResidentInd(true);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otTicketInfoTO.setVoidCode(1);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
       otTicketInfoTO.setVoidCode(100);
       try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, productTOs);
+         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
-      
    }
 }
