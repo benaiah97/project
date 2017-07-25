@@ -3,10 +3,14 @@
  */
 package pvt.disney.dti.gateway.rules.dlr;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
@@ -18,7 +22,6 @@ import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
-import pvt.disney.dti.gateway.dao.result.VisualIdResult;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
@@ -29,7 +32,7 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
-import pvt.disney.dti.gateway.data.common.EntityTO;
+import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo;
@@ -48,7 +51,6 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
 import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeQueryProductXML;
-import pvt.disney.dti.gateway.rules.BusinessRules;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
@@ -519,7 +521,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			GuestProductTO guestProductTO, TicketTO dtiTktTO,ArrayList<DBProductTO> upgradedProductTOList)
 			throws DTIException {
 		DemographicsTO ticketDemo = null;
-
+		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
+		EligibleProductsTO eligibleProductsTO;
+		
 		DBProductTO dbProductTO=guestProductTO.getDbproductTO();
 		GWDataRequestRespTO gwDataRespTO=guestProductTO.getGwDataRespTO();
 		
@@ -530,200 +534,16 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			// Set TktItem: Always only one.
 			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
-
-			// Tkt Price
-			dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
-
-			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
-
-			// dtiTktTO.setProdQty(dbProductTO.getQuantity());
-
-			dtiTktTO.setTktTax(dbProductTO.getTax());
-
-			dtiTktTO.setProdPrice(dbProductTO.getPrintedPrice());
-
-			// dtiTktTO.setUpgradePrice(upgradePrice);
-
-			dtiTktTO.setShowGroup(String.valueOf(dbProductTO
-					.getEligGrpid()));
-
+			
 			// Set TktID (for DLR it's External)
 			String visualId = gwDataRespTO.getVisualID();
 			dtiTktTO.setExternal(visualId);
+			
+			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
+			
+			// TODO ProdGuestType
 
-			// Tkt Status (Voidable YES or NO)
-			// Note: Locked out must be false for ticket to be voidable.
-			// Note: Use count must be zero for ticket to be voidable.
-			ArrayList<TktStatusTO> tktStatusList = dtiTktTO
-					.getTktStatusList();
-			TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
-			tktStatus.setStatusItem(VOIDABLE);
-			if ((gwDataRespTO.getReturnable().booleanValue() == true)
-					&& (gwDataRespTO.getLockedOut().booleanValue() == false)
-					&& (gwDataRespTO.getUseCount().intValue() == 0))
-				tktStatus.setStatusValue(YES);
-			else {
-				tktStatus.setStatusValue(NO);
-			}
-			tktStatusList.add(tktStatus);
-
-			// Tkt Status (Active YES or NO)
-			// Note: Locked out must be false for ticket to be active.
-			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
-
-				tktStatus = dtiTktTO.new TktStatusTO();
-				tktStatus.setStatusItem(ACTIVE);
-
-				GregorianCalendar startDateCal = gwDataRespTO
-						.getDateOpened();
-
-				// V 2.4 - 2011-12-05; CUS - date adjusted for validity,
-				// but
-				// original end date returned
-				GregorianCalendar endDateCal = (GregorianCalendar) gwDataRespTO
-						.getValidUntil().clone();
-
-				// V 2.2 - JTL - 12/13/2010 - Adjust calendar by a grace
-				// period
-				// (add)
-				// to account for east-coast/west-coast plus late park
-				// closings.
-				endDateCal.add(Calendar.HOUR_OF_DAY,
-						DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS);
-
-				// Is the pass within the dates established?
-				if ((startDateCal != null) && (endDateCal != null)) {
-
-					if (DateTimeRules.isNowWithinDate(
-							startDateCal.getTime(),
-							endDateCal.getTime())) {
-
-						if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.VALID)
-								&& (gwDataRespTO.getLockedOut()
-										.booleanValue() == false))
-							tktStatus.setStatusValue(YES);
-						else
-							tktStatus.setStatusValue(NO);
-
-					} else
-						tktStatus.setStatusValue(NO);
-				} else {
-					tktStatus.setStatusValue(NO);
-				}
-				tktStatusList.add(tktStatus);
-			}
-
-			// TktValidity ValidStart and ValidEnd
-			boolean startDateSet = false;
-			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
-				if (gwDataRespTO.getDateSold() != null) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartSaleDate());
-					startDateSet = true;
-				} else if (gwDataRespTO.getTicketDate() != null) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartValidDate());
-					startDateSet = true;
-				} else if (gwDataRespTO.getStartDateTime() != null) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartValidDate());
-					startDateSet = true;
-				}
-
-				boolean endDateSet = false;
-				if (gwDataRespTO.getExpirationDate() != null) {
-					dtiTktTO.setTktValidityValidEnd(dbProductTO
-							.getEndValidDate());
-					endDateSet = true;
-				} else if (gwDataRespTO.getEndDateTime() != null) {
-					dtiTktTO.setTktValidityValidEnd(dbProductTO
-							.getEndValidDate());
-					endDateSet = true;
-				}
-
-				// Note: HARD CODED!!! Arbitrarily set the end date if
-				// the start
-				// date is
-				// set.
-				// This maintains conformance with the other provider.
-				if ((startDateSet == true) && (endDateSet == false)) {
-					dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(
-							2099, 11, 31));
-				}
-
-			} else {
-				if (gwDataRespTO.getDateOpened() != null) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartValidDate());
-				}
-
-				if (gwDataRespTO.getValidUntil() != null) {
-					dtiTktTO.setTktValidityValidEnd(dbProductTO
-							.getStartValidDate());
-				}
-			}
-
-			// TktAttributes
-			// PassType
-			// TO DO need to add the code for UPGRADE
-			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
-
-				if (gwDataRespTO.getKind() != null) {
-
-					String passType = LookupKey.getSimpleTPLookup(
-							DLR_ID, gwDataRespTO.getKind(), PASS_KIND);
-					dtiTktTO.setPassType(passType);
-
-					String renewable = PASSRENEW_INELIGIBLE;
-
-					if ((gwDataRespTO.getRenewable() != null)
-							&& (gwDataRespTO.getRenewable())) {
-
-						String passRenew = LookupKey.getSimpleTPLookup(
-								DLR_ID, gwDataRespTO.getKind(),
-								PASS_RENEW);
-
-						if (passRenew == null) {
-							renewable = PASSRENEW_STANDARD;
-						} else if (passRenew.equalsIgnoreCase(PARKING)) {
-							renewable = PASSRENEW_PARKING;
-						} else {
-							renewable = PASSRENEW_STANDARD;
-						}
-					}
-
-					dtiTktTO.setPassRenew(renewable);
-
-				} else {
-					dtiTktTO.setPassType(ANNUAL_ATTR);
-				}
-
-			}
-
-			// PassName
-			if (gwDataRespTO.getPassKindName() != null) {
-				dtiTktTO.setPassName(gwDataRespTO.getPassKindName());
-			}
-
-			// LastDateUsed
-			if (gwDataRespTO.getDateUsed() != null) {
-				dtiTktTO.setLastDateUsed(gwDataRespTO.getDateUsed());
-			}
-
-			// TimesUsed
-			// Most of these don't have to be checked against the
-			// request,
-			// since they are not returned by eGalaxy. However, UseCount
-			// is
-			// called all the time, and it cannot be allowed to display
-			// unless
-			// explicitly requested.
-			if (gwDataRespTO.getUseCount() != null) {
-				int x = gwDataRespTO.getUseCount().intValue();
-				String value = Integer.toString(x);
-				dtiTktTO.setTimesUsed(new BigInteger(value));
-			}
-
+			/*Demographics start*/
 			// FirstName
 			if (gwDataRespTO.getFirstName() != null) {
 				if (ticketDemo == null)
@@ -820,6 +640,175 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				ticketDemo
 						.setDateOfBirth(gwDataRespTO.getDateOfBirth());
 			}
+			/*Demographics end*/
+			
+			// TktValidity ValidStart and ValidEnd
+			boolean startDateSet = false;
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
+				if (gwDataRespTO.getDateSold() != null || gwDataRespTO.getTicketDate() != null || gwDataRespTO.getStartDateTime() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartSaleDate());
+					startDateSet = true;
+				}
+
+				boolean endDateSet = false;
+				if (gwDataRespTO.getExpirationDate() != null || gwDataRespTO.getEndDateTime() != null) {
+					dtiTktTO.setTktValidityValidEnd(dbProductTO
+							.getEndValidDate());
+					endDateSet = true;
+				}
+
+				// Note: HARD CODED!!! Arbitrarily set the end date if
+				// the start date is set.
+				// This conforms with the other provider.
+				if ((startDateSet == true) && (endDateSet == false)) {
+					dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(
+							2099, 11, 31));
+				}
+
+			} else {
+				if (gwDataRespTO.getDateOpened() != null) {
+					dtiTktTO.setTktValidityValidStart(dbProductTO
+							.getStartValidDate());
+				}
+
+				if (gwDataRespTO.getValidUntil() != null) {
+					dtiTktTO.setTktValidityValidEnd(dbProductTO
+							.getStartValidDate());
+				}
+			}
+			
+			// SRP Price
+			dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
+
+			// SRP Tax
+			dtiTktTO.setTktTax(dbProductTO.getStandardRetailTax());
+			
+			// TODO TktStatus
+			
+			// Tkt Status (Voidable YES or NO)
+			// Note: Locked out must be false for ticket to be voidable.
+			// Note: Use count must be zero for ticket to be voidable.
+			ArrayList<TktStatusTO> tktStatusList = dtiTktTO
+					.getTktStatusList();
+			TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
+			tktStatus.setStatusItem(VOIDABLE);
+			if ((gwDataRespTO.getReturnable().booleanValue() == true)
+					&& (gwDataRespTO.getLockedOut().booleanValue() == false)
+					&& (gwDataRespTO.getUseCount().intValue() == 0))
+				tktStatus.setStatusValue(YES);
+			else {
+				tktStatus.setStatusValue(NO);
+			}
+			tktStatusList.add(tktStatus);
+
+			// Tkt Status (Active YES or NO)
+			// Note: Locked out must be false for ticket to be active.
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
+
+				tktStatus = dtiTktTO.new TktStatusTO();
+				tktStatus.setStatusItem(ACTIVE);
+
+				GregorianCalendar startDateCal = gwDataRespTO
+						.getDateOpened();
+
+				// V 2.4 - 2011-12-05; CUS - date adjusted for validity,
+				// but
+				// original end date returned
+				GregorianCalendar endDateCal = (GregorianCalendar) gwDataRespTO
+						.getValidUntil().clone();
+
+				// V 2.2 - JTL - 12/13/2010 - Adjust calendar by a grace
+				// period
+				// (add)
+				// to account for east-coast/west-coast plus late park
+				// closings.
+				endDateCal.add(Calendar.HOUR_OF_DAY,
+						DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS);
+
+				// Is the pass within the dates established?
+				if ((startDateCal != null) && (endDateCal != null)) {
+
+					if (DateTimeRules.isNowWithinDate(
+							startDateCal.getTime(),
+							endDateCal.getTime())) {
+
+						if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.VALID)
+								&& (gwDataRespTO.getLockedOut()
+										.booleanValue() == false))
+							tktStatus.setStatusValue(YES);
+						else
+							tktStatus.setStatusValue(NO);
+
+					} else
+						tktStatus.setStatusValue(NO);
+				} else {
+					tktStatus.setStatusValue(NO);
+				}
+				tktStatusList.add(tktStatus);
+			}
+			
+
+			// TktAttributes
+			// PassType
+			// TO DO need to add the code for UPGRADE
+			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.PASS) {
+
+				if (gwDataRespTO.getKind() != null) {
+
+					String passType = LookupKey.getSimpleTPLookup(
+							DLR_ID, gwDataRespTO.getKind(), PASS_KIND);
+					dtiTktTO.setPassType(passType);
+
+					String renewable = PASSRENEW_INELIGIBLE;
+
+					if ((gwDataRespTO.getRenewable() != null)
+							&& (gwDataRespTO.getRenewable())) {
+
+						String passRenew = LookupKey.getSimpleTPLookup(
+								DLR_ID, gwDataRespTO.getKind(),
+								PASS_RENEW);
+
+						if (passRenew == null) {
+							renewable = PASSRENEW_STANDARD;
+						} else if (passRenew.equalsIgnoreCase(PARKING)) {
+							renewable = PASSRENEW_PARKING;
+						} else {
+							renewable = PASSRENEW_STANDARD;
+						}
+					}
+
+					dtiTktTO.setPassRenew(renewable);
+
+				} else {
+					dtiTktTO.setPassType(ANNUAL_ATTR);
+				}
+
+			}
+
+			// PassName
+			if (gwDataRespTO.getPassKindName() != null) {
+				dtiTktTO.setPassName(gwDataRespTO.getPassKindName());
+			}
+
+			// LastDateUsed
+			if (gwDataRespTO.getDateUsed() != null) {
+				dtiTktTO.setLastDateUsed(gwDataRespTO.getDateUsed());
+			}
+
+			// TimesUsed
+			// Most of these don't have to be checked against the
+			// request,
+			// since they are not returned by eGalaxy. However, UseCount
+			// is
+			// called all the time, and it cannot be allowed to display
+			// unless
+			// explicitly requested.
+			if (gwDataRespTO.getUseCount() != null) {
+				int x = gwDataRespTO.getUseCount().intValue();
+				String value = Integer.toString(x);
+				dtiTktTO.setTimesUsed(new BigInteger(value));
+			}
 
 			// ReplacedByPass
 			if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPLACED)
@@ -903,9 +892,37 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 				tktStatusList.add(tktStatus);
 			}
-
+			
+			// TODO ResultStatus
+			
+			// Eligible products
+			for (/*each*/ DBProductTO productTO : /*in*/ upgradedProductTOList) {
+				eligibleProductsTO = new EligibleProductsTO();
+				// set the product code
+				eligibleProductsTO.setProdCode(productTO.getPdtCode());
+				// set the actual product price
+				prodPrice = dbProductTO.getStandardRetailPrice();
+				eligibleProductsTO.setProdPrice(prodPrice.toString());
+				// set the actual product tax
+				prodTax = dbProductTO.getStandardRetailTax();
+				eligibleProductsTO.setProdTax(prodTax);
+				// set the upgraded product price
+				prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
+				eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
+				// set the upgraded product tax
+				prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
+				eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
+				// set the validity
+				try {
+					eligibleProductsTO.setValidEnd(
+							DatatypeFactory.newInstance().newXMLGregorianCalendar(dbProductTO.getEndValidDate()));
+				} catch (DatatypeConfigurationException e) {
+					// TODO throw new DTIException(); or what needs to be done here ?
+				}
+				// add the eligible product element to the list 
+				dtiTktTO.addEligibleProducts(eligibleProductsTO);
+			}
 		}
-
 		
 		// Need to add exception block here
 		ResultStatusTo resultStatusTo = new ResultStatusTo(
@@ -914,11 +931,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// logger
 		logger.sendEvent("Setting all the data in GuestProductTo",
 				EventType.DEBUG, dtiTktTO.toString());
-
-	
-		
 	}
-}	
-	
 
-
+}
