@@ -806,7 +806,6 @@ public class ProductKey {
 		}
 
 		Object[] queryParms = { DBUtil.createSQLInList(tktNbrSet) };
-		// Replaces "?"
 		Object[] values = {};
 
 		// Get instance of Query Builder (Replaces "%")
