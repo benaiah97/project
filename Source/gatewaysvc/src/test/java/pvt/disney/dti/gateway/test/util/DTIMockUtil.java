@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
  
+
 import javax.xml.parsers.DocumentBuilder;
 
 import mockit.Mock;
@@ -75,7 +76,7 @@ public class DTIMockUtil extends CommonTestUtils {
 
 	/** The attribute rs. */
 	static ResultSet attributeRs = null;
-
+ 
 	/** The attribute rs1. */
 	static ResultSet attributeRs1 = null;
 
@@ -998,5 +999,4 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
-
 }

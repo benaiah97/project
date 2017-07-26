@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
@@ -16,8 +17,11 @@ import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
 import pvt.disney.dti.gateway.rules.dlr.DLRQueryEligibilityProductsRules;
 import pvt.disney.dti.gateway.service.dtixml.DTITestUtil;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
@@ -29,11 +33,47 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
  */
 
 public class DLRQueryEligibilityProductRulesTestCase {
-
+	
+	
+	@Test
+	public void	transformRequest(){
+		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+		DTIRequestTO request = new DTIRequestTO();
+		PayloadHeaderTO payloadHeader = new PayloadHeaderTO();
+		CommandHeaderTO commandHeader = new CommandHeaderTO();
+		QueryEligibleProductsRequestTO bodyTO = new QueryEligibleProductsRequestTO();
+		TicketTO ticketTo=new TicketTO();
+		TktSellerTO tktSeller=new TktSellerTO();
+		tktSeller.setTsMac("tsMac");
+		ticketTo.setExternal("BGYD28686");
+		payloadHeader.setPayloadID("68688989686786767");
+		payloadHeader.setTarget("target");
+		payloadHeader.setCommProtocol("protocol");
+		payloadHeader.setCommMethod("method");
+		payloadHeader.setVersion("version");
+		payloadHeader.setTktSeller(tktSeller);
+		commandHeader.setCmdActor("Actor");
+		commandHeader.setCmdDevice("cmdDevice");
+		commandHeader.setCmdInvoice("cmdInvoice");
+		commandHeader.setCmdItem(new BigInteger("4"));
+		commandHeader.setCmdMarket("cmdMarket");
+		bodyTO.getTktList().add(ticketTo);
+		request.setPayloadHeader(payloadHeader);
+		request.setCommandHeader(commandHeader);
+		request.setCommandBody(bodyTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(5634);
+		try {
+			String requestform=DLRQueryEligibilityProductsRules.transformRequest(dtiTxn);
+			Assert.assertNotNull(requestform);
+		} catch (DTIException e) {
+			Assert.fail("UnExpected Exception Occured" + e.getMessage());
+		}
+	}
 	/**
 	 * Test transform response.
 	 */
-	@Test
+	//@Test
 	public void testTransformResponse() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);
@@ -86,9 +126,9 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		dtiTxn.setTktBroker(DTITestUtil.TKTBROKER);
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
+			DTITransactionTO transactionTo=DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
 					xmlResponse);
-
+			Assert.assertNotNull(transactionTo);
 		} catch (DTIException e) {
 			Assert.fail("UnExpected Exception Occured" + e.getMessage());
 		}
@@ -99,7 +139,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 	 */
 	@Test
 	public void testGetUpgradedProduct() {
-		ArrayList<String> listfUpgradedPLUs = new ArrayList<String>();
+		ArrayList<String> listofUpgradedPLUs = new ArrayList<String>();
 
 		TicketTO dtiTktTO = new TicketTO();
 		DTITransactionTO dtiTxn = new DTITransactionTO(
@@ -111,7 +151,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		try {
 
 			ArrayList<DBProductTO> productDBList = DLRQueryEligibilityProductsRules
-					.getUpgradedProduct(listfUpgradedPLUs, dtiTktTO, dtiTxn);
+					.getUpgradedProduct(listofUpgradedPLUs, dtiTktTO, dtiTxn);
 			Assert.assertNull(productDBList);
 		} catch (Exception e) {
 			Assert.fail("UnExpected Exception Occured" + e.getMessage());
@@ -121,10 +161,10 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		 * not present in DBproductList
 		 */
 		try {
-			listfUpgradedPLUs.add("3GZ00601");
+			listofUpgradedPLUs.add("3GZ00601");
 			DTIMockUtil.processMockprepareAndExecuteSql();
 			ArrayList<DBProductTO> productDBList = DLRQueryEligibilityProductsRules
-					.getUpgradedProduct(listfUpgradedPLUs, dtiTktTO, dtiTxn);
+					.getUpgradedProduct(listofUpgradedPLUs, dtiTktTO, dtiTxn);
 			// Expected Null result
 			if (productDBList != null && productDBList.size() == 0) {
 				Assert.assertTrue(true);
@@ -135,6 +175,46 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		} catch (Exception e) {
 			Assert.fail("UnExpected Exception Occured" + e.getMessage());
 		}
-
 	}
-}
+		/**
+		 * Test set guest product details.
+		 * when UpgradePLUList !null and guestProductTO !null
+		 */
+		@Test 
+		public void testSetGuestProductDetails(){
+			GWDataRequestRespTO gwDataRespTO=new GWDataRequestRespTO();
+			gwDataRespTO.setFirstName("firstName");
+			gwDataRespTO.setLastName("lastName");
+			gwDataRespTO.setEmail("email@domain.com");
+			TicketTO dtiTktTO=new TicketTO();
+			String plu="3GZ00601";
+			UpgradePLUList upgradePLU=gwDataRespTO.new UpgradePLUList();
+			ArrayList<UpgradePLUList> upgradePLUList=new ArrayList<>();
+			upgradePLUList.add(upgradePLU);
+			gwDataRespTO.setUpgradePLUList(upgradePLUList);
+			//Scenario :: 1 Expecting Exception 
+			try {
+				GuestProductTO guestProductTO=	DLRQueryEligibilityProductsRules.setGuestProductDetails(gwDataRespTO, dtiTktTO, plu);
+				Assert.fail("Expecting Exception");
+				Assert.assertNull(guestProductTO);
+				Assert.assertNotNull(dtiTktTO.getResultType());
+				
+			} catch (DTIException e) {
+				Assert.assertTrue(true);
+				Assert.assertNull(dtiTktTO.getResultType());
+			}
+			//Scenario ::2 mocking and passing the PLU
+			DTIMockUtil.processMockprepareAndExecuteSql();
+			try {
+				GuestProductTO guestProductTO=	DLRQueryEligibilityProductsRules.setGuestProductDetails(gwDataRespTO, dtiTktTO, plu);
+				Assert.assertNotNull(guestProductTO);
+				Assert.assertNotNull(guestProductTO.getDbproductTO());
+				Assert.assertNotNull(guestProductTO.getGwDataRespTO());
+				Assert.assertNotNull(guestProductTO.getGwDataRespTO().getFirstName());
+				Assert.assertNotNull(dtiTktTO.getResultType());
+			} catch (DTIException e) {
+				Assert.fail("UnExpected Exception Occured"+e.getMessage());
+			}
+		}
+	}
+
