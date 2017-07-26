@@ -161,9 +161,11 @@ public class GWDataRequestRespTO implements Serializable {
   private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
   
   /** The picture. */
-  private String picture;
+  private String hasPicture;
   
   private ArrayList<Contact> contactList=new ArrayList<Contact>();
+  
+  private String payPlan;
 
   /** The kind. */
   private String kind; // Added as of 2.11
@@ -1648,5 +1650,34 @@ public void addContactList(Contact contact){
   public void setRenewable(Boolean renewable) {
     this.renewable = renewable;
   }
+
+/**
+ * @return the hasPicture
+ */
+public String getHasPicture() {
+	return hasPicture;
+}
+
+/**
+ * @param hasPicture the hasPicture to set
+ */
+public void setHasPicture(String hasPicture) {
+	this.hasPicture = hasPicture;
+}
+
+/**
+ * @return the payPlan
+ */
+public String getPayPlan() {
+	return payPlan;
+}
+
+/**
+ * @param payPlan the payPlan to set
+ */
+public void setPayPlan(String payPlan) {
+	this.payPlan = payPlan;
+}
+
 
 }

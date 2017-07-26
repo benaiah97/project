@@ -13,6 +13,8 @@ import java.util.List;
 
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
+import pvt.disney.dti.gateway.dao.data.GuestProductTO;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -22,6 +24,8 @@ import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
+import pvt.disney.dti.gateway.data.common.ResultStatusTo;
+import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
@@ -44,8 +48,6 @@ import com.disney.logging.audit.EventType;
  * 3. Defining the rules for transforming responses from the provider transfer
  * objects to the DTI transfer objects.<BR>
  * 
- * @author JTL
- * @since 2.16.3
  * 
  */
 public class WDWQueryEligibleProductsRules {
@@ -199,7 +201,7 @@ public class WDWQueryEligibleProductsRules {
       OTQueryTicketTO otQryTicketTO = otCmdTO.getQueryTicketTO();
 
       dtiRespTO.setCommandBody(dtiResRespTO);
-      ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+      
 
       // ResponseType
       ArrayList<TicketTO> ticketListTo = dtiResRespTO.getTicketList();
@@ -207,19 +209,31 @@ public class WDWQueryEligibleProductsRules {
       // Query Ticket InfoInlist
       ArrayList<OTTicketInfoTO> otTicketList = otQryTicketTO.getTicketInfoList();
 
-      for (OTTicketInfoTO otTicketInfoTO : otTicketList) {
-         tktNbr.add(otTicketInfoTO.getTicketType());
-      }
-
+    
+      /*Iterate for each of the ticketInfo*/
       if ((otTicketList != null) && (otTicketList.size() > 0)) {
 
          for (OTTicketInfoTO otTicketInfo : otTicketList) {
-
-            ArrayList<DBProductTO> productList = ProductKey.getProductsTktNbr(tktNbr);
-
-
             TicketTO dtiTicketTO = new TicketTO();
             TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
+            
+            ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
+            
+            tktNbr.add(otTicketInfo.getTicketType());
+            
+            /*Call this method get the list of DB products for the guest
+			 Step 1*/
+            GuestProductTO guestproductTO=setGuestProductDetails(otTicketList, dtiTicketTO, tktNbr);
+            
+            /*Step2*/ 
+            /*TODO*/
+            
+            /*Step 3*/
+           /*Pass the DbProductTO to next level of validation*/
+            if(validateInEligibleProducts(otQryTicketTO, guestproductTO.getDbproductTO())){
+            	ResultStatusTo resultStat=new ResultStatusTo(ResultType.INELIGIBLE);
+            	dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+            }
 
             // Status Item
             newStatus.setStatusItem(otTicketInfo.getItem().toString());
@@ -280,7 +294,97 @@ public class WDWQueryEligibleProductsRules {
       }
       return;
    }
+   
+   
+   /**
+	 * Gets the upgraded product.
+	 *
+	 * @return the upgraded product
+	 * @throws DTIException the DTI exception
+	 */
+	private static ArrayList<DBProductTO> getUpgradedProduct(ArrayList<String> listfUpgradedPLUs,ArrayList<DBProductTO> upgradedProductTOList,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{
+		ArrayList<DBProductTO> newProductCatalogTO=null;
+		
+		if(upgradedProductTOList!=null&&upgradedProductTOList.size()>0){
+			
+			if(matchUpgradedProductSize(listfUpgradedPLUs.size(),upgradedProductTOList.size())){
+				ResultStatusTo resultStatusTo = new ResultStatusTo(
+						ResultType.ELIGIBLE);
+			}
+			UpgradeCatalogTO upGradeCatalog=new UpgradeCatalogTO();
+			upGradeCatalog.retainDLRPLUs(listfUpgradedPLUs);
+			newProductCatalogTO=upGradeCatalog.getProductList();
+		}else{
+			logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+			  ResultStatusTo resultStatusTo = new ResultStatusTo(
+						ResultType.INELIGIBLE);
+			  dtiTktTO.setResultType(ResultType.INELIGIBLE);
+		}
+		
+		return newProductCatalogTO;
+	}
+	
+	/**
+	 * Match upgraded product size.
+	 *
+	 * @param upGradedPluList the up graded plu list
+	 * @param productCataLogList the product cata log list
+	 * @return true, if successful
+	 */
+	private static boolean matchUpgradedProductSize(int upGradedPluList,int productCataLogList){
+		
+		boolean eligibleFlag=false;
+		if((upGradedPluList>=productCataLogList)){
+			eligibleFlag=true;
+		}
+		
+		return eligibleFlag;
+	}
 
+  
+	/**
+	 * Sets the guest product details.
+	 *
+	 * @param otTicketList the omni ticket
+	 * @param dtiTktTO the TicketTO
+	 * @param tktNbr the ticket Number
+	 * @return the guest product TO
+	 * @throws DTIException the DTI exception
+	 */
+	private static GuestProductTO setGuestProductDetails(
+			ArrayList<OTTicketInfoTO> otTicketList,TicketTO dtiTktTO,  ArrayList<BigInteger> tktNbr) throws DTIException {
+		
+		/*This method is used for processing step 1 */
+		GuestProductTO guestProductTO=new GuestProductTO();
+		
+		ArrayList<DBProductTO> dbProductTO = null;
+		
+		/*Retrieving the product details for GuestProduct*/
+		dbProductTO = ProductKey.getProductsfromTktNbr(tktNbr);
+		if((dbProductTO != null) && (dbProductTO.size() > 0)){
+			
+		  logger.sendEvent(dbProductTO.toString(), EventType.DEBUG,THISINSTANCE);
+		  
+		  ResultStatusTo resultStatusTo = new ResultStatusTo(
+					ResultType.ELIGIBLE);
+		  
+		  dtiTktTO.setResultType(ResultType.ELIGIBLE);
+		  
+		  guestProductTO.setDbproductTO(dbProductTO.get(0));
+		  
+		  /*Setting up GWDataRequestRespTO in case of DLR*/
+		  guestProductTO.setOtTicketList(otTicketList);
+		  
+		}else{
+		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,null);
+		  ResultStatusTo resultStatusTo = new ResultStatusTo(
+					ResultType.INELIGIBLE);
+		  dtiTktTO.setResultType(ResultType.INELIGIBLE);
+			
+		}
+		/*Return the GuestProductTO*/
+		return guestProductTO;
+	}
    /**
     * @param gwDataRespTO
     * @param infoTO
@@ -288,8 +392,11 @@ public class WDWQueryEligibleProductsRules {
     */
    public static boolean validateInEligibleProducts(OTQueryTicketTO infoTO, DBProductTO productTO) throws DTIException {
       logger.sendEvent("Entering validateInEligibleProducts", EventType.DEBUG, THISINSTANCE);
+      
       boolean isInEligibleProductFlag = false;
+      
       Date date = null;
+      
       ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
       Integer voidCode = null;
       GregorianCalendar endDate = null;
@@ -375,5 +482,6 @@ public class WDWQueryEligibleProductsRules {
       return isInEligibleProductFlag;
 
    }
-
+   
+   
 }

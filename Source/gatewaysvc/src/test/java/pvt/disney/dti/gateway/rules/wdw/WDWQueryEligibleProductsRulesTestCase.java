@@ -12,8 +12,6 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 
 public class WDWQueryEligibleProductsRulesTestCase {
-
-   
    /**
     * Test Case for ValidateInEligibleProducts
     */

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
+
 /**
  * This class encapsulates the various manifestations of a ticket (DSSN, TktNid, magnetic track, etc.).
  * 
@@ -324,7 +326,7 @@ public class TicketTO implements Serializable, Cloneable {
   private String replacedByPass;
   
   /** get the eligibility criteria for the current ticket */
-  private String resultType;
+  private ResultType resultType;
   
   /** get the sale Type for the current ticket */
   private String saleType;
@@ -1207,14 +1209,14 @@ public class TicketTO implements Serializable, Cloneable {
 /**
  * @return the resultType
  */
-public String getResultType() {
+public ResultType getResultType() {
 	return resultType;
 }
 
 /**
  * @param resultType the resultType to set
  */
-public void setResultType(String resultType) {
+public void setResultType(ResultType resultType) {
 	this.resultType = resultType;
 }
 

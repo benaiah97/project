@@ -352,7 +352,7 @@ public class QueryEligibleProductsXML {
 			String result = null;
 			
 			if (aTicketTO.getResultType() != null) {
-				result = aTicketTO.getResultType();
+				aTicketTO.getResultType();
 			}
 			else{
 				// adding result status as ELIGIBLE intentionally  
