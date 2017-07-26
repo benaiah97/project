@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 
 /**
@@ -342,6 +343,9 @@ public class TicketTO implements Serializable, Cloneable {
   
   /** get upgraded information */
   private ArrayList<EligibleProductsTO> eligibleProducts;
+  
+  /** get the guest type info */
+  private GuestType guestType;
   
   /**
    * @return the showGroup
@@ -1282,5 +1286,19 @@ public void setUpgradePrice(BigDecimal upgradePrice) {
 public void addEligibleProducts(EligibleProductsTO eligibleProductsTO) {
 	eligibleProducts.add(eligibleProductsTO);
   }
-  
+
+/**
+ * @return the guestType
+ */
+public GuestType getGuestType() {
+	return guestType;
+}
+
+/**
+ * @param guestType the guestType to set
+ */
+public void setGuestType(GuestType guestType) {
+	this.guestType = guestType;
+}
+
 }

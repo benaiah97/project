@@ -2,8 +2,12 @@ package pvt.disney.dti.gateway.rules.dlr;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -34,6 +38,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
@@ -549,14 +554,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	private static void setQueryEligibleResponseCommand(
 			GuestProductTO guestProductTO, TicketTO dtiTktTO,ArrayList<DBProductTO> upgradedProductTOList)
 			throws DTIException {
-		DemographicsTO ticketDemo = null;
+		DemographicsTO ticketDemo = new DemographicsTO();
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
 		EligibleProductsTO eligibleProductsTO;
 		
 		DBProductTO dbProductTO=guestProductTO.getDbproductTO();
 		GWDataRequestRespTO gwDataRespTO=guestProductTO.getGwDataRespTO();
 		
-		if(dbProductTO!=null) {
+		if(dbProductTO!=null && gwDataRespTO.getContact() != null && gwDataRespTO.getContact().size() > 0) {
 
 			// Set TktItem: Always only one.
 			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
@@ -568,75 +573,149 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 			
 			// TODO ProdGuestType
+			dtiTktTO.setGuestType(dbProductTO.getGuestType());
+			
+			for(Contact contact : gwDataRespTO.getContact()) {
+				// FirstName
+				if (contact.getFirstName() != null) {
+					ticketDemo.setFirstName(contact.getFirstName());
+				}
 
+				// LastName
+				if (contact.getLastName() != null) {
+					ticketDemo.setLastName(contact.getLastName());
+				}
+
+				// Addr1
+				if (contact.getStreet1() != null) {
+					ticketDemo.setAddr1(contact.getStreet1());
+				}
+
+				// Addr2
+				if (contact.getStreet2() != null) {
+					ticketDemo.setAddr2(contact.getStreet2());
+				}
+				
+				// City
+				if (contact.getCity() != null) {
+					ticketDemo.setCity(contact.getCity());
+				}
+
+				// State
+				if (contact.getState() != null) {
+					ticketDemo.setState(contact.getState());
+				}
+
+				// ZIP
+				if (contact.getZip() != null) {
+					ticketDemo.setZip(contact.getZip());
+				}
+
+				// Country
+				if (contact.getCountryCode() != null) {
+					ticketDemo.setCountry(contact.getCountryCode());
+				}
+
+				// Telephone
+				if (contact.getPhone() != null) {
+					ticketDemo.setTelephone(contact.getPhone());
+				}
+
+				// Cell
+				if (contact.getEmail() != null) {
+					ticketDemo.setCellPhone(contact.getCell());
+				}
+				
+				// Email
+				if (contact.getEmail() != null) {
+					ticketDemo.setEmail(contact.getEmail());
+				}
+				
+				// Gender (as of 2.16.1, JTL) only returned if Demographics
+				// "ALL" specified.
+				// Note: We're using Gender Resp String here because Galaxy
+				// types vary between
+				// request (Integer) and response (String)
+				if ((contact.getGender() != null)) {
+
+					if (contact.getGender()
+							.equalsIgnoreCase("Male")) {
+						ticketDemo.setGender(GenderType.MALE);
+					} else if (contact.getGender()
+							.equalsIgnoreCase("Female")) {
+						ticketDemo.setGender(GenderType.FEMALE);
+					} else {
+						ticketDemo.setGender(GenderType.UNSPECIFIED);
+					}
+				}
+
+				// DOB (as of 2.16.1, JTL) only returned if Demographics
+				// "ALL" specified.
+				if ((contact.getDob() != null)) {
+					DateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+					Date date;
+					try {
+						date = format.parse(contact.getDob());
+						GregorianCalendar gregorianCalendar = new GregorianCalendar();
+						gregorianCalendar.setTime(date);
+						ticketDemo.setDateOfBirth(gregorianCalendar);
+					} catch (ParseException e) {
+						// TODO
+					}
+				}
+				
+				dtiTktTO.addTicketDemographic(ticketDemo);
+				ticketDemo = new DemographicsTO();
+			}
+			
 			/*Demographics start*/
 			// FirstName
 			if (gwDataRespTO.getFirstName() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setFirstName(gwDataRespTO.getFirstName());
 			}
 
 			// LastName
 			if (gwDataRespTO.getLastName() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setLastName(gwDataRespTO.getLastName());
 			}
 
 			// Addr1
 			if (gwDataRespTO.getStreet1() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setAddr1(gwDataRespTO.getStreet1());
 			}
 
 			// Addr2
 			if (gwDataRespTO.getStreet2() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setAddr2(gwDataRespTO.getStreet2());
 			}
 
 			// City
 			if (gwDataRespTO.getCity() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setCity(gwDataRespTO.getCity());
 			}
 
 			// State
 			if (gwDataRespTO.getState() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setState(gwDataRespTO.getState());
 			}
 
 			// ZIP
 			if (gwDataRespTO.getZip() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setZip(gwDataRespTO.getZip());
 			}
 
 			// Country
 			if (gwDataRespTO.getCountryCode() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setCountry(gwDataRespTO.getCountryCode());
 			}
 
 			// Telephone
 			if (gwDataRespTO.getPhone() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setTelephone(gwDataRespTO.getPhone());
 			}
 
 			// Email
 			if (gwDataRespTO.getEmail() != null) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 				ticketDemo.setEmail(gwDataRespTO.getEmail());
 			}
 
@@ -646,8 +725,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			// types vary between
 			// request (Integer) and response (String)
 			if ((gwDataRespTO.getGenderRespString() != null)) {
-				if (ticketDemo == null)
-					ticketDemo = new DemographicsTO();
 
 				if (gwDataRespTO.getGenderRespString()
 						.equalsIgnoreCase("Male")) {
@@ -667,6 +744,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						.setDateOfBirth(gwDataRespTO.getDateOfBirth());
 			}
 			/*Demographics end*/
+			
+			/*Adding ticketDemo to the ticket*/
+			if (ticketDemo != null) {
+				dtiTktTO.addTicketDemographic(ticketDemo);
+			}
 			
 			// TktValidity ValidStart and ValidEnd
 			boolean startDateSet = false;
@@ -709,8 +791,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			// SRP Tax
 			dtiTktTO.setTktTax(dbProductTO.getStandardRetailTax());
-			
-			// TODO TktStatus
 			
 			// Tkt Status (Voidable YES or NO)
 			// Note: Locked out must be false for ticket to be voidable.
@@ -882,11 +962,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 			}
 			
-			/*Adding ticketDemo to the ticket*/
-			if (ticketDemo != null) {
-				dtiTktTO.addTicketDemographic(ticketDemo);
-			}
-			
 			/*Ticket Status*/
 			tktStatus = dtiTktTO.new TktStatusTO();
 			tktStatus.setStatusItem(BLOCKED);
@@ -966,8 +1041,22 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
 				// set the validity
 				try {
+					Integer dayCount = Integer.parseInt(productTO.getDayCount());
+					
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(dbProductTO.getStartSaleDate().getTime());
+					
+					calendar.add(calendar.DAY_OF_MONTH, dayCount);
+					
+					GregorianCalendar gc = new GregorianCalendar();
+					gc.setTime(calendar.getTime());
+					
 					eligibleProductsTO.setValidEnd(
-							DatatypeFactory.newInstance().newXMLGregorianCalendar(dbProductTO.getEndValidDate()));
+							DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+				} catch (NullPointerException exception) { 
+				
+				} catch (NumberFormatException ne) { 
+				
 				} catch (Exception e) {
 					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
 					           "Exception executing getAPUpgradeCatalog", e);
@@ -975,6 +1064,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// add the eligible product element to the list 
 				dtiTktTO.addEligibleProducts(eligibleProductsTO);
 			}
+		} else {
+			dtiTktTO = new TicketTO();
+			dtiTktTO.setResultType(ResultType.INELIGIBLE);
 		}
 		
 		// Need to add exception block here
