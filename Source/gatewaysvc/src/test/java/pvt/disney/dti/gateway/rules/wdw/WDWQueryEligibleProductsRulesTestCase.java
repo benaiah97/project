@@ -33,6 +33,9 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 public class WDWQueryEligibleProductsRulesTestCase {
 	
+	/**
+	 * Test transform request.
+	 */
 	@Test
 	public void testTransformRequest(){
 		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
@@ -74,6 +77,9 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		}
 	}
 	
+	/**
+	 * Test transform response body.
+	 */
 	//@Test
 	public void testTransformResponseBody()
 	{
