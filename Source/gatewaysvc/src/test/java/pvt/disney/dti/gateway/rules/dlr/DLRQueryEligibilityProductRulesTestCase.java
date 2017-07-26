@@ -89,8 +89,9 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		dtiTxn.setTktBroker(DTITestUtil.TKTBROKER);
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
+			DTITransactionTO transactionTo=DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
 					xmlResponse);
+			Assert.assertNotNull(transactionTo);
 		} catch (DTIException e) {
 			Assert.fail("UnExpected Exception Occured" + e.getMessage());
 		}
@@ -146,47 +147,34 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		public void testSetGuestProductDetails(){
 			GWDataRequestRespTO gwDataRespTO=new GWDataRequestRespTO();
 			TicketTO dtiTktTO=new TicketTO();
-			String plu="PLU";
+			String plu="3GZ00601";
 			UpgradePLUList upgradePLU=gwDataRespTO.new UpgradePLUList();
 			ArrayList<UpgradePLUList> upgradePLUList=new ArrayList<>();
 			upgradePLUList.add(upgradePLU);
 			gwDataRespTO.setUpgradePLUList(upgradePLUList);
+			//Scenario :: 1 Expecting Exception 
+			try {
+				GuestProductTO guestProductTO=	DLRQueryEligibilityProductsRules.setGuestProductDetails(gwDataRespTO, dtiTktTO, plu);
+				Assert.fail("Expecting Exception");
+				Assert.assertNull(guestProductTO);
+				Assert.assertNotNull(dtiTktTO.getResultType());
+				
+			} catch (DTIException e) {
+				
+				Assert.assertTrue(true);
+				Assert.assertNull(dtiTktTO.getResultType());
+			}
+			//Scenario ::2 mocking and passing the PLU
 			DTIMockUtil.processMockprepareAndExecuteSql();
 			try {
 				GuestProductTO guestProductTO=	DLRQueryEligibilityProductsRules.setGuestProductDetails(gwDataRespTO, dtiTktTO, plu);
+				Assert.assertNotNull(guestProductTO);
 				Assert.assertNotNull(guestProductTO.getDbproductTO());
+				Assert.assertNotNull(guestProductTO.getGwDataRespTO());
+				Assert.assertNotNull(dtiTktTO.getResultType());
 			} catch (DTIException e) {
 				Assert.fail("UnExpected Exception Occured"+e.getMessage());
 			}
 		}
-			
-			
-			/**
-			 * Test set guest product details.
-			 * when UpgradePLUList !null and guestProductTO null
-			 */
-			@Test
-			public void testSetGuestProductDetailsnullplu(){
-				GWDataRequestRespTO gwDataRespTO=new GWDataRequestRespTO();
-				TicketTO dtiTktTO=new TicketTO();
-				String plu="plu";
-				UpgradePLUList upgradePLU=gwDataRespTO.new UpgradePLUList();
-				ArrayList<UpgradePLUList> upgradePLUList=new ArrayList<>();
-				upgradePLUList.add(upgradePLU);
-				gwDataRespTO.setUpgradePLUList(upgradePLUList);
-				DTIMockUtil.processMockDBProduct();
-				try {
-					GuestProductTO guestProductTO=DLRQueryEligibilityProductsRules.setGuestProductDetails(gwDataRespTO, dtiTktTO, plu);
-					Assert.assertNull(guestProductTO.getDbproductTO());
-				} catch (DTIException e) {
-					Assert.fail("UnExpected Exception Occured"+e.getMessage());
-				}
-			}
-			
-			
-			
-			
-			
-		
 	}
 
