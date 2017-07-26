@@ -5,10 +5,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
@@ -22,13 +20,10 @@ import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
-import pvt.disney.dti.gateway.rules.dlr.DLRQueryEligibilityProductsRules;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 public class WDWQueryEligibleProductsRulesTestCase {
@@ -105,86 +100,96 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		}
 	}
 	
-	
-   /**
-    * Test Case for ValidateInEligibleProducts
-    */
-   @Test
-   public void testValidateInEligibleProducts() {
-      OTUsagesTO otUsagesTO = new OTUsagesTO();
-      ArrayList<OTUsagesTO> usagesList = new ArrayList<>();
-      OTTicketInfoTO otTicketInfoTO = new OTTicketInfoTO();
-      otTicketInfoTO.setTicketType(new BigInteger("0"));
-      otTicketInfoTO.setVoidCode(new Integer(1));
-      otTicketInfoTO.setValidityEndDate(new GregorianCalendar());
-      otTicketInfoTO.setUsagesList(usagesList);
-      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
+	 /** 
+	    * Test Case for ValidateInEligibleProducts
+	    */
+	   @Test
+	   public void testValidateInEligibleProducts() {
+		   
+	      OTUsagesTO otUsagesTO = new OTUsagesTO();
+	      ArrayList<OTUsagesTO> usagesList = new ArrayList<>();
+	      OTTicketInfoTO otTicketInfoTO = new OTTicketInfoTO();
+	      otTicketInfoTO.setTicketType(new BigInteger("0"));
+	      otTicketInfoTO.setValidityEndDate(new GregorianCalendar());
+	      otTicketInfoTO.setUsagesList(usagesList);
+	      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
+	      DBProductTO dbProductTO = new DBProductTO();
+	      dbProductTO.setResidentInd(true);
+	      dbProductTO.setDayCount("1");
+	      otTicketInfoTO.setVoidCode(new Integer(1));
 
-      OTQueryTicketTO infoT = new OTQueryTicketTO();
-      infoT.getTicketInfoList().add(otTicketInfoTO);
-      DBProductTO dbProductTO = new DBProductTO();
-      dbProductTO.setUpgrdPathId(new BigInteger("0"));
-      dbProductTO.setResidentInd(true);
-      dbProductTO.setDayCount("1");
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otUsagesTO.setDate("17-07-22");
-      otTicketInfoTO.setVoidCode(new Integer(101));
-      usagesList.add(otUsagesTO);
-      otTicketInfoTO.setUsagesList(usagesList);
-      infoT.getTicketInfoList().add(otTicketInfoTO);
-      
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otTicketInfoTO.setBiometricTemplate(null);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      try {
-         otTicketInfoTO.setValidityEndDate("17-07-20");
-      } catch (ParseException e1) {
-      }
-      dbProductTO.setUpgrdPathId(new BigInteger("1"));
-      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
-     // otTicketInfoTO.setValidityEndDate(new GregorianCalendar());
-      dbProductTO.setResidentInd(false);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otUsagesTO.setDate("17-07-06");
-      dbProductTO.setUpgrdPathId(new BigInteger("1"));
-      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
-      dbProductTO.setResidentInd(true);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otUsagesTO.setDate("14-07-06");
-      dbProductTO.setUpgrdPathId(new BigInteger("2"));
-      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
-      dbProductTO.setDayCount("2");
-      dbProductTO.setResidentInd(true);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otTicketInfoTO.setVoidCode(1);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-      otTicketInfoTO.setVoidCode(100);
-      try {
-         WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
-      } catch (DTIException e) {
-      }
-   } 
+	      /*
+	       * Scenario 1 : VoidCode in the ATS Query Ticket response greater than 0
+	       * or less than or equal to 100
+	       */
+	      try {
+	         WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	      /*
+	       * Scenario 2 :ResidentInd is Y and DayCount = 1 and the first use date is
+	       * older than 14 days
+	       */
+	      otUsagesTO.setDate("17-07-22");
+	      otTicketInfoTO.setVoidCode(new Integer(101));
+	      usagesList.add(otUsagesTO);
+	      otTicketInfoTO.setUsagesList(usagesList);
+	      try {
+	    	  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	      
+	      /* Scenario 3 : UpgrdPathId is 0 */
+	      dbProductTO.setUpgrdPathId(new BigInteger("0"));
+	      try {
+	    	  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	      
+	      /*
+	       * Scenario 4: Usages must have one entry and BiometricTemplate must have
+	       * one entry
+	       */
+	      otTicketInfoTO.setBiometricTemplate(null);
+	      try {
+	    	  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	      
+	      /* Scenario 5 :ResidentInd is N and Validity EndDate less than today */
+	      try {
+	         otTicketInfoTO.setValidityEndDate("17-07-20");
+	      } catch (ParseException e1) {
+	      }
+
+	      dbProductTO.setUpgrdPathId(new BigInteger("1"));
+	      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
+	      dbProductTO.setResidentInd(false);
+	      try {
+	    	  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	      
+	      /*
+	       * Scenario 6: resident flag is 'Y' and DayCount > 1, and the first use
+	       * date is older than six months (185 days).
+	       */
+	      otUsagesTO.setDate("14-07-06");
+	      dbProductTO.setUpgrdPathId(new BigInteger("2"));
+	      otTicketInfoTO.setBiometricTemplate("biometricTemplate");
+	      dbProductTO.setDayCount("2");
+	      dbProductTO.setResidentInd(true);
+	      try {
+	    	  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
+	      } catch (DTIException dtie) {
+	         Assert.fail("Unexpected Exception" + dtie.getMessage());
+	      }
+	   }
    /**
 	 * Test set guest product details.
 	 * when UpgradePLUList !null and guestProductTO !null
