@@ -217,7 +217,6 @@ public class WDWQueryEligibleProductsRules {
 
             ArrayList<DBProductTO> productList = ProductKey.getProductsTktNbr(tktNbr);
 
-            boolean inElegibleProduct = validateInEligibleProducts(otQryTicketTO, productList);
 
             TicketTO dtiTicketTO = new TicketTO();
             TicketTO.TktStatusTO newStatus = dtiTicketTO.new TktStatusTO();
@@ -287,8 +286,7 @@ public class WDWQueryEligibleProductsRules {
     * @param infoTO
     * @throws DTIException
     */
-   public static boolean validateInEligibleProducts(OTQueryTicketTO infoTO, ArrayList<DBProductTO> productTOs)
-            throws DTIException {
+   public static boolean validateInEligibleProducts(OTQueryTicketTO infoTO, DBProductTO productTO) throws DTIException {
       logger.sendEvent("Entering validateInEligibleProducts", EventType.DEBUG, THISINSTANCE);
       boolean isInEligibleProductFlag = false;
       Date date = null;
@@ -308,8 +306,7 @@ public class WDWQueryEligibleProductsRules {
       }
       /* Getting the uses details */
       List<Date> useDates = new ArrayList<>();
-      if (usagesTOs != null && usagesTOs.size() != 0)
-      {
+      if (usagesTOs != null && usagesTOs.size() != 0) {
          for (OTUsagesTO otUsagesTO : usagesTOs) {
             SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
             if (otUsagesTO.getDate() != null) {
@@ -321,17 +318,17 @@ public class WDWQueryEligibleProductsRules {
                }
             }
             useDates.add(date);
-         }//for
+         }// for
          /* First use date */
          firstuseDate = Collections.min(useDates);
-         GregorianCalendar calendar = new GregorianCalendar ();
-         calendar.setTime (firstuseDate);
-      }//if
+         GregorianCalendar calendar = new GregorianCalendar();
+         calendar.setTime(firstuseDate);
+      }// if
       /*
        * VoidCode in the ATS Query Ticket response greater than 0 or less than
        * or equal to 100
        */
-      if (voidCode!=null && (voidCode > 0 && voidCode <= 100)) {
+      if (voidCode != null && (voidCode > 0 && voidCode <= 100)) {
          return isInEligibleProductFlag = true;
       }
       /* Usages must have one entry and BiometricTemplate must have one entry */
@@ -339,52 +336,44 @@ public class WDWQueryEligibleProductsRules {
          return isInEligibleProductFlag = true;
       }
 
-      if (productTOs != null) {
+      if (productTO != null) {
          long currentDateMiliSec = new Date().getTime();
-         for (DBProductTO productTO : productTOs) {
-
-            try {
-               /* UpgrdPathId is 0 */
-               if (productTO.getUpgrdPathId() != null && productTO.getUpgrdPathId().intValue() == 0) {
-                  isInEligibleProductFlag = true;
-                  break;
-               }//if
-               /* ResidentInd is N and Validity EndDate less than today */
-               if (endDate != null && productTO.isResidentInd() == false
-                        && (currentDateMiliSec - endDate.getTime().getTime()) / 86400000 > 0) {
-                  isInEligibleProductFlag = true;
-                  break;
-               }//if
-               /*
-                * ResidentInd is Y and DayCount = 1 and the first use date is
-                * older than 14 days
-                */
-               if (firstuseDate != null && productTO.isResidentInd() == true
-                        && Integer.parseInt(productTO.getDayCount()) == 1
-                        && currentDateMiliSec - firstuseDate.getTime() / 86400000 > 14) {
-                  isInEligibleProductFlag = true;
-                  break;
-               }//if
-               /*
-                * resident flag is 'Y' and DayCount > 1, and the first use date
-                * is older than six months (185 days).
-                */
-               if (firstuseDate != null && productTO.isResidentInd() == true
-                        && Integer.parseInt(productTO.getDayCount()) > 1
-                        && new Date().getTime() - firstuseDate.getTime() / 86400000 > 185) {
-                  isInEligibleProductFlag = true;
-                  break;
-               }//if
-            } catch (Exception e) {
-               logger.sendEvent("Exception executing validateInEligibleProducts: " + e.toString(), EventType.WARN,
-                        THISINSTANCE);
-            }
-         }//for
-      }//if
+         try {
+            /* UpgrdPathId is 0 */
+            if (productTO.getUpgrdPathId() != null && productTO.getUpgrdPathId().intValue() == 0) {
+               isInEligibleProductFlag = true;
+            }// if
+            /* ResidentInd is N and Validity EndDate less than today */
+            if (endDate != null && productTO.isResidentInd() == false
+                     && (currentDateMiliSec - endDate.getTime().getTime()) / 86400000 > 0) {
+               isInEligibleProductFlag = true;
+            }// if
+            /*
+             * ResidentInd is Y and DayCount = 1 and the first use date is older
+             * than 14 days
+             */
+            if (firstuseDate != null && productTO.isResidentInd() == true
+                     && Integer.parseInt(productTO.getDayCount()) == 1
+                     && currentDateMiliSec - firstuseDate.getTime() / 86400000 > 14) {
+               isInEligibleProductFlag = true;
+            }// if
+            /*
+             * resident flag is 'Y' and DayCount > 1, and the first use date is
+             * older than six months (185 days).
+             */
+            if (firstuseDate != null && productTO.isResidentInd() == true
+                     && Integer.parseInt(productTO.getDayCount()) > 1
+                     && new Date().getTime() - firstuseDate.getTime() / 86400000 > 185) {
+               isInEligibleProductFlag = true;
+            }// if
+         } catch (Exception e) {
+            logger.sendEvent("Exception executing validateInEligibleProducts: " + e.toString(), EventType.WARN,
+                     THISINSTANCE);
+         }
+      }// if
       logger.sendEvent("validateInEligibleProducts method end ", EventType.DEBUG, THISINSTANCE);
       return isInEligibleProductFlag;
-      
+
    }
-   
-   
+
 }

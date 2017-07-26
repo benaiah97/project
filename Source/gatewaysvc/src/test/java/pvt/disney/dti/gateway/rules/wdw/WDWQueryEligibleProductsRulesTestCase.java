@@ -92,5 +92,6 @@ public class WDWQueryEligibleProductsRulesTestCase {
          WDWQueryEligibleProductsRules.validateInEligibleProducts(infoT, dbProductTO);
       } catch (DTIException e) {
       }
-   }
+   } 
+   
 }
