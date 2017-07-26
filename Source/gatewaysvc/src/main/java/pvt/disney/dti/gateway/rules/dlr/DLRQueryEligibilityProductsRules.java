@@ -58,19 +58,11 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
 public class DLRQueryEligibilityProductsRules implements TransformConstants {
-
+	
 	 /** Object instance used for logging. */
 	private static final DLRQueryEligibilityProductsRules THISINSTANCE = new DLRQueryEligibilityProductsRules();
 	
-	/**
-	 * The number of hours to add to a pass expiration to ensure that
-	 * east-coast/west-coast time differences are accounted for (3) and the
-	 * impact of late closings (as many as 3 hours) (3 + 3 = 6 hours). Because
-	 * the dates from eGalaxy are returned as 12/27/2010 00:00:00, another 24
-	 * hours must be added, making the grand total of the padding 30 hours.
-	 */
 	public static final int DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS = 30;
-
 	/**
 	 * Numeric identifier indicating DLR
 	 */
@@ -89,7 +81,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			.getLogger(DLRQueryEligibilityProductsRules.class);
 
 	/**
-	 * Transforms a DTITransactionTO object containing a DLR query ticket
+	 * Transforms a DTITransactionTO object containing a DLR query eligible ticket
 	 * request into the format required by the DLR provider.
 	 * 
 	 * @param dtiTxn
@@ -255,37 +247,36 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				GuestProductTO guestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO,plu);
 				if (guestProduct != null) {
 					
+					/*If Picture is not present in response marking resultType as INELIGIBLE*/
+					if(guestProduct.getGwDataRespTO().getHasPicture()==null){
+						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					}
 					/* visualId*/
 					String visualId = gwDataRespTO.getVisualID();
 					
 					/* contact GUID*/
 					String contactGUID = null;// need to see if contact tag is present throw exception if contact is not there
 					
-					if((gwDataRespTO.getContact() !=null) && (gwDataRespTO.getContact().size() > 0)){
+					if((gwDataRespTO.getContact() != null) && (gwDataRespTO.getContact().size() > 0)){
 						
 						contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
+						if(contactGUID != null){
+							processGUID(visualId,contactGUID);
+						}else{
+							logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
+							dtiTktTO.setResultType(ResultType.INELIGIBLE);
+							//If DLR query ticket returns without a picture and without usage, then it should be INELIGIBLE. TODO
+							//QEP should then return INELIGIBLE.
+							//If someone attempts to upgrade with a ticket that had no demos, then it fails with 564.
+						}
+					}else{
+						logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
+						dtiTktTO.setResultType(ResultType.INELIGIBLE);
 					}
 										
 					/*Insert the GUID in table if GUID is not present assuming contact tag will be present in the response as it is present in req */
-					if(contactGUID != null){
-						processGUID(visualId,contactGUID);
-					}else{
-						
-						logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
-						dtiTktTO.setResultType(ResultType.INELIGIBLE);
-						
-						////If DLR query ticket returns without a picture and without usage, then it should be INELIGIBLE. TODO
-						//QEP should then return INELIGIBLE.
-						//If someone attempts to upgrade with a ticket that had no demos, then it fails with 564.
-						
-						//logger.sendEvent("",EventType.EXCEPTION );
-						//need not be done 
-						 /* throw new DTIException(TransformRules.class,
-									DTIErrorCode.INVALID_TICKET_DEMOGRAPHICS,
-									"Provider responded with a non-numeric status code.");*/
-					}
-				
 					/*Setting up the Upgraded Product Detail*/
+					
 					ArrayList<DBProductTO> newProductcatalogList=
 							getUpgradedProduct(upGradePluList, dtiTktTO, dtiTxn);
 					
@@ -295,13 +286,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}else{
 					logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,THISINSTANCE);
 				}
-				
 				/*Pass the object to QEP command Object*/
 				qtResp.add(dtiTktTO);
-				
 			}
 		} else {
-			// transformError
+			
+			logger.sendEvent("No Ticket Detail Found.", EventType.DEBUG,THISINSTANCE);
+			
+			//Throw Exception 
 			throw new DTIException(DTIErrorCode.TICKET_INVALID);
 		}
 
@@ -424,8 +416,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					"Exception executing getProductsByTktName", e);
 		}
-		
-		
 		//Checking the dbProduct size
 		if((dbProductTO != null) && (dbProductTO.size() > 0)){ 
 			
@@ -456,22 +446,25 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * @param visualid the visualid
 	 * @throws DTIException the DTI exception
 	 */
-	private static void processGUID(String guid,String visualid) throws DTIException{
-	  /*Step 3B*/
-	  try{
-		// Checking for the visual Id in ENTTL_GUID insert if no visualid is present
-		EnttlGuidTO entGuid=ProductKey.getGuId(visualid);
-		 
-		if(entGuid==null){
-		  //Inserting the visual id in table ENTTL_GUID
-		  ProductKey.insertGuId(visualid,guid);
-		 }
-	  }catch(Exception dtie){
-		  logger.sendEvent("database exception occured "+dtie.getMessage(),EventType.EXCEPTION,THISINSTANCE);
-		  throw new DTIException(TransformRules.class,
+	private static void processGUID(String guid, String visualid)
+			throws DTIException {
+		/* Step 3B */
+		try {
+			// Checking for the visual Id in ENTTL_GUID insert if no visualid is
+			// present
+			EnttlGuidTO entGuid = ProductKey.getGuId(visualid);
+
+			if (entGuid == null) {
+				// Inserting the visual id in table ENTTL_GUID
+				ProductKey.insertGuId(visualid, guid);
+			}
+		} catch (Exception dtie) {
+			logger.sendEvent("database exception occured " + dtie.getMessage(),
+					EventType.EXCEPTION, THISINSTANCE);
+			throw new DTIException(TransformRules.class,
 					DTIErrorCode.FAILED_DB_OPERATION_SVC,
 					"Provider responded with a non-numeric status code.");
-	   }
+		}
 	}
 	
 	/**
@@ -483,15 +476,24 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	public static ArrayList<DBProductTO> getUpgradedProduct(ArrayList<String> listfUpgradedPLUs,TicketTO dtiTktTO,DTITransactionTO dtiTxn)throws DTIException{
 		
 		ArrayList<DBProductTO> newProductCatalogTO=null;
+		UpgradeCatalogTO upGradeCatalogTo=null;
 		
 		
 		if((listfUpgradedPLUs == null) || (listfUpgradedPLUs.size() == 0)){
 		  logger.sendEvent("No PLU's List  fetched from DTI Ticketing System",EventType.DEBUG,THISINSTANCE);
 		  return newProductCatalogTO;
 		}
-		
 		/*Call to fetch the saleable ProductList*/
-		UpgradeCatalogTO upGradeCatalogTo=ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);
+		try{
+			upGradeCatalogTo=ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);			
+		
+		}catch(Exception dtie){
+			logger.sendEvent("database exception occured " + dtie.getMessage(),
+					EventType.EXCEPTION, THISINSTANCE);
+			throw new DTIException(TransformRules.class,
+					DTIErrorCode.FAILED_DB_OPERATION_SVC,
+					"Provider responded with a non-numeric status code.");
+		}
 		
 		if(upGradeCatalogTo != null){
 			ArrayList<DBProductTO > productList = upGradeCatalogTo.getProductList();
@@ -546,9 +548,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		return eligibleFlag;
 	}
 	
-	
-	
-	
 	/**
 	 * Sets the query eligible response command.
 	 *
@@ -579,7 +578,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 			
 			if(gwDataRespTO.getContact()==null && gwDataRespTO.getContact().size()==0){
-				dtiTktTO=new TicketTO();
 				dtiTktTO.setResultType(ResultType.INELIGIBLE);
 			}else{
 				
