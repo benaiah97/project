@@ -19,7 +19,7 @@ public class DBProductTO implements Serializable {
 
 	/** The enumeration of possible mismatch types in DTI. */
 	public enum MismatchToleranceType {
-		
+	
 		/** The amount. */
 		AMOUNT,
 		
@@ -28,6 +28,14 @@ public class DBProductTO implements Serializable {
 		
 		/** The undefined. */
 		UNDEFINED
+	};
+	
+	/** The enumeration of guest types in DTI. */
+	public enum GuestType {
+		ADULT,
+		CHILD,
+		ANY,
+		UNKNOWN
 	};
 
 	/** The product code. */
@@ -68,6 +76,9 @@ public class DBProductTO implements Serializable {
 
 	/** The tolerance type of mismatch configured. */
 	private MismatchToleranceType misMatchTolType = MismatchToleranceType.UNDEFINED;
+	
+	/** The tolerance type of mismatch configured. */
+	private GuestType guestType = GuestType.UNKNOWN;
 
 	/** The scalar value permitted in the mismatch. */
 	private BigDecimal misMatchTol;
@@ -697,6 +708,16 @@ public class DBProductTO implements Serializable {
 	 */
 	public void setDayCount(String dayCount) {
 		this.dayCount = dayCount;
+	}
+	
+	
+
+	public GuestType getGuestType() {
+		return guestType;
+	}
+
+	public void setGuestType(GuestType guestType) {
+		this.guestType = guestType;
 	}
 
 	/* (non-Javadoc)

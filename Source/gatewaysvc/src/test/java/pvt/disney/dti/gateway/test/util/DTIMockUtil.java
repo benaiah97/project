@@ -999,17 +999,4 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
-
-	public static void processMockDBProduct() {
-				try {
-			new MockUp<ProductKey>() {
-				@Mock
-				public ArrayList<DBProductTO> getProductsByTktName(ArrayList<String> tktName) {
-					return null;
-				}
-			};
-		} catch (Exception e) {
-		}
-	}
-
 }
