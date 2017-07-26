@@ -142,7 +142,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		 * Test set guest product details.
 		 * when UpgradePLUList !null and guestProductTO !null
 		 */
-		@Test
+		@Test 
 		public void testSetGuestProductDetails(){
 			GWDataRequestRespTO gwDataRespTO=new GWDataRequestRespTO();
 			TicketTO dtiTktTO=new TicketTO();

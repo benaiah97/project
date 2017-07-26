@@ -76,7 +76,7 @@ public class DTIMockUtil extends CommonTestUtils {
 
 	/** The attribute rs. */
 	static ResultSet attributeRs = null;
-
+ 
 	/** The attribute rs1. */
 	static ResultSet attributeRs1 = null;
 
