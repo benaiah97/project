@@ -17,6 +17,7 @@ import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
@@ -32,7 +33,43 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
  */
 
 public class DLRQueryEligibilityProductRulesTestCase {
-
+	
+	
+	@Test
+	public void	transformRequest(){
+		DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+		DTIRequestTO request = new DTIRequestTO();
+		PayloadHeaderTO payloadHeader = new PayloadHeaderTO();
+		CommandHeaderTO commandHeader = new CommandHeaderTO();
+		QueryEligibleProductsRequestTO bodyTO = new QueryEligibleProductsRequestTO();
+		TicketTO ticketTo=new TicketTO();
+		TktSellerTO tktSeller=new TktSellerTO();
+		tktSeller.setTsMac("tsMac");
+		ticketTo.setExternal("BGYD28686");
+		payloadHeader.setPayloadID("68688989686786767");
+		payloadHeader.setTarget("target");
+		payloadHeader.setCommProtocol("protocol");
+		payloadHeader.setCommMethod("method");
+		payloadHeader.setVersion("version");
+		payloadHeader.setTktSeller(tktSeller);
+		commandHeader.setCmdActor("Actor");
+		commandHeader.setCmdDevice("cmdDevice");
+		commandHeader.setCmdInvoice("cmdInvoice");
+		commandHeader.setCmdItem(new BigInteger("4"));
+		commandHeader.setCmdMarket("cmdMarket");
+		bodyTO.getTktList().add(ticketTo);
+		request.setPayloadHeader(payloadHeader);
+		request.setCommandHeader(commandHeader);
+		request.setCommandBody(bodyTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.setTpRefNum(5634);
+		try {
+			String requestform=DLRQueryEligibilityProductsRules.transformRequest(dtiTxn);
+			Assert.assertNotNull(requestform);
+		} catch (DTIException e) {
+			Assert.fail("UnExpected Exception Occured" + e.getMessage());
+		}
+	}
 	/**
 	 * Test transform response.
 	 */
@@ -146,6 +183,9 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		@Test 
 		public void testSetGuestProductDetails(){
 			GWDataRequestRespTO gwDataRespTO=new GWDataRequestRespTO();
+			gwDataRespTO.setFirstName("firstName");
+			gwDataRespTO.setLastName("lastName");
+			gwDataRespTO.setEmail("email@domain.com");
 			TicketTO dtiTktTO=new TicketTO();
 			String plu="3GZ00601";
 			UpgradePLUList upgradePLU=gwDataRespTO.new UpgradePLUList();
@@ -160,7 +200,6 @@ public class DLRQueryEligibilityProductRulesTestCase {
 				Assert.assertNotNull(dtiTktTO.getResultType());
 				
 			} catch (DTIException e) {
-				
 				Assert.assertTrue(true);
 				Assert.assertNull(dtiTktTO.getResultType());
 			}
@@ -171,6 +210,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 				Assert.assertNotNull(guestProductTO);
 				Assert.assertNotNull(guestProductTO.getDbproductTO());
 				Assert.assertNotNull(guestProductTO.getGwDataRespTO());
+				Assert.assertNotNull(guestProductTO.getGwDataRespTO().getFirstName());
 				Assert.assertNotNull(dtiTktTO.getResultType());
 			} catch (DTIException e) {
 				Assert.fail("UnExpected Exception Occured"+e.getMessage());
