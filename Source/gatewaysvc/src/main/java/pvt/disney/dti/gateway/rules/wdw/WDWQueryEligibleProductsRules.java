@@ -351,7 +351,7 @@ public class WDWQueryEligibleProductsRules {
 	 * @return the guest product TO
 	 * @throws DTIException the DTI exception
 	 */
-	private static GuestProductTO setGuestProductDetails(
+	public static GuestProductTO setGuestProductDetails(
 			ArrayList<OTTicketInfoTO> otTicketList,TicketTO dtiTktTO,  ArrayList<BigInteger> tktNbr) throws DTIException {
 		
 		/*This method is used for processing step 1 */
