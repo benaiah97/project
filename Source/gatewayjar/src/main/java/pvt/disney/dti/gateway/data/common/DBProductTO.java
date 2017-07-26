@@ -710,12 +710,16 @@ public class DBProductTO implements Serializable {
 		this.dayCount = dayCount;
 	}
 	
-	
-
+	/**
+	 * @return the guestType
+	 */
 	public GuestType getGuestType() {
 		return guestType;
 	}
 
+	/**
+	 * @param guestType the guestType to set
+	 */
 	public void setGuestType(GuestType guestType) {
 		this.guestType = guestType;
 	}
@@ -745,7 +749,7 @@ public class DBProductTO implements Serializable {
 				+ ", standardRetailPrice=" + standardRetailPrice
 				+ ", residentInd=" + residentInd + ", standardRetailTax="
 				+ standardRetailTax + ", upgrdPathId=" + upgrdPathId
-				+ ", dayCount=" + dayCount + "]";
+				+ ", dayCount=" + dayCount + ", guestType="+ guestType + "]";
 	}
 	
 	

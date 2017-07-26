@@ -58,11 +58,12 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
 public class DLRQueryEligibilityProductsRules implements TransformConstants {
-	
+
 	 /** Object instance used for logging. */
 	private static final DLRQueryEligibilityProductsRules THISINSTANCE = new DLRQueryEligibilityProductsRules();
 	
 	public static final int DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS = 30;
+
 	/**
 	 * Numeric identifier indicating DLR
 	 */
@@ -566,7 +567,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		DBProductTO dbProductTO=guestProductTO.getDbproductTO();
 		GWDataRequestRespTO gwDataRespTO=guestProductTO.getGwDataRespTO();
 		
-		if(dbProductTO!=null && gwDataRespTO.getContact() != null && gwDataRespTO.getContact().size() > 0) {
+		if(dbProductTO!=null) {
 
 			// Set TktItem: Always only one.
 			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
@@ -577,12 +578,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			
 			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 			
-			if(gwDataRespTO.getContact()==null && gwDataRespTO.getContact().size()==0){
-				dtiTktTO.setResultType(ResultType.INELIGIBLE);
-			}else{
-				
-			}
+			// TODO ProdGuestType
 			dtiTktTO.setGuestType(dbProductTO.getGuestType());
+			
+			if(gwDataRespTO.getContact() == null && gwDataRespTO.getContact().size() == 0){
+				dtiTktTO.setResultType(ResultType.INELIGIBLE);
+			}
 			
 			for(Contact contact : gwDataRespTO.getContact()) {
 				// FirstName
@@ -1053,19 +1054,22 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					Integer dayCount = Integer.parseInt(productTO.getDayCount());
 					
 					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dbProductTO.getStartSaleDate().getTime());
-					
-					calendar.add(calendar.DAY_OF_MONTH, dayCount);
-					
-					GregorianCalendar gc = new GregorianCalendar();
-					gc.setTime(calendar.getTime());
-					
-					eligibleProductsTO.setValidEnd(
-							DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
-				} catch (NullPointerException exception) { 
-				
+					if (dbProductTO.getStartSaleDate() != null) {
+						calendar.setTime(dbProductTO.getStartSaleDate().getTime());
+						calendar.add(calendar.DAY_OF_MONTH, dayCount);
+						
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTime(calendar.getTime());
+						
+						eligibleProductsTO.setValidEnd(
+								DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+					} else {
+						throw new Exception();
+					}
 				} catch (NumberFormatException ne) { 
-				
+					throw new DTIException(DLRQueryEligibilityProductsRules.class,
+							DTIErrorCode.TP_INTERFACE_FAILURE,
+							"Provider responded with a non-numeric status code.");
 				} catch (Exception e) {
 					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
 					           "Exception executing getAPUpgradeCatalog", e);
@@ -1073,9 +1077,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// add the eligible product element to the list 
 				dtiTktTO.addEligibleProducts(eligibleProductsTO);
 			}
-		} else {
-			dtiTktTO = new TicketTO();
-			dtiTktTO.setResultType(ResultType.INELIGIBLE);
 		}
 		
 		// Need to add exception block here
