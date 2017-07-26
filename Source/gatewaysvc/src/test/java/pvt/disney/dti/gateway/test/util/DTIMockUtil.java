@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
  
+
 import javax.xml.parsers.DocumentBuilder;
 
 import mockit.Mock;
@@ -993,6 +994,18 @@ public class DTIMockUtil extends CommonTestUtils {
 				public DTIErrorCode.ErrorScope getScopeFromCode(
 						String dtiErrorCode) {
 					return ErrorScope.valueOf(errorScope);
+				}
+			};
+		} catch (Exception e) {
+		}
+	}
+
+	public static void processMockDBProduct() {
+				try {
+			new MockUp<ProductKey>() {
+				@Mock
+				public ArrayList<DBProductTO> getProductsByTktName(ArrayList<String> tktName) {
+					return null;
 				}
 			};
 		} catch (Exception e) {
