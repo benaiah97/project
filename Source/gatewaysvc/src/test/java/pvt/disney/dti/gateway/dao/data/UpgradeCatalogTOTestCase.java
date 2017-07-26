@@ -13,7 +13,7 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 /**
  * 
  * @author lewit019
- * 
+ * This is the test case for UpgradeCatalogTO.
  */
 public class UpgradeCatalogTOTestCase {
    
