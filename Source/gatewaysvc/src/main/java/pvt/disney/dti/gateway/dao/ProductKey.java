@@ -1022,7 +1022,6 @@ public class ProductKey {
 		} catch (Exception e) {
 			logger.sendEvent("Unable to insert ENTTL_GUID: : " + e.toString(),
 					EventType.EXCEPTION, THISINSTANCE);
-			e.printStackTrace();
 		}
 	}
 	
