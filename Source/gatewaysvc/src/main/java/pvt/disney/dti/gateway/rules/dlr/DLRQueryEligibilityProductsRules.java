@@ -412,8 +412,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		
 		ArrayList<String> pluList = new ArrayList<String>();
 		pluList.add(plu);
+		try{
+			dbProductTO = ProductKey.getProductsByTktName(pluList);
+		}catch(Exception e){
+			throw new DTIException(ProductKey.class,
+					DTIErrorCode.FAILED_DB_OPERATION_SVC,
+					"Exception executing getProductsByTktName", e);
+		}
 		
-		dbProductTO = ProductKey.getProductsByTktName(pluList);
 		
 		//Checking the dbProduct size
 		if((dbProductTO != null) && (dbProductTO.size() > 0)){ 
@@ -567,7 +573,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			
 			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 			
-			// TODO ProdGuestType
+			if(gwDataRespTO.getContact()==null && gwDataRespTO.getContact().size()==0){
+				dtiTktTO=new TicketTO();
+				dtiTktTO.setResultType(ResultType.INELIGIBLE);
+			}else{
+				
+			}
 
 			/*Demographics start*/
 			// FirstName
@@ -967,7 +978,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// set the validity
 				try {
 					eligibleProductsTO.setValidEnd(
-							DatatypeFactory.newInstance().newXMLGregorianCalendar(dbProductTO.getEndValidDate()));
+							DatatypeFactory.newInstance().newXMLGregorianCalendar(dbProductTO.));
 				} catch (Exception e) {
 					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
 					           "Exception executing getAPUpgradeCatalog", e);
