@@ -18,7 +18,7 @@ import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
  * @author lewit019
  */
 public class TicketTO implements Serializable, Cloneable {
-	
+
   /** Serial Version UID */
   public final static long serialVersionUID = 9129231995L;
 

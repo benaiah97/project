@@ -19,7 +19,7 @@ public class DBProductTO implements Serializable {
 
 	/** The enumeration of possible mismatch types in DTI. */
 	public enum MismatchToleranceType {
-		
+	
 		/** The amount. */
 		AMOUNT,
 		

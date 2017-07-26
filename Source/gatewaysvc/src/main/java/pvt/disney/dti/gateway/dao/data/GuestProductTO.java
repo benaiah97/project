@@ -13,7 +13,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
  * 
  */
 public class GuestProductTO {
-	
+
 	/** The dbproduct TO. */
 	private DBProductTO dbproductTO;
 	

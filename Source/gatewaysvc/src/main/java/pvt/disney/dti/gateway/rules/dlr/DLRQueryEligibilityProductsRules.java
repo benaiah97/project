@@ -58,7 +58,7 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
 public class DLRQueryEligibilityProductsRules implements TransformConstants {
-	
+
 	 /** Object instance used for logging. */
 	private static final DLRQueryEligibilityProductsRules THISINSTANCE = new DLRQueryEligibilityProductsRules();
 	
