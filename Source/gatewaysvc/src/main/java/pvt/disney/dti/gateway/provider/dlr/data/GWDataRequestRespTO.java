@@ -158,7 +158,7 @@ public class GWDataRequestRespTO implements Serializable {
   private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
   
   /** The upgrade PLU list. */
-  private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>();
+  private ArrayList<UpgradePLUList> upgradePLUList = new ArrayList<UpgradePLUList>(); // As of 2.17.X NG
   
   /** The picture. */
   private String hasPicture;
@@ -184,6 +184,9 @@ public class GWDataRequestRespTO implements Serializable {
 
   /** The renewable. */
   private Boolean renewable; // As of 2.16.1, JTL
+  
+  /** The PLU of the original ticket */
+  private String plu; // As of 2.17.X NG
 
   /**
    * The Class LineageRecord.
@@ -1677,6 +1680,14 @@ public String getPayPlan() {
  */
 public void setPayPlan(String payPlan) {
 	this.payPlan = payPlan;
+}
+
+public String getPlu() {
+	return plu;
+}
+
+public void setPlu(String plu) {
+	this.plu = plu;
 }
 
 

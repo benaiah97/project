@@ -68,6 +68,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * Numeric identifier indicating DLR
 	 */
 	public static final Integer DLR_ID = new Integer(1);
+	
+	/** DLR Galaxy TPS Code constant (as of 2.17.X, NG) */
+	private final static String DLR_TPS_CODE = "DLR-Galaxy";
 
 	/** Constant text for PassRenew Status INELIGIBLE (as of 2.16.1, JTL) */
 	private final static String PASSRENEW_INELIGIBLE = "INELIGIBLE";
@@ -230,73 +233,101 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		GWQueryTicketRespTO gwQryTktRespTO = gwBodyTO
 				.getQueryTicketResponseTO();
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
+		
+		//TODO NG - Creating GuestProductTO	- Step 1	
+		GuestProductTO globalGuestProduct = new GuestProductTO();
+		globalGuestProduct.setGwDataRespTO(gwDataRespTO);		
+		// executing Query to pull up Guest Ticket detail by PLU
+		DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPlu());
+		globalGuestProduct.setDbproductTO(dBProduct);
+		
+		//TODO NG - Creating UpgradeCatalogTO - Step 2
+		UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
-		// Verifying for UpgradedPLU Based on this will , decide for eligible
-		// and inelligible
-
-		if (gwDataRespTO.getUpgradePLUList() != null
-				&& gwDataRespTO.getUpgradePLUList().size() > 0) {
-			
-			ArrayList<String> upGradePluList=new ArrayList<String>();
-			
-			for(UpgradePLUList upgradePLU:gwDataRespTO.getUpgradePLUList()){
-				
-				String plu=upgradePLU.getPLU();
-				upGradePluList.add(plu);
-				
-				/*Get the list of GuestProductTO , transaction will stop in case if no product is found*/
-				GuestProductTO guestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO,plu);
-				if (guestProduct != null) {
-					
-					/*If Picture is not present in response marking resultType as INELIGIBLE*/
-					if(guestProduct.getGwDataRespTO().getHasPicture()==null){
-						dtiTktTO.setResultType(ResultType.INELIGIBLE);
-					}
-					/* visualId*/
-					String visualId = gwDataRespTO.getVisualID();
-					
-					/* contact GUID*/
-					String contactGUID = null;// need to see if contact tag is present throw exception if contact is not there
-					
-					if((gwDataRespTO.getContact() != null) && (gwDataRespTO.getContact().size() > 0)){
-						
-						contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
-						if(contactGUID != null){
-							processGUID(visualId,contactGUID);
-						}else{
-							logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
-							dtiTktTO.setResultType(ResultType.INELIGIBLE);
-							//If DLR query ticket returns without a picture and without usage, then it should be INELIGIBLE. TODO
-							//QEP should then return INELIGIBLE.
-							//If someone attempts to upgrade with a ticket that had no demos, then it fails with 564.
-						}
-					}else{
-						logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
-						dtiTktTO.setResultType(ResultType.INELIGIBLE);
-					}
-										
-					/*Insert the GUID in table if GUID is not present assuming contact tag will be present in the response as it is present in req */
-					/*Setting up the Upgraded Product Detail*/
-					
-					ArrayList<DBProductTO> newProductcatalogList=
-							getUpgradedProduct(upGradePluList, dtiTktTO, dtiTxn);
-					
-					/*Setting up the respArrayList<UpgradeCatalogTO>onse Detail*/
-					setQueryEligibleResponseCommand(guestProduct,dtiTktTO,newProductcatalogList);
-					
-				}else{
-					logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,THISINSTANCE);
-				}
-				/*Pass the object to QEP command Object*/
-				qtResp.add(dtiTktTO);
-			}
-		} else {
-			
-			logger.sendEvent("No Ticket Detail Found.", EventType.DEBUG,THISINSTANCE);
-			
-			//Throw Exception 
-			throw new DTIException(DTIErrorCode.TICKET_INVALID);
-		}
+		
+		//TODO NG - DLR Step 3A
+		// Need to perform the following 3 checks in order to mark as INELIGIBLE and reply back to client
+		// 1. Contact GUID is not present - this can be relaxed for now;
+		// 2. Picture is not present - this can be relaxed as this business rule needs to be revisited
+		// 3. Park entry is not present - Usage tags from Galaxy need to be mapped in GWDataRequestRespTO and checked here (<UsageRequestResponse> tags I think
+		
+		//TODO NG - DLR Step 3B
+		//Store Contact GUID to Visual ID mapping from the Galaxy response - this can be skipped for now if Contact GUID is not present (add condition)
+		
+		//TODO NG - DLR Step 4
+		//Compare the Upgrade PLU list from GuestProductTO to the PLU list in the UpgradeCatalogTO, use DLR method in UpgradeCatalogTO to filter catalog
+		
+		//TODO NG - DLR Step 5
+		// Map response to the client
+		
+		
+		
+		// Verifying for UpgradedPLU Based on this will , decide for eligible 
+		// and ineligible
+//
+//		if (gwDataRespTO.getUpgradePLUList() != null
+//				&& gwDataRespTO.getUpgradePLUList().size() > 0) {
+//			
+//			ArrayList<String> upGradePluList=new ArrayList<String>();
+//			
+//			for(UpgradePLUList upgradePLU:gwDataRespTO.getUpgradePLUList()){
+//				
+//				String plu=upgradePLU.getPLU();
+//				upGradePluList.add(plu);
+//				
+//				/*Get the list of GuestProductTO , transaction will stop in case if no product is found*/
+//				GuestProductTO guestProduct = setGuestProductDetails(gwDataRespTO,dtiTktTO,plu);
+//				if (guestProduct != null) {
+//					
+//					/*If Picture is not present in response marking resultType as INELIGIBLE*/
+//					if(guestProduct.getGwDataRespTO().getHasPicture()==null){
+//						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+//					}
+//					/* visualId*/
+//					String visualId = gwDataRespTO.getVisualID();
+//					
+//					/* contact GUID*/
+//					String contactGUID = null;// need to see if contact tag is present throw exception if contact is not there
+//					
+//					if((gwDataRespTO.getContact() != null) && (gwDataRespTO.getContact().size() > 0)){
+//						
+//						contactGUID=gwDataRespTO.getContact().get(0).getContactGUID();
+//						if(contactGUID != null){
+//							processGUID(visualId,contactGUID);
+//						}else{
+//							logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
+//							dtiTktTO.setResultType(ResultType.INELIGIBLE);
+//							//If DLR query ticket returns without a picture and without usage, then it should be INELIGIBLE. TODO
+//							//QEP should then return INELIGIBLE.
+//							//If someone attempts to upgrade with a ticket that had no demos, then it fails with 564.
+//						}
+//					}else{
+//						logger.sendEvent("No Contact GUID found , Product is INELIGIBLE ",EventType.DEBUG,THISINSTANCE);
+//						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+//					}
+//										
+//					/*Insert the GUID in table if GUID is not present assuming contact tag will be present in the response as it is present in req */
+//					/*Setting up the Upgraded Product Detail*/
+//					
+//					ArrayList<DBProductTO> newProductcatalogList=
+//							getUpgradedProduct(upGradePluList, dtiTktTO, dtiTxn);
+//					
+//					/*Setting up the respArrayList<UpgradeCatalogTO>onse Detail*/
+//					setQueryEligibleResponseCommand(guestProduct,dtiTktTO,newProductcatalogList);
+//					
+//				}else{
+//					logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,THISINSTANCE);
+//				}
+//				/*Pass the object to QEP command Object*/
+//				qtResp.add(dtiTktTO);
+//			}
+//		} else {
+//			
+//			logger.sendEvent("No Ticket Detail Found.", EventType.DEBUG,THISINSTANCE);
+//			
+//			//Throw Exception 
+//			throw new DTIException(DTIErrorCode.TICKET_INVALID);
+//		}
 
 		// Pass the information fetched in form of ticket to response
 		
@@ -389,55 +420,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		TicketRules.validateExternalTktIdOnly(aTicketTO);
 
 		return;
-	}
-
-	/**
-	 * Sets the guest product details.
-	 * 
-	 * @param gwDataRespTO
-	 *            the gw data resp TO
-	 * @return the array list
-	 * @throws DTIException
-	 *             the DTI exception
-	 */
-	public static GuestProductTO setGuestProductDetails(
-			GWDataRequestRespTO gwDataRespTO,TicketTO dtiTktTO, String plu) throws DTIException {
-		
-		/*This method is used for processing step 1 */
-		GuestProductTO guestProductTO=new GuestProductTO();
-		
-		ArrayList<DBProductTO> dbProductTO = null;
-		
-		ArrayList<String> pluList = new ArrayList<String>();
-		pluList.add(plu);
-		try{
-			dbProductTO = ProductKey.getProductsByTktName(pluList);
-		}catch(Exception e){
-			throw new DTIException(ProductKey.class,
-					DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getProductsByTktName", e);
-		}
-		//Checking the dbProduct size
-		if((dbProductTO != null) && (dbProductTO.size() > 0)){ 
-			
-		  logger.sendEvent(dbProductTO.toString(), EventType.DEBUG,THISINSTANCE);
-		  ResultStatusTo resultStatusTo = new ResultStatusTo(
-					ResultType.ELIGIBLE);
-		  dtiTktTO.setResultType(ResultType.ELIGIBLE);
-		  guestProductTO.setDbproductTO(dbProductTO.get(0));
-		  
-		  /*Setting up GWDataRequestRespTO in case of DLR*/
-		  guestProductTO.setGwDataRespTO(gwDataRespTO);
-		  
-		}else{
-		  logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG,THISINSTANCE);
-		  ResultStatusTo resultStatusTo = new ResultStatusTo(
-					ResultType.INELIGIBLE);
-		  dtiTktTO.setResultType(ResultType.INELIGIBLE);
-			
-		}
-		/*Return the GuestProductTO*/
-		return guestProductTO;
 	}
 	
 	/**

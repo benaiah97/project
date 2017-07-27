@@ -602,7 +602,13 @@ public class GWQueryEligibleProductsTicketXML {
 		        dataRespTO.setTicketDate(ticketDate);
 		      }
 		      
-		      // Adding new Tag UpgradePLUList
+		      // String PLU - this is PLU for the current guest ticket
+		      if (element.getName().compareTo("PLU") == 0) {
+		        String plu = element.getText();
+		        dataRespTO.setPlu(plu);
+		      }
+		      
+		      // Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can upgrade to
 		      if(element.getName().compareTo("UpgradePLUList")==0){
 		    	  extractUplgradePlU(dataRespTO, i, element);
 		      }
@@ -610,7 +616,9 @@ public class GWQueryEligibleProductsTicketXML {
 		      // Adding new Tag Contact
 		      if(element.getName().compareTo("Contact")==0){
 		    	  extractContact(dataRespTO, element);
-		      }
+		      } 
+		      
+		      //TODO - Map Has Picture and Payment Plan inside the Upgrade PLU List
 
 		    }
 
@@ -628,6 +636,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 */
 	private static void extractUplgradePlU(GWDataRequestRespTO dataRespTO,
 	      Iterator<org.dom4j.Element> i, Element lineageRequestResponse) throws DTIException{
+			//TODO - NG typo in the method signature
 		  
 		    // LineageRequestResponse
 		    Node linReqResp = lineageRequestResponse;
@@ -641,22 +650,28 @@ public class GWQueryEligibleProductsTicketXML {
 		      Node linRecord = (Node) linRecordList.get(index);
 
 		      // Create the inner class
+		      //TODO NG - this needs to be outside of the for loop, this is a bug
 		      GWDataRequestRespTO.UpgradePLUList uplUpgradePLUList = dataRespTO.new UpgradePLUList();
 		      
 		      // PLU
 		      Node pluNode = linRecord.selectSingleNode("PLU");
 		      if (pluNode != null) {
+		    	  // TODO NG - typo in the variable name
 		    	  uplUpgradePLUList.setPLU(pluNode.getText());
 		      }
 
 		      // Price
+		      // TODO NG - do we need to append .00? check BigDecimal conversion
+		      // TODO NG - reformatting and brakets even for single statement ifs
 		      Node priceNode = linRecord.selectSingleNode("Price");
 		      if (priceNode != null) {
 		        String inText = priceNode.getText();
 		        //TODO add price section
-		      if (inText.contains(".")) uplUpgradePLUList
-		            .setPrice(new BigDecimal(inText));
-		        else uplUpgradePLUList.setPrice(new BigDecimal(inText + ".00"));
+				      if (inText.contains(".")) { 
+				    	  uplUpgradePLUList.setPrice(new BigDecimal(inText));
+				      } else { 
+				    	  uplUpgradePLUList.setPrice(new BigDecimal(inText + ".00"));
+				      }
 		      }
 		      
 		      // Upgraded Price
@@ -670,6 +685,8 @@ public class GWQueryEligibleProductsTicketXML {
 		      }
 		      // Save it to the array
 		      dataRespTO.addUpgradePLUList(uplUpgradePLUList);
+		      
+		      //TODO NG - map Payment Plan elements if present/applicable
 
 		    }
 
@@ -682,7 +699,7 @@ public class GWQueryEligibleProductsTicketXML {
 		
 		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
 		
-		 for (Iterator<org.dom4j.Element> i = lineageRequestResponse.elementIterator(); i
+		for (Iterator<org.dom4j.Element> i = lineageRequestResponse.elementIterator(); i
 			        .hasNext();) {
 			 
 			      Element element = i.next();
