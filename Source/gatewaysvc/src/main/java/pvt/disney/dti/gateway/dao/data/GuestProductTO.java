@@ -6,20 +6,19 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 
-
-// TODO: Auto-generated Javadoc
+// 
 /**
  * The Class GuestProductTO.
- * 
  */
+
 public class GuestProductTO {
 
 	/** The dbproduct TO. */
 	private DBProductTO dbproductTO;
-	
+
 	/** The OMNI ticket list. */
-	private ArrayList<OTTicketInfoTO> otTicketList;
-	
+	private OTTicketInfoTO otTicketInfo;
+
 	/** The gw data resp TO. */
 	private GWDataRequestRespTO gwDataRespTO;
 
@@ -31,24 +30,26 @@ public class GuestProductTO {
 	}
 
 	/**
-	 * @param dbproductTO the dbproductTO to set
+	 * @param dbproductTO
+	 *           the dbproductTO to set
 	 */
 	public void setDbproductTO(DBProductTO dbproductTO) {
 		this.dbproductTO = dbproductTO;
 	}
 
 	/**
-	 * @return the otTicketList
+	 * @return the otTicketInfo
 	 */
-	public ArrayList<OTTicketInfoTO> getOtTicketList() {
-		return otTicketList;
+	public OTTicketInfoTO getOtTicketInfo() {
+		return otTicketInfo;
 	}
 
 	/**
-	 * @param otTicketList the otTicketList to set
+	 * @param otTicketInfo
+	 *           the otTicketInfo to set
 	 */
-	public void setOtTicketList(ArrayList<OTTicketInfoTO> otTicketList) {
-		this.otTicketList = otTicketList;
+	public void setOtTicketInfo(OTTicketInfoTO otTicketInfo) {
+		this.otTicketInfo = otTicketInfo;
 	}
 
 	/**
@@ -59,11 +60,11 @@ public class GuestProductTO {
 	}
 
 	/**
-	 * @param gwDataRespTO the gwDataRespTO to set
+	 * @param gwDataRespTO
+	 *           the gwDataRespTO to set
 	 */
 	public void setGwDataRespTO(GWDataRequestRespTO gwDataRespTO) {
 		this.gwDataRespTO = gwDataRespTO;
 	}
-	
-	
+
 }

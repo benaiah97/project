@@ -107,6 +107,8 @@ public class OTTicketInfoTO implements Serializable {
   
   /** AP Upgrade  */
   private String biometricTemplate;
+  
+  private String payPlan;
 
   /**
    * Gets the item.
@@ -590,7 +592,19 @@ public class OTTicketInfoTO implements Serializable {
 	public void setBiometricTemplate(String biometricTemplate) {
 		this.biometricTemplate = biometricTemplate;
 	}
-  
-  
-  
-}
+
+	/**
+	 * @return the payPlan
+	 */
+	public String getPayPlan() {
+		return payPlan;
+	}
+
+	/**
+	 * @param payPlan the payPlan to set
+	 */
+	public void setPayPlan(String payPlan) {
+		this.payPlan = payPlan;
+	}
+	
+  }
