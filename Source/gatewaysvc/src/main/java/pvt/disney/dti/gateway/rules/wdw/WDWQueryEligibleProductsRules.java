@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.data.GuestProductTO;
@@ -49,8 +50,12 @@ import com.disney.logging.audit.EventType;
  */
 public class WDWQueryEligibleProductsRules {
 
+   /** Event logger. */
+   private static final EventLogger logger = EventLogger.getLogger(WDWQueryEligibleProductsRules.class.getCanonicalName());
+   
    /** Object instance used for logging. */
    private static final WDWQueryEligibleProductsRules THISINSTANCE = new WDWQueryEligibleProductsRules();
+
    /** Request type header constant. */
    private final static String REQUEST_TYPE_QUERY = "Query";
 
@@ -74,8 +79,13 @@ public class WDWQueryEligibleProductsRules {
 
    /** Constant text for ITEM ONE (1). */
    private final static String ITEMONE = "1";
-   /** Event logger. */
-   private static final EventLogger logger = EventLogger.getLogger(WDWQueryEligibleProductsRules.class.getCanonicalName());
+   
+   /*Simple Date Format*/
+   private static final SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
+   
+   private static final int NUMBER_FOR_DAYCOUNT = 24 * 60 * 60 * 1000;
+   
+ 
 
    /**
     * Transform the DTITransactionTO value object to the provider value objects
@@ -393,24 +403,23 @@ public class WDWQueryEligibleProductsRules {
     * @throws DTIException the DTI exception
     */
    public static boolean validateInEligibleProducts(OTTicketInfoTO otTicketInfo, DBProductTO productTO) throws DTIException {
-	   
-      logger.sendEvent("Entering validateInEligibleProducts", EventType.DEBUG, THISINSTANCE);
       
       boolean isInEligibleProductFlag = false;
       
       Date date = null;
-      Integer voidCode = null;
-      GregorianCalendar endDate = null;
+      
       ArrayList<OTUsagesTO> usagesTOs = null;
+      
       String biometricTemplet = null;
+      
       Date firstuseDate = null;
       /* Getting Ticket details */
      
       /*Void Code */
-      voidCode = otTicketInfo.getVoidCode();
+      Integer voidCode = otTicketInfo.getVoidCode();
          
       /*End Date*/
-      endDate = otTicketInfo.getValidityEndDate();
+      GregorianCalendar  endDate = otTicketInfo.getValidityEndDate();
          
       /*Usages*/
       usagesTOs = otTicketInfo.getUsagesList();
@@ -426,93 +435,99 @@ public class WDWQueryEligibleProductsRules {
     	  
          for (OTUsagesTO otUsagesTO : usagesTOs) {
           
-           SimpleDateFormat fmt = new SimpleDateFormat("yy-MM-dd");
-            
         	if (otUsagesTO.getDate() != null) {
               try {
                   date = fmt.parse(otUsagesTO.getDate());
               } catch (ParseException e) {
-                  logger.sendEvent("Exception executing validateInEligibleProducts: " + e.toString(), EventType.WARN,
+                  logger.sendEvent("Exception executing validateInEligibleProducts: " + e.toString(), EventType.EXCEPTION,
                            THISINSTANCE);
+                  throw new DTIException(WDWQueryEligibleProductsRules.class,
+                          DTIErrorCode.DTI_DATA_ERROR,
+                          "Exception executing validateInEligibleProducts");
               }
             }
             useDates.add(date);
-         }// Usages for 
+         }
          
          /* First use date */
          firstuseDate = Collections.min(useDates);
-         GregorianCalendar calendar = new GregorianCalendar();
-         calendar.setTime(firstuseDate);
-      }// if
-      
+      }
       /*
        * VoidCode in the ATS Query Ticket response greater than 0 or less than
        * or equal to 100
        */
       if (voidCode != null && (voidCode > 0 && voidCode <= 100)) {
-    	  
          return isInEligibleProductFlag = true;
-         
       }
-      
       /* Usages must have one entry and BiometricTemplate must have one entry */
       if ((usagesTOs != null && (usagesTOs.size() == 0) || biometricTemplet == null)) {
-    	  
          return isInEligibleProductFlag = true;
-         
       }
 
       if (productTO != null) {
-    	  
-         long currentDateMiliSec = new Date().getTime();
-         
          try {
             /* UpgrdPathId is 0 */
             if (productTO.getUpgrdPathId() != null && productTO.getUpgrdPathId().intValue() == 0) {
-            	
                isInEligibleProductFlag = true;
-               
-            }// if
-            
+            }
             /* ResidentInd is N and Validity EndDate less than today */
             if (endDate != null && productTO.isResidentInd() == false
-                     && (currentDateMiliSec - endDate.getTime().getTime()) / 86400000 > 0) {
-            	
+                     && getDayDifference(endDate)> 0) {
                isInEligibleProductFlag = true;
-               
-            }// if
-            
+            }
             /*
              * ResidentInd is Y and DayCount = 1 and the first use date is older
              * than 14 days
              */
             if (firstuseDate != null && productTO.isResidentInd() == true
                      && Integer.parseInt(productTO.getDayCount()) == 1
-                     && currentDateMiliSec - firstuseDate.getTime() / 86400000 > 14) {
-            	
+                     && getDayDifference(firstuseDate) > 14) {
                isInEligibleProductFlag = true;
-               
-            }// if
-            
+            }
             /*
              * resident flag is 'Y' and DayCount > 1, and the first use date is
              * older than six months (185 days).
              */
             if (firstuseDate != null && productTO.isResidentInd() == true
                      && Integer.parseInt(productTO.getDayCount()) > 1
-                     && new Date().getTime() - firstuseDate.getTime() / 86400000 > 185) {
-            	
+                     && getDayDifference(firstuseDate) > 185) {
                isInEligibleProductFlag = true;
-               
-            }// if
-            
+            }
          } catch (Exception e) {
             logger.sendEvent("Exception executing validateInEligibleProducts: " + e.toString(), EventType.EXCEPTION,
                      THISINSTANCE);
+            throw new DTIException(WDWQueryEligibleProductsRules.class,
+                    DTIErrorCode.DTI_DATA_ERROR,
+                    "Exception executing validateInEligibleProducts");
          }
-         
-      }// if
+      }
       logger.sendEvent("validateInEligibleProducts method end ", EventType.DEBUG, THISINSTANCE);
       return isInEligibleProductFlag;
+
    }
+   
+   /**
+    * To get the day difference for the day argument
+    * 
+    * @param date
+    * @return
+    */
+    private static long getDayDifference(Date date) {
+
+      long difference = new Date().getTime() - date.getTime() / NUMBER_FOR_DAYCOUNT;
+      return difference;
+   }
+
+   /**
+    * To get the day difference for the GregorianCalendar argument
+    * 
+    * @param calendar
+    * @return
+    */
+    private static long getDayDifference(GregorianCalendar calendar) {
+
+      long difference = new Date().getTime() - calendar.getTime().getTime() / NUMBER_FOR_DAYCOUNT;
+      return difference;
+   }
+
 }
