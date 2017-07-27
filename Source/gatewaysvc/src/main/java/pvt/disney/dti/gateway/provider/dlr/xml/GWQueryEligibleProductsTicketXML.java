@@ -11,9 +11,6 @@ import java.util.List;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
@@ -23,8 +20,10 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketErrorsTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
 import pvt.disney.dti.gateway.util.UtilityXML;
+
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 public class GWQueryEligibleProductsTicketXML {
 	
@@ -610,7 +609,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 		      // Adding new Tag Contact
 		      if(element.getName().compareTo("Contact")==0){
-		    	  extractContact(dataRespTO, i, element);
+		    	  extractContact(dataRespTO, element);
 		      }
 
 		    }
@@ -679,200 +678,220 @@ public class GWQueryEligibleProductsTicketXML {
 	  }
 
 
-	private static void extractContact(GWDataRequestRespTO dataRespTO,
-		      Iterator<org.dom4j.Element> i, Element lineageRequestResponse) throws DTIException{
+	private static void extractContact(GWDataRequestRespTO dataRespTO, Element lineageRequestResponse) throws DTIException{
 		
-		 // LineageRequestResponse
-	    Node linReqResp = lineageRequestResponse;
+		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
 		
-	    List linRecordList = linReqResp.selectNodes("Contact");
+		 for (Iterator<org.dom4j.Element> i = lineageRequestResponse.elementIterator(); i
+			        .hasNext();) {
+			 
+			      Element element = i.next();
+			      
+		             // String First Name
+				      if (element.getName().compareTo("FirstName") == 0) {
+				        String firstName = element.getText();
+				        contact.setFirstName(firstName);
+				        continue;
+				      }
 
-	    for (int index = 0; index < linRecordList.size(); index++) {
+				      // MiddleName
+				      if (element.getName().compareTo("MiddleName") == 0) {
+					        String middleName = element.getText();
+					        contact.setMiddleName(middleName);
+					        continue;
+					  }
+			            
+				      // String Last Name
+				      if (element.getName().compareTo("LastName") == 0) {
+				    	  String lastName = element.getText();
+				    	  contact.setLastName(lastName);
+				    	  continue;
+				      }
+				 
+				      // String IdentificationNo 
+				      if (element.getName().compareTo("IdentificationNo") == 0) {
+				        String identificationNo = element.getText();
+				        contact.setIdentificationNo(identificationNo);
+				        continue;
+				      }
 
-	      Node linRecord = (Node) linRecordList.get(index);
-	      
-	      // Create the inner class
-	      GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
-	      
-	      // FirstName
-	      Node firstNameNode = linRecord.selectSingleNode("FirstName");
-	      if (firstNameNode != null) {
-	    	  contact.setFirstName(firstNameNode.getText());
-	      }
-	      
-	      // MiddleName
-	      Node middleNameNode = linRecord.selectSingleNode("MiddleName");
-	      if (middleNameNode != null) {
-	    	  contact.setMiddleName(middleNameNode.getText());
-	      }
-	      
-	      // LastName
-	      Node lastNameNode = linRecord.selectSingleNode("LastName");
-	      if (lastNameNode != null) {
-	    	  contact.setLastName(lastNameNode.getText());
-	      } 
-	      
-	      // IdentificationNo
-	      Node identificatioNo = linRecord.selectSingleNode("IdentificationNo");
-	      if (identificatioNo != null) {
-	    	  contact.setIdentificationNo(identificatioNo.getText());
-	      }
-	      
-	      // Street1
-	      Node street1 = linRecord.selectSingleNode("Street1");
-	      if (street1 != null) {
-	    	  contact.setStreet1(street1.getText());
-	      }
-	      
-	      // Street2
-	      Node street2 = linRecord.selectSingleNode("Street2");
-	      if (street2 != null) {
-	    	  contact.setStreet2(street2.getText());
-	      } 
-	      
-	      // Street3
-	      Node street3 = linRecord.selectSingleNode("Street3");
-	      if (street3 != null) {
-	    	  contact.setStreet3(street3.getText());
-	      }
-	      
-	      // City
-	      Node cityNode = linRecord.selectSingleNode("City");
-	      if (cityNode != null) {
-	    	  contact.setCity(cityNode.getText());
-	      }
-	      
-	      // State
-	      Node stateNode = linRecord.selectSingleNode("State");
-	      if (stateNode != null) {
-	    	  contact.setState(stateNode.getText());
-	      }
-	      
-	      //ZIP
-	      Node zipNode = linRecord.selectSingleNode("ZIP");
-	      if (zipNode != null) {
-	    	  contact.setZip(zipNode.getText());
-	      }
-	      
-	      //CountryCode
-	      Node countryCodeNode = linRecord.selectSingleNode("CountryCode");
-	      if (countryCodeNode != null) {
-	    	  contact.setCountryCode(countryCodeNode.getText());
-	      }
-	      
-	      //Phone
-	      Node phoneNode = linRecord.selectSingleNode("Phone");
-	      if (phoneNode != null) {
-	    	  contact.setPhone(phoneNode.getText());
-	      }
-	      
-	      //Fax
-	      Node faxNode = linRecord.selectSingleNode("FaxNode");
-	      if (faxNode != null) {
-	    	  contact.setFax(faxNode.getText());
-	      }
-	      
-	      //Cell
-	      Node cellNode = linRecord.selectSingleNode("Cell");
-	      if (cellNode != null) {
-	    	  contact.setCell(cellNode.getText());
-	      }
-	      
-	      //Email
-	      Node emailNode = linRecord.selectSingleNode("Email");
-	      if (emailNode != null) {
-	    	  contact.setEmail(emailNode.getText());
-	      }
-	      
-	      //ExternalID
-	      Node externalIDNode = linRecord.selectSingleNode("ExternalID");
-	      if (externalIDNode != null) {
-	    	  contact.setExternalId(externalIDNode.getText());
-	      }
-	      
-	      //ContactGUID
-	      Node contactGUIDNode = linRecord.selectSingleNode("ContactGUID");
-	      if (contactGUIDNode != null) {
-	    	  contact.setContactGUID(contactGUIDNode.getText());
-	      } 
-	      
-	      //GalaxyContactID
-	      Node galaxyContactIDNode = linRecord.selectSingleNode("GalaxyContactID");
-	      if (galaxyContactIDNode != null) {
-	    	  contact.setGalaxyContactId(galaxyContactIDNode.getText());
-	      } 
-	      
-	      //JobTitle
-	      Node jobTitleNode = linRecord.selectSingleNode("JobTitle");
-	      if (jobTitleNode != null) {
-	    	  contact.setJobTitle(jobTitleNode.getText());
-	      }  
-	      
-	      //Primary
-	      Node pimaryNode = linRecord.selectSingleNode("Primary");
-	      if (pimaryNode != null) {
-	    	  contact.setPrimary(pimaryNode.getText());
-	      } 
-	      
-	      //ContactNote
-	      Node contactNoteNode = linRecord.selectSingleNode("ContactNote");
-	      if (contactNoteNode != null) {
-	    	  contact.setContactNote(contactNoteNode.getText());
-	      }  
-	      
-	      //NameTitleID
-	      Node nameTitleIDNode = linRecord.selectSingleNode("NameTitleID");
-	      if (nameTitleIDNode != null) {
-	    	  contact.setNameTitleId(nameTitleIDNode.getText());
-	      }  
-	      
-	      //NameSuffixID
-	      Node nameSuffixIDNode = linRecord.selectSingleNode("NameSuffixID");
-	      if (nameSuffixIDNode != null) {
-	    	  contact.setNameSuffixId(nameSuffixIDNode.getText());
-	      }  
-	      
-	      //TotalPaymentContracts
-	      Node totalPaymentContractsNode = linRecord.selectSingleNode("TotalPaymentContracts");
-	      if (totalPaymentContractsNode != null) {
-	    	  contact.setTotalPaymentContracts(totalPaymentContractsNode.getText());
-	      } 
-	      
-	      //AllowEmail
-	      Node allowEmailNode = linRecord.selectSingleNode("AllowEmail");
-	      if (allowEmailNode != null) {
-	    	  contact.setAllowMail(allowEmailNode.getText());
-	      }  
-	      
-	      //AllowMailings
-	      Node allowMailingsNode = linRecord.selectSingleNode("AllowMailings");
-	      if (allowMailingsNode != null) {
-	    	  contact.setAllowMailing(allowMailingsNode.getText());
-	      }  
-	      
-	      //DOB
-	      Node DOBNode = linRecord.selectSingleNode("DOB");
-	      if (DOBNode != null) {
-	    	  contact.setDob(DOBNode.getText());
-	      }  
-	      
-	      //AgeGroup
-	      Node ageGroupNode = linRecord.selectSingleNode("AgeGroup");
-	      if (ageGroupNode != null) {
-	    	  contact.setAgeGroup(ageGroupNode.getText());
-	      }
-	      
-	      
-	      //Gender
-	      Node genderNode = linRecord.selectSingleNode("Gender");
-	      if (genderNode != null) {
-	    	  contact.setGender(genderNode.getText());
-	      }
-	      
-	      // Save it to the array
-	      dataRespTO.addContactList(contact);
+				      // String Street1
+				      if (element.getName().compareTo("Street1") == 0) {
+				        String street1 = element.getText();
+				        contact.setStreet1(street1);
+				        continue;
+				      }
 
-	    }
+				      // String Street2
+				      if (element.getName().compareTo("Street2") == 0) {
+				        String street2 = element.getText();
+				        contact.setStreet2(street2);
+				        continue;
+				      }
+
+				      // String Street3
+				      if (element.getName().compareTo("Street3") == 0) {
+				        String street3 = element.getText();
+				        contact.setStreet3(street3);
+				        continue;
+				      }
+				      // String City
+				      if (element.getName().compareTo("City") == 0) {
+				        String city = element.getText();
+				        contact.setCity(city);
+				        continue;
+				      }
+
+				      // String State
+				      if (element.getName().compareTo("State") == 0) {
+				        String state = element.getText();
+				        contact.setState(state);
+				        continue;
+				      }
+
+				      // String ZIP
+				      if (element.getName().compareTo("ZIP") == 0) {
+				        String zip = element.getText();
+				        contact.setZip(zip);
+				        continue;
+				      }
+				      
+				      // String CountryCode
+				      if (element.getName().compareTo("CountryCode") == 0) {
+				        String countryCode = element.getText();
+				        contact.setCountryCode(countryCode);
+				        continue;
+				      }
+
+				      // String Phone
+				      if (element.getName().compareTo("Phone") == 0) {
+				        String phone = element.getText();
+				        contact.setPhone(phone);
+				        continue;
+				      }
+
+				      // String Fax
+				      if (element.getName().compareTo("Fax") == 0) {
+				        String fax = element.getText();
+				        contact.setFax(fax);
+				        continue;
+				      }
+
+				      // String Cell
+				      if (element.getName().compareTo("Cell") == 0) {
+				        String cell = element.getText();
+				        contact.setCell(cell);
+				        continue;
+				      }
+
+				      // String Email
+				      if (element.getName().compareTo("Email") == 0) {
+				        String email = element.getText();
+				        contact.setEmail(email);
+				        continue;
+				      }
+
+				      // String ExternalID
+				      if (element.getName().compareTo("ExternalID") == 0) {
+				        String externalID = element.getText();
+				        contact.setExternalId(externalID);
+				        continue;
+				      }
+				    
+				      // String ContactGUID
+				      if (element.getName().compareTo("ContactGUID") == 0) {
+				        String contactGUID = element.getText();
+				        contact.setContactGUID(contactGUID);
+				        continue;
+				      }
+				    
+				      // String GalaxyContactID
+				      if (element.getName().compareTo("GalaxyContactID") == 0) {
+				        String galaxyContactID = element.getText();
+				        contact.setGalaxyContactId(galaxyContactID);
+				        continue;
+				      }
+				    
+				      // String JobTitle
+				      if (element.getName().compareTo("JobTitle") == 0) {
+				        String jobTitle = element.getText();
+				        contact.setJobTitle(jobTitle);
+				        continue;
+				      }
+
+				      // String Primary
+				      if (element.getName().compareTo("Primary") == 0) {
+				        String primary = element.getText();
+				        contact.setPrimary(primary);
+				        continue;
+				      }
+				    
+				      // String ContactNote
+				      if (element.getName().compareTo("ContactNote") == 0) {
+				        String contactNote = element.getText();
+				        contact.setContactNote(contactNote);
+				        continue;
+				      }
+				    
+				      // String NameTitleID
+				      if (element.getName().compareTo("NameTitleID") == 0) {
+				        String nameTitleID = element.getText();
+				        contact.setNameTitleId(nameTitleID);
+				        continue;
+				      }
+				      
+				      // String NameSuffixID
+				      if (element.getName().compareTo("NameSuffixID") == 0) {
+				        String nameSuffixID = element.getText();
+				        contact.setNameSuffixId(nameSuffixID);
+				        continue;
+				      }
+				      
+				      // String TotalPaymentContracts
+				      if (element.getName().compareTo("TotalPaymentContracts") == 0) {
+				        String totalPaymentContracts = element.getText();
+				        contact.setTotalPaymentContracts(totalPaymentContracts);
+				        continue;
+				      }
+				      
+				      // String AllowEmail
+				      if (element.getName().compareTo("AllowEmail") == 0) {
+				        String allowEmail = element.getText();
+				        contact.setAllowMail(allowEmail);
+				        continue;
+				      }
+				      
+				      // String AllowMailings
+				      if (element.getName().compareTo("AllowMailings") == 0) {
+				        String allowMailings = element.getText();
+				        contact.setAllowMailing(allowMailings);
+				        continue;
+				      }
+				      
+				      // String DOB
+				      if (element.getName().compareTo("DOB") == 0) {
+				        String DOB = element.getText();
+				        contact.setDob(DOB);
+				        continue;
+				      }
+				      
+				      // String AgeGroup
+				      if (element.getName().compareTo("AgeGroup") == 0) {
+				        String ageGroup = element.getText();
+				        contact.setAgeGroup(ageGroup);
+				        continue;
+				      }
+				      
+				      // String Gender
+				      if (element.getName().compareTo("Gender") == 0) {
+				        String gender = element.getText();
+				        contact.setGender(gender);
+				      }
+				   
+			      
+		 }
+		 dataRespTO.addContactList(contact);
+		 
 	    }
 	    
 	  /**
