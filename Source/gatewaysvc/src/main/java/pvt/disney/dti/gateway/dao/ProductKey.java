@@ -40,13 +40,16 @@ public class ProductKey {
 	/** Object instance used for logging. */
 	private static final ProductKey THISINSTANCE = new ProductKey();
 
+ 
 	/** Event logger. */
 	private static final EventLogger logger = EventLogger
 			.getLogger(ProductKey.class.getCanonicalName());
 
+
 	/** Constant representing the get products query. */
 	private static final String GET_PRODUCTS = "GET_PRODUCTS";
 
+  
 	/** Constant representing the get product ticket type query. */
 	private static final String GET_PDT_TKT_TYPE = "GET_PDT_TKT_TYPE";
 
@@ -64,6 +67,7 @@ public class ProductKey {
 
 	/** Constant representing the get ticket to product query. */
 	private static final String GET_TKT_TO_PRODUCT = "GET_TKT_TO_PRODUCT";
+  
 
 	/** Constant representing the get product from ticket number query . */
 	private static final String GET_PRD_FROM_TKTNBR = "GET_PRD_FROM_TKTNBR";
@@ -683,6 +687,7 @@ public class ProductKey {
 					DTIErrorCode.INVALID_PRODUCT_CODE,
 					"getOrderProducts DB routine found an empty ticket list.");
 		}
+  
 
 		try {
 			// Retrieve and validate the parameters

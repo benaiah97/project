@@ -255,9 +255,8 @@ public class DLRRenewEntitlementRules implements TransformConstants {
       orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
     }
 
-    // OrderDate
-    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules
-        .getGMTDateNow()));
+    // OrderDate (Now PT, as of 2.17.2.1 JTL)
+    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getPTDateNow()));
 
     // OrderStatus ( 1 if unpaid, 2 if paid )
     ArrayList<PaymentTO> payListTO = resReq.getPaymentList();

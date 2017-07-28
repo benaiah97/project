@@ -348,7 +348,7 @@ public class QueryEligibleProductsXML {
 
 			}
 			
-			// ResultStatus
+			// ResultStatus // TO DO 
 			String result = null;
 			
 			if (aTicketTO.getResultType() != null) {
