@@ -330,7 +330,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 //		}
 
 		// Pass the information fetched in form of ticket to response
-		
 		dtiRespTO.setCommandBody(qtResp);
 		dtiTxn.setResponse(dtiRespTO);
 
