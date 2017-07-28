@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Envelope>
+	<Header>
+		<MessageID>123456</MessageID>
+		<MessageType>QueryOrderResponse</MessageType>
+		<SourceID>DLRMerch</SourceID>
+		<TimeStamp>2009-01-23 11:38:20</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<!-- <Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status> -->
+		<QueryOrderResponse>
+		<Tickets>
+				<Ticket>
+					<VisualID>6051039879902575</VisualID>
+					<ItemCode>21353</ItemCode>
+					<Price>65.00</Price>
+					<PLU>1</PLU>
+				</Ticket>
+			</Tickets>
+			</QueryOrderResponse>
+	</Body>
+</Envelope>

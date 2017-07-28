@@ -1,15 +1,14 @@
 package pvt.disney.dti.gateway.util;
 
-import static org.junit.Assert.fail;
 
+import java.io.InputStream;
 import java.util.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.test.util.TestUtilities;
 
@@ -21,13 +20,9 @@ import pvt.disney.dti.gateway.test.util.TestUtilities;
 public class PCIControlTestCase {
 
   private final static String MAGTRACKMASK = "ZZZZZZZZZZZZZZZZZZZZ";
-
   private final static String CREDITCARDMASK = "ZZZZZZZZZZZZ1111";
-
   private final static String GIFTCARDMASK = "111111111111ZZZZ";
-
   private final static String FULLCARDMASK = "ZZZZZZZZZZZZZZZZ";
-
   private final static String LENGTH3MASK = "ZZZ";
 
   /**
@@ -71,51 +66,48 @@ public class PCIControlTestCase {
   }
 
   /**
-   * Test
+   * Test 
    */
   @Test
   public final void testGetXmlWithPciTags() {
 
     // ***** Read the test file. *****
     String dirtyXML = null;
-    String inputFileName = new String("./config/PCIControlTest01.xml");
+    String inputFileName=null; 
+    InputStream in= this.getClass().getResourceAsStream("/pci/PCIControlTest01.xml");
 
     try {
-      dirtyXML = TestUtilities.getXMLfromFile(inputFileName);
+      dirtyXML = TestUtilities.getXMLFromFile(in);
     } catch (Exception e) {
-      fail("Unable to read test file: " + inputFileName + ". " + e.toString());
+      Assert.fail("Unable to read test file: " + inputFileName + ". " + e.toString());
     }
 
     String answerXML = null;
-    String answerFileName = new String("./config/PCIControlTest01Answer.xml");
+    String answerFileName=null;
+    InputStream in_ans= this.getClass().getResourceAsStream("/pci/PCIControlTest01Answer.xml");
     try {
-      answerXML = TestUtilities.getXMLfromFile(answerFileName);
+      answerXML = TestUtilities.getXMLFromFile(in_ans);
     } catch (Exception e) {
-      fail("Unable to read test file: " + answerFileName + ". " + e.toString());
+    	Assert.fail("Unable to read test file: " + answerFileName + ". " + e.toString());
     }
-
     String cleanXML = null;
     try {
       cleanXML = PCIControl.overwritePciDataInXML(dirtyXML);
     } catch (DTIException dtie) {
-      fail("DTIException occurred while cleaning XML: " + dtie.toString());
+    	Assert.fail("DTIException occurred while cleaning XML: " + dtie.toString());
     }
-
-    // Validate changes to XML
+   /*Validate changes to XML*/
     try {
       validateXMLOverwrites(cleanXML);
     } catch (Exception e) {
-      fail("DTIException occurred while validating clean XML: " + e.toString());
+    	Assert.fail("DTIException occurred while validating clean XML: " + e.toString());
     }
-
-    // Validate the reproduction of the XML.
+    /*Validate the reproduction of the XML.*/
     try {
       TestUtilities.compareXML(cleanXML, answerXML, "XMLTest");
     } catch (Exception e) {
-      fail("XML was altered beyond any PCI tags were present:" + e.toString());
+    	Assert.fail("XML was altered beyond any PCI tags were present:" + e.toString());
     }
-    
-    return;
   }
 
   /**
@@ -126,29 +118,23 @@ public class PCIControlTestCase {
 
     // ***** Read the test file. *****
     String dirtyXML = null;
-    String fileName = new String("./config/PCIControlTest02.xml");
-
+    InputStream in= this.getClass().getResourceAsStream("/pci/PCIControlTest02.xml");
     try {
-      dirtyXML = TestUtilities.getXMLfromFile(fileName);
+      dirtyXML = TestUtilities.getXMLFromFile(in);
     } catch (Exception e) {
-      fail("Unable to read test file: " + fileName + ". " + e.toString());
+    	Assert.fail("Unable to read test file: " + in + ". " + e.toString());
     }
-
     String cleanXML = null;
-
     try {
       cleanXML = PCIControl.overwritePciDataInXML(dirtyXML);
     } catch (DTIException dtie) {
-      fail("DTIException occurred while cleaning XML: " + dtie.toString());
+    	Assert.fail("DTIException occurred while cleaning XML: " + dtie.toString());
     }
-
     try {
       TestUtilities.compareXML(dirtyXML, cleanXML, "Transmission");
     } catch (Exception e) {
-      fail("XML was altered although no PCI tags were present:" + e.toString());
+    	Assert.fail("XML was altered although no PCI tags were present:" + e.toString());
     }
-
-    return;
   }
 
   /**
@@ -159,21 +145,16 @@ public class PCIControlTestCase {
 
     // ***** Read the test file. *****
     String dirtyXML = null;
-    String fileName = new String("./config/PCIControlTest03.xml");
-
+    InputStream in= this.getClass().getResourceAsStream("/pci/PCIControlTest03.xml");
     try {
-      dirtyXML = TestUtilities.getXMLfromFile(fileName);
+      dirtyXML = TestUtilities.getXMLFromFile(in);
     } catch (Exception e) {
-      fail("Unable to read test file: " + fileName + ". " + e.toString());
+    	Assert.fail("Unable to read test file: " + in + ". " + e.toString());
     }
-
     try {
       PCIControl.overwritePciDataInXML(dirtyXML);
-      fail("DTIException expected when parsing bad XML.");
     } catch (DTIException dtie) {
     }
-
-    return;
   }
   
   /**
@@ -186,54 +167,37 @@ public class PCIControlTestCase {
 
     // CCNbr
     PCIControlTestCase.validateFieldMask(cleanXML, "CCNbr", CREDITCARDMASK);
-
     // CCNumber
     PCIControlTestCase.validateFieldMask(cleanXML, "CCNumber", CREDITCARDMASK);
-
     // CCVV
     PCIControlTestCase.validateFieldMask(cleanXML, "CCVV", LENGTH3MASK);
-
     // GCNbr
     PCIControlTestCase.validateFieldMask(cleanXML, "GCNbr", GIFTCARDMASK);
-
     // Endorsement
     ArrayList<String> endList = TestUtilities.getRecurringTagData(cleanXML, "Endorsement");
     for /* each */(String aString : /* in */endList)
-      if (aString.compareTo(CREDITCARDMASK) != 0)
+      if (aString.compareTo(MAGTRACKMASK) != 0)
         throw new Exception("Endorsement not properly masked.");
-
     // CCTrack1
     PCIControlTestCase.validateFieldMask(cleanXML, "CCTrack1", MAGTRACKMASK);
-
     // CCTrack2
     PCIControlTestCase.validateFieldMask(cleanXML, "CCTrack2", MAGTRACKMASK);
-
     // GCTrack1
     PCIControlTestCase.validateFieldMask(cleanXML, "GCTrack1", MAGTRACKMASK);
-
     // GCTrack2
     PCIControlTestCase.validateFieldMask(cleanXML, "GCTrack2", MAGTRACKMASK);
-
     // CVN
     PCIControlTestCase.validateFieldMask(cleanXML, "CVN", LENGTH3MASK);
-
     // Track1
     PCIControlTestCase.validateFieldMask(cleanXML, "Track1", MAGTRACKMASK);
-
     // Track2
     PCIControlTestCase.validateFieldMask(cleanXML, "Track2", MAGTRACKMASK);
-
     // CVV
     PCIControlTestCase.validateFieldMask(cleanXML, "CVV", LENGTH3MASK);
-
     // CardNumber
     PCIControlTestCase.validateFieldMask(cleanXML, "CardNumber", FULLCARDMASK);
-
     // CAVVValue
     PCIControlTestCase.validateFieldMask(cleanXML, "CAVVValue", LENGTH3MASK);
-
-    return;
-
   }
 
   /**
@@ -249,8 +213,6 @@ public class PCIControlTestCase {
     String aString = TestUtilities.getTagData(xml, tag);
     if (aString.compareTo(expectedValue) != 0)
       throw new Exception(tag + " not properly masked.");
-
-    return;
   }
 
 }

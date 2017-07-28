@@ -664,6 +664,7 @@ public class OTTestUtil {
    */
   public static void validateTicketFlagList(ArrayList<Integer> flagList) throws Exception {
 
+
     // TicketFlag
     if ((flagList == null) || (flagList.size() < 1)) {
       throw new Exception("Object OTTicketInfoTO had an empty or null TicketFlag list.");

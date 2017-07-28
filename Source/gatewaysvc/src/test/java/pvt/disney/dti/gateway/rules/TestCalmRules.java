@@ -121,7 +121,7 @@ public class TestCalmRules {
 	 *
 	 * @throws Exception the exception
 	 */
-	@Test
+	// @Test
 	public void testCheckContingencyActionsLogicModuleForHkd() throws Exception {
 		System.out.println("Testing HKD Calm Rules");
 		CalmRules rules = CalmRules.getInstance(testProps);
@@ -139,7 +139,7 @@ public class TestCalmRules {
 	 *
 	 * @throws Exception the exception
 	 */
-	@Test
+	// @Test
 	public void testCheckContingencyActionsLogicModuleForWdw() throws Exception {
 		System.out.println("Testing WDW Calm Rules");
 		
@@ -158,7 +158,7 @@ public class TestCalmRules {
 	 *
 	 * @throws Exception the exception
 	 */
-	@Test 
+	// @Test
 	public void testCheckContingencyActionsLogicModuleForDlr() throws Exception {
 		System.out.println("Testing DLR Calm Rules");
 

@@ -1,10 +1,11 @@
 package pvt.disney.dti.gateway.util.flood;
 
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-
+import org.junit.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -32,18 +33,14 @@ public class FloodControlVolumeTestCase extends TestCase {
     super(name);
     
     props = new Properties();
-
-    FileInputStream inStream = null;
-
     try {
-      inStream = new FileInputStream("./config/FloodControlVolumeTestCase.properties");
-      props.load(inStream);
+    InputStream fileName = this.getClass().getResourceAsStream("/FloodControlVolumeTestCase.properties");
+      props.load(fileName);
     } catch (FileNotFoundException fnfe) {
-      fail("Unable to load properties for test." + fnfe.toString());
+      Assert.fail("Unable to load properties for test." + fnfe.getMessage());
     } catch (IOException ioe) {
-      fail("Unable to load properties for test." + ioe.toString());
+    	 Assert.fail("Unable to load properties for test." + ioe.getMessage());
     }
-
     keyFrequencyWindow = props.getProperty("FloodControl.KeyFrequencyWindow");
     keyFrequencyLimit = props.getProperty("FloodControl.KeyFrequencyLimit");
     keySuppressInterval = props.getProperty("FloodControl.KeySuppressInterval");
@@ -54,7 +51,6 @@ public class FloodControlVolumeTestCase extends TestCase {
    */
   protected void setUp() {
   }
-
   protected void tearDown() {
   }
 
@@ -67,7 +63,7 @@ public class FloodControlVolumeTestCase extends TestCase {
     try {
       floodControl = new TestImplementor(props);
     } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
+    	Assert.fail("Exception creating KeyMatchFloodControl:" + fcie.getMessage());
     }
 
     // **************************
@@ -76,30 +72,30 @@ public class FloodControlVolumeTestCase extends TestCase {
 
     String test = new String("Nonblocked" + getNewTestNumber());
 
-    // Run three occurrences back-to-back (should be legal)
-    // Relies on the KeyFrequencyLimit property above being set to 3.
+     /*Run three occurrences back-to-back (should be legal)
+    Relies on the KeyFrequencyLimit property above being set to 3.*/
     try {
       int numberOfAllowableOccurences = Integer.parseInt(keyFrequencyLimit);
       for (int i = 0; i < numberOfAllowableOccurences; i++) {
         floodControl.evaluateTransaction(test);
       }
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.getMessage());
     }
 
-    // Wait out the Key Frequency Window
+    /*Wait out the Key Frequency Window*/
     try {
       Thread.sleep((Integer.parseInt(keyFrequencyWindow) * 1000) + 50);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
 
-    // This should be a valid call, all three of the previous occurrences should
-    // have aged out.
+     /*This should be a valid call, all three of the previous occurrences should
+     have aged out.*/
     try {
       floodControl.evaluateTransaction(test);
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
 
     // **********************
@@ -107,82 +103,85 @@ public class FloodControlVolumeTestCase extends TestCase {
     // **********************
     test = new String("Blocked" + getNewTestNumber());
 
-    // Run three occurrences back-to-back (should be legal)
-    // Relies on the KeyFrequencyLimit property above being set to 3.
+    /* Run three occurrences back-to-back (should be legal)
+    Relies on the KeyFrequencyLimit property above being set to 3.*/
     try {
       int numberOfAllowableOccurences = Integer.parseInt(keyFrequencyLimit);
       for (int i = 0; i < numberOfAllowableOccurences; i++) {
         floodControl.evaluateTransaction(test);
       }
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
 
-    // This should be a blocking call
+   /* This should be a blocking call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeyBlockException 001 should have been generated for (" + test + ").");
+      Assert.fail("KeyBlockException 001 should have been generated for (" + test + ").");
     } catch (KeySuppressException kse) {
-      fail("KeySuppressException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeySuppressException occurred, but should have been KeyBlockException instead.");
     } catch (KeyBlockException kbe) {
-      // This is the expected result.
+     /*This is the expected result.*/
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeyBlockException instead.");
     } catch (KeyStoreException kse) {
-      fail("KeyStoreException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeyBlockException instead.");
     }
 
-    // This should be a supressing call
+    /* This should be a supressing call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeySuppressException 001 should have been generated for (" + test + ").");
+      Assert.fail("KeySuppressException 001 should have been generated for (" + test + ").");
     } catch (KeySuppressException kse) {
       // This is the expected result.
     } catch (KeyBlockException kbe) {
-      fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
     } catch (KeyStoreException kse) {
-      fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
     }
 
-    // "Almost" wait out the suppression interval. (KSI - 2 seconds)
+   /*"Almost" wait out the suppression interval. (KSI - 2 seconds)*/
     try {
       Thread.sleep((Integer.parseInt(keySuppressInterval) * 1000) - 2000);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
 
-    // This should be another supressing call
+    /* This should be another supressing call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeySuppressException 002 should have been generated for (" + test + ").");
+      Assert.fail("KeySuppressException 002 should have been generated for (" + test + ").");
     } catch (KeySuppressException kse) {
-      // This is the expected result.
+      /* This is the expected result.*/
     } catch (KeyBlockException kbe) {
-      fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
     } catch (KeyStoreException kde) {
-      fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
     }
 
-    // Wait 1 seconds to put you on the other side of the KSI.
+   /* Wait 1 seconds to put you on the other side of the KSI.*/
     try {
       Thread.sleep(2000);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
-
+    floodControl.getCacheRefreshInterval();
+    floodControl.isFloodControlActive();
+    floodControl.isKeyBlockException();
+    floodControl.getKeyFrequencyLimit();
     boolean blockRemovalLate = false;
 
-    // The next one should add normally (because the block aged out).
+    /*The next one should add normally (because the block aged out).*/
     try {
       floodControl.evaluateTransaction(test);
     } catch (KeySuppressException kse) {
       blockRemovalLate = true;
     } catch (Exception e) {
-      fail("Unexpected exception after key block expiry: " + e.toString());
+    	Assert.fail("Unexpected exception after key block expiry: " + e.toString());
     }
 
     if (blockRemovalLate) {
@@ -193,7 +192,7 @@ public class FloodControlVolumeTestCase extends TestCase {
           Thread.sleep(1000);
           numberOfSecondsLate++;
         } catch (InterruptedException ie) {
-          fail("Sleep thread was interrupted.");
+        	Assert.fail("Sleep thread was interrupted.");
         }
 
         try {
@@ -202,16 +201,14 @@ public class FloodControlVolumeTestCase extends TestCase {
         } catch (KeySuppressException kse) {
 
         } catch (Exception e) {
-          fail("Unexpected exception after key block expiry: " + e.toString());
+        	Assert.fail("Unexpected exception after key block expiry: " + e.toString());
         }
       }
 
       if (numberOfSecondsLate > 60) {
-        fail("Blocked key did not clear in a reasonable amount of time.");
+    	  Assert.fail("Blocked key did not clear in a reasonable amount of time.");
       }
-
     }
-
   }
 
   /**
