@@ -25,6 +25,7 @@ import pvt.disney.dti.gateway.request.xsd.AssociateMediaToAccountRequest;
 import pvt.disney.dti.gateway.request.xsd.CommandHeader;
 import pvt.disney.dti.gateway.request.xsd.CreateTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.PayloadHeader;
+import pvt.disney.dti.gateway.request.xsd.QueryEligibleProductsRequest;
 import pvt.disney.dti.gateway.request.xsd.QueryReservationRequest;
 import pvt.disney.dti.gateway.request.xsd.QueryTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest;
@@ -118,7 +119,24 @@ public class TransmissionRqstXML {
     jaxbReq = (Transmission) unmarshaller
         .unmarshal(new ByteArrayInputStream(requestXMLin.getBytes()));
 
-    dtiTransTO = new DTITransactionTO(requestType);
+    return getDtiTransactionTo(requestType, tktBroker, jaxbReq);
+
+  }
+  
+ 
+  /**
+ * This will call the actual logic of converting the Transmission object to the required DTiTransaction Object  
+ * @param requestType
+ * @param tktBroker
+ * @param jaxbReq
+ * @return
+ * @throws JAXBException
+ */
+public static DTITransactionTO getDtiTransactionTo(
+		TransactionType requestType, String tktBroker, Transmission jaxbReq)
+		throws JAXBException {
+	DTITransactionTO dtiTransTO;
+	dtiTransTO = new DTITransactionTO(requestType);
     dtiTransTO.setTktBroker(tktBroker);
 
     DTIRequestTO dtiRequestTO = new DTIRequestTO();
@@ -213,7 +231,13 @@ public class TransmissionRqstXML {
     case VOIDRESERVATION: // as of 2.16.3, JTL
       VoidReservationRequest vResReq = payload.getCommand().getVoidReservationRequest();
       commandBodyTO = VoidReservationXML.getTO(vResReq);
-      break;      
+      break;  
+      
+    case QUERYELIGIBLEPRODUCTS: // as of part of AP Upgrade Service
+	  QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand()
+		   .getQueryEligibleProductsRequest();
+	   commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
+	  break;  
 
     default:
       break;
@@ -225,8 +249,7 @@ public class TransmissionRqstXML {
     dtiTransTO.setRequest(dtiRequestTO);
 
     return dtiTransTO;
-
-  }
+}
   
   
   /**

@@ -1,6 +1,7 @@
 package pvt.disney.dti.gateway.data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
@@ -22,11 +23,22 @@ public class UpgradeEntitlementRequestTO extends CommandBodyTO implements Serial
 
 	/** Payment */
 	private ArrayList<PaymentTO> paymentList = new ArrayList<PaymentTO>();
-
+	
 	/**
 	 * Audit Notation (as of 2.12). When the transaction note in ATS needs to be used or a reason for a failure recorded,
 	 */
 	private String auditNotation;
+	
+  /**
+   * Identifies this as an installment reservation request (one which includes installment payments. This flag is set when the installment payment amount is validated. {@link ProductRules.validateInstallmentDownpayment() }
+   */
+  private boolean isInstallmentRequest = false;
+
+  /**
+   * Identifies the amount of the down-payment. This value is set when the installment payment amount is verified. It is used to populate values in the out-bound transaction to eGalaxy. {@link ProductRules.validateInstallmentDownpayment()
+   * }
+   */
+  private BigDecimal installmentDownpayment = null;
 
 	/* -------------------------------------------------------------------------------- */
 
@@ -74,5 +86,33 @@ public class UpgradeEntitlementRequestTO extends CommandBodyTO implements Serial
 	public void setAuditNotation(String auditNotation) {
 		this.auditNotation = auditNotation;
 	}
+
+  /**
+   * @return the isInstallmentRequest
+   */
+  public boolean isInstallmentRequest() {
+    return isInstallmentRequest;
+  }
+
+  /**
+   * @param isInstallmentRequest the isInstallmentRequest to set
+   */
+  public void setInstallmentRequest(boolean isInstallmentRequest) {
+    this.isInstallmentRequest = isInstallmentRequest;
+  }
+
+  /**
+   * @return the installmentDownpayment
+   */
+  public BigDecimal getInstallmentDownpayment() {
+    return installmentDownpayment;
+  }
+
+  /**
+   * @param installmentDownpayment the installmentDownpayment to set
+   */
+  public void setInstallmentDownpayment(BigDecimal installmentDownpayment) {
+    this.installmentDownpayment = installmentDownpayment;
+  }
 
 }

@@ -31,6 +31,7 @@ public class OTCommandTO implements Serializable {
     UPGRADETICKET,
     RENEWTICKET,
     MULTIENTITLEMENTACCOUNT,
+    ELIGIBLEPRODUCTS, // Probably not needed 
     UNDEFINED
   };
 
@@ -77,6 +78,9 @@ public class OTCommandTO implements Serializable {
 
   /** The Omni Ticket Update Transactions Transfer Object. */
   private OTRenewTicketTO renewTicketTO;
+  
+  /** The Omni Ticket Query Eligible Products Object. */
+  private OTQueryEligibleProductsTo queryEligbleProductsTO;
 
   /**
    * Instantiates a new Omni Ticket Command Transfer Object.
@@ -301,6 +305,9 @@ public class OTCommandTO implements Serializable {
     case RENEWTICKET:
       otErrorTO = renewTicketTO.getError();
       break;
+    case ELIGIBLEPRODUCTS:
+    	otErrorTO=queryEligbleProductsTO.getError();
+        break;
 
     default:
       break;
@@ -360,6 +367,15 @@ public class OTCommandTO implements Serializable {
       if (renewTicketTO == null) hasBody = false;
       else hasBody = true;
       break;
+      
+    case ELIGIBLEPRODUCTS:
+        if (queryEligbleProductsTO == null) {
+          hasBody = false;
+        }
+        else {
+          hasBody = true;
+        }
+        break;
 
     default:
       hasBody = false;
@@ -435,5 +451,22 @@ public class OTCommandTO implements Serializable {
   public void setRenewTicketTO(OTRenewTicketTO renewTicketTO) {
     this.renewTicketTO = renewTicketTO;
   }
+
+/**
+ * @return the queryEligbleProductsTO
+ */
+public OTQueryEligibleProductsTo getQueryEligbleProductsTO() {
+	return queryEligbleProductsTO;
+}
+
+/**
+ * @param queryEligbleProductsTO the queryEligbleProductsTO to set
+ */
+public void setQueryEligbleProductsTO(
+		OTQueryEligibleProductsTo queryEligbleProductsTO) {
+	this.queryEligbleProductsTO = queryEligbleProductsTO;
+}
+  
+  
 
 }

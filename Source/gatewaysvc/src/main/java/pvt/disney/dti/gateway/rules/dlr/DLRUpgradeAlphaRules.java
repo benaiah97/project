@@ -137,8 +137,8 @@ public class DLRUpgradeAlphaRules implements TransformConstants {
 		// Set MessageID to DTI Payload ID (to TpRefNum as of 2.16.1)
 		headerTO.setMessageID(new BigInteger(dtiTxn.getTpRefNum().toString()));
 
-		// Set the time stamp to the GMT date/time now.
-		headerTO.setTimeStamp(DateTimeRules.getGMTDateNow());
+    // Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
+    headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
 
 		// Set the echo data to the DTI payload ID (as of 2.16.1, JTL)
 		headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader()

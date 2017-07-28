@@ -24,6 +24,7 @@ import pvt.disney.dti.gateway.data.AssociateMediaToAccountRequestTO;
 import pvt.disney.dti.gateway.data.CreateTicketRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.QueryReservationRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementRequestTO;
@@ -52,6 +53,7 @@ import pvt.disney.dti.gateway.rules.dlr.DLRQueryTicketRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRRenewEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRReservationRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeAlphaRules;
+import pvt.disney.dti.gateway.rules.dlr.DLRUpgradeEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRVoidTicketRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDBusinessRules;
 import pvt.disney.dti.gateway.rules.hkd.HKDQueryReservationRules;
@@ -171,7 +173,11 @@ public abstract class BusinessRules {
       
     case VOIDRESERVATION: // As of 2.16.3, JTL
       applyVoidReservationRules(dtiTxn);
-      break;      
+      break;
+      
+    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
+    	applyEligibleProductRules(dtiTxn); // Adding the 
+      break;   
 
     default:
       throw new DTIException(BusinessRules.class,
@@ -848,6 +854,28 @@ public abstract class BusinessRules {
 
     return;
   }  
+  /**
+   * Apply Query Eligible Product business rules.
+   * 
+   * @param dtiTxn
+   *            the DTI transaction
+   * 
+   * @throws DTIException
+   *             should any rule fail.
+   */
+public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTIException{
+
+	    // RULE: Is this a QueryEligibleProducts Rule TO?
+	    CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
+	    if (commandBody.getClass() != QueryEligibleProductsRequestTO.class) {
+	      throw new DTIException(
+	          BusinessRules.class,
+	          DTIErrorCode.DTI_PROCESS_ERROR,
+	          "Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
+	    }
+	    return;
+	  
+  }
   
   /**
    * Apply upgrade entitlement business rules.
@@ -952,6 +980,8 @@ public abstract class BusinessRules {
     // Apply any rules unique to one provider.
     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
       WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
+    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
+    	DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
     }
 
     return;
@@ -1115,5 +1145,5 @@ public abstract class BusinessRules {
 
     return;
   }
-
+  
 }

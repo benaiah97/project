@@ -18,6 +18,9 @@ import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.GiftCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
+import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
@@ -152,66 +155,91 @@ public class UpgradeEntitlementXML {
 
 			if (aProdDemoData.getTktDemoData() != null) {
 
-				TktDemoData aTicketDemo = aProdDemoData.getTktDemoData();
+				TktDemoData aTktDemographic = aProdDemoData.getTktDemoData();
 				DemographicsTO aTicketDemoTO = new DemographicsTO();
 
 				// NOTE: In this specific case, the XSD enforces minimum lengths,
 				// so we know the length will never be zero.
 
-				// FirstName
-				aTicketDemoTO.setFirstName(aTicketDemo.getFirstName());
+        // FirstName
+        if (aTktDemographic.getFirstName() != null) {
+           aTicketDemoTO.setFirstName(aTktDemographic.getFirstName());
+        }
 
-				// LastName
-				aTicketDemoTO.setLastName(aTicketDemo.getLastName());
+        // LastName
+        if (aTktDemographic.getLastName() != null) {
+           aTicketDemoTO.setLastName(aTktDemographic.getLastName());
+        }
 
-				// DateOfBirth
-				XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTicketDemo
-						.getDateOfBirth();
-				GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
-				aTicketDemoTO.setDateOfBirth(tempCalendar);
+        // DateOfBirth
+        if (aTktDemographic.getDateOfBirth() != null) {
+           XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aTktDemographic.getDateOfBirth();
+           GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+           aTicketDemoTO.setDateOfBirth(tempCalendar);
+        }
+        
+        // Gender
+        if (aTktDemographic.getGender() != null) {
+           aTicketDemoTO.setGender(aTktDemographic.getGender());
+        }
 
-				// Gender
-				aTicketDemoTO.setGender(aTicketDemo.getGender());
+        // Addr1
+        if (aTktDemographic.getAddr1() != null) {
+           aTicketDemoTO.setAddr1(aTktDemographic.getAddr1());
+        }
 
-				// Addr1
-				aTicketDemoTO.setAddr1(aTicketDemo.getAddr1());
+        // Addr2 (opt)
+        if (aTktDemographic.getAddr2() != null) {
+          aTicketDemoTO.setAddr2(aTktDemographic.getAddr2());
+        }
 
-				// Addr2 (opt)
-				if (aTicketDemo.getAddr2() != null) {
-					aTicketDemoTO.setAddr2(aTicketDemo.getAddr2());
-				}
+        // City
+        if (aTktDemographic.getCity() != null) {
+        aTicketDemoTO.setCity(aTktDemographic.getCity());
+        }
 
-				// City
-				aTicketDemoTO.setCity(aTicketDemo.getCity());
+        // State (opt)
+        if (aTktDemographic.getState() != null) {
+          aTicketDemoTO.setState(aTktDemographic.getState());
+        }
 
-				// State (opt)
-				if (aTicketDemo.getState() != null) {
-					aTicketDemoTO.setState(aTicketDemo.getState());
-				}
+        // ZIP
+        if (aTktDemographic.getZip() != null) {
+           aTicketDemoTO.setZip(aTktDemographic.getZip());
+        }
 
-				// ZIP
-				aTicketDemoTO.setZip(aTicketDemo.getZip());
+        // Country
+        if (aTktDemographic.getCountry() != null)
+        aTicketDemoTO.setCountry(aTktDemographic.getCountry());
 
-				// Country
-				aTicketDemoTO.setCountry(aTicketDemo.getCountry());
+        // Telephone (opt) as of 2.16.1 APMP (JTL)
+        if (aTktDemographic.getTelephone() != null) {
+          aTicketDemoTO.setTelephone(aTktDemographic.getTelephone());
+        }
 
-				// Telephone (opt) as of 2.16.1 APMP JTL
-				if (aTicketDemo.getTelephone() != null) {
-					aTicketDemoTO.setTelephone(aTicketDemo.getTelephone());
-				}
+        // Email (opt)
+        if (aTktDemographic.getEmail() != null) {
+          aTicketDemoTO.setEmail(aTktDemographic.getEmail());
+        }
 
-				// Email (opt)
-				if (aTicketDemo.getEmail() != null) {
-					aTicketDemoTO.setEmail(aTicketDemo.getEmail());
-				}
+        // OptInSolicit (2.10)
+        if (aTktDemographic.getOptInSolicit() != null) {
+          if (aTktDemographic.getOptInSolicit().compareTo("YES") == 0) {
+            aTicketDemoTO.setOptInSolicit(new Boolean(true));
+          } else {
+            aTicketDemoTO.setOptInSolicit(new Boolean(false));
+          }
+        }
 
-				// OptInSolicit
-				if (aTicketDemo.getOptInSolicit().compareTo("YES") == 0) {
-					aTicketDemoTO.setOptInSolicit(new Boolean(true));
-				}
-				else {
-					aTicketDemoTO.setOptInSolicit(new Boolean(false));
-				}
+        // CellPhone (as of 2.16.3, JTL)
+        if (aTktDemographic.getCellPhone() != null) {
+          aTicketDemoTO.setCellPhone(aTktDemographic.getCellPhone());
+        }
+        
+        // Seller Ref (as of 2.16.3, JTL)
+        if (aTktDemographic.getSellerRef() != null) {
+          aTicketDemoTO.setSellerRef(aTktDemographic.getSellerRef());
+        }
 
 				aTicketTO.addTicketDemographic(aTicketDemoTO);
 
@@ -390,7 +418,81 @@ public class UpgradeEntitlementXML {
 
 				aPaymentTO.setGiftCard(giftCardTO);
 			}
-		}
+		} else if (payType.getInstallment() != null) { // (As of 2.17.3, JTL)
+
+      InstallmentTO instTO = new InstallmentTO();
+      UpgradeEntitlementRequest.Payment.PayType.Installment installment = payType.getInstallment();
+      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentCreditCard installCard = installment
+          .getInstallmentCreditCard();
+
+      InstallmentCreditCardTO installCCTO = instTO.getCreditCard();
+
+      if (installCard.getCCManual() != null) {
+        installCCTO.setCcNbr(installCard.getCCManual().getCCNbr());
+        installCCTO.setCcExpiration(installCard.getCCManual().getCCExpiration());
+        installCCTO.setCcName(installCard.getCCManual().getCCName());
+      } else {
+        installCCTO.setCcTrack1(installCard.getCCSwipe().getCCTrack1());
+        installCCTO.setCcTrack2(installCard.getCCSwipe().getCCTrack2());
+      }
+
+      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentDemoData installDemo = installment
+          .getInstallmentDemoData();
+      InstallmentDemographicsTO installDemoTO = instTO.getInstllDemo();
+
+      // First Name
+      installDemoTO.setFirstName(installDemo.getFirstName());
+
+      // Middle Name (opt)
+      if (installDemo.getMiddleName() != null) {
+        installDemoTO.setMiddleName(installDemo.getMiddleName());
+      }
+
+      // Last Name
+      installDemoTO.setLastName(installDemo.getLastName());
+
+      // DOB (opt)
+      if (installDemo.getDateOfBirth() != null) {
+        XMLGregorianCalendar tXCal = (XMLGregorianCalendar) installDemo.getDateOfBirth();
+        GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+        installDemoTO.setDateOfBirth(tempCalendar);
+      }
+
+      // Addr1
+      installDemoTO.setAddr1(installDemo.getAddr1());
+
+      // Addr2 (opt)
+      if (installDemo.getAddr2() != null) {
+        installDemoTO.setAddr2(installDemo.getAddr2());
+      }
+
+      // City
+      installDemoTO.setCity(installDemo.getCity());
+
+      // State
+      installDemoTO.setState(installDemo.getState());
+
+      // ZIP
+      installDemoTO.setZip(installDemo.getZip());
+
+      // Country
+      installDemoTO.setCountry(installDemo.getCountry());
+
+      // Telephone
+      installDemoTO.setTelephone(installDemo.getTelephone());
+
+      // AltTelephone (opt)
+      if (installDemo.getAltTelephone() != null) {
+        installDemoTO.setAltTelephone(installDemo.getAltTelephone());
+      }
+
+      // Email
+      installDemoTO.setEmail(installDemo.getEmail());
+
+      // Set the installment
+      aPaymentTO.setInstallment(instTO);
+
+    }
 
 		// PayAmount
 		if (aPayment.getPayAmount() != null) aPaymentTO

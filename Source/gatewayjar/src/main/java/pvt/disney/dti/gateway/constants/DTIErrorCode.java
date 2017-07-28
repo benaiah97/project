@@ -269,6 +269,8 @@ public class DTIErrorCode implements Serializable {
       "883", DTIErrorCode.ErrorScope.COMMAND, "Cannot find Reservation");
   public final static DTIErrorCode CANNOT_VOID_RESERVATION = new DTIErrorCode(
       "884", DTIErrorCode.ErrorScope.COMMAND, "Cannot void Reservation");  // As of 2.16.3, JTL
+  public final static DTIErrorCode CANNOT_GEN_RESCODE = new DTIErrorCode(
+      "885", DTIErrorCode.ErrorScope.COMMAND, "Cannot generate Rescode");  // As of 2.17.2, JTL  
   public final static DTIErrorCode PARTIAL_FAILURE = new DTIErrorCode("898",
       DTIErrorCode.ErrorScope.COMMAND, "Partial Failure");
   public final static DTIErrorCode UNDEFINED_FAILURE = new DTIErrorCode(
@@ -394,7 +396,7 @@ public class DTIErrorCode implements Serializable {
     if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.RESERVATION) {
       
       if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
-
+        
         DTIRequestTO dtiRequest = dtiTxn.getRequest();
         CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
         ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
@@ -405,7 +407,7 @@ public class DTIErrorCode implements Serializable {
           ReservationTO resTO = new ReservationTO();
           resTO.setResCode(resCode);
           resRespTO.setReservation(resTO);
-          dtiResp.setCommandBody(dtiResReq);
+          dtiResp.setCommandBody(resRespTO);
         }
         
       }

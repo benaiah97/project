@@ -656,21 +656,24 @@ public class HKDBusinessRules {
 //            .toUpperCase())));
 //      }
       
-      // Date of Birth DD
-      SimpleDateFormat sdf = new SimpleDateFormat("dd");
-      String dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
-      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_DD, dobString));
+      // Date of Birth (Optional)
+      if (aDtiTicket.getDateOfBirth() != null) {
+        
+        // Date of Birth DD
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        String dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_DD, dobString));
 
-      // Date of Birth MM
-      sdf = new SimpleDateFormat("MM");
-      dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
-      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_MM, dobString));
+        // Date of Birth MM
+        sdf = new SimpleDateFormat("MM");
+        dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_MM, dobString));
 
-      // Date of Birth YYYY
-      sdf = new SimpleDateFormat("yyyy");
-      dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
-      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_YYYY, dobString));
-
+        // Date of Birth YYYY
+        sdf = new SimpleDateFormat("yyyy");
+        dobString = sdf.format(aDtiTicket.getDateOfBirth().getTime());
+        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_DOB_YYYY, dobString));
+      }
       
       // Telephone (Mobile) 
       if (aDtiTicket.getCellPhone() != null) {
@@ -693,9 +696,10 @@ public class HKDBusinessRules {
       // Country (not used for HKDL)
 
       // Telephone (HOME)
-      otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_HOMEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
+      if (aDtiTicket.getTelephone() != null) {
+    	  otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_HOMEPHONE, DTIFormatter.websafe(aDtiTicket.getTelephone()
           .toUpperCase())));
-
+      }
       // OptInSolicit (2.10)
 //      if (aDtiTicket.getOptInSolicit().booleanValue() == true) {
 //        otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_OKAYFORNEWS, HKDBusinessRules.YES));

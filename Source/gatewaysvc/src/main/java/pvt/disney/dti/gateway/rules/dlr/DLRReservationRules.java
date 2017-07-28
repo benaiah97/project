@@ -215,8 +215,8 @@ public class DLRReservationRules implements TransformConstants {
     headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader()
         .getPayloadID());
 
-    // Set the time stamp to the GMT date/time now.
-    headerTO.setTimeStamp(DateTimeRules.getGMTDateNow());
+    // Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
+    headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
 
     // Set the message type to a fixed value
     headerTO.setMessageType(GW_ORDERS_MESSAGE_TYPE);
@@ -941,9 +941,8 @@ public class DLRReservationRules implements TransformConstants {
       orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
     }
 
-    // OrderDate
-    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules
-        .getGMTDateNow()));
+    // OrderDate (Now PT, as of 2.17.2.1 JTL)
+    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getPTDateNow()));
 
     // OrderStatus ( 1 if unpaid, 2 if paid )
     ArrayList<PaymentTO> payListTO = resReq.getPaymentList();
@@ -1047,8 +1046,7 @@ public class DLRReservationRules implements TransformConstants {
       GWPaymentContractTO payContract = new GWPaymentContractTO();
 
       // RecurrenceType
-      payContract
-          .setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
+      payContract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
 
       // DayOfMonth (Set to today's day).
       SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
@@ -1073,10 +1071,9 @@ public class DLRReservationRules implements TransformConstants {
       String paymentPlan = null;
       if (resReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
         paymentPlan = instTPLookupMap.get(GW_ORDERS_SOCAPURCHPLAN);
-      }
-      else {
+      } else {
         paymentPlan = instTPLookupMap.get(GW_ORDERS_CAPURCHPLAN);
-      }
+      } 
       if (paymentPlan == null) {
         throw new DTIException(
             DLRReservationRules.class,
@@ -1204,9 +1201,7 @@ public class DLRReservationRules implements TransformConstants {
             "GWTPLookup for ShipMethod is missing in the database.");
       }
       else {
-        orderTO.setShipDeliveryMethod(shipMethodlookupTO
-            .getLookupValue());
-
+        orderTO.setShipDeliveryMethod(shipMethodlookupTO.getLookupValue());
       }
 
       String resPickup = UtilityXML.getEGalaxyDateFromGCalNoTime(resReq
@@ -1224,6 +1219,13 @@ public class DLRReservationRules implements TransformConstants {
 
         orderTO.setGroupVisitDescription(resReq.getClientData()
             .getBillingInfo().getName());
+        
+        if (resReq.getEligibilityGroup() == null) {
+          throw new DTIException(
+              DLRReservationRules.class,
+              DTIErrorCode.INVALID_ELIGIBILITY_NBR,
+              "Eligibility Group not provided as expected on order.");
+        }
 
         // Populate Group Visit Reference only for BOLT style orders.
         if (resReq.getEligibilityGroup().equalsIgnoreCase(

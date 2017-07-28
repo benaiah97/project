@@ -23,7 +23,6 @@ public class TransidRescodeTO  implements Serializable {
   /** The creation date. */
   private GregorianCalendar creationDate;
   
-
   /**
    * Instantiates a new transid rescode TO.
    */
@@ -71,6 +70,18 @@ public class TransidRescodeTO  implements Serializable {
    */
   public void setCreationDate(GregorianCalendar creationDate) {
     this.creationDate = creationDate;
+  }
+  
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  public String toString() {
+	  StringBuffer prettyTo = new StringBuffer("TransidRescodeTO [");
+	  prettyTo.append("rescode='" + rescode + "', ");
+	  prettyTo.append("tsTransid='" + tsTransid + "', ");
+	  prettyTo.append("creationDate='" + creationDate + "' ]");
+	    
+	  return prettyTo.toString();
   }
 
 }

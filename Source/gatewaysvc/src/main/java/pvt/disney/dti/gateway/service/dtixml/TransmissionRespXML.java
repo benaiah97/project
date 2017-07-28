@@ -10,6 +10,7 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.AssociateMediaToAccountResponseTO;
 import pvt.disney.dti.gateway.data.CreateTicketResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryReservationResponseTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.RenewEntitlementResponseTO;
@@ -28,6 +29,7 @@ import pvt.disney.dti.gateway.response.xsd.AssociateMediaToAccountResponse;
 import pvt.disney.dti.gateway.response.xsd.CommandHeader;
 import pvt.disney.dti.gateway.response.xsd.CreateTicketResponse;
 import pvt.disney.dti.gateway.response.xsd.PayloadHeader;
+import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
 import pvt.disney.dti.gateway.response.xsd.QueryTicketResponse;
 import pvt.disney.dti.gateway.response.xsd.RenewEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.ReservationResponse;
@@ -290,7 +292,15 @@ public class TransmissionRespXML {
       VoidReservationResponse vResResp = VoidReservationXML.getJaxb(
           vResRespTO, errorTO);
       cmd.setVoidReservationResponse(vResResp);
-      break;      
+      break;    
+    
+    case QUERYELIGIBLEPRODUCTS:// for AP Upgrade
+	  QueryEligibilityProductsResponseTO queryEligRespTo = (QueryEligibilityProductsResponseTO) responseIn
+		  .getResponse().getCommandBody();
+	  QueryEligibleProductsResponse qEligResp = QueryEligibleProductsXML
+		  .getJaxb(queryEligRespTo, errorTO);
+	  cmd.setQueryEligibleProductsResponse(qEligResp);
+      break;
 
     default:
       break;
@@ -365,7 +375,12 @@ public class TransmissionRespXML {
       RenewEntitlementResponse qRenewResp = new RenewEntitlementResponse();
       cmd.setRenewEntitlementResponse(qRenewResp);
       break;
-
+      
+    case QUERYELIGIBLEPRODUCTS:
+    	QueryEligibleProductsResponse qEligResp=new QueryEligibleProductsResponse();
+    	cmd.setQueryEligibleProductsResponse(qEligResp);
+    	break;
+    	
     default:
       break;
 

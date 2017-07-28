@@ -384,8 +384,10 @@ public class DTIService {
     if (compare.equals("VoidReservationRequest")) { // as of 2.16.3, JTL
       return TransactionType.VOIDRESERVATION;
     }
-
-    return TransactionType.UNDEFINED;
+    if (compare.equals("QueryEligibleProductsRequest")) { // added as a part of new AP Upgrade service
+      return TransactionType.QUERYELIGIBLEPRODUCTS;
+    }
+      return TransactionType.UNDEFINED;
   }
 
   /**

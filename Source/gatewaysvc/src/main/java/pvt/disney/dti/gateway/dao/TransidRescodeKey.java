@@ -1,12 +1,11 @@
 package pvt.disney.dti.gateway.dao;
 
-import java.util.ArrayList;
-
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
 
+import com.disney.exception.WrappedException;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -40,15 +39,19 @@ public class TransidRescodeKey {
    * @throws DTIException
    *           the DTI exception
    */
-  public static final ArrayList<TransidRescodeTO> getTransIdResCode(String transid) throws DTIException {
+ public static final TransidRescodeTO getTransIdResCode(String transid) throws DTIException {
     return getTransidRescodeFromDB(transid);
   }
 
-  @SuppressWarnings("unchecked")
-  public static final ArrayList<TransidRescodeTO> getTransidRescodeFromDB(String transid) throws DTIException {
-
-    ArrayList<TransidRescodeTO> result = null;
-
+  /**
+   * Gets the transid rescode from DB.
+   *
+   * @param transid the transid
+   * @return the transid rescode from DB
+   * @throws DTIException the DTI exception
+   */
+  public static final TransidRescodeTO getTransidRescodeFromDB(String transid) throws DTIException {
+	  TransidRescodeTO result = null;
     logger.sendEvent("Entering getTransidRescodeFromDB()", EventType.DEBUG, THISINSTANCE);
 
     // validate the parameters
@@ -68,17 +71,17 @@ public class TransidRescodeKey {
 
       // Run the SQL
       logger.sendEvent("About to processQuery:  GET_TRANSID_RESCODE", EventType.DEBUG, THISINSTANCE);
-      result = (ArrayList<TransidRescodeTO>) helper.processQuery(values);
+      result = (TransidRescodeTO) helper.processQuery(values);
 
-      if (result.isEmpty()) {
-        logger.sendEvent("getTransidRescodeFromDB did not find results for '" + transid + "'", EventType.WARN,
+      //if (result.isEmpty()) { 
+      if ((result == null) || (result.getRescode() ==null) || (result.getRescode().length() == 0)) {
+         logger.sendEvent("getTransidRescodeFromDB did not find results for '" + transid + "'", EventType.WARN,
             THISINSTANCE);
-        throw new DTIException(TransidRescodeKey.class, DTIErrorCode.DTI_CANNOT_FIND_RESERVATION,
-            "Exception executing getTransidRescodeFromDB");
+         result = null; // Makes SURE the response when not found is NULL.
+      } else {
+         // Debug
+         logger.sendEvent("getTransidRescodeFromDB found rescode.", EventType.DEBUG, THISINSTANCE, result, null);
       }
-
-      // Debug
-      logger.sendEvent("getTransidRescodeFromDB found rescode.", EventType.DEBUG, THISINSTANCE, result, null);
 
     } catch (Exception e) {
       logger.sendEvent("Exception executing getTransidRescodeFromDB: " + e.toString(), EventType.WARN, THISINSTANCE);
@@ -90,19 +93,26 @@ public class TransidRescodeKey {
   }
 
   /**
-   * Insert entry into ts_transid_rescode_xref.
-   * 
-   * @param dtiTxn
-   *          the dti txn
+   * Attempts to insert the trans ID reservation code.  If a duplicate is found, it will attempt to find
+   * the already inserted reservation code by ts_transid (payloadID).  If found, it will return it.  If not found, 
+   * it will return null, meaning that the record was duplicated by either a non-unique transIdITS or
+   * rescode. 
+   * @since 2.17.2
+   * @author jtl
+   * @param transIdITS
+   * @param ts_transid
+   * @param rescode
+   * @return String 
    * @throws DTIException
-   *           the DTI exception
    */
-  public static final void insertTransIdRescode(Integer transIdITS, String ts_transid, String rescode)
+  public static final String insertTransIdRescode(Integer transIdITS, String ts_transid, String rescode)
       throws DTIException {
 
     logger.sendEvent("Entering insertTransIdRescode()", EventType.DEBUG, THISINSTANCE);
 
-    // validat input
+    String resultingResCode = null;
+
+    // validate input
     if (ts_transid == null || rescode == null || ts_transid.length() == 0 || rescode.length() == 0) {
       throw new DTIException(TransidRescodeKey.class, DTIErrorCode.UNDEFINED_FAILURE,
           "insertTransIdRescode DB routine given null or empty parameters: .ts_transid:'" + ts_transid
@@ -110,7 +120,7 @@ public class TransidRescodeKey {
     }
 
     // values to insert in sql statement
-    Object[] values = { transIdITS, ts_transid, rescode, };
+    Object[] values = { transIdITS, ts_transid, rescode };
 
     int counter = 0;
 
@@ -120,12 +130,41 @@ public class TransidRescodeKey {
     try {
       counter += helper.processInsert(values);
 
+      resultingResCode = rescode; // Meaning the insert worked, so return what you sent in.
+      
+      logger.sendEvent("INS_TRANSID_RESCODE inserted " + counter + " rows.", EventType.DEBUG, THISINSTANCE);
+
+    } catch (WrappedException we) {
+
+      String wrappedString = we.getWrappedException().toString();
+
+      // Duplicate during insert?
+      if (wrappedString.contains("ORA-00001")) {
+        logger.sendEvent("Duplicate detected during insertTransIdRescode. " + wrappedString, EventType.DEBUG, THISINSTANCE);
+
+        TransidRescodeTO resCodeTO = getTransidRescodeFromDB(ts_transid);
+        
+        if (resCodeTO == null) {
+          logger.sendEvent("No previously stored record found for duplicate during insertTransIdRescode.", EventType.WARN,
+              THISINSTANCE);
+        } else {
+          resultingResCode = resCodeTO.getRescode();
+          logger.sendEvent("Recovered previously stored record during insertTransIdRescode: " + resultingResCode, EventType.DEBUG,
+              THISINSTANCE);
+        }
+
+      } else {
+        throw new DTIException(ProductKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
+            "Exception executing insertTransIdRescode", we);
+      }
+
     } catch (Exception e) {
       logger.sendEvent("Exception executing insertTransIdRescode: " + e.toString(), EventType.WARN, THISINSTANCE);
       throw new DTIException(ProductKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing insertTransIdRescode", e);
     }
 
-    logger.sendEvent("INS_TRANSID_RESCODE inserted " + counter + " rows.", EventType.DEBUG, THISINSTANCE);
+
+    return resultingResCode;
   }
 }

@@ -1215,7 +1215,7 @@ public class DAOHelper
         long executionLength = -1;
         int valuesLength = 0;
 
-        while (retry && retryCount > 0)
+        while (retry && retryCount > 0) 
         {
             retry = false;
             try
@@ -1375,7 +1375,7 @@ public class DAOHelper
                     }
                 }
                 catch (SQLException se)
-                {
+                {	
                     parameters = "";
                     // reset debug string and redo to get correct values
 

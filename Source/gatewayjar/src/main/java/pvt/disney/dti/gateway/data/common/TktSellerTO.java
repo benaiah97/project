@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This class represents the Ticket Seller identification, found in DTI requests.
  * 
- * @author lewit019
+ * @author lewit019 moons012
  * 
  */
 public class TktSellerTO implements Serializable {
@@ -24,6 +24,9 @@ public class TktSellerTO implements Serializable {
 
 	/** The ticket seller security. */
 	private String TsSecurity = "";
+	
+	/** The sellerid (optional field used by HKDL only for e-ticket purchases */
+	private String SellerId = "";
 
 	/**
 	 * Gets a copy of this object.
@@ -37,6 +40,7 @@ public class TktSellerTO implements Serializable {
 		copy.setTsSystem(this.getTsSystem());
 		copy.setTsLocation(this.getTsLocation());
 		copy.setTsSecurity(this.getTsSystem());
+		copy.setSellerId(this.getSellerId());
 
 		return copy;
 	}
@@ -101,4 +105,19 @@ public class TktSellerTO implements Serializable {
 		TsSystem = tsSystem;
 	}
 
+	/**
+	 * @return the sellerId
+	 */
+	public String getSellerId() {
+		return SellerId;
+	}
+
+	/**
+	 * @param sellerId the sellerId to set
+	 */
+	public void setSellerId(String sellerId) {
+		SellerId = sellerId;
+	}
+
+	
 }

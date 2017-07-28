@@ -124,6 +124,9 @@ public interface TransformConstants {
 
   /** gateway galaxy order line item type for ticket product */
   String GW_ORDERS_PASS_ORDER_LINE_ITEM = "8";
+  
+  /** gateway galaxy order line item type for ticket Upgrade TO DO */
+  String GW_ORDERS_UPGRADE_ORDER_LINE_ITEM = "16";
 
   /** gateway galaxy order status field for unpaid orders, value 1 */
   String GW_ORDERS_UNPAID_ORDER_STATUS = "1";
@@ -142,6 +145,10 @@ public interface TransformConstants {
 
   /** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
   String GW_PASS = "PASS";
+  
+  // need to verify TO DO 
+  /** gateway galaxy UPGRADE (as configured in DTI's Day_Subclass) */
+  String GW_UPGRADE = "UPGRADE";
 
   /** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
   String GW_RENEW = "RENEW";

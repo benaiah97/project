@@ -13,6 +13,13 @@
 	<name>gatewaysvc</name>
 	<url>http://maven.apache.org</url>
 	
+	<properties>
+        <powermock.version>1.7.0RC2</powermock.version>
+        <mockito.version>2.7.22</mockito.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.7</java.version>
+        <jacoco.version>0.7.8</jacoco.version>
+    </properties>
 	<developers>
 	   <developer>
             <id>lewit019</id>
@@ -133,11 +140,7 @@
     </ciManagement>
 
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.7</java.version>
-        <jacoco.version>0.7.8</jacoco.version>
-    </properties>
+    
 	<build>
 	<pluginManagement>
             <plugins>
@@ -267,6 +270,26 @@
             <version>2.3.4</version> <!-- should update to 2.4.3 once it is in a repo -->
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.mockito</groupId>
+             <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.powermock</groupId>
+           <artifactId>powermock-module-junit4</artifactId>
+           <version>${powermock.version}</version>
+           <scope>test</scope>
+         </dependency>
+  
+         <dependency>
+           <groupId>org.powermock</groupId>
+           <artifactId>powermock-api-mockito2</artifactId>
+           <version>${powermock.version}</version>
+           <scope>test</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>javanettasks</groupId>
@@ -274,6 +297,13 @@
 			<version>1.7</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
 
 
 		<!-- LOGGING -->

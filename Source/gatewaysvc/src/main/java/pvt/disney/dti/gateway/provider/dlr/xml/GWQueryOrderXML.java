@@ -141,15 +141,15 @@ public class GWQueryOrderXML {
 								gwTicketTO.setDescription(description);
 							}
 
-							// Price
-							if (ticketChildElement.getName().compareTo("Price") == 0) {
-								String priceString = ticketChildElement
-										.getText();
-								if (priceString.contains(".")) gwTicketTO
-										.setPrice(new BigDecimal(priceString));
-								else gwTicketTO.setPrice(new BigDecimal(
-										priceString + ".00"));
-							}
+              // Price 
+              if (ticketChildElement.getName().compareTo("Price") == 0) {
+                String formattedPriceString = ticketChildElement.getText();
+                String priceString = formattedPriceString.replaceAll("[$,]", "");               
+                if (priceString.contains(".")) gwTicketTO
+                    .setPrice(new BigDecimal(priceString));
+                else gwTicketTO.setPrice(new BigDecimal(
+                    priceString + ".00"));
+              }
 
 						}
 

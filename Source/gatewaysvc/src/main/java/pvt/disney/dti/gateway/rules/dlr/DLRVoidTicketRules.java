@@ -80,8 +80,8 @@ public class DLRVoidTicketRules implements TransformConstants {
 		headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader()
 				.getPayloadID());
 
-		// Set the time stamp to the GMT date/time now.
-		headerTO.setTimeStamp(DateTimeRules.getGMTDateNow());
+    // Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
+    headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
 
 		// Set the message type to a fixed value
 		headerTO.setMessageType(GW_TKT_ACTIVATE_TYPE);

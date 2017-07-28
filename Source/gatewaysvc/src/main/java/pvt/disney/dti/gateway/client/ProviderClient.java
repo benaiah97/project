@@ -110,9 +110,9 @@ public abstract class ProviderClient {
 
     String xmlResponse = null;
 
-    IagoClient wdwIagoClient = new IagoClient();
+    IagoClient hkdIagoClient = new IagoClient();
 
-    xmlResponse = wdwIagoClient.sendRequest(dtiTxn, xmlRequest);
+    xmlResponse = hkdIagoClient.sendRequest(dtiTxn, xmlRequest);
 
     return xmlResponse;
 

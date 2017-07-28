@@ -52,6 +52,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.UtilityXML;
 import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRespTO.TicketRecord;
 import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
+import pvt.disney.dti.gateway.rules.ProductRules;
 import pvt.disney.dti.gateway.rules.TransformRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
@@ -209,8 +210,8 @@ public class DLRRenewEntitlementRules implements TransformConstants {
     headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader()
         .getPayloadID());
 
-    // Set the time stamp to the GMT date/time now.
-    headerTO.setTimeStamp(DateTimeRules.getGMTDateNow());
+    // Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
+    headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
 
     // Set the message type to a fixed value
     headerTO.setMessageType(GW_ORDERS_MESSAGE_TYPE);
@@ -235,10 +236,6 @@ public class DLRRenewEntitlementRules implements TransformConstants {
   private static GWOrderTO createOrderTO(DTITransactionTO dtiTxn) throws DTIException {
 
     GWOrderTO orderTO = new GWOrderTO();
-    // get a map of various provider values (we will need to use this later
-    // for some shipping and payment details)
-    HashMap<TPLookupTO.TPLookupType, TPLookupTO> gwTPLookupMap = dtiTxn
-        .getTpLookupTOMap();
 
     RenewEntitlementRequestTO resReq = (RenewEntitlementRequestTO) dtiTxn
         .getRequest().getCommandBody();
@@ -258,9 +255,8 @@ public class DLRRenewEntitlementRules implements TransformConstants {
       orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
     }
 
-    // OrderDate
-    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules
-        .getGMTDateNow()));
+    // OrderDate (Now PT, as of 2.17.2.1 JTL)
+    orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getPTDateNow()));
 
     // OrderStatus ( 1 if unpaid, 2 if paid )
     ArrayList<PaymentTO> payListTO = resReq.getPaymentList();
@@ -301,44 +297,6 @@ public class DLRRenewEntitlementRules implements TransformConstants {
       }
 
     } // If is installment request
-
-    // BEGIN OrderNote
-    // String orderNote = null;
-
-    // check for AP pass note
-    // if (resReq.getAPPassInfo() != null) {
-    // orderNote = resReq.getAPPassInfo();
-    // orderTO.setOrderNote(orderNote);
-    // }
-
-    // check for other notes
-    // Iterator<String> resNoteIter = resReq.getNoteList().iterator();
-    // while (resNoteIter.hasNext()) {
-    // String resNote = resNoteIter.next();
-    // if (resNote.startsWith("Personal Message")) {
-    // orderTO.setOrderNote(resNote);
-    // orderNote = resNote;
-    // } else if (resNote.startsWith("Personnel Number")) {
-    // orderTO.setOrderReference(resNote); // calling out separate from
-    // // default
-    // } else { // default
-    // orderTO.setOrderReference(resNote);
-    // }
-    // }
-
-    // Format the DLR note field exactly like the ATS one for fulfillment.
-    // Since 2.9 JTL
-    // if (orderNote == null) {
-    // if (resReq.getClientData() != null) {
-    // if (resReq.getClientData().getClientPaymentMethod() != null) {
-    // orderNote = TransformRules
-    // .setFulfillmentNoteDetails(dtiTxn);
-    // orderTO.setOrderNote(orderNote);
-    // }
-    // }
-    // }
-
-    // END OrderNote
 
     // OrderTotal (as of 2.16.1, JTL)
     if (resReq.isInstallmentRenewRequest()) {
@@ -851,6 +809,9 @@ public class DLRRenewEntitlementRules implements TransformConstants {
 
     }
 
+    // RULE: Validate ticket level demographics for DLR. (As of 2.17.2, JTL)
+    ProductRules.validateDlrTicketDemo(tktListTO);
+    
     return;
 
   }

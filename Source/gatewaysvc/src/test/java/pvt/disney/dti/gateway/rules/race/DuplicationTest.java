@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -29,8 +30,9 @@ import pvt.disney.dti.gateway.rules.race.utility.AlgorithmUtility;
  *
  * @author MOONS012
  */
-//@PerfTest(invocations = 10, threads = 1)
-//@Required(max = 1800, average = 850)
+@PerfTest(invocations = 50, threads = 10)
+//@Required(max = 4200, average = 3850)
+@Ignore
 public class DuplicationTest {
 	
 
@@ -124,6 +126,7 @@ public class DuplicationTest {
 	@Test
 	@PerfTest(invocations = 1, threads = 1)
 	//@Required(max = 2800, average = 1500)
+	@Ignore
 	public void testDuplication() throws Exception {
 		if ( !(shoudIRun) ) {
 			System.out.println("Running test for duplication " + iterationsToRun + ". This could take awhile.");
