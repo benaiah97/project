@@ -173,7 +173,7 @@ public class QueryEligibleProductsXML {
 		  }
 		 }
 			// Ticket Demographics
-			// TODO 06-23-2017 JTL all demographic including opt in/out
+			// TODO 06-23-2017 JTL all demographic including optin/out
 		 if ((aTicketTO.getTicketDemoList() != null)
 			&& (aTicketTO.getTicketDemoList().size() == 1)) {
 
@@ -345,16 +345,6 @@ public class QueryEligibleProductsXML {
 				aTicket.getTktItemOrTktIDOrProdCode().add(sRPPrice);
 
 			}
-			
-			//PLU
-			if (aTicketTO.getPlu() != null) {
-				String plu = aTicketTO.getPlu();
-				qName = new QName("PLU");
-				JAXBElement<String> pluElement = new JAXBElement(qName,
-						plu.getClass(), plu);
-				aTicket.getTktItemOrTktIDOrProdCode().add(pluElement);
-			}
-
 			
 			// ResultStatus // TO DO 
 			String result = null;
