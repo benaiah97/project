@@ -245,6 +245,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
 		
+		
 		//TODO NG - DLR Step 3A
 		// Need to perform the following 3 checks in order to mark as INELIGIBLE and reply back to client
 		// 1. Contact GUID is not present - this can be relaxed for now;
