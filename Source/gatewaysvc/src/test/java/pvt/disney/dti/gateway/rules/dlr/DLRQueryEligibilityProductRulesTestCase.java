@@ -4,10 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
@@ -17,12 +15,9 @@ import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
-import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
-import pvt.disney.dti.gateway.rules.dlr.DLRQueryEligibilityProductsRules;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.service.dtixml.DTITestUtil;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
