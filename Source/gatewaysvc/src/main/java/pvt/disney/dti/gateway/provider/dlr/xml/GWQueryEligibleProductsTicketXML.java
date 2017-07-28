@@ -610,16 +610,19 @@ public class GWQueryEligibleProductsTicketXML {
 		      
 		      // Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can upgrade to
 		      if(element.getName().compareTo("UpgradePLUList")==0){
-		    	  extractUplgradePlU(dataRespTO, i, element);
+		      	extractUpgradePLU(dataRespTO, i, element);
 		      }
 
 		      // Adding new Tag Contact
 		      if(element.getName().compareTo("Contact")==0){
 		    	  extractContact(dataRespTO, element);
-		      } 
+		      }
 		      
-		      //TODO - Map Has Picture and Payment Plan inside the Upgrade PLU List
-
+		      // Adding new Has Picture Contact
+		      if(element.getName().compareTo("HasPicture")==0){
+		      	String hasPicture = element.getText();
+		      	dataRespTO.setHasPicture(hasPicture);
+		      } 
 		    }
 
 		    qtRespTO.setDataRespTO(dataRespTO);
@@ -627,289 +630,337 @@ public class GWQueryEligibleProductsTicketXML {
 		    return qtRespTO;
 		  }
 	  
-	 /**
-	 * It contains the list of Upgraded PLU Object 
-	 * @param dataRespTO
-	 * @param i
-	 * @param lineageRequestResponse
-	 * @throws DTIException
+	
+	/**
+	 * Extract upgrade PLU.
+	 *
+	 * @param dataRespTO the data resp TO
+	 * @param i the i
+	 * @param upGradePLUResponse the up grade PLU response
+	 * @throws DTIException the DTI exception
 	 */
-	private static void extractUplgradePlU(GWDataRequestRespTO dataRespTO,
-	      Iterator<org.dom4j.Element> i, Element lineageRequestResponse) throws DTIException{
-			//TODO - NG typo in the method signature
-		  
-		    // LineageRequestResponse
-		    Node linReqResp = lineageRequestResponse;
+	private static void extractUpgradePLU(GWDataRequestRespTO dataRespTO,Iterator<org.dom4j.Element> i,
+				Element upGradePLUResponse) throws DTIException {
 
-		   
+		// UpGradePLU Response
+		Node linReqResp = upGradePLUResponse;
 
-		    List linRecordList = linReqResp.selectNodes("Item");
-
-		    for (int index = 0; index < linRecordList.size(); index++) {
-
-		      Node linRecord = (Node) linRecordList.get(index);
-
-		      // Create the inner class
-		      //TODO NG - this needs to be outside of the for loop, this is a bug
-		      GWDataRequestRespTO.UpgradePLUList uplUpgradePLUList = dataRespTO.new UpgradePLUList();
-		      
-		      // PLU
-		      Node pluNode = linRecord.selectSingleNode("PLU");
-		      if (pluNode != null) {
-		    	  // TODO NG - typo in the variable name
-		    	  uplUpgradePLUList.setPLU(pluNode.getText());
-		      }
-
-		      // Price
-		      // TODO NG - do we need to append .00? check BigDecimal conversion
-		      // TODO NG - reformatting and brakets even for single statement ifs
-		      Node priceNode = linRecord.selectSingleNode("Price");
-		      if (priceNode != null) {
-		        String inText = priceNode.getText();
-		        //TODO add price section
-				      if (inText.contains(".")) { 
-				    	  uplUpgradePLUList.setPrice(new BigDecimal(inText));
-				      } else { 
-				    	  uplUpgradePLUList.setPrice(new BigDecimal(inText + ".00"));
-				      }
-		      }
-		      
-		      // Upgraded Price
-		      Node upgdpriceNode = linRecord.selectSingleNode("UpgradePrice");
-		      if (upgdpriceNode != null) {
-		        String inText = upgdpriceNode.getText();
-		        //TODO add price section
-		      if (inText.contains(".")) uplUpgradePLUList
-		            .setUpgradePrice(new BigDecimal(inText));
-		        else uplUpgradePLUList.setUpgradePrice(new BigDecimal(inText + ".00"));
-		      }
-		      // Save it to the array
-		      dataRespTO.addUpgradePLUList(uplUpgradePLUList);
-		      
-		      //TODO NG - map Payment Plan elements if present/applicable
-
-		    }
-
-		  
-		  
-	  }
-
-
-	private static void extractContact(GWDataRequestRespTO dataRespTO, Element lineageRequestResponse) throws DTIException{
+		List linRecordList = linReqResp.selectNodes("Item");
 		
+		for (int index = 0; index < linRecordList.size(); index++) {
+
+			Node linRecord = (Node) linRecordList.get(index);
+
+			// Create the inner class
+			GWDataRequestRespTO.UpgradePLU upgratePLU = dataRespTO.new UpgradePLU();
+
+			// PLU
+			Node pluNode = linRecord.selectSingleNode("PLU");
+			if (pluNode != null) {
+
+				upgratePLU.setPLU(pluNode.getText());
+			}
+
+			// Price
+			// TODO NG - do we need to append .00? check BigDecimal conversion
+			// TODO NG - reformatting and brakets even for single statement ifs
+			Node priceNode = linRecord.selectSingleNode("Price");
+			if (priceNode != null) {
+				String inText = priceNode.getText();
+				upgratePLU.setPrice(new BigDecimal(inText));
+
+			}
+
+			// Upgraded Price
+			Node upgdpriceNode = linRecord.selectSingleNode("UpgradePrice");
+			if (upgdpriceNode != null) {
+				String inText = upgdpriceNode.getText();
+				upgratePLU.setUpgradePrice(new BigDecimal(inText));
+
+			}
+			// Adding new Has Picture Contact
+			if (linReqResp.getName().compareTo("PaymentPlans") == 0) {
+				dataRespTO.setPayPlan("YES");
+				extractPayplan(upgratePLU, linReqResp);
+			} 
+			// Save it to the array
+			dataRespTO.addUpgradePLUList(upgratePLU);
+		}
+	}
+	
+	/**
+	 * Extract payplan.
+	 *
+	 * @param upgratePLU the upgrate PLU
+	 * @param payPlanLineResponse the pay plan line response
+	 * @throws DTIException the DTI exception
+	 */
+	private static void extractPayplan(GWDataRequestRespTO.UpgradePLU upgratePLU, Node payPlanLineResponse)
+				throws DTIException {
+
+		// Payment Plan Line response
+		Node linReqResp = payPlanLineResponse;
+
+		List linRecordList = linReqResp.selectNodes("PaymentPlan");
+	
+		for (int index = 0; index < linRecordList.size(); index++) {
+
+			Node linRecord = (Node) linRecordList.get(index);
+
+			// Create the inner class
+
+			GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgratePLU.new PaymentPlan();
+
+			// PayplanId
+			Node payPlanId = linRecord.selectSingleNode("PaymentPlanID");
+			if (payPlanId != null) {
+				paymentPlan.setPlanId(payPlanId.getText());
+
+			}
+
+			// Description
+			Node payPlanDesc = linRecord.selectSingleNode("Description");
+			if (payPlanDesc != null) {
+				paymentPlan.setPlanId(payPlanDesc.getText());
+
+			}
+
+			// Name
+			Node payPlanName = linRecord.selectSingleNode("Name");
+			if (payPlanName != null) {
+				paymentPlan.setPlanId(payPlanName.getText());
+
+			}
+
+			upgratePLU.addPaymentPlans(paymentPlan);
+
+		}
+
+	}
+
+	/**
+	 * Extract contact.
+	 *
+	 * @param dataRespTO
+	 *           the data resp TO
+	 * @param contactLineResponse
+	 *           the contact line response
+	 * @throws DTIException
+	 *            the DTI exception
+	 */
+	private static void extractContact(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
+
 		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
-		
-		for (Iterator<org.dom4j.Element> i = lineageRequestResponse.elementIterator(); i
-			        .hasNext();) {
-			 
-			      Element element = i.next();
-			      
-		             // String First Name
-				      if (element.getName().compareTo("FirstName") == 0) {
-				        String firstName = element.getText();
-				        contact.setFirstName(firstName);
-				        continue;
-				      }
 
-				      // MiddleName
-				      if (element.getName().compareTo("MiddleName") == 0) {
-					        String middleName = element.getText();
-					        contact.setMiddleName(middleName);
-					        continue;
-					  }
-			            
-				      // String Last Name
-				      if (element.getName().compareTo("LastName") == 0) {
-				    	  String lastName = element.getText();
-				    	  contact.setLastName(lastName);
-				    	  continue;
-				      }
-				 
-				      // String IdentificationNo 
-				      if (element.getName().compareTo("IdentificationNo") == 0) {
-				        String identificationNo = element.getText();
-				        contact.setIdentificationNo(identificationNo);
-				        continue;
-				      }
+		for (Iterator<org.dom4j.Element> i = contactLineResponse.elementIterator(); i.hasNext();) {
 
-				      // String Street1
-				      if (element.getName().compareTo("Street1") == 0) {
-				        String street1 = element.getText();
-				        contact.setStreet1(street1);
-				        continue;
-				      }
+			Element element = i.next();
 
-				      // String Street2
-				      if (element.getName().compareTo("Street2") == 0) {
-				        String street2 = element.getText();
-				        contact.setStreet2(street2);
-				        continue;
-				      }
+			// String First Name
+			if (element.getName().compareTo("FirstName") == 0) {
+				String firstName = element.getText();
+				contact.setFirstName(firstName);
+				continue;
+			}
 
-				      // String Street3
-				      if (element.getName().compareTo("Street3") == 0) {
-				        String street3 = element.getText();
-				        contact.setStreet3(street3);
-				        continue;
-				      }
-				      // String City
-				      if (element.getName().compareTo("City") == 0) {
-				        String city = element.getText();
-				        contact.setCity(city);
-				        continue;
-				      }
+			// MiddleName
+			if (element.getName().compareTo("MiddleName") == 0) {
+				String middleName = element.getText();
+				contact.setMiddleName(middleName);
+				continue;
+			}
 
-				      // String State
-				      if (element.getName().compareTo("State") == 0) {
-				        String state = element.getText();
-				        contact.setState(state);
-				        continue;
-				      }
+			// String Last Name
+			if (element.getName().compareTo("LastName") == 0) {
+				String lastName = element.getText();
+				contact.setLastName(lastName);
+				continue;
+			}
 
-				      // String ZIP
-				      if (element.getName().compareTo("ZIP") == 0) {
-				        String zip = element.getText();
-				        contact.setZip(zip);
-				        continue;
-				      }
-				      
-				      // String CountryCode
-				      if (element.getName().compareTo("CountryCode") == 0) {
-				        String countryCode = element.getText();
-				        contact.setCountryCode(countryCode);
-				        continue;
-				      }
+			// String IdentificationNo
+			if (element.getName().compareTo("IdentificationNo") == 0) {
+				String identificationNo = element.getText();
+				contact.setIdentificationNo(identificationNo);
+				continue;
+			}
 
-				      // String Phone
-				      if (element.getName().compareTo("Phone") == 0) {
-				        String phone = element.getText();
-				        contact.setPhone(phone);
-				        continue;
-				      }
+			// String Street1
+			if (element.getName().compareTo("Street1") == 0) {
+				String street1 = element.getText();
+				contact.setStreet1(street1);
+				continue;
+			}
 
-				      // String Fax
-				      if (element.getName().compareTo("Fax") == 0) {
-				        String fax = element.getText();
-				        contact.setFax(fax);
-				        continue;
-				      }
+			// String Street2
+			if (element.getName().compareTo("Street2") == 0) {
+				String street2 = element.getText();
+				contact.setStreet2(street2);
+				continue;
+			}
 
-				      // String Cell
-				      if (element.getName().compareTo("Cell") == 0) {
-				        String cell = element.getText();
-				        contact.setCell(cell);
-				        continue;
-				      }
+			// String Street3
+			if (element.getName().compareTo("Street3") == 0) {
+				String street3 = element.getText();
+				contact.setStreet3(street3);
+				continue;
+			}
+			// String City
+			if (element.getName().compareTo("City") == 0) {
+				String city = element.getText();
+				contact.setCity(city);
+				continue;
+			}
 
-				      // String Email
-				      if (element.getName().compareTo("Email") == 0) {
-				        String email = element.getText();
-				        contact.setEmail(email);
-				        continue;
-				      }
+			// String State
+			if (element.getName().compareTo("State") == 0) {
+				String state = element.getText();
+				contact.setState(state);
+				continue;
+			}
 
-				      // String ExternalID
-				      if (element.getName().compareTo("ExternalID") == 0) {
-				        String externalID = element.getText();
-				        contact.setExternalId(externalID);
-				        continue;
-				      }
-				    
-				      // String ContactGUID
-				      if (element.getName().compareTo("ContactGUID") == 0) {
-				        String contactGUID = element.getText();
-				        contact.setContactGUID(contactGUID);
-				        continue;
-				      }
-				    
-				      // String GalaxyContactID
-				      if (element.getName().compareTo("GalaxyContactID") == 0) {
-				        String galaxyContactID = element.getText();
-				        contact.setGalaxyContactId(galaxyContactID);
-				        continue;
-				      }
-				    
-				      // String JobTitle
-				      if (element.getName().compareTo("JobTitle") == 0) {
-				        String jobTitle = element.getText();
-				        contact.setJobTitle(jobTitle);
-				        continue;
-				      }
+			// String ZIP
+			if (element.getName().compareTo("ZIP") == 0) {
+				String zip = element.getText();
+				contact.setZip(zip);
+				continue;
+			}
 
-				      // String Primary
-				      if (element.getName().compareTo("Primary") == 0) {
-				        String primary = element.getText();
-				        contact.setPrimary(primary);
-				        continue;
-				      }
-				    
-				      // String ContactNote
-				      if (element.getName().compareTo("ContactNote") == 0) {
-				        String contactNote = element.getText();
-				        contact.setContactNote(contactNote);
-				        continue;
-				      }
-				    
-				      // String NameTitleID
-				      if (element.getName().compareTo("NameTitleID") == 0) {
-				        String nameTitleID = element.getText();
-				        contact.setNameTitleId(nameTitleID);
-				        continue;
-				      }
-				      
-				      // String NameSuffixID
-				      if (element.getName().compareTo("NameSuffixID") == 0) {
-				        String nameSuffixID = element.getText();
-				        contact.setNameSuffixId(nameSuffixID);
-				        continue;
-				      }
-				      
-				      // String TotalPaymentContracts
-				      if (element.getName().compareTo("TotalPaymentContracts") == 0) {
-				        String totalPaymentContracts = element.getText();
-				        contact.setTotalPaymentContracts(totalPaymentContracts);
-				        continue;
-				      }
-				      
-				      // String AllowEmail
-				      if (element.getName().compareTo("AllowEmail") == 0) {
-				        String allowEmail = element.getText();
-				        contact.setAllowMail(allowEmail);
-				        continue;
-				      }
-				      
-				      // String AllowMailings
-				      if (element.getName().compareTo("AllowMailings") == 0) {
-				        String allowMailings = element.getText();
-				        contact.setAllowMailing(allowMailings);
-				        continue;
-				      }
-				      
-				      // String DOB
-				      if (element.getName().compareTo("DOB") == 0) {
-				        String DOB = element.getText();
-				        contact.setDob(DOB);
-				        continue;
-				      }
-				      
-				      // String AgeGroup
-				      if (element.getName().compareTo("AgeGroup") == 0) {
-				        String ageGroup = element.getText();
-				        contact.setAgeGroup(ageGroup);
-				        continue;
-				      }
-				      
-				      // String Gender
-				      if (element.getName().compareTo("Gender") == 0) {
-				        String gender = element.getText();
-				        contact.setGender(gender);
-				      }
-				   
-			      
-		 }
-		 dataRespTO.addContactList(contact);
-		 
-	    }
+			// String CountryCode
+			if (element.getName().compareTo("CountryCode") == 0) {
+				String countryCode = element.getText();
+				contact.setCountryCode(countryCode);
+				continue;
+			}
+
+			// String Phone
+			if (element.getName().compareTo("Phone") == 0) {
+				String phone = element.getText();
+				contact.setPhone(phone);
+				continue;
+			}
+
+			// String Fax
+			if (element.getName().compareTo("Fax") == 0) {
+				String fax = element.getText();
+				contact.setFax(fax);
+				continue;
+			}
+
+			// String Cell
+			if (element.getName().compareTo("Cell") == 0) {
+				String cell = element.getText();
+				contact.setCell(cell);
+				continue;
+			}
+
+			// String Email
+			if (element.getName().compareTo("Email") == 0) {
+				String email = element.getText();
+				contact.setEmail(email);
+				continue;
+			}
+
+			// String ExternalID
+			if (element.getName().compareTo("ExternalID") == 0) {
+				String externalID = element.getText();
+				contact.setExternalId(externalID);
+				continue;
+			}
+
+			// String ContactGUID
+			if (element.getName().compareTo("ContactGUID") == 0) {
+				String contactGUID = element.getText();
+				contact.setContactGUID(contactGUID);
+				continue;
+			}
+
+			// String GalaxyContactID
+			if (element.getName().compareTo("GalaxyContactID") == 0) {
+				String galaxyContactID = element.getText();
+				contact.setGalaxyContactId(galaxyContactID);
+				continue;
+			}
+
+			// String JobTitle
+			if (element.getName().compareTo("JobTitle") == 0) {
+				String jobTitle = element.getText();
+				contact.setJobTitle(jobTitle);
+				continue;
+			}
+
+			// String Primary
+			if (element.getName().compareTo("Primary") == 0) {
+				String primary = element.getText();
+				contact.setPrimary(primary);
+				continue;
+			}
+
+			// String ContactNote
+			if (element.getName().compareTo("ContactNote") == 0) {
+				String contactNote = element.getText();
+				contact.setContactNote(contactNote);
+				continue;
+			}
+
+			// String NameTitleID
+			if (element.getName().compareTo("NameTitleID") == 0) {
+				String nameTitleID = element.getText();
+				contact.setNameTitleId(nameTitleID);
+				continue;
+			}
+
+			// String NameSuffixID
+			if (element.getName().compareTo("NameSuffixID") == 0) {
+				String nameSuffixID = element.getText();
+				contact.setNameSuffixId(nameSuffixID);
+				continue;
+			}
+
+			// String TotalPaymentContracts
+			if (element.getName().compareTo("TotalPaymentContracts") == 0) {
+				String totalPaymentContracts = element.getText();
+				contact.setTotalPaymentContracts(totalPaymentContracts);
+				continue;
+			}
+
+			// String AllowEmail
+			if (element.getName().compareTo("AllowEmail") == 0) {
+				String allowEmail = element.getText();
+				contact.setAllowMail(allowEmail);
+				continue;
+			}
+
+			// String AllowMailings
+			if (element.getName().compareTo("AllowMailings") == 0) {
+				String allowMailings = element.getText();
+				contact.setAllowMailing(allowMailings);
+				continue;
+			}
+
+			// String DOB
+			if (element.getName().compareTo("DOB") == 0) {
+				String DOB = element.getText();
+				contact.setDob(DOB);
+				continue;
+			}
+
+			// String AgeGroup
+			if (element.getName().compareTo("AgeGroup") == 0) {
+				String ageGroup = element.getText();
+				contact.setAgeGroup(ageGroup);
+				continue;
+			}
+
+			// String Gender
+			if (element.getName().compareTo("Gender") == 0) {
+				String gender = element.getText();
+				contact.setGender(gender);
+			}
+
+		}
+		dataRespTO.addContactList(contact);
+
+	}
 	    
 	  /**
 	   * Extracts the lineage info (this structure is complex).
