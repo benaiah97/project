@@ -273,6 +273,12 @@
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.6</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.juliusdavies</groupId>
 			<artifactId>not-yet-commons-ssl</artifactId>
@@ -298,9 +304,7 @@
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayxsd</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		
-		
+		</dependency>		
 		
 	</dependencies>
 </project>

@@ -2195,6 +2195,7 @@
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
+							<xs:element name="PLU" type="xs:string"/>
 							<xs:element name="TktDemographics" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
