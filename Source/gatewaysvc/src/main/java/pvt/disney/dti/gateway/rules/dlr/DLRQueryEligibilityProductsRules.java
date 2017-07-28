@@ -42,7 +42,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
