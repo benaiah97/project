@@ -42,7 +42,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.ItemKind;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Status;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLUList;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
@@ -244,6 +244,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		//TODO NG - Creating UpgradeCatalogTO - Step 2
 		UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
+		
 		
 		//TODO NG - DLR Step 3A
 		// Need to perform the following 3 checks in order to mark as INELIGIBLE and reply back to client
