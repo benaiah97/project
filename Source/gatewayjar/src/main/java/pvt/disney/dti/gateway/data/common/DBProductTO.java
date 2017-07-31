@@ -135,7 +135,7 @@ public class DBProductTO implements Serializable {
 	private BigInteger upgrdPathId;
 	
 	/** The dayCount. */
-	private String dayCount;
+	private int dayCount;
 	
 	/**
 	 * Gets the quantity.
@@ -699,14 +699,14 @@ public class DBProductTO implements Serializable {
 	/**
 	 * @return dayCount
 	 */
-	public String getDayCount() {
+	public int getDayCount() {
 		return dayCount;
 	}
 
 	/**
 	 * @param dayCount
 	 */
-	public void setDayCount(String dayCount) {
+	public void setDayCount(int dayCount) {
 		this.dayCount = dayCount;
 	}
 	

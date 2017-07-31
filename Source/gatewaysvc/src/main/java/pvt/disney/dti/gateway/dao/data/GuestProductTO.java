@@ -11,12 +11,18 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
  * The Class GuestProductTO.
  */
 
+/**
+ * @author amrastog
+ *
+ */
 public class GuestProductTO {
 
 	/** The dbproduct TO. */
 	private DBProductTO dbproductTO;
 
 	/** The OMNI ticket list. */
+	private ArrayList<OTTicketInfoTO> otTicketInfoList=new ArrayList<OTTicketInfoTO>();
+	
 	private OTTicketInfoTO otTicketInfo;
 
 	/** The gw data resp TO. */
@@ -38,6 +44,20 @@ public class GuestProductTO {
 	}
 
 	/**
+	 * @return the otTicketInfoList
+	 */
+	public ArrayList<OTTicketInfoTO> getOtTicketInfoList() {
+		return otTicketInfoList;
+	}
+
+	/**
+	 * @param otTicketInfoList the otTicketInfoList to set
+	 */
+	public void setOtTicketInfoList(ArrayList<OTTicketInfoTO> otTicketInfoList) {
+		this.otTicketInfoList = otTicketInfoList;
+	}
+
+	/**
 	 * @return the otTicketInfo
 	 */
 	public OTTicketInfoTO getOtTicketInfo() {
@@ -45,8 +65,7 @@ public class GuestProductTO {
 	}
 
 	/**
-	 * @param otTicketInfo
-	 *           the otTicketInfo to set
+	 * @param otTicketInfo the otTicketInfo to set
 	 */
 	public void setOtTicketInfo(OTTicketInfoTO otTicketInfo) {
 		this.otTicketInfo = otTicketInfo;
