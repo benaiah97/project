@@ -755,7 +755,7 @@ public class WDWQueryEligibleProductsRules {
 		// Prod Price
 		dtiTicketTO.setTktPrice(dbProductTO.getStandardRetailPrice());
 
-		dtiTicketTO.setTktTax(dbProductTO.getTax());
+		dtiTicketTO.setTktTax(dbProductTO.getStandardRetailTax());
 
 		// Tkt Status (BIOMETRIC and PAYPLAN)
 		ArrayList<TktStatusTO> tktStatusList = dtiTicketTO.getTktStatusList();
