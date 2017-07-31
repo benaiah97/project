@@ -116,9 +116,6 @@ public class WDWQueryEligibleProductsRules {
 	/** The Constant NUMBER_FOR_DAYCOUNT. */
 	private static final int NUMBER_FOR_DAYCOUNT = 24 * 60 * 60 * 1000;
 
-	/** The upgrade catalog set. */
-	private static HashSet<UpgradeCatalogTO> UPGRADE_CATALOG_SET = new HashSet<UpgradeCatalogTO>();
-
 	/**
 	 * Transform the DTITransactionTO value object to the provider value objects
 	 * and then pass those to XML Marshaling routines to create an XML string.
@@ -283,9 +280,8 @@ public class WDWQueryEligibleProductsRules {
 					return;
 				}
 
-				// Step 2 :: Putting globalUpgradeProduct into hash set to avoid
-				// calling Product Key multiple times
-
+				// Step 2 :: Putting a check to avoid multiple calls in case of
+				// multiple tickets
 				if (globalUpgradeProduct == null) {
 
 					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(),
@@ -300,7 +296,7 @@ public class WDWQueryEligibleProductsRules {
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 				}
 
-				/* Step 4::  get the Upgraded List of PLU*/
+				/* Step 4:: get the Upgraded List of PLU */
 				if (globalUpgradeProduct != null) {
 
 					ArrayList<OTUpgradePLU> upGradedPluList = otTicketInfo.getUpgradePLUList();
@@ -328,10 +324,9 @@ public class WDWQueryEligibleProductsRules {
 				}
 
 				/* Step 5 */
-				if(dtiTicketTO.getResultType() != ResultType.NOPRODUCTS){
-					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);	
+				if (dtiTicketTO.getResultType() != ResultType.NOPRODUCTS) {
+					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);
 				}
-				
 
 				dtiResRespTO.add(dtiTicketTO);
 			}
