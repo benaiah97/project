@@ -232,7 +232,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		String PLU = gwDataRespTO.getPlu();
 
 		/* throw error if ticket not found */
-		if (StringUtils.isNotBlank(PLU)) {
+		if (PLU != null) {
 
 			// executing Query to pull up Guest Ticket detail by PLU
 			DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPlu());
@@ -267,7 +267,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						/* GUID */
 						String contactGUID = globalGuestProduct.getGwDataRespTO().getContact().get(0).getContactGUID();
 
-						if (StringUtils.isNotBlank(contactGUID)) {
+						if (contactGUID !=null) {
 
 							// Insert the GUID for GUID_ENTL Table
 							processGUID(visualId, contactGUID);

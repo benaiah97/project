@@ -106,6 +106,7 @@ public class GWQueryEligibleProductsTicketXML {
 		dataRequestStanza.addElement("Field").addText("UpgradePLUList");
 		dataRequestStanza.addElement("Field").addText("Contact");
 		dataRequestStanza.addElement("Field").addText("HasPicture");
+		dataRequestStanza.addElement("Field").addText("PLU");
 		return;
 	}
 

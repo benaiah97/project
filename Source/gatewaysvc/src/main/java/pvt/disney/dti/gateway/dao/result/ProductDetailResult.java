@@ -217,15 +217,15 @@ public class ProductDetailResult implements ResultSetProcessor {
 			aProduct.setStandardRetailPrice(standardRetailPrice);
 		}
 
-		// RESIDENT_IND
-		String residentIndString = rs.getString("RESIDENT_IND");
+		/*// RESIDENT_IND
+		String residentIndString = rs.getString("RESIDENTID");
 		if (residentIndString.compareToIgnoreCase("T") == 0) {
 			aProduct.setResidentInd(true);
 		} else {
 			aProduct.setResidentInd(false);
-		}
+		}*/
 
-		// STANDARD_RETAIL_TAX
+		/*// STANDARD_RETAIL_TAX
 		BigDecimal standardRetailTax = rs.getBigDecimal("STANDARD_RETAIL_TAX");
 		if (standardRetailTax != null) {
 			aProduct.setStandardRetailTax(standardRetailTax);
@@ -233,14 +233,16 @@ public class ProductDetailResult implements ResultSetProcessor {
 
 		// UPGRD_PATH_ID
 		BigInteger upGrdPathId = new BigInteger(rs.getString("UPGRD_PATH_ID"));
-		aProduct.setUpgrdPathId(upGrdPathId);
+		aProduct.setUpgrdPathId(upGrdPathId);*/
 
 		// GUEST TYPE
 		String guestType = rs.getString("GUEST_TYPE");
-		if (StringUtils.isNotBlank(guestType)) {
-			if (StringUtils.equals(guestType, ADULTCODE)) {
+		if (guestType != null) {
+			
+			
+			if (guestType.compareTo(ADULTCODE)==0) {
 				aProduct.setGuestType(GuestType.ADULT);
-			} else if (StringUtils.equals(guestType, CHILDCODE)) {
+			} else if (guestType.compareTo(CHILDCODE)==0) {
 				aProduct.setGuestType(GuestType.CHILD);
 			} else {
 				aProduct.setGuestType(GuestType.ANY);
@@ -249,6 +251,12 @@ public class ProductDetailResult implements ResultSetProcessor {
 		
 		int dayCount = rs.getInt("DAY_COUNT");
 		aProduct.setDayCount(dayCount);
+		
+		String tktName=rs.getString("TKTSYSID");
+		if(tktName !=null){
+			aProduct.setMappedProviderTktName(tktName);
+		}
+		
 		
 		/* Adding the result set to result */
 		results.add(aProduct);
