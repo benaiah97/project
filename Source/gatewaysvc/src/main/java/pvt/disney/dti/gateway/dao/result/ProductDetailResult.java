@@ -248,7 +248,7 @@ public class ProductDetailResult implements ResultSetProcessor {
 		}
 		
 		int dayCount = rs.getInt("DAY_COUNT");
-		aProduct.setDayCount(dayCount);(dayCount);
+		aProduct.setDayCount(dayCount);
 		
 		/* Adding the result set to result */
 		results.add(aProduct);
