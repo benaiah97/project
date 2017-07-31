@@ -1281,6 +1281,20 @@ public void setUpgradePrice(BigDecimal upgradePrice) {
 }
 
 /**
+ * @return the eligibleProducts
+ */
+public ArrayList<EligibleProductsTO> getEligibleProducts() {
+	return eligibleProducts;
+}
+
+/**
+ * @param eligibleProducts the eligibleProducts to set
+ */
+public void setEligibleProducts(ArrayList<EligibleProductsTO> eligibleProducts) {
+	this.eligibleProducts = eligibleProducts;
+}
+
+/**
  * Adds products to the list.
  */
 public void addEligibleProducts(EligibleProductsTO eligibleProductsTO) {
@@ -1300,5 +1314,6 @@ public GuestType getGuestType() {
 public void setGuestType(GuestType guestType) {
 	this.guestType = guestType;
 }
+
 
 }

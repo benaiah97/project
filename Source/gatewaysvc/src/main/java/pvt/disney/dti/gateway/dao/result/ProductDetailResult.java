@@ -217,15 +217,15 @@ public class ProductDetailResult implements ResultSetProcessor {
 			aProduct.setStandardRetailPrice(standardRetailPrice);
 		}
 
-		/*// RESIDENT_IND
-		String residentIndString = rs.getString("RESIDENTID");
+		// RESIDENT_IND
+		String residentIndString = rs.getString("RESIDENT_IND");
 		if (residentIndString.compareToIgnoreCase("T") == 0) {
 			aProduct.setResidentInd(true);
 		} else {
 			aProduct.setResidentInd(false);
-		}*/
+		}
 
-		/*// STANDARD_RETAIL_TAX
+		// STANDARD_RETAIL_TAX
 		BigDecimal standardRetailTax = rs.getBigDecimal("STANDARD_RETAIL_TAX");
 		if (standardRetailTax != null) {
 			aProduct.setStandardRetailTax(standardRetailTax);
@@ -233,7 +233,7 @@ public class ProductDetailResult implements ResultSetProcessor {
 
 		// UPGRD_PATH_ID
 		BigInteger upGrdPathId = new BigInteger(rs.getString("UPGRD_PATH_ID"));
-		aProduct.setUpgrdPathId(upGrdPathId);*/
+		aProduct.setUpgrdPathId(upGrdPathId);
 
 		// GUEST TYPE
 		String guestType = rs.getString("GUEST_TYPE");

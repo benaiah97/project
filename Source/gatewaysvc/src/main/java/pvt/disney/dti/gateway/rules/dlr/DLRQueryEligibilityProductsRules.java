@@ -80,7 +80,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	/** Constant text for PassRenew Status PARKING (as of 2.16.1, JTL) */
 	private final static String PASSRENEW_PARKING = "PARKING";
 
-	//private static ResultType Result_Type;
+	// private static ResultType Result_Type;
 
 	private static EventLogger logger = EventLogger.getLogger(DLRQueryEligibilityProductsRules.class);
 
@@ -252,7 +252,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 					// If Picture is not present in response marking resultType as
 					// INELIGIBLE
-					if (StringUtils.isNotBlank(globalGuestProduct.getGwDataRespTO().getHasPicture())) {
+					if (globalGuestProduct.getGwDataRespTO().getHasPicture() != null) {
 
 						dtiTktTO.setResultType(ResultType.INELIGIBLE);
 					}
@@ -267,7 +267,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						/* GUID */
 						String contactGUID = globalGuestProduct.getGwDataRespTO().getContact().get(0).getContactGUID();
 
-						if (contactGUID !=null) {
+						if (contactGUID != null) {
 
 							// Insert the GUID for GUID_ENTL Table
 							processGUID(visualId, contactGUID);
@@ -283,6 +283,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					 * Step 4 :: Check and filter the upgradeable PLU's with the
 					 * number of products from Upgrade product catalog TO
 					 */
+
 					ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
 					if (upGradedPLuList != null && upGradedPLuList.size() > 0) {
@@ -310,11 +311,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					 * globalUpgradeProduct to response
 					 */
 
-					/*if NOPRODUCTS is returned from step 2 or 4 stop transaction*/
-					if (dtiTktTO.getResultType() != ResultType.NOPRODUCTS) {
-						
-						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, newUpGradableProductList);
-					}
+					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, newUpGradableProductList);
 
 				} else {
 					dtiTktTO.setResultType(ResultType.NOPRODUCTS);
@@ -511,12 +508,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		logger.sendEvent("Orignal List of Salaeable Product Obtaned " + upGradeProductcatalog.getProductListCount(),
 					EventType.DEBUG, THISINSTANCE);
 
-		
-		
-		
 		if (PLUCount > 0 && upGradeProductcatalog.getProductListCount() > 0) {
 
-			// Filter for the PLU's from response (Step 1 ) with what obtained Step 2
+			// Filter for the PLU's from response (Step 1 ) with what obtained Step
+			// 2
 			upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
 
 			// new Upgradable product List
@@ -564,102 +559,101 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			/* ProdGuestType */
 			dtiTktTO.setGuestType(dbProductTO.getGuestType());
-
-			if (gwDataRespTO.getContact() == null && gwDataRespTO.getContact().size() == 0) {
-				dtiTktTO.setResultType(ResultType.INELIGIBLE);
-			}
-
-			for (Contact contact : gwDataRespTO.getContact()) {
-				/* FirstName */
-				if (contact.getFirstName() != null) {
-					ticketDemo.setFirstName(contact.getFirstName());
-				}
-
-				/* LastName */
-				if (contact.getLastName() != null) {
-					ticketDemo.setLastName(contact.getLastName());
-				}
-
-				/* Addr1 */
-				if (contact.getStreet1() != null) {
-					ticketDemo.setAddr1(contact.getStreet1());
-				}
-
-				/* Addr2 */
-				if (contact.getStreet2() != null) {
-					ticketDemo.setAddr2(contact.getStreet2());
-				}
-
-				/* City */
-				if (contact.getCity() != null) {
-					ticketDemo.setCity(contact.getCity());
-				}
-
-				/* State */
-				if (contact.getState() != null) {
-					ticketDemo.setState(contact.getState());
-				}
-
-				/* ZIP */
-				if (contact.getZip() != null) {
-					ticketDemo.setZip(contact.getZip());
-				}
-
-				/* Country */
-				if (contact.getCountryCode() != null) {
-					ticketDemo.setCountry(contact.getCountryCode());
-				}
-
-				/* Telephone */
-				if (contact.getPhone() != null) {
-					ticketDemo.setTelephone(contact.getPhone());
-				}
-
-				/* Cell */
-				if (contact.getEmail() != null) {
-					ticketDemo.setCellPhone(contact.getCell());
-				}
-
-				/* Email */
-				if (contact.getEmail() != null) {
-					ticketDemo.setEmail(contact.getEmail());
-				}
-
-				/*
-				 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
-				 * specified. Note: We're using Gender Resp String here because
-				 * Galaxy types vary between request (Integer) and response (String)
-				 */
-				if ((contact.getGender() != null)) {
-
-					if (contact.getGender().equalsIgnoreCase("Male")) {
-						ticketDemo.setGender(GenderType.MALE);
-					} else if (contact.getGender().equalsIgnoreCase("Female")) {
-						ticketDemo.setGender(GenderType.FEMALE);
-					} else {
-						ticketDemo.setGender(GenderType.UNSPECIFIED);
+			
+			/*Contact*/
+			if (gwDataRespTO.getContact() != null && gwDataRespTO.getContact().size() > 0)
+				for (Contact contact : gwDataRespTO.getContact()) {
+					/* FirstName */
+					if (contact.getFirstName() != null) {
+						ticketDemo.setFirstName(contact.getFirstName());
 					}
-				}
 
-				/*
-				 * DOB (as of 2.16.1, JTL) only returned if Demographics "ALL"
-				 * specified.
-				 */
-				if ((contact.getDob() != null)) {
-					try {
-						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						Date date = format.parse(contact.getDob());
-						GregorianCalendar gregorianCalendar = new GregorianCalendar();
-						gregorianCalendar.setTime(date);
-						ticketDemo.setDateOfBirth(gregorianCalendar);
-					} catch (ParseException e) {
-						// TODO
+					/* LastName */
+					if (contact.getLastName() != null) {
+						ticketDemo.setLastName(contact.getLastName());
 					}
-				}
 
-				dtiTktTO.addTicketDemographic(ticketDemo);
-				ticketDemo = new DemographicsTO();
-			}
+					/* Addr1 */
+					if (contact.getStreet1() != null) {
+						ticketDemo.setAddr1(contact.getStreet1());
+					}
+
+					/* Addr2 */
+					if (contact.getStreet2() != null) {
+						ticketDemo.setAddr2(contact.getStreet2());
+					}
+
+					/* City */
+					if (contact.getCity() != null) {
+						ticketDemo.setCity(contact.getCity());
+					}
+
+					/* State */
+					if (contact.getState() != null) {
+						ticketDemo.setState(contact.getState());
+					}
+
+					/* ZIP */
+					if (contact.getZip() != null) {
+						ticketDemo.setZip(contact.getZip());
+					}
+
+					/* Country */
+					if (contact.getCountryCode() != null) {
+						ticketDemo.setCountry(contact.getCountryCode());
+					}
+
+					/* Telephone */
+					if (contact.getPhone() != null) {
+						ticketDemo.setTelephone(contact.getPhone());
+					}
+
+					/* Cell */
+					if (contact.getEmail() != null) {
+						ticketDemo.setCellPhone(contact.getCell());
+					}
+
+					/* Email */
+					if (contact.getEmail() != null) {
+						ticketDemo.setEmail(contact.getEmail());
+					}
+
+					/*
+					 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
+					 * specified. Note: We're using Gender Resp String here because
+					 * Galaxy types vary between request (Integer) and response
+					 * (String)
+					 */
+					if ((contact.getGender() != null)) {
+
+						if (contact.getGender().equalsIgnoreCase("Male")) {
+							ticketDemo.setGender(GenderType.MALE);
+						} else if (contact.getGender().equalsIgnoreCase("Female")) {
+							ticketDemo.setGender(GenderType.FEMALE);
+						} else {
+							ticketDemo.setGender(GenderType.UNSPECIFIED);
+						}
+					}
+
+					/*
+					 * DOB (as of 2.16.1, JTL) only returned if Demographics "ALL"
+					 * specified.
+					 */
+					if ((contact.getDob() != null)) {
+						try {
+							DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							Date date = format.parse(contact.getDob());
+							GregorianCalendar gregorianCalendar = new GregorianCalendar();
+							gregorianCalendar.setTime(date);
+							ticketDemo.setDateOfBirth(gregorianCalendar);
+						} catch (ParseException e) {
+							// TODO
+						}
+					}
+
+					dtiTktTO.addTicketDemographic(ticketDemo);
+					ticketDemo = new DemographicsTO();
+				}
 
 			/* Demographics start */
 			/* FirstName */
@@ -795,6 +789,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			} else {
 				tktStatus.setStatusValue(NO);
 			}
+			tktStatusList.add(tktStatus);
+
+			tktStatusList = dtiTktTO.getTktStatusList();
+			tktStatus = dtiTktTO.new TktStatusTO();
 
 			/* payplan */
 			tktStatus.setStatusItem(PAYLAN);
@@ -889,58 +887,62 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		}
 
 		/* Eligible products */
-		for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
+		if (upgradedProductTOList != null && upgradedProductTOList.size() > 0) {
+			for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
 
-			eligibleProductsTO = new EligibleProductsTO();
+				eligibleProductsTO = new EligibleProductsTO();
 
-			/* set the product code */
-			eligibleProductsTO.setProdCode(productTO.getPdtCode());
+				/* set the product code */
+				eligibleProductsTO.setProdCode(productTO.getPdtCode());
 
-			/* set the actual product price */
-			prodPrice = dbProductTO.getStandardRetailPrice();
+				/* set the actual product price */
+				prodPrice = dbProductTO.getStandardRetailPrice();
 
-			eligibleProductsTO.setProdPrice(prodPrice.toString());
+				eligibleProductsTO.setProdPrice(prodPrice.toString());
 
-			/* set the actual product tax */
-			prodTax = dbProductTO.getStandardRetailTax();
+				/* set the actual product tax */
+				prodTax = dbProductTO.getStandardRetailTax();
 
-			eligibleProductsTO.setProdTax(prodTax);
+				eligibleProductsTO.setProdTax(prodTax);
 
-			/* set the upgraded product price */
-			prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
+				/* set the upgraded product price */
+				prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
 
-			eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
+				eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
 
-			/* set the upgraded product tax */
-			prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
-			eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
-			/* set the validity */
-			try {
-				Integer dayCount = productTO.getDayCount();
+				/* set the upgraded product tax */
+				prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
+				eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
+				/* set the validity */
+				try {
+					Integer dayCount = productTO.getDayCount();
 
-				Calendar calendar = Calendar.getInstance();
-				if (dbProductTO.getStartSaleDate() != null) {
-					calendar.setTime(dbProductTO.getStartSaleDate().getTime());
-					calendar.add(calendar.DAY_OF_MONTH, dayCount);
+					Calendar calendar = Calendar.getInstance();
+					if (dbProductTO.getStartSaleDate() != null) {
+						calendar.setTime(dbProductTO.getStartSaleDate().getTime());
+						calendar.add(calendar.DAY_OF_MONTH, dayCount);
 
-					GregorianCalendar gc = new GregorianCalendar();
-					gc.setTime(calendar.getTime());
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTime(calendar.getTime());
 
-					eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
-				} else {
-					throw new Exception();
+						// TODO need to figure out
+						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+					} else {
+						throw new Exception();
+					}
+				} catch (NumberFormatException ne) {
+					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+								"Provider responded with a non-numeric status code.");
+				} catch (Exception e) {
+					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+								"Exception executing getAPUpgradeCatalog", e);
 				}
-			} catch (NumberFormatException ne) {
-				throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Provider responded with a non-numeric status code.");
-			} catch (Exception e) {
-				throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Exception executing getAPUpgradeCatalog", e);
-			}
-			/* add the eligible product element to the list */
-			dtiTktTO.addEligibleProducts(eligibleProductsTO);
+				/* add the eligible product element to the list */
+				dtiTktTO.addEligibleProducts(eligibleProductsTO);
 
-			logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
+				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
+			}
+
 		}
 	}
 
