@@ -114,7 +114,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
       otTicketInfoTO.setBiometricTemplate("biometricTemplate");
       DBProductTO dbProductTO = new DBProductTO();
       dbProductTO.setResidentInd(true);
-      dbProductTO.setDayCount("1");
+      dbProductTO.setDayCount(1);
       otTicketInfoTO.setVoidCode(new Integer(1));
       boolean inElegibleFlag = false;
 
@@ -194,7 +194,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
       otUsagesTO.setDate("17-07-06");
       dbProductTO.setUpgrdPathId(new BigInteger("2"));
       otTicketInfoTO.setBiometricTemplate("biometricTemplate");
-      dbProductTO.setDayCount("2");
+      dbProductTO.setDayCount(2);
       dbProductTO.setResidentInd(true);
       try {
          inElegibleFlag =  WDWQueryEligibleProductsRules.validateInEligibleProducts(otTicketInfoTO, dbProductTO);

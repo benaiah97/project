@@ -80,7 +80,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	/** Constant text for PassRenew Status PARKING (as of 2.16.1, JTL) */
 	private final static String PASSRENEW_PARKING = "PARKING";
 
-	private static ResultType Result_Type;
+	//private static ResultType Result_Type;
 
 	private static EventLogger logger = EventLogger.getLogger(DLRQueryEligibilityProductsRules.class);
 
@@ -220,7 +220,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
 
 		/* new List of Upgradeable Product after filter */
-		ArrayList<DBProductTO> newUpGradableProductList = new ArrayList<DBProductTO>();
+		ArrayList<DBProductTO> newUpGradableProductList = null;
 
 		// Creating GuestProductTO - Step 1
 		GuestProductTO globalGuestProduct = new GuestProductTO();
@@ -293,6 +293,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						}
 						newUpGradableProductList = matchUpgradedProductSize(PLUList, globalUpgradeProduct);
 
+						if (newUpGradableProductList == null || newUpGradableProductList.size() == 0) {
+							dtiTktTO.setResultType(ResultType.INELIGIBLE);
+						}
+
 					} else {
 						/*
 						 * if no upgradeable PLUs mark the result as INELIGIBLE and
@@ -306,12 +310,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					 * globalUpgradeProduct to response
 					 */
 
-					if (Result_Type != ResultType.NOPRODUCTS) {
+					/*if NOPRODUCTS is returned from step 2 or 4 stop transaction*/
+					if (dtiTktTO.getResultType() != ResultType.NOPRODUCTS) {
+						
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, newUpGradableProductList);
 					}
-
-					/* setting Final result type */
-					dtiTktTO.setResultType(Result_Type);
 
 				} else {
 					dtiTktTO.setResultType(ResultType.NOPRODUCTS);
@@ -508,25 +511,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		logger.sendEvent("Orignal List of Salaeable Product Obtaned " + upGradeProductcatalog.getProductListCount(),
 					EventType.DEBUG, THISINSTANCE);
 
-		// Filter for the PLU's from response (Step 1 ) with what obtained Step 2
-		upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
+		
+		
+		
+		if (PLUCount > 0 && upGradeProductcatalog.getProductListCount() > 0) {
 
-		// new Upgradable produc List
-		newUpgradableProductList = upGradeProductcatalog.getProductList();
-		int upgradableProductCount = upGradeProductcatalog.getProductList().size();
+			// Filter for the PLU's from response (Step 1 ) with what obtained Step 2
+			upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
 
-		logger.sendEvent("Final List of Salaeable Product Obtaned " + upgradableProductCount, EventType.DEBUG,
-					THISINSTANCE);
+			// new Upgradable product List
+			newUpgradableProductList = upGradeProductcatalog.getProductList();
+			int upgradableProductCount = upGradeProductcatalog.getProductList().size();
 
-		if (upgradableProductCount > 0) {
+			logger.sendEvent("Final List of Salaeable Product Obtaned " + upgradableProductCount, EventType.DEBUG,
+						THISINSTANCE);
 
-			if ((PLUCount >= upgradableProductCount) || (PLUCount < upgradableProductCount)) {
-				Result_Type = ResultType.ELIGIBLE;
-			} else {
-				Result_Type = ResultType.INELIGIBLE;
-			}
-		} else {
-			Result_Type = ResultType.NOPRODUCTS;
 		}
 		return newUpgradableProductList;
 	}

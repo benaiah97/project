@@ -14,6 +14,8 @@ import com.disney.logging.audit.EventType;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicData;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTErrorTO;
@@ -21,6 +23,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO.TicketIDType;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTUpgradePLU;
 import pvt.disney.dti.gateway.util.CustomDataTypeConverter;
 
 /**
@@ -328,10 +331,64 @@ public class OTQueryTicketXML {
         }
       }
       
+      // TODO :: to confirm if this is needed for WDW
+      Node upGradePLU = aNode.selectSingleNode("UpgradePLUList");
+      if (upGradePLU != null) {
+      	setUpgradePLUItems(otTktInfoTO,upGradePLU);
+      }
+      
       otTktList.add(otTktInfoTO);
     }
 
     return;
   }
+  
+  /**
+   * Sets the upgrade PLU items.
+   *
+   * @param otTktInfoTO the ot tkt info TO
+   * @param upGradePLUResponse the up grade PLU response
+   */
+  private static void setUpgradePLUItems(OTTicketInfoTO otTktInfoTO,Node upGradePLUResponse){
+
+		// UpGradePLU Response
+		Node linReqResp = upGradePLUResponse;
+
+		List linRecordList = linReqResp.selectNodes("Item");
+		
+		for (int index = 0; index < linRecordList.size(); index++) {
+
+			Node linRecord = (Node) linRecordList.get(index);
+
+			// Create the inner class
+			OTUpgradePLU upgratePLU=new OTUpgradePLU();
+
+			// PLU
+			Node pluNode = linRecord.selectSingleNode("PLU");
+			if (pluNode != null) {
+
+				upgratePLU.setPLU(pluNode.getText());
+			}
+
+			// Price
+			Node priceNode = linRecord.selectSingleNode("Price");
+			if (priceNode != null) {
+				String inText = priceNode.getText();
+				upgratePLU.setPrice(new BigDecimal(inText));
+
+			}
+
+			// Upgraded Price
+			Node upgdpriceNode = linRecord.selectSingleNode("UpgradePrice");
+			if (upgdpriceNode != null) {
+				String inText = upgdpriceNode.getText();
+				upgratePLU.setUpgradePrice(new BigDecimal(inText));
+
+			}
+			
+			// Save it to the array
+			otTktInfoTO.addUpgradePLUList(upgratePLU);
+		}
+	}
 
 }

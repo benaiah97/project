@@ -37,12 +37,14 @@ import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTUpgradePLU;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 import pvt.disney.dti.gateway.rules.TransformRules;
@@ -116,9 +118,6 @@ public class WDWQueryEligibleProductsRules {
 
 	/** The upgrade catalog set. */
 	private static HashSet<UpgradeCatalogTO> UPGRADE_CATALOG_SET = new HashSet<UpgradeCatalogTO>();
-
-	/** The Result type. */
-	private static ResultType Result_Type;
 
 	/**
 	 * Transform the DTITransactionTO value object to the provider value objects
@@ -244,7 +243,7 @@ public class WDWQueryEligibleProductsRules {
 
 		dtiRespTO.setCommandBody(dtiResRespTO);
 
-		// global Upgrade Catalog product 
+		// global Upgrade Catalog product
 		UpgradeCatalogTO globalUpgradeProduct = null;
 
 		// new and final List of Upgradeable Product after filter
@@ -301,20 +300,24 @@ public class WDWQueryEligibleProductsRules {
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 				}
 
-				/* Step 4:: how to get the Upgraded List */
+				/* Step 4::  get the Upgraded List of PLU*/
 				if (globalUpgradeProduct != null) {
 
-					ArrayList<String> upGradedPluList = new ArrayList<String>();
-					newProductcatalogList = matchUpgradedProductSize(upGradedPluList, globalUpgradeProduct);
+					ArrayList<OTUpgradePLU> upGradedPluList = otTicketInfo.getUpgradePLUList();
 
-					// if not product is found return No Product
+					if (upGradedPluList != null && upGradedPluList.size() > 0) {
+
+						ArrayList<String> PLUList = new ArrayList<String>();
+						for (OTUpgradePLU upgradePLU : upGradedPluList) {
+							PLUList.add(upgradePLU.getPLU());
+						}
+						newProductcatalogList = matchUpgradedProductSize(PLUList, globalUpgradeProduct);
+					}
+
+					// if no product is found return No Product
 					if (newProductcatalogList == null) {
 
-						dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
-
-						dtiResRespTO.add(dtiTicketTO);
-
-						return;
+						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 					}
 				} else {
 					dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
@@ -325,7 +328,10 @@ public class WDWQueryEligibleProductsRules {
 				}
 
 				/* Step 5 */
-				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);
+				if(dtiTicketTO.getResultType() != ResultType.NOPRODUCTS){
+					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);	
+				}
+				
 
 				dtiResRespTO.add(dtiTicketTO);
 			}
@@ -396,26 +402,19 @@ public class WDWQueryEligibleProductsRules {
 		logger.sendEvent("Orignal List of Salaeable Product Obtaned " + upGradeProductcatalog.getProductListCount(),
 					EventType.DEBUG, THISINSTANCE);
 
-		// Filter for the PLU's from response (Step 1 ) with what obtained Step 2
-		upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
+		if (PLUCount > 0 && upGradeProductcatalog.getProductListCount() > 0) {
+			upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
 
-		// new Upgradable produc List
-		newUpgradableProductList = upGradeProductcatalog.getProductList();
-		int upgradableProductCount = upGradeProductcatalog.getProductList().size();
+			// new Upgradable product List
+			newUpgradableProductList = upGradeProductcatalog.getProductList();
+			int upgradableProductCount = upGradeProductcatalog.getProductList().size();
 
-		logger.sendEvent("Final List of Salaeable Product Obtaned " + upgradableProductCount, EventType.DEBUG,
-					THISINSTANCE);
+			logger.sendEvent("Final List of Salaeable Product Obtaned " + upgradableProductCount, EventType.DEBUG,
+						THISINSTANCE);
 
-		if (upgradableProductCount > 0) {
-
-			if ((PLUCount >= upgradableProductCount) || (PLUCount < upgradableProductCount)) {
-				Result_Type = ResultType.ELIGIBLE;
-			} else {
-				Result_Type = ResultType.INELIGIBLE;
-			}
-		} else {
-			Result_Type = ResultType.NOPRODUCTS;
 		}
+		// Filter for the PLU's from response (Step 1 ) with what obtained Step 2
+
 		return newUpgradableProductList;
 	}
 
@@ -550,16 +549,16 @@ public class WDWQueryEligibleProductsRules {
 				 * ResidentInd is Y and DayCount = 1 and the first use date is older
 				 * than 14 days
 				 */
-				if (firstuseDate != null && productTO.isResidentInd() == true
-							&& productTO.getDayCount() == 1 && getDayDifference(firstuseDate) > 14) {
+				if (firstuseDate != null && productTO.isResidentInd() == true && productTO.getDayCount() == 1
+							&& getDayDifference(firstuseDate) > 14) {
 					isInEligibleProductFlag = true;
 				}
 				/*
 				 * resident flag is 'Y' and DayCount > 1, and the first use date is
 				 * older than six months (185 days).
 				 */
-				if (firstuseDate != null && productTO.isResidentInd() == true
-							&& productTO.getDayCount() > 1 && getDayDifference(firstuseDate) > 185) {
+				if (firstuseDate != null && productTO.isResidentInd() == true && productTO.getDayCount() > 1
+							&& getDayDifference(firstuseDate) > 185) {
 					isInEligibleProductFlag = true;
 				}
 			} catch (Exception e) {
