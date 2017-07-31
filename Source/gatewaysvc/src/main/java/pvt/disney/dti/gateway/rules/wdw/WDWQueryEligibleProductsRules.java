@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -37,7 +36,6 @@ import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
@@ -54,8 +52,8 @@ import com.disney.logging.audit.EventType;
 
 // TODO: Auto-generated Javadoc
 /**
- * This class is responsible for three major functions for WDW query
- * reservation:<BR>
+ * This class is responsible for three major functions for WDW Query Eligible Product 
+ * :<BR>
  * 1. Defining the business rules specific to WDW query Eligible Products.<BR>
  * 2. Defining the rules for transforming requests from the DTI transfer objects
  * to the provider transfer objects.<BR>
@@ -318,12 +316,9 @@ public class WDWQueryEligibleProductsRules {
 				} else {
 					dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
 
-					dtiResRespTO.add(dtiTicketTO);
-
-					return;
 				}
 
-				/* Step 5 */
+				/* Step 5 setting up the detail in Ticket TO */
 				if (dtiTicketTO.getResultType() != ResultType.NOPRODUCTS) {
 					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);
 				}

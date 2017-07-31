@@ -639,7 +639,7 @@ public class GWQueryEligibleProductsTicketXML {
 				upgratePLU.setUpgradePrice(new BigDecimal(inText));
 
 			}
-			// Adding new Has Picture Contact
+			// Adding Pay Plan information
 			if (linReqResp.getName().compareTo("PaymentPlans") == 0) {
 				dataRespTO.setPayPlan("YES");
 				extractPayplan(upgratePLU, linReqResp);
