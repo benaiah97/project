@@ -158,6 +158,7 @@ public class QueryEligibleProductsTestCase {
 	@Test
 	public void testGetJaxb() {
 		QueryEligibilityProductsResponseTO qryResRespTO = new QueryEligibilityProductsResponseTO();
+		QueryEligibleProductsResponse queryEligibleProductsResponse;
 		BigInteger errorCodeIn = new BigInteger("52");
 		String errorClassIn = "errorClassIn";
 		String errorTextIn = "errorTextIn";
@@ -233,7 +234,7 @@ public class QueryEligibleProductsTestCase {
 		qryResRespTO.getTicketList().add(ticketTO);
 		/*Scenario 1 :: Guesttype= ADULT*/
 		try {
-			QueryEligibleProductsResponse queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
+			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
 		} catch (JAXBException e) {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
@@ -241,7 +242,7 @@ public class QueryEligibleProductsTestCase {
 		/*Scenario 2 :: Guesttype= Child*/
 		ticketTO.setGuestType(DBProductTO.GuestType.CHILD);
 		try {
-			QueryEligibleProductsResponse queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
+			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
 		} catch (JAXBException e) {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
@@ -249,7 +250,7 @@ public class QueryEligibleProductsTestCase {
 		/*Scenario 3 :: Guesttype= Any*/
 		ticketTO.setGuestType(DBProductTO.GuestType.ANY);
 		try {
-			QueryEligibleProductsResponse queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
+			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
 		} catch (JAXBException e) {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
@@ -257,7 +258,7 @@ public class QueryEligibleProductsTestCase {
 		/*Scenario 4 :: ResultType= NOPRODUCTS*/
 		ticketTO.setResultType(ResultStatusTo.ResultType.NOPRODUCTS);
 		try {
-			QueryEligibleProductsResponse queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
+			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
 		} catch (JAXBException e) {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
@@ -265,7 +266,7 @@ public class QueryEligibleProductsTestCase {
 		/*Scenario 5 :: ResultType= INELIGIBLE*/
 		ticketTO.setResultType(ResultStatusTo.ResultType.INELIGIBLE);
 		try {
-			QueryEligibleProductsResponse queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
+			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
 		} catch (JAXBException e) {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
