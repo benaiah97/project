@@ -2,6 +2,7 @@ package pvt.disney.dti.gateway.provider.dlr.xml;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,6 +33,7 @@ public class GWQueryEligibleProductsTicketXML {
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
 
 	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
 
 	/**
 	 * Adds the query ticket element.
@@ -107,6 +109,9 @@ public class GWQueryEligibleProductsTicketXML {
 		dataRequestStanza.addElement("Field").addText("Contact");
 		dataRequestStanza.addElement("Field").addText("HasPicture");
 		dataRequestStanza.addElement("Field").addText("PLU");
+		Element usageElement = dataRequestStanza.addElement("UsageRecords");
+		usageElement.addElement("Field").addText("*");
+
 		return;
 	}
 
@@ -584,11 +589,93 @@ public class GWQueryEligibleProductsTicketXML {
 				String hasPicture = element.getText();
 				dataRespTO.setHasPicture(hasPicture);
 			}
+
+			// Adding new Usage details
+			if (element.getName().compareTo("UsageRequestResponse") == 0) {
+				extractUsageRecords(dataRespTO, i, element);
+			}
 		}
 
 		qtRespTO.setDataRespTO(dataRespTO);
 
 		return qtRespTO;
+	}
+
+	/**
+	 * Extract Usage records.
+	 *
+	 * @param dataRespTO
+	 *           the data resp TO
+	 * @param i
+	 *           the i
+	 * @param usageRecords
+	 *           the usage records
+	 * @throws DTIException
+	 *            the DTI exception
+	 */
+	@SuppressWarnings("rawtypes")
+	private static void extractUsageRecords(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+				Element usageRecords) throws DTIException {
+
+		// UpGradePLU Response
+		Node linReqResp = usageRecords;
+		
+		Node linRecords = linReqResp.selectSingleNode("UsageRecords");
+		if(linRecords==null){
+			return;
+		}
+
+		List linRecordList = linRecords.selectNodes("UsageRecord");
+
+		for (int index = 0; index < linRecordList.size(); index++) {
+
+			Node linRecord = (Node) linRecordList.get(index);
+
+			// Create the inner class
+			GWDataRequestRespTO.UsageRecord usageRecord = dataRespTO.new UsageRecord();
+
+			// AccessCode
+			Node acessCode = linRecord.selectSingleNode("AccessCode");
+			if (acessCode != null) {
+				usageRecord.setAcessCode(acessCode.getText());
+
+			}
+
+			// ACP
+			Node acpNode = linRecord.selectSingleNode("ACP");
+			if (acpNode != null) {
+				String inText = acpNode.getText();
+				usageRecord.setAcp(inText);
+			}
+
+			// Use No
+			Node usenumberNode = linRecord.selectSingleNode("UseNo");
+			if (usenumberNode != null) {
+				try {
+					Integer useNo = Integer.valueOf(usenumberNode.getText());
+					usageRecord.setUseNo(useNo);
+				} catch (Exception e) {
+
+				}
+
+			}
+
+			// Use Time
+			Node useTimeNode = linRecord.selectSingleNode("UseTime");
+			if (useTimeNode != null) {
+				String useTime = useTimeNode.getText();
+				if ((useTime != null) && (useTime.length() > 0)) {
+					GregorianCalendar useDateTime = UtilityXML.getGCalFromEGalaxyDate(useTime);
+					if (useDateTime == null) {
+						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+									"Response GW XML DataRequestResp has unparsable StartDateTime: " + useTime);
+					}
+					usageRecord.setUseTime(useDateTime);
+				}
+			}
+			dataRespTO.addUsageRecords(usageRecord);
+		}
+
 	}
 
 	/**
@@ -603,6 +690,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 * @throws DTIException
 	 *            the DTI exception
 	 */
+	@SuppressWarnings("rawtypes")
 	private static void extractUpgradePLU(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
 				Element upGradePLUResponse) throws DTIException {
 
@@ -651,7 +739,7 @@ public class GWQueryEligibleProductsTicketXML {
 	}
 
 	/**
-	 * Extract payplan.
+	 * Extract pay plan.
 	 *
 	 * @param upgratePLU
 	 *           the upgrate PLU
@@ -660,6 +748,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 * @throws DTIException
 	 *            the DTI exception
 	 */
+	@SuppressWarnings("rawtypes")
 	private static void extractPayplan(GWDataRequestRespTO.UpgradePLU upgratePLU, Node payPlanLineResponse)
 				throws DTIException {
 
@@ -713,6 +802,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 * @throws DTIException
 	 *            the DTI exception
 	 */
+	@SuppressWarnings("unchecked")
 	private static void extractContact(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
 
 		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();

@@ -3,6 +3,7 @@ package pvt.disney.dti.gateway.provider.dlr.data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 // TODO: Auto-generated Javadoc
@@ -158,10 +159,7 @@ public class GWDataRequestRespTO implements Serializable {
 	private ArrayList<LineageRecord> lineageArray = new ArrayList<LineageRecord>();
 
 	/** The upgrade PLU list. */
-	private ArrayList<UpgradePLU> upgradePLUList = new ArrayList<UpgradePLU>(); // As
-																											// of
-																											// 2.17.X
-																											// NG
+	private ArrayList<UpgradePLU> upgradePLUList = new ArrayList<UpgradePLU>(); // As of 2.17.X  NG
 
 	/** The picture. */
 	private String hasPicture;
@@ -193,6 +191,9 @@ public class GWDataRequestRespTO implements Serializable {
 
 	/** The PLU of the original ticket. */
 	private String plu; // As of 2.17.X NG
+	
+	/** The usage records. */
+	private ArrayList<UsageRecord> usageRecords=new ArrayList<GWDataRequestRespTO.UsageRecord>();
 
 	/**
 	 * The Class LineageRecord.
@@ -540,6 +541,131 @@ public class GWDataRequestRespTO implements Serializable {
 
 		}
 
+	}
+	
+	
+	public class UsageRecord{
+		
+		/** The acess code. */
+		private String acessCode;
+		
+		/** The acp. */
+		private String acp;
+		
+		/** The acp name. */
+		private String acpName;
+		
+		/** The attraction id. */
+		private String attractionId;
+		
+		/** The bank no. */
+		private Integer bankNo; 
+		
+		/** The use time. */
+		private GregorianCalendar useTime;
+		
+		/** The use no. */
+		private Integer useNo;
+
+		/**
+		 * @return the acessCode
+		 */
+		public String getAcessCode() {
+			return acessCode;
+		}
+
+		/**
+		 * @param acessCode the acessCode to set
+		 */
+		public void setAcessCode(String acessCode) {
+			this.acessCode = acessCode;
+		}
+
+		/**
+		 * @return the acp
+		 */
+		public String getAcp() {
+			return acp;
+		}
+
+		/**
+		 * @param acp the acp to set
+		 */
+		public void setAcp(String acp) {
+			this.acp = acp;
+		}
+
+		/**
+		 * @return the acpName
+		 */
+		public String getAcpName() {
+			return acpName;
+		}
+
+		/**
+		 * @param acpName the acpName to set
+		 */
+		public void setAcpName(String acpName) {
+			this.acpName = acpName;
+		}
+
+		/**
+		 * @return the attractionId
+		 */
+		public String getAttractionId() {
+			return attractionId;
+		}
+
+		/**
+		 * @param attractionId the attractionId to set
+		 */
+		public void setAttractionId(String attractionId) {
+			this.attractionId = attractionId;
+		}
+
+		/**
+		 * @return the bankNo
+		 */
+		public Integer getBankNo() {
+			return bankNo;
+		}
+
+		/**
+		 * @param bankNo the bankNo to set
+		 */
+		public void setBankNo(Integer bankNo) {
+			this.bankNo = bankNo;
+		}
+
+		/**
+		 * @return the useTime
+		 */
+		public GregorianCalendar getUseTime() {
+			return useTime;
+		}
+
+		/**
+		 * @param useTime the useTime to set
+		 */
+		public void setUseTime(GregorianCalendar useTime) {
+			this.useTime = useTime;
+		}
+
+		/**
+		 * @return the useNo
+		 */
+		public Integer getUseNo() {
+			return useNo;
+		}
+
+		/**
+		 * @param useNo the useNo to set
+		 */
+		public void setUseNo(Integer useNo) {
+			this.useNo = useNo;
+		}
+		
+		
 	}
 
 	/**
@@ -2029,6 +2155,24 @@ public class GWDataRequestRespTO implements Serializable {
 	 */
 	public void setPlu(String plu) {
 		this.plu = plu;
+	}
+
+	/**
+	 * @return the usageRecords
+	 */
+	public ArrayList<UsageRecord> getUsageRecords() {
+		return usageRecords;
+	}
+
+	/**
+	 * @param usageRecords the usageRecords to set
+	 */
+	public void setUsageRecords(ArrayList<UsageRecord> usageRecords) {
+		this.usageRecords = usageRecords;
+	}
+	
+	public void addUsageRecords(UsageRecord usageRecord) {
+		this.usageRecords.add(usageRecord);
 	}
 
 }

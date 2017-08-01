@@ -14,7 +14,11 @@ import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.lang3.StringUtils;
+
+
+
+
+import org.apache.commons.lang.StringUtils;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -83,19 +87,12 @@ public class WDWQueryEligibleProductsRules {
 	/** Constant indicating the Manage Reservation XSD. */
 	private final static String NO_NAMESPACE_SCHEMA_LOCATION = "dtigatewayrequest.xsd";
 
-	/** Constant indicating limited tags should be created. */
-	private final static String[] QT_TAGS = { "Tax", "VoidCode", "TicketFlag", "TicketAttribute", "AlreadyUsed" };
-
-	/**
-	 * Tag exception -- This is hard-coded, but when TDS gets rid of their old
-	 * system, we'll be able to remove this. JTL
-	 */
-	private final static String EXCEPTION_TSMAC = "TDSNA";
-
 	/** Constant text for ITEM ONE (1). */
 	private final static String ITEMONE = "1";
-
-	/** The Constant fmt. */
+	
+	/** The Constant WDW_TPS_CODE. */
+	private final static String WDW_TPS_CODE = "WDW-ATS";
+	
 	/* Simple Date Format */
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("yy-MM-dd");
 
@@ -282,8 +279,7 @@ public class WDWQueryEligibleProductsRules {
 				// multiple tickets
 				if (globalUpgradeProduct == null) {
 
-					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(),
-								"WDW-ATS");
+					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), WDW_TPS_CODE);
 				}
 
 				/* Step 3 */
@@ -319,58 +315,12 @@ public class WDWQueryEligibleProductsRules {
 				}
 
 				/* Step 5 setting up the detail in Ticket TO */
-				if (dtiTicketTO.getResultType() != ResultType.NOPRODUCTS) {
-					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
-				}
+				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
 
 				dtiResRespTO.add(dtiTicketTO);
 			}
 		}
 
-	}
-
-	/**
-	 * Gets the upgraded product.
-	 *
-	 * @param dtiTktTO
-	 *           the dti tkt TO
-	 * @param dtiTxn
-	 *           the dti txn
-	 * @return the upgraded product
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	private static ArrayList<DBProductTO> getUpgradedProduct(TicketTO dtiTktTO, DTITransactionTO dtiTxn)
-				throws DTIException {
-
-		ArrayList<DBProductTO> newProductCatalogTO = null;
-
-		UpgradeCatalogTO upGradeCatalogTO = null;
-
-		/* Call to fetch the saleable ProductList */
-		try {
-			upGradeCatalogTO = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);
-
-		} catch (Exception dtie) {
-			logger.sendEvent("database exception occured " + dtie.getMessage(), EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(TransformRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-						"Provider responded with a non-numeric status code.");
-		}
-
-		if (upGradeCatalogTO != null) {
-
-			if (upGradeCatalogTO.getProductList() != null && upGradeCatalogTO.getProductList().size() > 0) {
-				dtiTktTO.setResultType(ResultType.ELIGIBLE);
-				newProductCatalogTO = upGradeCatalogTO.getProductList();
-			}
-
-		} else {
-			logger.sendEvent("Not able to find any Ticket Information in DTI.", EventType.DEBUG, null);
-
-			dtiTktTO.setResultType(ResultType.INELIGIBLE);
-		}
-
-		return newProductCatalogTO;
 	}
 
 	/**
@@ -387,13 +337,11 @@ public class WDWQueryEligibleProductsRules {
 
 		ArrayList<DBProductTO> newUpgradableProductList = null;
 		int PLUCount = upGradedPluList.size();
-		ResultType eligibleFlag = ResultType.NOPRODUCTS;
-
 		logger.sendEvent("Orignal List of Salaeable Product Obtaned " + upGradeProductcatalog.getProductListCount(),
 					EventType.DEBUG, THISINSTANCE);
 
 		if (PLUCount > 0 && upGradeProductcatalog.getProductListCount() > 0) {
-			upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
+			//upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
 
 			// new Upgradable product List
 			newUpgradableProductList = upGradeProductcatalog.getProductList();

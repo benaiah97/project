@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -43,6 +45,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.LineageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
+import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UsageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
@@ -218,7 +221,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
 
 		/* new List of Upgradeable Product after filter */
-		ArrayList<DBProductTO> newUpGradableProductList = new ArrayList<DBProductTO>();
+		ArrayList<DBProductTO> newUpGradableProductList = null;
 
 		// Creating GuestProductTO - Step 1
 		GuestProductTO globalGuestProduct = new GuestProductTO();
@@ -286,14 +289,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 					if (upGradedPLuList != null && upGradedPLuList.size() > 0) {
 
-						ArrayList<String> PLUList = new ArrayList<String>();
-						for (UpgradePLU upgradePLU : upGradedPLuList) {
-							PLUList.add(upgradePLU.getPLU());
-						}
-						newUpGradableProductList = matchUpgradedProductSize(PLUList, globalUpgradeProduct);
+						if (globalUpgradeProduct.getProductListCount() > 0) {
+							
+							ArrayList<String> PLUList = new ArrayList<String>();
+							for (UpgradePLU upgradePLU : upGradedPLuList) {
+								PLUList.add(upgradePLU.getPLU());
+							}
+							newUpGradableProductList = matchUpgradedProductSize(PLUList, globalUpgradeProduct);
 
-						if (newUpGradableProductList == null || newUpGradableProductList.size() == 0) {
-							dtiTktTO.setResultType(ResultType.INELIGIBLE);
+							if (newUpGradableProductList == null) {
+								dtiTktTO.setResultType(ResultType.INELIGIBLE);
+							}
+						} else {
+							dtiTktTO.setResultType(ResultType.NOPRODUCTS);
 						}
 
 					} else {
@@ -508,11 +516,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		if (PLUCount > 0 && upGradeProductcatalog.getProductListCount() > 0) {
 
-			// Filter for the PLU's from response (Step 1 ) with what obtained Step
-			// 2
+			// Filter for the PLU's from response (Step 1) with what obtained Step 2
 			upGradeProductcatalog.retainDLRPLUs(upGradedPluList);
 
-			// new Upgradable product List
+			// new Upgradeable product List
 			newUpgradableProductList = upGradeProductcatalog.getProductList();
 			int upgradableProductCount = upGradeProductcatalog.getProductList().size();
 
@@ -527,16 +534,16 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * Sets the query eligible response command.
 	 *
 	 * @param upgradedProduct
-	 *            the upgraded product
+	 *           the upgraded product
 	 * @param dtiTktTO
-	 *            the dti tkt TO
+	 *           the dti tkt TO
 	 * @param gwDataRespTO
-	 *            the gw data resp TO
+	 *           the gw data resp TO
 	 * @throws DTIException
-	 *             the DTI exception
+	 *            the DTI exception
 	 */
 	private static void setQueryEligibleResponseCommand(GuestProductTO guestProductTO, TicketTO dtiTktTO,
-			ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
+				ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
 
 		DemographicsTO ticketDemo = new DemographicsTO();
@@ -617,10 +624,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/*
-					 * Gender (as of 2.16.1, JTL) only returned if Demographics
-					 * "ALL" specified. Note: We're using Gender Resp String
-					 * here because Galaxy types vary between request (Integer)
-					 * and response (String)
+					 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
+					 * specified. Note: We're using Gender Resp String here because
+					 * Galaxy types vary between request (Integer) and response
+					 * (String)
 					 */
 					if ((contact.getGender() != null)) {
 
@@ -634,8 +641,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/*
-					 * DOB (as of 2.16.1, JTL) only returned if Demographics
-					 * "ALL" specified.
+					 * DOB (as of 2.16.1, JTL) only returned if Demographics "ALL"
+					 * specified.
 					 */
 					if ((contact.getDob() != null)) {
 						try {
@@ -706,8 +713,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			/*
 			 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
-			 * specified. Note: We're using Gender Resp String here because
-			 * Galaxy types vary between request (Integer) and response (String)
+			 * specified. Note: We're using Gender Resp String here because Galaxy
+			 * types vary between request (Integer) and response (String)
 			 */
 			if ((gwDataRespTO.getGenderRespString() != null)) {
 
@@ -738,7 +745,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			boolean startDateSet = false;
 			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
 				if (gwDataRespTO.getDateSold() != null || gwDataRespTO.getTicketDate() != null
-						|| gwDataRespTO.getStartDateTime() != null) {
+							|| gwDataRespTO.getStartDateTime() != null) {
 					dtiTktTO.setTktValidityValidStart(dbProductTO.getStartSaleDate());
 					startDateSet = true;
 				}
@@ -782,8 +789,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			/* picture */
 			tktStatus.setStatusItem(PICTURE);
 
-			if ((gwDataRespTO.getHasPicture() != null)
-					&& (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
+			if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
 				tktStatus.setStatusValue(YES);
 			} else {
 				tktStatus.setStatusValue(NO);
@@ -848,8 +854,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		/*
 		 * TimesUsed Most of these don't have to be checked against the request,
-		 * since they are not returned by eGalaxy. However, UseCount is called
-		 * all the time, and it cannot be allowed to display unless explicitly
+		 * since they are not returned by eGalaxy. However, UseCount is called all
+		 * the time, and it cannot be allowed to display unless explicitly
 		 * requested.
 		 */
 		if (gwDataRespTO.getUseCount() != null) {
@@ -860,21 +866,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		/* ReplacedByPass */
 		if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPLACED)
-				|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
+					|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
 
 			/*
-			 * DLR Business rule - non-validated AP's are 19 digits in length
-			 * and then get converted to 18 digits once ID is shown at the gate.
+			 * DLR Business rule - non-validated AP's are 19 digits in length and
+			 * then get converted to 18 digits once ID is shown at the gate.
 			 */
 			if ((gwDataRespTO.getVisualID() != null && gwDataRespTO.getVisualID().length() == 19)
-					&& (gwDataRespTO.getLineageArray() != null && gwDataRespTO.getLineageArray().size() > 0)) {
+						&& (gwDataRespTO.getLineageArray() != null && gwDataRespTO.getLineageArray().size() > 0)) {
 
 				ArrayList<LineageRecord> lineageList = gwDataRespTO.getLineageArray();
 
 				for (/* each */LineageRecord aLineage : /* in */lineageList) {
 
 					if ((aLineage.getStatus() == GWDataRequestRespTO.Status.BLOCKED)
-							|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
+								|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
 
 						if (aLineage.getVisualID() != null && aLineage.getVisualID().length() == 18) {
 							dtiTktTO.setReplacedByPass(aLineage.getVisualID());
@@ -884,7 +890,20 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 			}
 		}
-
+		
+		// for the first use Date 
+		ArrayList<GregorianCalendar> useTimeList=new ArrayList<GregorianCalendar>();
+		
+		for(UsageRecord usage:gwDataRespTO.getUsageRecords()){
+			useTimeList.add(usage.getUseTime());
+		}
+		// Sorting to get the first Usage Date
+		Collections.sort(useTimeList);
+		
+		GregorianCalendar firstUsageValue=useTimeList.get(0);
+		logger.sendEvent("First Use Date:"+useTimeList.get(0).getTime(),EventType.DEBUG,THISINSTANCE);
+		
+		
 		/* Eligible products */
 		if (upgradedProductTOList != null && upgradedProductTOList.size() > 0) {
 			for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
@@ -895,12 +914,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				eligibleProductsTO.setProdCode(productTO.getPdtCode());
 
 				/* set the actual product price */
-				prodPrice = dbProductTO.getStandardRetailPrice();
+				prodPrice = dbProductTO.getUnitPrice();
 
 				eligibleProductsTO.setProdPrice(prodPrice.toString());
 
 				/* set the actual product tax */
-				prodTax = dbProductTO.getStandardRetailTax();
+				prodTax = dbProductTO.getTax();
 
 				eligibleProductsTO.setProdTax(prodTax);
 
@@ -917,24 +936,25 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					Integer dayCount = productTO.getDayCount();
 
 					Calendar calendar = Calendar.getInstance();
-					if (dbProductTO.getStartSaleDate() != null) {
-						calendar.setTime(dbProductTO.getStartSaleDate().getTime());
+					
+					// adding first Usage Value for Valid End
+					if (firstUsageValue != null) {
+						calendar.setTime(firstUsageValue.getTime());
 						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
 
 						GregorianCalendar gc = new GregorianCalendar();
 						gc.setTime(calendar.getTime());
 
-						// TODO need to figure out
 						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
 					} else {
 						throw new Exception();
 					}
 				} catch (NumberFormatException ne) {
 					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Provider responded with a non-numeric status code.");
+								"Provider responded with a non-numeric status code.");
 				} catch (Exception e) {
 					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Exception executing getAPUpgradeCatalog", e);
+								"Exception executing getAPUpgradeCatalog", e);
 				}
 				/* add the eligible product element to the list */
 				dtiTktTO.addEligibleProducts(eligibleProductsTO);
