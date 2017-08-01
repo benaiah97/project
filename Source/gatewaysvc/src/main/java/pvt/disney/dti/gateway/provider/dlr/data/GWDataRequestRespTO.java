@@ -542,8 +542,9 @@ public class GWDataRequestRespTO implements Serializable {
 		}
 
 	}
-	
-	
+	/**
+	 * The Class UsageRecord.
+	 */
 	public class UsageRecord{
 		
 		/** The acess code. */
@@ -664,7 +665,15 @@ public class GWDataRequestRespTO implements Serializable {
 		public void setUseNo(Integer useNo) {
 			this.useNo = useNo;
 		}
-		
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "UsageRecord [acessCode=" + acessCode + ", acp=" + acp + ", acpName=" + acpName + ", attractionId="
+						+ attractionId + ", bankNo=" + bankNo + ", useTime=" + useTime + ", useNo=" + useNo + "]";
+		}
 		
 	}
 

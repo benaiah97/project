@@ -619,9 +619,9 @@ public class GWQueryEligibleProductsTicketXML {
 
 		// UpGradePLU Response
 		Node linReqResp = usageRecords;
-		
+
 		Node linRecords = linReqResp.selectSingleNode("UsageRecords");
-		if(linRecords==null){
+		if (linRecords == null) {
 			return;
 		}
 
@@ -646,18 +646,6 @@ public class GWQueryEligibleProductsTicketXML {
 			if (acpNode != null) {
 				String inText = acpNode.getText();
 				usageRecord.setAcp(inText);
-			}
-
-			// Use No
-			Node usenumberNode = linRecord.selectSingleNode("UseNo");
-			if (usenumberNode != null) {
-				try {
-					Integer useNo = Integer.valueOf(usenumberNode.getText());
-					usageRecord.setUseNo(useNo);
-				} catch (Exception e) {
-
-				}
-
 			}
 
 			// Use Time

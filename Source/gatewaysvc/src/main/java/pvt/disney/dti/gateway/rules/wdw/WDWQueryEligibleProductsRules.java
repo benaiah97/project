@@ -269,7 +269,7 @@ public class WDWQueryEligibleProductsRules {
 
 				// if no guest Type information is found then ticket is INELIGIBLE
 				// and transaction stops
-				if (guestproductTO == null) {
+				if (guestproductTO.getDbproductTO() == null) {
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 					dtiResRespTO.add(dtiTicketTO);
 					return;

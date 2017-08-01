@@ -900,7 +900,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// Sorting to get the first Usage Date
 		Collections.sort(useTimeList);
 		
-		GregorianCalendar firstUsageValue=useTimeList.get(0);
+		GregorianCalendar firstUsageDateValue=useTimeList.get(0);
 		logger.sendEvent("First Use Date:"+useTimeList.get(0).getTime(),EventType.DEBUG,THISINSTANCE);
 		
 		
@@ -938,8 +938,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					Calendar calendar = Calendar.getInstance();
 					
 					// adding first Usage Value for Valid End
-					if (firstUsageValue != null) {
-						calendar.setTime(firstUsageValue.getTime());
+					if (firstUsageDateValue != null) {
+						calendar.setTime(firstUsageDateValue.getTime());
 						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
 
 						GregorianCalendar gc = new GregorianCalendar();
