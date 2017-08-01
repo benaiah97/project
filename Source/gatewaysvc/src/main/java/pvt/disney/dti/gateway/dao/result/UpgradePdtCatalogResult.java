@@ -58,6 +58,9 @@ public class UpgradePdtCatalogResult implements ResultSetProcessor {
       // DAY_CLASS
       aProduct.setDayClass(rs.getString("DAY_CLASS"));
       
+      // TODO DAY COUNT
+      aProduct.setDayCount(rs.getInt("DAY_COUNT"));
+      
       // DAY_SUBCLASS
       aProduct.setDaySubclass(rs.getString("DAY_SUBCLASS"));
       

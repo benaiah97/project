@@ -12,7 +12,8 @@ import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.lang3.StringUtils;
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -52,9 +53,6 @@ import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
-
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
 
 public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
@@ -220,7 +218,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
 
 		/* new List of Upgradeable Product after filter */
-		ArrayList<DBProductTO> newUpGradableProductList = null;
+		ArrayList<DBProductTO> newUpGradableProductList = new ArrayList<DBProductTO>();
 
 		// Creating GuestProductTO - Step 1
 		GuestProductTO globalGuestProduct = new GuestProductTO();
@@ -529,25 +527,25 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * Sets the query eligible response command.
 	 *
 	 * @param upgradedProduct
-	 *           the upgraded product
+	 *            the upgraded product
 	 * @param dtiTktTO
-	 *           the dti tkt TO
+	 *            the dti tkt TO
 	 * @param gwDataRespTO
-	 *           the gw data resp TO
+	 *            the gw data resp TO
 	 * @throws DTIException
-	 *            the DTI exception
+	 *             the DTI exception
 	 */
 	private static void setQueryEligibleResponseCommand(GuestProductTO guestProductTO, TicketTO dtiTktTO,
-				ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
-		DemographicsTO ticketDemo = new DemographicsTO();
+			ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
+
+		DemographicsTO ticketDemo = new DemographicsTO();
 		EligibleProductsTO eligibleProductsTO;
 
 		DBProductTO dbProductTO = guestProductTO.getDbproductTO();
 		GWDataRequestRespTO gwDataRespTO = guestProductTO.getGwDataRespTO();
 
 		if (dbProductTO != null) {
-
 			/* Set TktItem: Always only one. */
 			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
 
@@ -559,8 +557,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			/* ProdGuestType */
 			dtiTktTO.setGuestType(dbProductTO.getGuestType());
-			
-			/*Contact*/
+
+			/* Contact */
 			if (gwDataRespTO.getContact() != null && gwDataRespTO.getContact().size() > 0)
 				for (Contact contact : gwDataRespTO.getContact()) {
 					/* FirstName */
@@ -619,10 +617,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/*
-					 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
-					 * specified. Note: We're using Gender Resp String here because
-					 * Galaxy types vary between request (Integer) and response
-					 * (String)
+					 * Gender (as of 2.16.1, JTL) only returned if Demographics
+					 * "ALL" specified. Note: We're using Gender Resp String
+					 * here because Galaxy types vary between request (Integer)
+					 * and response (String)
 					 */
 					if ((contact.getGender() != null)) {
 
@@ -636,8 +634,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/*
-					 * DOB (as of 2.16.1, JTL) only returned if Demographics "ALL"
-					 * specified.
+					 * DOB (as of 2.16.1, JTL) only returned if Demographics
+					 * "ALL" specified.
 					 */
 					if ((contact.getDob() != null)) {
 						try {
@@ -708,8 +706,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			/*
 			 * Gender (as of 2.16.1, JTL) only returned if Demographics "ALL"
-			 * specified. Note: We're using Gender Resp String here because Galaxy
-			 * types vary between request (Integer) and response (String)
+			 * specified. Note: We're using Gender Resp String here because
+			 * Galaxy types vary between request (Integer) and response (String)
 			 */
 			if ((gwDataRespTO.getGenderRespString() != null)) {
 
@@ -740,7 +738,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			boolean startDateSet = false;
 			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
 				if (gwDataRespTO.getDateSold() != null || gwDataRespTO.getTicketDate() != null
-							|| gwDataRespTO.getStartDateTime() != null) {
+						|| gwDataRespTO.getStartDateTime() != null) {
 					dtiTktTO.setTktValidityValidStart(dbProductTO.getStartSaleDate());
 					startDateSet = true;
 				}
@@ -784,7 +782,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			/* picture */
 			tktStatus.setStatusItem(PICTURE);
 
-			if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
+			if ((gwDataRespTO.getHasPicture() != null)
+					&& (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
 				tktStatus.setStatusValue(YES);
 			} else {
 				tktStatus.setStatusValue(NO);
@@ -849,8 +848,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		/*
 		 * TimesUsed Most of these don't have to be checked against the request,
-		 * since they are not returned by eGalaxy. However, UseCount is called all
-		 * the time, and it cannot be allowed to display unless explicitly
+		 * since they are not returned by eGalaxy. However, UseCount is called
+		 * all the time, and it cannot be allowed to display unless explicitly
 		 * requested.
 		 */
 		if (gwDataRespTO.getUseCount() != null) {
@@ -861,21 +860,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		/* ReplacedByPass */
 		if ((gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPLACED)
-					|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
+				|| (gwDataRespTO.getStatus() == GWDataRequestRespTO.Status.REPRINTED)) {
 
 			/*
-			 * DLR Business rule - non-validated AP's are 19 digits in length and
-			 * then get converted to 18 digits once ID is shown at the gate.
+			 * DLR Business rule - non-validated AP's are 19 digits in length
+			 * and then get converted to 18 digits once ID is shown at the gate.
 			 */
 			if ((gwDataRespTO.getVisualID() != null && gwDataRespTO.getVisualID().length() == 19)
-						&& (gwDataRespTO.getLineageArray() != null && gwDataRespTO.getLineageArray().size() > 0)) {
+					&& (gwDataRespTO.getLineageArray() != null && gwDataRespTO.getLineageArray().size() > 0)) {
 
 				ArrayList<LineageRecord> lineageList = gwDataRespTO.getLineageArray();
 
 				for (/* each */LineageRecord aLineage : /* in */lineageList) {
 
 					if ((aLineage.getStatus() == GWDataRequestRespTO.Status.BLOCKED)
-								|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
+							|| (aLineage.getStatus() == GWDataRequestRespTO.Status.VALID)) {
 
 						if (aLineage.getVisualID() != null && aLineage.getVisualID().length() == 18) {
 							dtiTktTO.setReplacedByPass(aLineage.getVisualID());
@@ -920,7 +919,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					Calendar calendar = Calendar.getInstance();
 					if (dbProductTO.getStartSaleDate() != null) {
 						calendar.setTime(dbProductTO.getStartSaleDate().getTime());
-						calendar.add(calendar.DAY_OF_MONTH, dayCount);
+						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
 
 						GregorianCalendar gc = new GregorianCalendar();
 						gc.setTime(calendar.getTime());
@@ -932,10 +931,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 				} catch (NumberFormatException ne) {
 					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-								"Provider responded with a non-numeric status code.");
+							"Provider responded with a non-numeric status code.");
 				} catch (Exception e) {
 					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-								"Exception executing getAPUpgradeCatalog", e);
+							"Exception executing getAPUpgradeCatalog", e);
 				}
 				/* add the eligible product element to the list */
 				dtiTktTO.addEligibleProducts(eligibleProductsTO);

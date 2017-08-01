@@ -5,10 +5,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+
 import org.junit.Assert;
-import org.junit.Test;
+
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -18,11 +18,14 @@ import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicData;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
@@ -87,11 +90,19 @@ public class WDWQueryEligibleProductsRulesTestCase {
       OTQueryTicketTO queryTicketTO = new OTQueryTicketTO();
       OTTicketInfoTO oTTicketInfoTO = new OTTicketInfoTO();
       oTTicketInfoTO.setTicketType(new BigInteger("1"));
+      oTTicketInfoTO.setPayPlan("YES");
+      OTDemographicData demographicData = new OTDemographicData();
+      oTTicketInfoTO.setSeasonPassDemo(demographicData);
+      OTTicketTO ticket = new OTTicketTO();
+      oTTicketInfoTO.setTicket(ticket);
       queryTicketTO.getTicketInfoList().add(oTTicketInfoTO);
       otCmdTO.setQueryTicketTO(queryTicketTO);
       QueryEligibilityProductsResponseTO queryEligibilityProductsResponseTO = new QueryEligibilityProductsResponseTO();
       TicketTO ticketTO = new TicketTO();
+      EntityTO entityTO = new EntityTO();
       queryEligibilityProductsResponseTO.add(ticketTO);
+      dtiTxn.setEntityTO(entityTO);
+      DTIMockUtil.processMockprepareAndExecuteSql();
       try {
          WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
       } catch (DTIException e) {
