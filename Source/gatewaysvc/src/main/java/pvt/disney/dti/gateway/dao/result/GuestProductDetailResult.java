@@ -7,27 +7,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import pvt.disney.dti.gateway.data.common.DBProductTO;
-
 import com.disney.exception.WrappedException;
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 
-/**
- * This class is used by the DAO to process the result sets from Product Detail Result queries.
- * 
- * @author lewit019
- * 
- */
-public class ProductDetailResult implements ResultSetProcessor {
+public class GuestProductDetailResult implements ResultSetProcessor{
 
 	/** List of database products. */
 	private ArrayList<DBProductTO> results = new ArrayList<DBProductTO>();
 
 	/**
-	 * Constructor for ProductDetailResult
+	 * Constructor for GuestProductDetailResult
 	 */
-	public ProductDetailResult() {
+	public GuestProductDetailResult() {
 		super();
 	}
 
@@ -197,9 +189,28 @@ public class ProductDetailResult implements ResultSetProcessor {
 		if (standardRetailPrice != null) {
 			aProduct.setStandardRetailPrice(standardRetailPrice);
 		}
+		
+        //RESIDENT_IND
+		String residentIndString = rs.getString("RESIDENT_IND");
+		if(residentIndString.compareToIgnoreCase("T")==0){
+			aProduct.setResidentInd(true);
+		}else{
+			aProduct.setResidentInd(false);
+		}
 
+		
+		//STANDARD_RETAIL_TAX
+		BigDecimal standardRetailTax = rs.getBigDecimal("STANDARD_RETAIL_TAX");
+			if (standardRetailTax != null) {
+					aProduct.setStandardRetailTax(standardRetailTax);
+			}
+				
+		//UPGRD_PATH_ID
+		BigInteger upGrdPathId=new BigInteger(rs.getString("UPGRD_PATH_ID"));
+		aProduct.setUpgrdPathId(upGrdPathId);
+				
+		/* Adding the result set to result*/
 		results.add(aProduct);
-
 		return;
 
 	}

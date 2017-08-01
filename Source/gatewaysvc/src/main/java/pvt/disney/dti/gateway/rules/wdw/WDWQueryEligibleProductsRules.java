@@ -283,7 +283,7 @@ public class WDWQueryEligibleProductsRules {
 				if (globalUpgradeProduct == null) {
 
 					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(),
-								DTITransactionTO.TPI_CODE_WDW);
+								"WDW-ATS");
 				}
 
 				/* Step 3 */
@@ -320,7 +320,7 @@ public class WDWQueryEligibleProductsRules {
 
 				/* Step 5 setting up the detail in Ticket TO */
 				if (dtiTicketTO.getResultType() != ResultType.NOPRODUCTS) {
-					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, newProductcatalogList);
+					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
 				}
 
 				dtiResRespTO.add(dtiTicketTO);
@@ -624,9 +624,10 @@ public class WDWQueryEligibleProductsRules {
 
 		// Ticket Demo
 		DemographicsTO dtiDemoTO = new DemographicsTO();
-
-		ArrayList<OTFieldTO> otFieldList = otTicketInfo.getSeasonPassDemo().getDemoDataList();
-
+		ArrayList<OTFieldTO> otFieldList = new ArrayList<OTFieldTO>();
+		if(otTicketInfo!=null && otTicketInfo.getSeasonPassDemo()!=null) {
+			otFieldList = otTicketInfo.getSeasonPassDemo().getDemoDataList();
+		}
 		for (/* each */OTFieldTO anOTField : /* in */otFieldList) {
 
 			// FirstName
@@ -764,7 +765,7 @@ public class WDWQueryEligibleProductsRules {
 
 		/* payplan */
 		tktStatus.setStatusItem(PAYLAN);
-		if (otTicketInfo.getPayPlan().compareToIgnoreCase(YES) == 0) {
+		if (otTicketInfo.getPayPlan() !=null && otTicketInfo.getPayPlan().compareToIgnoreCase(YES) == 0) {
 			tktStatus.setStatusValue(YES);
 		} else {
 			tktStatus.setStatusValue(NO);
@@ -801,55 +802,63 @@ public class WDWQueryEligibleProductsRules {
 		dtiTicketTO.setTktTax(otTicketInfo.getTax());
 
 		// Eligible product
-		for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
-			EligibleProductsTO eligibleProductsTO = new EligibleProductsTO();
-
-			// set the product code
-			eligibleProductsTO.setProdCode(productTO.getPdtCode());
-
-			// set the actual product price
-			BigDecimal prodPrice = productTO.getStandardRetailPrice();
-
-			eligibleProductsTO.setProdPrice(prodPrice.toString());
-
-			// set the actual product tax
-			BigDecimal prodTax = productTO.getStandardRetailTax();
-
-			eligibleProductsTO.setProdTax(prodTax);
-
-			// set the upgraded product price
-			BigDecimal prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
-
-			eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
-
-			// set the upgraded product tax
-			BigDecimal prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
-			eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
-			// set the validity
-			try {
-				Integer dayCount = productTO.getDayCount();
-
-				Calendar calendar = Calendar.getInstance();
-				if (dbProductTO.getStartSaleDate() != null) {
-					calendar.setTime(dbProductTO.getStartSaleDate().getTime());
-					calendar.add(calendar.DAY_OF_MONTH, dayCount);
-
-					GregorianCalendar gc = new GregorianCalendar();
-					gc.setTime(calendar.getTime());
-
-					eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+		if(upgradedProductTOList != null) {
+			for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
+				EligibleProductsTO eligibleProductsTO = new EligibleProductsTO();
+	
+				// set the product code
+				eligibleProductsTO.setProdCode(productTO.getPdtCode());
+	
+				// set the actual product price
+				BigDecimal prodPrice = productTO.getUnitPrice();
+	
+				eligibleProductsTO.setProdPrice(prodPrice.toString());
+	
+				// set the actual product tax
+				BigDecimal prodTax = productTO.getTax();
+	
+				eligibleProductsTO.setProdTax(prodTax);
+	
+				// set the upgraded product price
+				BigDecimal prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice() == null ? new BigDecimal(0) : guestProductTO.getDbproductTO().getStandardRetailPrice());
+				if(prodUpgradePrice.longValue() < 0) {
+					eligibleProductsTO.setUpgrdPrice("0");
 				} else {
-					throw new Exception("In valid Sale Start date");
+					eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
 				}
-			} catch (NumberFormatException ne) {
-				throw new DTIException(WDWQueryEligibleProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Provider responded with a non-numeric status code.");
-			} catch (Exception e) {
-				throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-							"Exception executing getAPUpgradeCatalog", e);
+				// set the upgraded product tax
+				BigDecimal prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax() == null ? new BigDecimal(0) : guestProductTO.getDbproductTO().getStandardRetailTax());
+				if(prodUpgradePrice.longValue() < 0) {
+					eligibleProductsTO.setUpgrdTax("0");
+				} else {
+					eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
+				}
+				// set the validity
+				try {
+					Integer dayCount = productTO.getDayCount();
+	
+					Calendar calendar = Calendar.getInstance();
+					if (dbProductTO.getStartSaleDate() != null) {
+						calendar.setTime(dbProductTO.getStartSaleDate().getTime());
+						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
+	
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTime(calendar.getTime());
+	
+						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+					} else {
+						throw new Exception("In valid Sale Start date");
+					}
+				} catch (NumberFormatException ne) {
+					throw new DTIException(WDWQueryEligibleProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+								"Provider responded with a non-numeric status code.");
+				} catch (Exception e) {
+					throw new DTIException(ProductKey.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+								"Exception executing getAPUpgradeCatalog", e);
+				}
+				// add the eligible product element to the list
+				dtiTicketTO.addEligibleProducts(eligibleProductsTO);
 			}
-			// add the eligible product element to the list
-			dtiTicketTO.addEligibleProducts(eligibleProductsTO);
 		}
 
 	}
