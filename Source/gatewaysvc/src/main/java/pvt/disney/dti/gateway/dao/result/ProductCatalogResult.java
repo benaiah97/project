@@ -40,15 +40,13 @@ public class ProductCatalogResult implements ResultSetProcessor{
 
 		// PDT_CODE
 		aProduct.setPdtCode(rs.getString("PDT_CODE"));
-
-		// TAX
-		aProduct.setTax(rs.getBigDecimal("TAX"));
-
 		
 		// UNIT_PRICE
 		aProduct.setUnitPrice(rs.getBigDecimal("UNIT_PRICE"));
-
 		
+		// TAX
+		aProduct.setTax(rs.getBigDecimal("TAX"));
+
 		// DAY_CLASS (As of 2.12)
 		String dayClassString = rs.getString("DAY_CLASS");
 		if (dayClassString != null) {
