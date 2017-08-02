@@ -102,21 +102,30 @@
 
 	</build>
 
-	<dependencies>
+<dependencies>
 
 		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.11</version> 
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>junitperf</groupId>
-			<artifactId>junitperf</artifactId>
-			<version>1.9.1</version>
+            <groupId>org.databene</groupId>
+            <artifactId>contiperf</artifactId>
+            <version>2.3.4</version> 
+            <scope>test</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>javanettasks</groupId>
+			<artifactId>httpunit</artifactId>
+			<version>1.7</version>
 			<scope>test</scope>
 		</dependency>
+
 
 		
 		<dependency>
@@ -125,16 +134,119 @@
 			<version>1.2.16</version>
 		</dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        
+		<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+         </dependency>
+                    
+        
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+
 		
+		
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1.9</version>
+		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.6</version>
 		</dependency>
+
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		
+		<dependency>
+    <groupId>org.jmockit</groupId>
+    <artifactId>jmockit</artifactId>
+    <version>1.9</version>
+</dependency>
+
+
+		
+		
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
+			
 			<version>2.9.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>activesoap</groupId>
+			<artifactId>jaxb-xercesImpl</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>activesoap</groupId>
+			<artifactId>jaxb-xalan</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			
+			<version>2.7.1</version>			
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.3.04</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc5</artifactId>
+			<version>11.2.0.2.0</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ca.juliusdavies</groupId>
+			<artifactId>not-yet-commons-ssl</artifactId>
+			<version>0.3.11</version>
 		</dependency>
 
 		
@@ -144,12 +256,47 @@
 			<version>2.0.4</version>
 		</dependency>
 
+
+		
+		
 		
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc5</artifactId>
-			<version>11.2.0.2.0</version>
+			<groupId>pvt.disney.dti</groupId>
+			<artifactId>gatewayxsd</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
+			
+		<dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>3.0</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.4.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>1.4.9</version>
+      <scope>test</scope>
+      </dependency>
+		<dependency>
+			<groupId>junitperf</groupId>
+			<artifactId>junitperf</artifactId>
+			<version>1.9.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
