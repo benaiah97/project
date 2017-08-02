@@ -2,7 +2,6 @@ package pvt.disney.dti.gateway.provider.dlr.xml;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,6 +10,9 @@ import java.util.List;
 
 import org.dom4j.Element;
 import org.dom4j.Node;
+
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -22,9 +24,6 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
 import pvt.disney.dti.gateway.util.UtilityXML;
-
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
 
 public class GWQueryEligibleProductsTicketXML {
 
@@ -980,10 +979,17 @@ public class GWQueryEligibleProductsTicketXML {
 				continue;
 			}
 
-			// String DOB
-			if (element.getName().compareTo("DOB") == 0) {
-				String DOB = element.getText();
-				contact.setDob(DOB);
+			// Gregorian Calendar DOB (Date of Birth) As of 2.16.1, JTL
+			if (element.getName().equalsIgnoreCase("DOB")) {
+				String dobString = element.getText();
+				if ((dobString != null) && (dobString != "")) {
+					GregorianCalendar dateOfBirth = UtilityXML.getGCalFromEGalaxyDate(dobString);
+					if (dateOfBirth == null) {
+						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+									"Response GW XML DataRequestResp has unparsable DateUsed: " + dobString);
+					}
+					contact.setDob(dateOfBirth);
+				}
 				continue;
 			}
 

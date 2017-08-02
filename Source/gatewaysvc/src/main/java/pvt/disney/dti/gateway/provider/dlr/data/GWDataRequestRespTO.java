@@ -3,7 +3,6 @@ package pvt.disney.dti.gateway.provider.dlr.data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 // TODO: Auto-generated Javadoc
@@ -761,7 +760,7 @@ public class GWDataRequestRespTO implements Serializable {
 		private String allowMailing;
 
 		/** The dob. */
-		private String dob;
+		private GregorianCalendar dob;
 
 		/** The age group. */
 		private String ageGroup;
@@ -1268,7 +1267,7 @@ public class GWDataRequestRespTO implements Serializable {
 		 *
 		 * @return the dob
 		 */
-		public String getDob() {
+		public GregorianCalendar getDob() {
 			return dob;
 		}
 
@@ -1278,7 +1277,7 @@ public class GWDataRequestRespTO implements Serializable {
 		 * @param dob
 		 *           the dob to set
 		 */
-		public void setDob(String dob) {
+		public void setDob(GregorianCalendar dob) {
 			this.dob = dob;
 		}
 
