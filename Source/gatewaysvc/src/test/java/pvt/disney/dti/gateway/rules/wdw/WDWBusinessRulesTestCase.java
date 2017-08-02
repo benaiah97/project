@@ -74,7 +74,8 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 	 * 'F' in position 37. <BR>
 	 * 2. If the TicketIdType is DSSN, then all four components must be filled
 	 * out. <BR>
-	 * 3. If the TicketIdType is TKTNID, then it must be 17 characters long. <BR>
+	 * 3. If the TicketIdType is TKTNID, then it must be 17 characters long.
+	 * <BR>
 	 * 4. If the TicketIdType is BARCODE, then it must be 20 characters long
 	 * (new). <BR>
 	 * 5. There may only be one TicketIdType per in-bound ticket.
@@ -92,60 +93,50 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 			fail("In-bound WDW txn with invalid Mag length: 13");
 		} catch (DTIException dtie) {
-			Assert.assertEquals("In-bound WDW txn with invalid Mag length: 13",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with invalid Mag length: 13", dtie.getLogMessage());
 		}
 		/* scenario : 2 Valid Mag Stripe */
 		aTktList = new ArrayList<TicketTO>();
 		aTicketTO = new TicketTO();
-		aTicketTO
-				.setMag(" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ");
+		aTicketTO.setMag(" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ");
 		aTktList.add(aTicketTO);
 		try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on Test 2: Valid Mag Stripe:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on Test 2: Valid Mag Stripe:" + dtie.getLogMessage());
 		}
 		/* scenario : 3 No F in position 38. */
 		aTktList = new ArrayList<TicketTO>();
 		aTicketTO = new TicketTO();
-		aTicketTO
-				.setMag(" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ");
+		aTicketTO.setMag(" AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ");
 		aTktList.add(aTicketTO);
 		try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 			fail("In-bound WDW txn with invalid midpoint char: X");
 		} catch (DTIException dtie) {
 
-			Assert.assertEquals(
-					"In-bound WDW txn with invalid midpoint char: X",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with invalid midpoint char: X", dtie.getLogMessage());
 		}
 		/* scenario : 4 Valid DSSN */
 		aTktList = new ArrayList<TicketTO>();
 		aTicketTO = new TicketTO();
-		aTicketTO.setDssn((GregorianCalendar) GregorianCalendar.getInstance(),
-				"site", "station", "33");
+		aTicketTO.setDssn((GregorianCalendar) GregorianCalendar.getInstance(), "site", "station", "33");
 		aTktList.add(aTicketTO);
 		try {
-			WDWBusinessRules
-					.validateInBoundWDWTickets(getTicketList(TicketIdType.MAG_ID));
+			WDWBusinessRules.validateInBoundWDWTickets(getTicketList(TicketIdType.MAG_ID));
 		} catch (DTIException dtie) {
 			fail("Unexpected exception on  Valid DSSN: " + dtie.getLogMessage());
 		}
 		/* scenario : 5 Invalid DSSN */
 		aTktList = new ArrayList<TicketTO>();
 		aTicketTO = new TicketTO();
-		aTicketTO.setDssn((GregorianCalendar) GregorianCalendar.getInstance(),
-				"", "station", "number");
+		aTicketTO.setDssn((GregorianCalendar) GregorianCalendar.getInstance(), "", "station", "number");
 		aTktList.add(aTicketTO);
 		try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 			fail("In-bound WDW txn with invalid DSSN.");
 		} catch (DTIException dtie) {
-			Assert.assertEquals("In-bound WDW txn with invalid DSSN.",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with invalid DSSN.", dtie.getLogMessage());
 		}
 		/* scenario : 6 Valid TktNID */
 		aTktList = new ArrayList<TicketTO>();
@@ -155,8 +146,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on Valid TktNID: "
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on Valid TktNID: " + dtie.getLogMessage());
 		}
 		/* scenario : 7 Invalid TktNID */
 		aTktList = new ArrayList<TicketTO>();
@@ -168,9 +158,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			fail("In-bound WDW txn with invalid TktNID length: 18");
 		} catch (DTIException dtie) {
 
-			Assert.assertEquals(
-					"In-bound WDW txn with invalid TktNID length: 18",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with invalid TktNID length: 18", dtie.getLogMessage());
 		}
 		/* scenario : 8 Valid Barcode */
 		aTktList = new ArrayList<TicketTO>();
@@ -180,8 +168,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  Valid Barcode:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  Valid Barcode:" + dtie.getLogMessage());
 		}
 		/* scenario : 9 Invalid TktNID */
 		aTktList = new ArrayList<TicketTO>();
@@ -192,9 +179,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 			fail("In-bound WDW txn with invalid Barcode length: 19");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"In-bound WDW txn with invalid Barcode length: 19",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with invalid Barcode length: 19", dtie.getLogMessage());
 		}
 		/*
 		 * scenario : 10 Two ticket Id's on the same ticket
@@ -207,8 +192,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 			fail("In-bound WDW txn with <> 1 TktId: 2");
 		} catch (DTIException dtie) {
-			Assert.assertEquals("In-bound WDW txn with <> 1 TktId: 2",
-					dtie.getLogMessage());
+			Assert.assertEquals("In-bound WDW txn with <> 1 TktId: 2", dtie.getLogMessage());
 		}
 	}
 
@@ -224,8 +208,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateVoidTicketActor(cmdHeader);
 			fail("No CmdActor tag provided where required.");
 		} catch (DTIException dtie) {
-			Assert.assertEquals("No CmdActor tag provided where required.",
-					dtie.getLogMessage());
+			Assert.assertEquals("No CmdActor tag provided where required.", dtie.getLogMessage());
 		}
 		/* scenario : 2 Actor but invalid value */
 		cmdHeader.setCmdActor("BOB");
@@ -233,9 +216,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateVoidTicketActor(cmdHeader);
 			fail("CmdActor tag of BOB not authorized for void (MGR or SYS only");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"CmdActor tag of BOB not authorized for void (MGR or SYS only)",
-					dtie.getLogMessage());
+			Assert.assertEquals("CmdActor tag of BOB not authorized for void (MGR or SYS only)", dtie.getLogMessage());
 		}
 		/* scenario : 3 MGR value */
 		cmdHeader.setCmdActor("MGR");
@@ -268,8 +249,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		try {
 			WDWBusinessRules.validateTicketOrderShells(aTktListTO);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception in  Valid shell number: "
-					+ dtie.getLogMessage());
+			fail("Unexpected exception in  Valid shell number: " + dtie.getLogMessage());
 		}
 		/* scenario : 2 Empty shell number */
 		aTicketTO = new TicketTO();
@@ -280,9 +260,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateTicketOrderShells(aTktListTO);
 			fail("Ticket item 2 Mag Track 2 contains non-numeric shell number:");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"Ticket item 2 Mag Track 2 contains non-numeric shell number: ",
-					dtie.getLogMessage());
+			Assert.assertEquals("Ticket item 2 Mag Track 2 contains non-numeric shell number: ", dtie.getLogMessage());
 		}
 		/* scenario : 3 Non numeric shell number */
 		aTktListTO.clear();
@@ -295,8 +273,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			fail("Ticket item 1 Mag Track 2 contains non-numeric shell number: ABC");
 		} catch (DTIException dtie) {
 
-			Assert.assertEquals(
-					"Ticket item 1 Mag Track 2 contains non-numeric shell number: ABC",
+			Assert.assertEquals("Ticket item 1 Mag Track 2 contains non-numeric shell number: ABC",
 					dtie.getLogMessage());
 		}
 		/* scenario : 4 Shell number too large */
@@ -309,8 +286,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			WDWBusinessRules.validateTicketOrderShells(aTktListTO);
 			fail("Ticket item 1 Mag Track 2 contains invalid shell number: 1000000");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"Ticket item 1 Mag Track 2 contains invalid shell number: 1000000",
+			Assert.assertEquals("Ticket item 1 Mag Track 2 contains invalid shell number: 1000000",
 					dtie.getLogMessage());
 		}
 	}
@@ -325,44 +301,34 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		ArrayList<Integer> activeShells = null;
 		/* scenario : 1 No order shells */
 		try {
-			WDWBusinessRules.validateTicketShellActive(orderShells,
-					activeShells);
+			WDWBusinessRules.validateTicketShellActive(orderShells, activeShells);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  No order shells: "
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  No order shells: " + dtie.getLogMessage());
 		}
 		/* scenario : 2 No active shells */
 		orderShells.add(new Integer(23));
 		try {
-			WDWBusinessRules.validateTicketShellActive(orderShells,
-					activeShells);
+			WDWBusinessRules.validateTicketShellActive(orderShells, activeShells);
 			fail("No shells on ticket order are known to the database..");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"No shells on ticket order are known to the database.",
-					dtie.getLogMessage());
+			Assert.assertEquals("No shells on ticket order are known to the database.", dtie.getLogMessage());
 		}
 		/* scenario : 3 Matching shells */
 		activeShells = new ArrayList<Integer>();
 		activeShells.add(new Integer(23));
 		try {
-			WDWBusinessRules.validateTicketShellActive(orderShells,
-					activeShells);
+			WDWBusinessRules.validateTicketShellActive(orderShells, activeShells);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  Matching shells: "
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  Matching shells: " + dtie.getLogMessage());
 		}
 		/* scenario : 4 Nonmatching shells */
 		orderShells.add(new Integer(42));
 		activeShells.add(new Integer(41));
 		try {
-			WDWBusinessRules.validateTicketShellActive(orderShells,
-					activeShells);
+			WDWBusinessRules.validateTicketShellActive(orderShells, activeShells);
 			fail("Shell 42 is not known or is not active in the database.");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"Shell 42 is not known or is not active in the database.",
-					dtie.getLogMessage());
+			Assert.assertEquals("Shell 42 is not known or is not active in the database.", dtie.getLogMessage());
 		}
 	}
 
@@ -394,11 +360,9 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		aTicketTO.setMag("BOB", "IAMMEALPLANINFO");
 		aTktListTO.add(aTicketTO);
 		try {
-			WDWBusinessRules.validateTicketShellToProduct(aTktListTO,
-					prodShellsXRef);
+			WDWBusinessRules.validateTicketShellToProduct(aTktListTO, prodShellsXRef);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  No shell on tickets:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  No shell on tickets:" + dtie.getLogMessage());
 		}
 		/* scenario : 2 Good product shell mapping */
 		aTicketTO = new TicketTO();
@@ -408,11 +372,9 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		aTktListTO.add(aTicketTO);
 
 		try {
-			WDWBusinessRules.validateTicketShellToProduct(aTktListTO,
-					prodShellsXRef);
+			WDWBusinessRules.validateTicketShellToProduct(aTktListTO, prodShellsXRef);
 		} catch (DTIException dtie) {
-			fail("Unexpected exception on  Good product shell mapping:"
-					+ dtie.getLogMessage());
+			fail("Unexpected exception on  Good product shell mapping:" + dtie.getLogMessage());
 		}
 		/* scenario : 3 Invalid product shell mapping */
 		aTicketTO = new TicketTO();
@@ -421,13 +383,10 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		aTicketTO.setProdCode("AAA01");
 		aTktListTO.add(aTicketTO);
 		try {
-			WDWBusinessRules.validateTicketShellToProduct(aTktListTO,
-					prodShellsXRef);
+			WDWBusinessRules.validateTicketShellToProduct(aTktListTO, prodShellsXRef);
 			fail("Expected exception on Invalid product shell mapping.");
 		} catch (DTIException dtie) {
-			Assert.assertEquals(
-					"Shell 97 not associated with product AAA01 in the database.",
-					dtie.getLogMessage());
+			Assert.assertEquals("Shell 97 not associated with product AAA01 in the database.", dtie.getLogMessage());
 		}
 	}
 
@@ -445,8 +404,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		OTFieldTO fieldTO = new OTFieldTO(1, "fieldValueIn");
 		ArrayList<OTFieldTO> otDemoList = new ArrayList<>();
 		otDemoList.add(fieldTO);
-		WDWBusinessRules
-				.transformInstallmentDemoData(installDemoTO, otDemoList);
+		WDWBusinessRules.transformInstallmentDemoData(installDemoTO, otDemoList);
 	}
 
 	/**
@@ -462,22 +420,19 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		entityTO.setDefPymtData("defPymtData");
 		entityTO.setECommerceValue("commerceValue");
 		/* scenario : 1 dtiPayList size is Zero */
-		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-				entityTO);
+		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 		/* scenario : 2 Paytype is creditCard */
 		PaymentTO paymentTO = new PaymentTO();
 		CreditCardTO creditCard = new CreditCardTO();
 		getCreditCard(creditCard);
 		dtiPayList.add(paymentTO);
 		paymentTO.setCreditCard(creditCard);
-		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-				entityTO);
+		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 		/* scenario : 3 Paytype is giftCard */
 		GiftCardTO giftCard = new GiftCardTO();
 		giftCard.setGcNbr("123654");
 		paymentTO.setGiftCard(giftCard);
-		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-				entityTO);
+		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 		InstallmentTO installment = new InstallmentTO();
 		installment.setForRenewal(true);
 		/* scenario : 4 installmentcreditcard type is CCMANUAL */
@@ -487,16 +442,14 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		installment.setCreditCard(creditCardTO);
 		paymentTO.setInstallment(installment);
 		paymentTO.setPayAmount(new BigDecimal("1236547"));
-		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-				entityTO);
+		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 		/* scenario : 5 installmentcreditcard type is CCSWIPE */
 		creditCardTO.setCcManualOrSwipe(CreditCardTO.CreditCardType.CCSWIPE);
 		creditCard.setCcManualOrSwipe(CreditCardTO.CreditCardType.CCSWIPE);
 		creditCard.setPosTermID("236589");
 		creditCard.setExtnlDevSerial("extnlDevSerial");
 		paymentTO.setCreditCard(creditCard);
-		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList,
-				entityTO);
+		WDWBusinessRules.createOTPaymentList(otPaymentList, dtiPayList, entityTO);
 	}
 
 	/**
@@ -522,26 +475,18 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 	@Test
 	public void testTransformEntitlementExternalReferenceType() {
 		WDWBusinessRules.transformEntitlementExternalReferenceType("XBANDID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("GXP_LINK_ID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("XBAND_EXTERNAL_NUMBER");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("GXP_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("XBAND_EXTERNAL_NUMBER");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("SWID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("GUID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("XBMS_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("XBMS_LINK_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("XPASSID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("TRANSACTIONAL_GUEST_ID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("ADMISSION_LINK_ID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("PAYMENT_LINK_ID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("MEDIA_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("TRANSACTIONAL_GUEST_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("ADMISSION_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("PAYMENT_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("MEDIA_LINK_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("XID");
-		WDWBusinessRules
-				.transformEntitlementExternalReferenceType("DME_LINK_ID");
+		WDWBusinessRules.transformEntitlementExternalReferenceType("DME_LINK_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("SECURE_ID");
 		WDWBusinessRules.transformEntitlementExternalReferenceType("TXN_GUID");
 	}
@@ -552,11 +497,9 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 	 * @throws URISyntaxException
 	 * @throws FileNotFoundException
 	 */
-	@Test
-	public void testChangeWDWProviderFormatToDti() throws URISyntaxException,
-			FileNotFoundException {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.QUERYTICKET); 
+	// @Test TODO
+	public void testChangeWDWProviderFormatToDti() throws URISyntaxException, FileNotFoundException {
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYTICKET);
 		createCommonRequest(dtiTxn);
 		/* Scenario :1 TransactionType as QUERYTICKET with ErrorCode >0 */
 		DTIRequestTO request = new DTIRequestTO();
@@ -576,8 +519,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -589,8 +531,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -607,8 +548,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -620,8 +560,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -638,8 +577,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -655,8 +593,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -670,8 +607,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -689,8 +625,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -707,8 +642,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());
@@ -724,8 +658,7 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 			file = new File(url.toURI());
 			InputStream ls = new FileInputStream(file);
 			xmlResponse = DTITestUtilities.getXMLFromFile(ls);
-			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(
-					dtiTxn, xmlResponse);
+			dtiTransactionTO = WDWBusinessRules.changeWDWProviderFormatToDti(dtiTxn, xmlResponse);
 			Assert.assertNotNull(dtiTransactionTO);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected exception" + dtie.getLogMessage());

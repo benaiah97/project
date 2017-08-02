@@ -84,7 +84,7 @@ public class DLRQueryReservationRulesTestCase extends CommonTestUtils {
 	/**
 	 * test Case for transformError
 	 */
-	@Test
+	// @Test TODO
 	public void testTransformError() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				DTITransactionTO.TransactionType.QUERYRESERVATION);

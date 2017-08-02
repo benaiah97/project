@@ -48,8 +48,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 	@Test
 	public void testTransformRequest() {
 		String xmlString = null;
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.RENEWENTITLEMENT);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
 		createCommonRequest(dtiTxn);
 		RenewEntitlementRequestTO queryReq = new RenewEntitlementRequestTO();
 		getRenewEntitlementRequestTO(queryReq);
@@ -85,15 +84,12 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			assertNotNull(xmlString);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.UNDEFINED_FAILURE, dtie.getDtiErrorCode());
-			assertEquals(
-					"GWTPLookup for SalesProgram is missing in the database.",
-					dtie.getLogMessage());
+			assertEquals("GWTPLookup for SalesProgram is missing in the database.", dtie.getLogMessage());
 
 		}
 		TPLookupTO aTPLookupClientTypeTO = new TPLookupTO();
 		aTPLookupClientTypeTO.setLookupValue("123");
-		aTPLookupClientTypeTO
-				.setLookupType(TPLookupTO.TPLookupType.INSTALLMENT);
+		aTPLookupClientTypeTO.setLookupType(TPLookupTO.TPLookupType.INSTALLMENT);
 		aTPLookupClientTypeTO.setLookupDesc("SalesProgram");
 		tpLookupTOListIn.add(aTPLookupClientTypeTO);
 		try {
@@ -101,8 +97,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			assertNotNull(xmlString);
 		} catch (DTIException dtie) {
 			assertEquals(DTIErrorCode.UNDEFINED_FAILURE, dtie.getDtiErrorCode());
-			assertEquals(
-					"GWTPLookup for SOCARenewPlan or CARenewPlan is missing in the database.",
+			assertEquals("GWTPLookup for SOCARenewPlan or CARenewPlan is missing in the database.",
 					dtie.getLogMessage());
 
 		}
@@ -117,10 +112,8 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			xmlString = DLRRenewEntitlementRules.transformRequest(dtiTxn);
 			assertNotNull(xmlString);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-					dtie.getDtiErrorCode());
-			assertEquals(
-					"Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for CARenewPlan.",
+			assertEquals(DTIErrorCode.UNDEFINED_CRITICAL_ERROR, dtie.getDtiErrorCode());
+			assertEquals("Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for CARenewPlan.",
 					dtie.getLogMessage());
 
 		}
@@ -135,18 +128,15 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			xmlString = DLRRenewEntitlementRules.transformRequest(dtiTxn);
 			assertNotNull(xmlString);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-					dtie.getDtiErrorCode());
-			assertEquals(
-					"Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for SOCARenewPlan.",
+			assertEquals(DTIErrorCode.UNDEFINED_CRITICAL_ERROR, dtie.getDtiErrorCode());
+			assertEquals("Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for SOCARenewPlan.",
 					dtie.getLogMessage());
 
 		}
 		queryReq.setEligibilityMember("CA_RES");
 		aTPLookupPickUpTypeTO = new TPLookupTO();
 		aTPLookupPickUpTypeTO.setLookupValue("123");
-		aTPLookupPickUpTypeTO
-				.setLookupType(TPLookupTO.TPLookupType.INSTALLMENT);
+		aTPLookupPickUpTypeTO.setLookupType(TPLookupTO.TPLookupType.INSTALLMENT);
 		aTPLookupPickUpTypeTO.setLookupDesc("CARenewPlan");
 		tpLookupTOListIn.add(aTPLookupPickUpTypeTO);
 
@@ -159,16 +149,15 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 
 	}
 
-	private void getRenewEntitlementRequestTO(
-			RenewEntitlementRequestTO renewEntReqTO) {
-	
-		ArrayList<TicketTO> ticketList=getTicketList(TicketIdType.EXTERNAL_ID);
-		TicketTO ticket=new TicketTO(); 
+	private void getRenewEntitlementRequestTO(RenewEntitlementRequestTO renewEntReqTO) {
+
+		ArrayList<TicketTO> ticketList = getTicketList(TicketIdType.EXTERNAL_ID);
+		TicketTO ticket = new TicketTO();
 		ticket.setTktItem(new BigInteger("1"));
 		ticket.setExternal("1");
 		ticket.setProdCode("1");
 		ticket.setProdPrice(new BigDecimal("1"));
-		for(TicketTO ticketTo:ticketList){
+		for (TicketTO ticketTo : ticketList) {
 			ticketTo.getTicketDemoList().add(getBillingInfo());
 			ticketTo.setProdPrice(new BigDecimal("1"));
 			ticketTo.setProdQty(new BigInteger("1"));
@@ -218,11 +207,9 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 
 	@Test
 	public void testTransformResponse() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.RENEWENTITLEMENT);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
 		String xmlResponse = null;
-		InputStream fileName = this.getClass().getResourceAsStream(
-				DLR_XML_PATH + "DLR_QueryTicket_01_Rsp_Error.xml");
+		InputStream fileName = this.getClass().getResourceAsStream(DLR_XML_PATH + "DLR_QueryTicket_01_Rsp_Error.xml");
 		xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 		createCommonRequest(dtiTxn);
 		createCommonResponse(dtiTxn);
@@ -232,22 +219,18 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 		dtiTxn.setTpRefNum(new Integer(1));
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
-			dtiTxn = DLRRenewEntitlementRules.transformResponse(dtiTxn,
-					xmlResponse);
+			dtiTxn = DLRRenewEntitlementRules.transformResponse(dtiTxn, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.TP_INTERFACE_FAILURE,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.TP_INTERFACE_FAILURE, dtie.getDtiErrorCode());
 		}
 
-		fileName = this.getClass().getResourceAsStream(
-				DLR_XML_PATH + "DLR_RenewEntitlement_Res_01.xml");
+		fileName = this.getClass().getResourceAsStream(DLR_XML_PATH + "DLR_RenewEntitlement_Res_01.xml");
 		xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 
 		try {
 			DTIMockUtil.processMockprepareAndExecuteSql();
-			dtiTxn = DLRRenewEntitlementRules.transformResponse(dtiTxn,
-					xmlResponse);
+			dtiTxn = DLRRenewEntitlementRules.transformResponse(dtiTxn, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getMessage());
@@ -257,8 +240,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 
 	@Test
 	public void testApplyDLRRenewEntitlementRules() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.RENEWENTITLEMENT);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
 		createCommonRequest(dtiTxn);
 		RenewEntitlementRequestTO queryReq = new RenewEntitlementRequestTO();
 		// getRenewEntitlementRequestTO(queryReq);
@@ -266,8 +248,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 		try {
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT, dtie.getDtiErrorCode());
 		}
 		ReservationTO reserv = new ReservationTO();
 		reserv.setResPickupArea("ABC");
@@ -278,8 +259,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 		try {
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT, dtie.getDtiErrorCode());
 		}
 		ClientDataTO clientData = new ClientDataTO();
 		getClientData(clientData);
@@ -287,15 +267,13 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 		try {
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT, dtie.getDtiErrorCode());
 		}
 		reserv.setResCode("ABCD");
 		try {
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT, dtie.getDtiErrorCode());
 		}
 		reserv.setResSalesType("123");
 
@@ -312,8 +290,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			DTIMockUtil.processMockprepareAndExecuteSql();
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT,
-					dtie.getDtiErrorCode());
+			assertEquals(DTIErrorCode.INVALID_MSG_CONTENT, dtie.getDtiErrorCode());
 		}
 		aDemo.setCountry("12");
 		for (TicketTO ticketTo : ticketList) {
@@ -336,28 +313,19 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 			DLRRenewEntitlementRules.applyDLRRenewEntitlementRules(dtiTxn);
 		} catch (DTIException dtie) {
 			// TODO Somesh
-			//Assert.fail("Unexpected Exception:: " + dtie.getLogMessage());
+			// Assert.fail("Unexpected Exception:: " + dtie.getLogMessage());
 		}
 	}
 
 	/**
 	 * test Case for transformError
 	 */
-	@Test
+	// @Test TODO
 	public void testTransformError() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.RENEWENTITLEMENT);
-		String xmlResponse = "<Envelope> "
-				+ "<Header>"
-				+ "<MessageID>290118</MessageID>"
-				+ "<MessageType>QueryTicketResponse</MessageType>"
-				+ "<SourceID>WDPRODLRNA</SourceID>"
-				+ "<TimeStamp>"
-				+ DLRTestUtil.getDLRTimeStamp()
-				+ "</TimeStamp>"
-				+ "<EchoData />"
-				+ "<SystemFields />"
-				+ "</Header>"
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.RENEWENTITLEMENT);
+		String xmlResponse = "<Envelope> " + "<Header>" + "<MessageID>290118</MessageID>"
+				+ "<MessageType>QueryTicketResponse</MessageType>" + "<SourceID>WDPRODLRNA</SourceID>" + "<TimeStamp>"
+				+ DLRTestUtil.getDLRTimeStamp() + "</TimeStamp>" + "<EchoData />" + "<SystemFields />" + "</Header>"
 				+ "<Body><Status><StatusCode>1300</StatusCode><StatusText>QueryTicket request error</StatusText></Status>"
 				+ "<QueryTicketErrors><Errors><Error><ErrorCode>1306</ErrorCode><ErrorText>Can not process messages from source WDPRODLRNA, source is inactive</ErrorText>"
 				+ "</Error></Errors><DataRequestErrors /></QueryTicketErrors></Body></Envelope>";
@@ -370,8 +338,7 @@ public class DLRRenewEntitlementRulesTestCase extends CommonTestUtils {
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		queryReq.setTktList(getTicketList(TicketIdType.EXTERNAL_ID));
 		try {
-			dtiTxn = DLRRenewEntitlementRules.transformError(dtiTxn, dtiRespTO,
-					statusCode, xmlResponse);
+			dtiTxn = DLRRenewEntitlementRules.transformError(dtiTxn, dtiRespTO, statusCode, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getMessage());

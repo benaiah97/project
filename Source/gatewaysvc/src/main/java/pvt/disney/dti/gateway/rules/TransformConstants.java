@@ -39,6 +39,12 @@ public interface TransformConstants {
 
   /** ITE m_1. */
   String ITEM_1 = "1";
+  
+  /** The picture. */
+  String PICTURE="PICTURE";
+  
+  /** The paylan. */
+  String PAYPLAN="PAYPLAN";
 
   // GW PREFIX INDICATES GATEWAY EGALAXY (DLR) CONSTANTS
 

@@ -30,8 +30,7 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 	@Test
 	public void testTransformRequest() {
 		String xmlString = null;
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.VOIDTICKET);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.VOIDTICKET);
 		createCommonRequest(dtiTxn);
 		VoidTicketRequestTO voidReq = new VoidTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(voidReq);
@@ -50,10 +49,8 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 	 * JUnit for transformResponse
 	 */
 	@Test
-	public void testTransformResponse() throws DTIException,
-			FileNotFoundException, URISyntaxException {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				DTITransactionTO.TransactionType.VOIDTICKET);
+	public void testTransformResponse() throws DTIException, FileNotFoundException, URISyntaxException {
+		DTITransactionTO dtiTxn = new DTITransactionTO(DTITransactionTO.TransactionType.VOIDTICKET);
 		String xmlResponse = null;
 		createCommonRequest(dtiTxn);
 		VoidTicketRequestTO queryReq = new VoidTicketRequestTO();
@@ -63,12 +60,11 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 		queryReq.setTktList(arrTicketTO);
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		dtiTxn.setTpRefNum(222);
-		InputStream	fileName = null;
+		InputStream fileName = null;
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		/* scenario : 1 TransactionType is VOIDTICKET with status code=0 */
 		try {
-			fileName = this.getClass().getResourceAsStream(
-					DLR_XML_PATH + "DLR_VoidTicketResponse.xml");
+			fileName = this.getClass().getResourceAsStream(DLR_XML_PATH + "DLR_VoidTicketResponse.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			DLRVoidTicketRules.transformResponse(dtiTxn, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
@@ -76,10 +72,9 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 			Assert.fail("Unexpected exception" + dtie.getMessage());
 		}
 		/* scenario : 2 TransactionType is VOIDTICKET with status code>0 */
-		
+
 		try {
-			fileName = this.getClass().getResourceAsStream(
-					DLR_XML_PATH + "DLR_VoidTicketResponse_1.xml");
+			fileName = this.getClass().getResourceAsStream(DLR_XML_PATH + "DLR_VoidTicketResponse_1.xml");
 			xmlResponse = DTITestUtilities.getXMLFromFile(fileName);
 			DLRVoidTicketRules.transformResponse(dtiTxn, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
@@ -91,21 +86,12 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for transformError
 	 */
-	@Test
+	// @Test TODO
 	public void testTransformError() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.VOIDTICKET);
-		String xmlResponse = "<Envelope> "
-				+ "<Header>"
-				+ "<MessageID>290118</MessageID>"
-				+ "<MessageType>QueryTicketResponse</MessageType>"
-				+ "<SourceID>WDPRODLRNA</SourceID>"
-				+ "<TimeStamp>"
-				+ DLRTestUtil.getDLRTimeStamp()
-				+ "</TimeStamp>"
-				+ "<EchoData />"
-				+ "<SystemFields />"
-				+ "</Header>"
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.VOIDTICKET);
+		String xmlResponse = "<Envelope> " + "<Header>" + "<MessageID>290118</MessageID>"
+				+ "<MessageType>QueryTicketResponse</MessageType>" + "<SourceID>WDPRODLRNA</SourceID>" + "<TimeStamp>"
+				+ DLRTestUtil.getDLRTimeStamp() + "</TimeStamp>" + "<EchoData />" + "<SystemFields />" + "</Header>"
 				+ "<Body><Status><StatusCode>1300</StatusCode><StatusText>QueryTicket request error</StatusText></Status>"
 				+ "<QueryTicketErrors><Errors><Error><ErrorCode>1306</ErrorCode><ErrorText>Can not process messages from source WDPRODLRNA, source is inactive</ErrorText>"
 				+ "</Error></Errors><DataRequestErrors /></QueryTicketErrors></Body></Envelope>";
@@ -118,20 +104,19 @@ public class DLRVoidTicketRulesTestCase extends CommonTestUtils {
 		dtiTxn.getRequest().setCommandBody(queryReq);
 		queryReq.setTktList(getTicketList(TicketIdType.EXTERNAL_ID));
 		try {
-			dtiTxn = DLRVoidTicketRules.transformError(dtiTxn, dtiRespTO,
-					statusCode, xmlResponse);
+			dtiTxn = DLRVoidTicketRules.transformError(dtiTxn, dtiRespTO, statusCode, xmlResponse);
 			assertNotNull(dtiTxn.getResponse());
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception::" + dtie.getMessage());
 		}
 	}
+
 	/**
 	 * JUnit for applyDLRVoidTicketRules
 	 */
 	@Test
 	public void testApplyDLRVoidTicketRules() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.VOIDTICKET);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.VOIDTICKET);
 		createCommonRequest(dtiTxn);
 		VoidTicketRequestTO voidReq = new VoidTicketRequestTO();
 		dtiTxn.getRequest().setCommandBody(voidReq);

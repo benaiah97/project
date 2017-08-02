@@ -12,6 +12,7 @@ public  class ResourceLoader {
 
 	//default Constructor
 	private ResourceLoader () {
+		
 	}
 	
 	static public ResourceBundle getResourceBundle(String bundleName) {

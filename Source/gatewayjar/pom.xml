@@ -263,11 +263,11 @@
 
 		<!-- other DTI projects -->
 		<!-- VERSIONS HERE MAY NEED UPDATED FOR NEW VERSIONS -->
-		<dependency>
+		<!-- dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayjar</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>pvt.disney.dti</groupId>
 			<artifactId>gatewayxsd</artifactId>
