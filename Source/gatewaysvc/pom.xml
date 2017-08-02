@@ -202,7 +202,7 @@
 
 			<!-- reporting plugin for jacoco is not setting up executing properly 
 				until that is fixed we have to configured goals for the plugin in build. -->
-			<plugin>
+			<!-- plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.5.5.201112152213</version>
@@ -225,7 +225,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

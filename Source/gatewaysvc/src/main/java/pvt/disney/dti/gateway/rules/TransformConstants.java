@@ -44,7 +44,7 @@ public interface TransformConstants {
   String PICTURE="PICTURE";
   
   /** The paylan. */
-  String PAYLAN="PAYPLAN";
+  String PAYPLAN="PAYPLAN";
 
   // GW PREFIX INDICATES GATEWAY EGALAXY (DLR) CONSTANTS
 
