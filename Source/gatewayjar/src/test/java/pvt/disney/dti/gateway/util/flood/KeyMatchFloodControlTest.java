@@ -1,11 +1,9 @@
 package pvt.disney.dti.gateway.util.flood;
 
-import static org.junit.Assert.fail;
-
 import java.util.Properties;
-
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +26,6 @@ public class KeyMatchFloodControlTest {
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-
   }
 
   @AfterClass
@@ -37,7 +34,6 @@ public class KeyMatchFloodControlTest {
 
   @Before
   public void setUp() throws Exception {
-
   }
 
   @After
@@ -52,48 +48,46 @@ public class KeyMatchFloodControlTest {
   public final void testKeyMatchFloodControlProperties() {
 
     Properties props = new Properties();
-    // The properties are not tested; they default to a value without error.
+   /* The properties are not tested; they default to a value without error.*/
     props.setProperty("FloodControl.KeyStoreType", "InMemory");
     props.setProperty("FloodControl.Active", "true");
     props.setProperty("FloodControl.KeyBlockException", "true");
 
-    // Test numeric parameter constraints
+   /*Test numeric parameter constraints*/
     try {
       props.setProperty("FloodControl.KeyFrequencyWindow", "notanumber");
       floodControl = new TestImplementor(props);
-      fail("Did not throw exception on bad KeyFrequencyWindow.");
+      Assert.fail("Did not throw exception on bad KeyFrequencyWindow.");
     } catch (FloodControlInitException fcie) {
     }
 
     try {
       props.setProperty("FloodControl.KeyFrequencyLimit", "notanumber");
       floodControl = new TestImplementor(props);
-      fail("Did not throw exception on bad KeyFrequencyLimit.");
+      Assert.fail("Did not throw exception on bad KeyFrequencyLimit.");
     } catch (FloodControlInitException fcie) {
     }
 
     try {
       props.setProperty("FloodControl.KeySuppressInterval", "notanumber");
       floodControl = new TestImplementor(props);
-      fail("Did not throw exception on bad KeySuppressInterval.");
+      Assert.fail("Did not throw exception on bad KeySuppressInterval.");
     } catch (FloodControlInitException fcie) {
     }
 
     try {
       props.setProperty("FloodControl.MaxConcurrentKeys", "notanumber");
       floodControl = new TestImplementor(props);
-      fail("Did not throw exception on bad MaxConcurrentKeys.");
+      Assert.fail("Did not throw exception on bad MaxConcurrentKeys.");
     } catch (FloodControlInitException fcie) {
     }
 
     try {
       props.setProperty("FloodControl.CacheRefreshInterval", "notanumber");
       floodControl = new TestImplementor(props);
-      fail("Did not throw exception on bad CacheRefreshInterval.");
+      Assert.fail("Did not throw exception on bad CacheRefreshInterval.");
     } catch (FloodControlInitException fcie) {
     }
-
-    //
     props.setProperty("FloodControl.KeyFrequencyWindow", KEYFREQUENCYWINDOW); // seconds
     props.setProperty("FloodControl.KeyFrequencyLimit", KEYFREQUENCYLIMIT);
     props.setProperty("FloodControl.KeySuppressInterval", KEYSUPPRESSINTERVAL); // seconds
@@ -103,11 +97,8 @@ public class KeyMatchFloodControlTest {
     try {
       floodControl = new TestImplementor(props);
     } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
+    	Assert.fail("Exception creating KeyMatchFloodControl: " + fcie);
     }
-
-    return;
-
   }
 
   /** 
@@ -119,21 +110,18 @@ public class KeyMatchFloodControlTest {
 
     String newKey;
     String txnIn = new String("key");
-
     try {
       newKey = (String) floodControl.deriveKey(txnIn);
       if (!newKey.equals(txnIn))
-        fail("Key passed in doesn't match what was expected.");
+    	  Assert.fail("Key passed in doesn't match what was expected.");
     } catch (KeyDerivationException kde) {
-      fail("Valid key caused KeyDerivationException");
+    	Assert.fail("Valid key caused KeyDerivationException");
     }
-
     try {
       newKey = (String) floodControl.deriveKey(new String(""));
-      fail("Invalid key caused no KeyDerivationException");
+      Assert.fail("Invalid key caused no KeyDerivationException");
     } catch (KeyDerivationException kde) {
     }
-
   }
 
   /**
@@ -145,32 +133,29 @@ public class KeyMatchFloodControlTest {
     int testNumber = getNewTestNumber();
     String test = new String("Test" + testNumber);
 
-    // Run three occurrences back-to-back (should be legal)
-    // Relies on the KeyFrequencyLimit property above being set to 3.
+  /*  Run three occurrences back-to-back (should be legal)
+   Relies on the KeyFrequencyLimit property above being set to 3.
     try {
       int numberOfAllowableOccurences = Integer.parseInt(KEYFREQUENCYLIMIT);
       for (int i = 0; i < numberOfAllowableOccurences; i++) {
         floodControl.evaluateTransaction(test);
       }
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
-    }
-
-    // Wait out the Key Frequency Window
+    	Assert.fail("Unexpected exception: " + e.toString());
+    }*/
+   /*Wait out the Key Frequency Window*/
     try {
       Thread.sleep((Integer.parseInt(KEYFREQUENCYWINDOW) * 1000) + 50);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
-
-    // This should be a valid call, all three of the previous occurrences should
-    // have aged out.
+    /* This should be a valid call, all three of the previous occurrences should
+     have aged out.*/
     try {
       floodControl.evaluateTransaction(test);
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
-
   }
 
   /**
@@ -183,80 +168,77 @@ public class KeyMatchFloodControlTest {
     int testNumber = getNewTestNumber();
     String test = new String("Test" + testNumber);
 
-    // Run three occurrences back-to-back (should be legal)
-    // Relies on the KeyFrequencyLimit property above being set to 3.
+     /*Run three occurrences back-to-back (should be legal)
+     Relies on the KeyFrequencyLimit property above being set to 3.*/
     try {
       int numberOfAllowableOccurences = Integer.parseInt(KEYFREQUENCYLIMIT);
       for (int i = 0; i < numberOfAllowableOccurences; i++) {
         floodControl.evaluateTransaction(test);
       }
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
 
-    // This should be a blocking call
+  /*This should be a blocking call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeyBlockException should have been generated.");
+      Assert.fail("KeyBlockException should have been generated.");
     } catch (KeySuppressException kse) {
-      fail("KeySuppressException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeySuppressException occurred, but should have been KeyBlockException instead.");
     } catch (KeyBlockException kbe) {
-      // This is the expected result.
+      /* This is the expected result.*/
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeyBlockException instead.");
     } catch (KeyStoreException kse) {
-      fail("KeyStoreException occurred, but should have been KeyBlockException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeyBlockException instead.");
     }
 
-    // This should be a supressing call
+    /*This should be a supressing call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeySuppressException should have been generated.");
+      Assert.fail("KeySuppressException should have been generated.");
     } catch (KeySuppressException kse) {
-      // This is the expected result.
+      /* This is the expected result.*/
     } catch (KeyBlockException kbe) {
-      fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
     } catch (KeyStoreException kse) {
-      fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
     }
 
-    // "Almost" wait out the suppression interval. (KSI - 1 second)
+   /* "Almost" wait out the suppression interval. (KSI - 1 second)*/
     try {
       Thread.sleep((Integer.parseInt(KEYSUPPRESSINTERVAL) * 1000) - 1000);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
 
-    // This should be another supressing call
+   /* This should be another supressing call*/
     try {
       floodControl.evaluateTransaction(test);
-      fail("KeySuppressException should have been generated.");
+      Assert.fail("KeySuppressException should have been generated.");
     } catch (KeySuppressException kse) {
-      // This is the expected result.
+     /* This is the expected result.*/
     } catch (KeyBlockException kbe) {
-      fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyBlockException occurred, but should have been KeySuppressException instead.");
     } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyDerivationException occurred, but should have been KeySuppressException instead.");
     } catch (KeyStoreException kde) {
-      fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
+    	Assert.fail("KeyStoreException occurred, but should have been KeySuppressException instead.");
     }
-
-    // Wait 2 seconds to put you on the other side of the KSI.
+    /* Wait 2 seconds to put you on the other side of the KSI.*/
     try {
       Thread.sleep(2000);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }
-
-    // The next one should add normally (because the block aged out).
+   /* The next one should add normally (because the block aged out).*/
     try {
       floodControl.evaluateTransaction(test);
     } catch (Exception e) {
-      fail("Unexpected exception after key block expiry: " + e.toString());
+    	Assert.fail("Unexpected exception after key block expiry: " + e.toString());
     }
-
   }
 
   /**
@@ -267,12 +249,10 @@ public class KeyMatchFloodControlTest {
     
     int testNumber = getNewTestNumber();
     String test = new String("Test" + testNumber);
-    
     int counter = 0;
     int numberOfKeysStored = 0;
-    
-    // Run three occurrences back-to-back (should be legal)
-    // Relies on the KeyFrequencyLimit property above being set to 3.
+    /* Run three occurrences back-to-back (should be legal)
+     Relies on the KeyFrequencyLimit property above being set to 3.*/
     try {
       int maximumNumberOfKeys = Integer.parseInt(MAXCONCURRENTKEYS);
       int numberOfAllowableOccurences = Integer.parseInt(KEYFREQUENCYLIMIT);
@@ -282,34 +262,30 @@ public class KeyMatchFloodControlTest {
           floodControl.evaluateTransaction(newKey);
         }
       }
-      
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
 
-    // Sleep at least one second+.
+   /*Sleep at least one second+.*/
     try {
       Thread.sleep(1050);
     } catch (InterruptedException ie) {
-      fail("Sleep thread was interrupted.");
+    	Assert.fail("Sleep thread was interrupted.");
     }   
-    
-    // The next one should add normally.
+    /* The next one should add normally.*/
     try {
       floodControl.evaluateTransaction(test);
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());
+    	Assert.fail("Unexpected exception: " + e.toString());
     }
-   
     try {
        numberOfKeysStored = floodControl.getNumberOfKeysStored();
        if (numberOfKeysStored != 1) {
-         fail("KeyStore did not clear when passing max concurrent keys.");
+    	   Assert.fail("KeyStore did not clear when passing max concurrent keys.");
        }
     } catch (Exception e) {
-      fail("Unexpected exception: " + e.toString());      
+    	Assert.fail("Unexpected exception: " + e.toString());      
     }
-
   }
 
   /**
@@ -318,5 +294,4 @@ public class KeyMatchFloodControlTest {
   private static synchronized int getNewTestNumber() {
     return testNumber++;
   }
-
 }

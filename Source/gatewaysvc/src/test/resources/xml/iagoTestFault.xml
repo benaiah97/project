@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Header />
+	<soapenv:Body>
+		<soapenv:Fault>
+			<faultcode>soapenv:Client</faultcode>
+			<faultstring>Message does not have necessary info</faultstring>
+			<faultactor>http://gizmos.com/order</faultactor>
+			<detail>
+				<PO:order xmlns:PO="http://gizmos.com/orders/">
+					Quantity element does not have a value
+				</PO:order>
+				<PO:confirmation xmlns:PO="http://gizmos.com/confirm">
+					Incomplete address: no zip code
+				</PO:confirmation>
+			</detail>
+		</soapenv:Fault>
+	</soapenv:Body>
+</soapenv:Envelope>

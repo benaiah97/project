@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="RACE">
+<project name="DTI gatewaysvc">
   <bannerLeft>
-    <name>RACE</name>
-    <src>/images/race_logo_115x80.png</src>
-    <href>https://confluence.disney.com/display/SET/RACE</href>
+    <name>DTI gatewaysvc</name> 
+    <src>/images/dtidoc.gif</src>
+    <href>https://confluence.disney.com/display/SET/Application+Portfolio</href>
   </bannerLeft>
   <bannerRight>
     <src>/images/eticketstudiologo_139x80.png</src>
@@ -28,7 +28,8 @@
       <item name="Apache" href="http://www.apache.org/" />
       <item name="Maven 3" href="http://maven.apache.org/"/>
       <item name="RefDocs" href="https://dtidev.disney.pvt/refdocs/" />
-      <item name="Race Docs" href="https://confluence.disney.com/display/SET/RACE" />
+      <item name="DTI Docs" href="https://confluence.disney.com/display/SET/Application+Portfolio" />
+      <item name="DTI RefDocs" href="https://dtidev.disney.pvt/refdoc/" />
     </links>
 
 

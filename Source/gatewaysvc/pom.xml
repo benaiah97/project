@@ -17,9 +17,129 @@
 	<properties>
 		<powermock.version>1.7.0RC2</powermock.version>
 		<mockito.version>2.7.22</mockito.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+		<jacoco.version>0.7.8</jacoco.version>
 	</properties>
+	<developers>
+		<developer>
+			<id>lewit019</id>
+			<name>Todd Lewis</name>
+			<url>https://rostr.disney.com/people/cca54d23dfd46f45534f6de13e07f4d4?locale=en</url>
+			<email>Todd.Lewis@disney.com</email>
+			<organization>WDPR E-Ticket Studio</organization>
+			<organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+			<roles>
+				<role>engineering lead</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>moons012</id>
+			<name>Shannon (Shan) Moon</name>
+			<url>https://rostr.disney.com/people/2b79a5946358f586b2117c401b2e80ba</url>
+			<email>shan.m.moon@disney.com</email>
+			<organization>WDPR E-Ticket Studio</organization>
+			<organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+			<roles>
+				<role>engineering lead</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>biest001</id>
+			<name>Tamra (Tam) Biese</name>
+			<url>https://rostr.disney.com/people/1f0f4ecd9f8c69d88bff5ec9caa1c605</url>
+			<email>TAMRA.F.BIESE@DISNEY.COM</email>
+			<organization>WDPR E-Ticket Studio</organization>
+			<organizationUrl>https://confluence.disney.com/display/SET/Studio+E-Ticket</organizationUrl>
+			<roles>
+				<role>engineering lead</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<reporting>
+		<excludeDefaults>false</excludeDefaults>
+		<outputDirectory>${project.build.directory}/site</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+					<dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+				</configuration>
+			</plugin>
+
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
+				<version>2.7</version> </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.19.1</version>
+				<!-- <configuration> <includes> <include>pvt/disney/race/**/*.java </include> 
+					</includes> </configuration> -->
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>emma-maven-plugin</artifactId>
+				<version>1.0-alpha-3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.4.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.6</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+	<scm>
+		<url>git@github.disney.com:WDPR-DTI/DTIGateway.git</url>
+	</scm>
+
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://wdpr-cicd-magneto-master.cloud.corp.dig.com/job/DTIGateway/</url>
+	</ciManagement>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.3</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 			<!-- REQUIRED FOR JAVA 5 -->
 			<plugin>
@@ -33,19 +153,93 @@
 			<!-- Adding test exclusions for Surefire reporting.. TODO : This is a 
 				hack until SHAN can setup filters -->
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<instrumentation>
+						<excludes>
+							<exclude>pvt/disney/dti/gateway/dao/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/client/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/provider/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/service/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/rules/dlr/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/rules/hkd/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/rules/race/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/rules//*.class</exclude>
+						</excludes>
+					</instrumentation>
+					<formats>
+						<format>html</format>
+					</formats>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>cobertura</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>**/GWOrdersResXMLTestCase*</include>
+						<include>pvt/disney/dti/gateway/rules/*.class</include>
+						<include>pvt/disney/dti/gateway/dao/*.class</include>
+						<include>pvt/disney/dti/gateway/dao/data/*.class</include>
+						<include>pvt/disney/dti/gateway/client/*.class</include>
+						<include>pvt/disney/dti/gateway/rules/wdw/*.class</include>
+						<include>pvt/disney/dti/gateway/rules/hkd/*.class</include>
+						<include>pvt/disney/dti/gateway/provider/hkd/xml/*.class</include>
+						<include>pvt/disney/dti/gateway/rules/dlr/*.class</include>
 					</includes>
 				</configuration>
 			</plugin>
+
+			<!-- reporting plugin for jacoco is not setting up executing properly 
+				until that is fixed we have to configured goals for the plugin in build. -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.5.5.201112152213</version>
+				<configuration>
+					<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+					<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+				</configuration>
+				<executions>
+					<execution>
+						<id>jacoco-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-site</id>
+						<phase>package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
 		</plugins>
+
 	</build>
 
 	<dependencies>
-
 		<!-- TESTING -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -53,14 +247,6 @@
 			<version>4.11</version> <!-- should update to 4.12+ once we can update contiperf -->
 			<scope>test</scope>
 		</dependency>
-
-
-
-
-
-
-
-
 
 		<dependency>
 			<groupId>org.databene</groupId>
@@ -73,21 +259,20 @@
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-core</artifactId>
+		    <version>${powermock.version}</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito2</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-api-mockito-common</artifactId>
+		    <version>${powermock.version}</version>
+		    <scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
@@ -107,28 +292,13 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>1.4.9</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-easymock</artifactId>
 			<version>1.4.9</version>
 			<scope>test</scope>
 		</dependency>
-
-
-
-
-
-
-
-
-
-
 
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -163,8 +333,6 @@
 			<version>1.3</version>
 			<scope>test</scope>
 		</dependency>
-
-
 		<!-- LOGGING -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -195,8 +363,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
 		</dependency>
-
-
 		<!-- BEGIN XML -->
 		<!-- Sun jaxb, from ws dev pack -->
 		<dependency>
@@ -221,13 +387,11 @@
 			<version>1.1.1</version>
 		</dependency>
 
-
 		<!-- TODO: NEED A FILTER TO EXCLUDE THIS FOR A WAS BUILD -->
 		<!-- reworked and removed these, WAS chokes on 'em, but Tomcat needs it -->
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<!--version>2.8.1</version -->
 			<version>2.9.1</version>
 		</dependency>
 
@@ -246,7 +410,6 @@
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<!--version>2.7.0</version -->
 			<version>2.7.1</version>
 		</dependency>
 
@@ -307,6 +470,5 @@
 			<artifactId>gatewayxsd</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 	</dependencies>
 </project>

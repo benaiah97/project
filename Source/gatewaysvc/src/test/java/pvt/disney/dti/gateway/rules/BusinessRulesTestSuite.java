@@ -13,7 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(value = Suite.class)
 @SuiteClasses(value = { ContentRulesTestCase.class, DateTimeRulesTestCase.class,
     EligibilityRulesTestCase.class, PaymentRulesTestCase.class,
-    ProductRulesTestCase.class, TargetRulesTestCase.class,
-    TransformRulesTestCase.class })
+    ProductRulesTestCase.class,
+    TransformRulesTestCase.class,BusinessRulesTestCase.class,CalmRulesTestCase.class })
 public class BusinessRulesTestSuite {
 }
