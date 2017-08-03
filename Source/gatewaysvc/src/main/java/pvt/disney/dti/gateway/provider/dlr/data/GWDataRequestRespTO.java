@@ -565,7 +565,7 @@ public class GWDataRequestRespTO implements Serializable {
 		private GregorianCalendar useTime;
 		
 		/** The use no. */
-		private Integer useNo;
+		private int useNo=0;
 
 		/**
 		 * @return the acessCode
@@ -654,14 +654,14 @@ public class GWDataRequestRespTO implements Serializable {
 		/**
 		 * @return the useNo
 		 */
-		public Integer getUseNo() {
+		public int getUseNo() {
 			return useNo;
 		}
 
 		/**
 		 * @param useNo the useNo to set
 		 */
-		public void setUseNo(Integer useNo) {
+		public void setUseNo(int useNo) {
 			this.useNo = useNo;
 		}
 

@@ -225,23 +225,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// Step 3A
 				// If Picture is not present in response marking resultType as INELIGIBLE
 				
-				// visualId
-				//String visualId = gwDataRespTO.getVisualID();
-				
-				// contactGUID
-			/*	String contactGUID=null;*/
-				
-				// usage
-				int useNo=0;
-				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
-							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
-					
-					if(globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() != null){
-						useNo = globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo();
-					}
-
-					
-				}
 				if ((globalGuestProduct.getGwDataRespTO().getHasPicture() == null)) {
 					// TODO need to verify if Haspicture is NO ||
 					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
@@ -253,14 +236,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				
 				
 				// Check usage 
-				if(useNo==0){
-					logger.sendEvent("No Usage is there ", EventType.DEBUG,
-								THISINSTANCE);
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
+							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
+					
+					if((globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo()==0)){
+						
+						logger.sendEvent("No Usage is there ", EventType.DEBUG,
+									THISINSTANCE);
+						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					}
+					//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
+					
 				}
-				//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
 				
-			
 				// Step 4 :: Check the Upgrade PLU's from DLR response and filter with list from UpgradeCatalogTO
 				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
@@ -290,6 +278,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						logger.sendEvent("No Upgradable Product found ",
 									EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
+						
+						dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+						String visualId = gwDataRespTO.getVisualID();
+						dtiTktTO.setExternal(visualId);
+						
 						//TODO need to verify this with do we need to stop and skip step 5 
 						return getQueryEligibleCommand(dtiTktTO,dtiRespTO,dtiTxn);
 					}
@@ -300,13 +293,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 								EventType.DEBUG, THISINSTANCE);
 					
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					
+					dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+					String visualId = gwDataRespTO.getVisualID();
+					dtiTktTO.setExternal(visualId);
 					//TODO need to verify this with do we need to stop and skip step 5 
 					return getQueryEligibleCommand(dtiTktTO,dtiRespTO,dtiTxn);
 				}
 			
 				// Step 5 :: Mapping the globalGuestProduct and globalUpgradeProduct to response
 				setTicketValues(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
-				
+				if(dtiTktTO.getResultType()==null){
+					dtiTktTO.setResultType(ResultType.ELIGIBLE);
+				}
 				
 
 			} else {
@@ -423,46 +422,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		return;
 	}
 
-	/**
-	 * Gets the upgraded product.
-	 *
-	 * @return the upgraded product
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	public static ArrayList<DBProductTO> aa(ArrayList<String> listfUpgradedPLUs, TicketTO dtiTktTO,
-				DTITransactionTO dtiTxn) throws DTIException {
-
-		ArrayList<DBProductTO> newProductCatalogTO = null;
-		UpgradeCatalogTO upGradeCatalogTo = null;
-
-		if ((listfUpgradedPLUs == null) || (listfUpgradedPLUs.size() == 0)) {
-			logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
-			return newProductCatalogTO;
-		}
-		/* Call to fetch the sale able ProductList */
-		try {
-			upGradeCatalogTo = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);
-
-		} catch (Exception dtie) {
-			logger.sendEvent("database exception occured " + dtie.getMessage(), EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(TransformRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-						"Provider responded with a non-numeric status code.");
-		}
-
-		if (upGradeCatalogTo != null) {
-			ArrayList<DBProductTO> productList = upGradeCatalogTo.getProductList();
-
-			if ((productList != null) && (productList.size() > 0)) {
-
-				logger.sendEvent("Orignal List of Salaeable Product Obtaned " + productList.size(), EventType.DEBUG,
-							THISINSTANCE);
-
-			}
-		}
-		return newProductCatalogTO;
-	}
-
+	
 	/**
 	 * Sets the query eligible response command.
 	 *
