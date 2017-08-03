@@ -178,7 +178,11 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		 * is older than 14 days
 		 */
 		inElegibleFlag = false;
-		otUsagesTO.setDate("17-07-22");
+		try {
+			otUsagesTO.setDate("17-07-22");
+		} catch (ParseException pe) {
+			Assert.fail("Date Parse Exception" + pe.getMessage());
+		}
 		otTicketInfoTO.setVoidCode(new Integer(101));
 		usagesList.add(otUsagesTO);
 		otTicketInfoTO.setUsagesList(usagesList);
@@ -239,8 +243,12 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		 * date is older than six months (185 days).
 		 */
 		inElegibleFlag = false;
-		otUsagesTO.setDate("12-07-06");
-		otUsagesTO.setDate("17-07-06");
+		try {
+			otUsagesTO.setDate("12-07-06");
+			otUsagesTO.setDate("17-07-06");
+		} catch (ParseException pe) {
+			Assert.fail("Date Parse Exception" + pe.getMessage());
+		}
 		dbProductTO.setUpgrdPathId(new BigInteger("2"));
 		otTicketInfoTO.setBiometricTemplate("biometricTemplate");
 		dbProductTO.setDayCount(2);
