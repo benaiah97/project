@@ -3,12 +3,10 @@ package pvt.disney.dti.gateway.dao;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import pvt.disney.dti.gateway.connection.DAOHelper;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -19,11 +17,8 @@ import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
-import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
-
-import com.disney.exception.WrappedException;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
@@ -91,10 +86,6 @@ public class ProductKey {
 	private static final String GET_PRODUCTS_FROM_TYPCODE = "GET_PRODUCTS_FROM_TYPCODE";
 
 	private static final String GET_PRODUCTS_PRODUCT_UPGRADE = "GET_PRODUCTS_PRODUCT_UPGRADE";
-
-	private static final String GET_GUID = "GET_GUID";
-
-	private static final String INS_GUID = "INS_GUID";
 
 	/**
 	 * Returns an array of products found on the order.
@@ -752,7 +743,6 @@ public class ProductKey {
 
 			// Run the SQL
 			logger.sendEvent("About to processQuery:  GET_PRODUCTS_FROM_NAME", EventType.DEBUG, THISINSTANCE);
-			@SuppressWarnings("unchecked")
 			ArrayList<DBProductTO> resultSet = (ArrayList<DBProductTO>) helper.processQuery(values);
 			if (resultSet != null) {
 				logger.sendEvent("getProductsByTktName() found " + resultSet.size() + " products", EventType.INFO, THISINSTANCE);
@@ -939,85 +929,6 @@ public class ProductKey {
 					"Exception executing getProductUpgrade", e);
 		}
 		return result;
-	}
-
-	/**Gets the getGuId from the database.
-	 * @param enttlVsualId
-	 * @return
-	 * @throws DTIException
-	 */
-	public static EnttlGuidTO getGuId(String enttlVsualId) throws DTIException {
-
-		logger.sendEvent("Entering getGuId()", EventType.DEBUG, THISINSTANCE);
-		if (enttlVsualId == null) {
-			throw new DTIException("getGuId enttlVsualId is null.");
-		}
-		EnttlGuidTO result = null;
-		try {
-			Object[] values = { enttlVsualId };
-
-			// Prepare query
-			logger.sendEvent("About to getInstance from DAOHelper",
-					EventType.DEBUG, THISINSTANCE);
-			DAOHelper helper = DAOHelper.getInstance(GET_GUID);
-
-			// Run the SQL
-			logger.sendEvent("About to processQuery:  GET_GUID",
-					EventType.DEBUG, THISINSTANCE);
-			result = (EnttlGuidTO) helper.processQuery(values);
-
-			// Debug
-			logger.sendEvent("getGuId found products.", EventType.DEBUG,
-					THISINSTANCE, result, null);
-
-		} catch (Exception e) {
-			logger.sendEvent("Exception executing getGuId: " + e.toString(),
-					EventType.WARN, THISINSTANCE);
-			throw new DTIException(ProductKey.class,
-					DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getGuId", e);
-		}
-		return result;
-	}
-
-	
-	/**Gets the Insert visulId & GUID in database.
-	 * @param enttlVsualId
-	 * @param guId
-	 * @throws DTIException
-	 */
-	public static void insertGuId(String enttlVsualId, String guId)
-			throws DTIException {
-		logger.sendEvent("Entering insertGuId()", EventType.DEBUG, THISINSTANCE);
-		if (enttlVsualId == null || guId == null) {
-			throw new DTIException("insertGuId enttlVsualId or guId is null. ");
-		}
-		try {
-			Object[] values = { enttlVsualId, guId };
-			DAOHelper helper = DAOHelper.getInstance(INS_GUID);
-			logger.sendEvent("About to processInsert:  INS_GUID",
-					EventType.DEBUG, THISINSTANCE);
-			helper.processInsert(values);
-		} catch (WrappedException we) {
-
-			if (we.getWrappedException() instanceof SQLException) {
-				SQLException sqle = (SQLException) we.getWrappedException();
-				if (sqle.getErrorCode() == 1) {
-					logger.sendEvent(
-							"Unable to insert a duplicate row in ENTTL_GUID for guId "
-									+ guId, EventType.WARN, null);
-				} else {
-					logger.sendEvent("Unable to insert ENTTL_GUID: " + sqle,
-							EventType.EXCEPTION, THISINSTANCE);
-				}
-			} else {
-				logger.sendEvent("Unable to insert ENTTL_GUID: " + we,
-						EventType.EXCEPTION, THISINSTANCE);
-			}
-		} catch (Exception e) {
-			logger.sendEvent("Unable to insert ENTTL_GUID: : " + e.toString(),
-					EventType.EXCEPTION, THISINSTANCE);
-		}
 	}
 	
 	/**

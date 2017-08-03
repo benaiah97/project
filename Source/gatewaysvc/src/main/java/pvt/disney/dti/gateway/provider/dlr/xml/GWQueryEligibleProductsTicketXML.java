@@ -614,7 +614,8 @@ public class GWQueryEligibleProductsTicketXML {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void extractUsageRecords(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-				Element usageRecords) throws DTIException {
+ Element usageRecords)
+			throws DTIException {
 
 		// UpGradePLU Response
 		Node linReqResp = usageRecords;
@@ -647,15 +648,25 @@ public class GWQueryEligibleProductsTicketXML {
 				usageRecord.setAcp(inText);
 			}
 
+			// Use
+			Node useNoNode = linRecord.selectSingleNode("UseNo");
+			if (acpNode != null) {
+				int inText = Integer.valueOf(useNoNode.getText());
+				usageRecord.setUseNo(inText);
+			}
+
 			// Use Time
 			Node useTimeNode = linRecord.selectSingleNode("UseTime");
 			if (useTimeNode != null) {
 				String useTime = useTimeNode.getText();
 				if ((useTime != null) && (useTime.length() > 0)) {
-					GregorianCalendar useDateTime = UtilityXML.getGCalFromEGalaxyDate(useTime);
+					GregorianCalendar useDateTime = UtilityXML
+							.getGCalFromEGalaxyDate(useTime);
 					if (useDateTime == null) {
-						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-									"Response GW XML DataRequestResp has unparsable StartDateTime: " + useTime);
+						throw new DTIException(GWQueryTicketXML.class,
+								DTIErrorCode.INVALID_MSG_CONTENT,
+								"Response GW XML DataRequestResp has unparsable StartDateTime: "
+										+ useTime);
 					}
 					usageRecord.setUseTime(useDateTime);
 				}
