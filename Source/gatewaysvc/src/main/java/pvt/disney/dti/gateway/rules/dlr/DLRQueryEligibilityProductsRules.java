@@ -6,11 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-
 import javax.xml.datatype.DatatypeFactory;
-
-import org.apache.commons.lang.StringUtils;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -28,7 +24,6 @@ import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
-import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -48,7 +43,6 @@ import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
-
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -231,19 +225,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// Step 3A
 				// If Picture is not present in response marking resultType as INELIGIBLE
 				
-				// visualId
-				String visualId = gwDataRespTO.getVisualID();
-				
-				// contactGUID
-				String contactGUID=null;
-				
-				// usage
-				int useNo=0;
-				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
-							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
-
-					useNo = globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo();
-				}
 				if ((globalGuestProduct.getGwDataRespTO().getHasPicture() == null)) {
 					// TODO need to verify if Haspicture is NO ||
 					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
@@ -253,33 +234,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
 				}
 				
-				// check contact and contact GUID
-				if ((globalGuestProduct.getGwDataRespTO().getContact() != null)
-							&& (globalGuestProduct.getGwDataRespTO().getContact().size() > 0)){
-					contactGUID= globalGuestProduct.getGwDataRespTO().getContact().get(0).getContactGUID();
-				}
-				
-				//check GUID
-				if(StringUtils.isBlank(contactGUID)){
-					
-					logger.sendEvent("Contact GUID is not found ", EventType.DEBUG,
-								THISINSTANCE);
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
-				}
 				
 				// Check usage 
-				if(useNo==0){
-					logger.sendEvent("No Usage is there ", EventType.DEBUG,
-								THISINSTANCE);
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
+							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
+					
+					if((globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo()==0)){
+						
+						logger.sendEvent("No Usage is there ", EventType.DEBUG,
+									THISINSTANCE);
+						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					}
+					//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
+					
 				}
-				//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
 				
-				// Step 3B if contact GUID is present, Insert the GUID for GUID_ENTL Table
-				if (contactGUID != null) {
-					processGUID(visualId, contactGUID);
-				}
-			
 				// Step 4 :: Check the Upgrade PLU's from DLR response and filter with list from UpgradeCatalogTO
 				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
@@ -309,6 +278,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						logger.sendEvent("No Upgradable Product found ",
 									EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
+						
+						dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+						String visualId = gwDataRespTO.getVisualID();
+						dtiTktTO.setExternal(visualId);
+						
 						//TODO need to verify this with do we need to stop and skip step 5 
 						return getQueryEligibleCommand(dtiTktTO,dtiRespTO,dtiTxn);
 					}
@@ -319,6 +293,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 								EventType.DEBUG, THISINSTANCE);
 					
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					
+					dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+					String visualId = gwDataRespTO.getVisualID();
+					dtiTktTO.setExternal(visualId);
 					//TODO need to verify this with do we need to stop and skip step 5 
 					return getQueryEligibleCommand(dtiTktTO,dtiRespTO,dtiTxn);
 				}
@@ -326,6 +304,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// Step 5 :: Mapping the globalGuestProduct and globalUpgradeProduct to response
 				setTicketValues(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
 				
+				// set the result type as ELIGIBLE 
+				if(dtiTktTO.getResultType()==null){
+					dtiTktTO.setResultType(ResultType.ELIGIBLE);
+				}
 				
 
 			} else {
@@ -442,74 +424,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		return;
 	}
 
-	/**
-	 * Process GUID.
-	 *
-	 * @param guid
-	 *           the guid
-	 * @param visualid
-	 *           the visualid
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	private static void processGUID(String guid, String visualid) throws DTIException {
-		/* Step 3B */
-		try {
-			// Checking for the visual Id in ENTTL_GUID insert if no visualid is
-			// present
-			EnttlGuidTO entGuid = ProductKey.getGuId(visualid);
-
-			if (entGuid == null) {
-				// Inserting the visual id in table ENTTL_GUID
-				ProductKey.insertGuId(visualid, guid);
-			}
-		} catch (Exception dtie) {
-			logger.sendEvent("database exception occured " + dtie.getMessage(), EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(TransformRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-						"Provider responded with a non-numeric status code.");
-		}
-	}
-
-	/**
-	 * Gets the upgraded product.
-	 *
-	 * @return the upgraded product
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	public static ArrayList<DBProductTO> aa(ArrayList<String> listfUpgradedPLUs, TicketTO dtiTktTO,
-				DTITransactionTO dtiTxn) throws DTIException {
-
-		ArrayList<DBProductTO> newProductCatalogTO = null;
-		UpgradeCatalogTO upGradeCatalogTo = null;
-
-		if ((listfUpgradedPLUs == null) || (listfUpgradedPLUs.size() == 0)) {
-			logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
-			return newProductCatalogTO;
-		}
-		/* Call to fetch the saleable ProductList */
-		try {
-			upGradeCatalogTo = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);
-
-		} catch (Exception dtie) {
-			logger.sendEvent("database exception occured " + dtie.getMessage(), EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(TransformRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-						"Provider responded with a non-numeric status code.");
-		}
-
-		if (upGradeCatalogTo != null) {
-			ArrayList<DBProductTO> productList = upGradeCatalogTo.getProductList();
-
-			if ((productList != null) && (productList.size() > 0)) {
-
-				logger.sendEvent("Orignal List of Salaeable Product Obtaned " + productList.size(), EventType.DEBUG,
-							THISINSTANCE);
-
-			}
-		}
-		return newProductCatalogTO;
-	}
-
+	
 	/**
 	 * Sets the query eligible response command.
 	 *
@@ -596,7 +511,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/* Cell */
-					if (contact.getEmail() != null) {
+					if (contact.getCell() != null) {
 						ticketDemo.setCellPhone(contact.getCell());
 					}
 
@@ -773,8 +688,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
-
 		}
 	}
-
 }
