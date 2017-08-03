@@ -291,7 +291,7 @@ public class UpgradeCatalogTO implements Serializable {
    
    
    /**
-    * Retai postive ap upgrades.
+    * Retain postive ap upgrades.
     *
     * @param unitPrice the unit price
     * @return the int
