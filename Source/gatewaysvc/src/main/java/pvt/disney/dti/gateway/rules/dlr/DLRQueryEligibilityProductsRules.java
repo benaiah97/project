@@ -726,7 +726,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
-
 		}
 	}
 
