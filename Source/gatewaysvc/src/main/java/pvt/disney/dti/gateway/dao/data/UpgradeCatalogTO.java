@@ -288,5 +288,25 @@ public class UpgradeCatalogTO implements Serializable {
 
       return productList.size();
    }
+   
+   
+   /**
+    * Retai postive ap upgrades.
+    *
+    * @param unitPrice the unit price
+    * @return the int
+    */
+   public int retainPostiveApUpgrades(BigDecimal standardRetailPrice){
+
+	      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
+	      for (/* each */DBProductTO aProduct : /* in */productList) {
+	    	  if(aProduct.getUnitPrice().subtract(standardRetailPrice).compareTo(BigDecimal.ZERO)>0){
+	    		  newList.add(aProduct);
+	    	  }
+	      }
+	      productList = newList;
+	      return productList.size();
+	   }
 
 }

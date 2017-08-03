@@ -298,6 +298,8 @@ public class WDWQueryEligibleProductsRules {
 				/* Step 4:: get the Upgraded List */
 				if (globalUpgradeProduct != null) {
 
+					globalUpgradeProduct.retainPostiveApUpgrades(guestproductTO.getDbproductTO().getStandardRetailPrice());
+					
 					newProductcatalogList = globalUpgradeProduct.getProductList();
 					logger.sendEvent("product found in new product list is."+newProductcatalogList,EventType.DEBUG,THISINSTANCE);
 					/* if no product is found return No Product */
