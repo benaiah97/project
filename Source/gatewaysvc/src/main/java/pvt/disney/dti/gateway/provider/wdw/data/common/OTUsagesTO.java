@@ -1,6 +1,10 @@
 package pvt.disney.dti.gateway.provider.wdw.data.common;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.util.GregorianCalendar;
+
+import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 
 /**
  * The Class OTUsagesTO represents a transfer object containing the Omni Ticket Usages information.
@@ -25,7 +29,7 @@ public class OTUsagesTO implements Serializable {
 	private String gate;
 
 	/** The date time. */
-	private String date;
+	private GregorianCalendar date;
 
 	private String time;
 
@@ -109,7 +113,7 @@ public class OTUsagesTO implements Serializable {
 	 * 
 	 * @return the date
 	 */
-	public String getDate() {
+	public GregorianCalendar getDate() {
 		return date;
 	}
 
@@ -119,8 +123,24 @@ public class OTUsagesTO implements Serializable {
 	 * @param date
 	 *            the date to set.
 	 */
-	public void setDate(String date) {
+	public void setDate(GregorianCalendar date) {
 		this.date = date;
+	}
+	
+	/**
+	 * Allows the caller to set the validity end date as a string, with the
+	 * format yy-MM-dd (such as 09-01-31).
+	 * 
+	 * @param validityEndDate
+	 *           the string value of the validity end date to be set.
+	 * @throws ParseException
+	 *            if the string cannot be parsed.
+	 */
+	public void setDate(String date) throws ParseException {
+		
+		this.date = OTCommandTO.convertOmniYYDate(date);
+
+		return;
 	}
 
 	/**

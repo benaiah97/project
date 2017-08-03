@@ -3,10 +3,8 @@ package pvt.disney.dti.gateway.rules.wdw;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -80,9 +78,6 @@ public class WDWQueryEligibleProductsRules {
 
 	/** The Constant WDW_TPS_CODE. */
 	private final static String WDW_TPS_CODE = "WDW-ATS";
-
-	/** Simple Date Format */
-	private static final SimpleDateFormat FMT = new SimpleDateFormat("yy-MM-dd");
 
 	/** The paylan. */
 	private static final String PAYLAN = "PAYPLAN";
@@ -382,13 +377,13 @@ public class WDWQueryEligibleProductsRules {
 
 		boolean isInEligibleProductFlag = false;
 
-		Date date = null;
+		GregorianCalendar date = null;
 
 		ArrayList<OTUsagesTO> usagesTOs = null;
 
 		String biometricTemplet = null;
 
-		Date firstuseDate = null;
+		GregorianCalendar firstUseDate = null;
 		/* Getting Ticket details */
 
 		/* Void Code */
@@ -405,25 +400,20 @@ public class WDWQueryEligibleProductsRules {
 
 		/* Getting the usages details */
 
-		List<Date> useDates = new ArrayList<>();
+		List<GregorianCalendar> useDates = new ArrayList<GregorianCalendar>();
 
 		if ((usagesTOs != null) && (usagesTOs.size() > 0)) {
 
 			for (OTUsagesTO otUsagesTO : usagesTOs) {
-
-				if (otUsagesTO.getDate() != null) {
-					try {
-						date = FMT.parse(otUsagesTO.getDate());
-					} catch (ParseException e) {
-						logger.sendEvent("Exception executing validateInEligibleProducts: "+ e.toString(), EventType.EXCEPTION,THISINSTANCE);
-						throw new DTIException(WDWQueryEligibleProductsRules.class,DTIErrorCode.DTI_DATA_ERROR,"Exception executing validateInEligibleProducts");
-					}
+				// find first use date by pulling in Item Number 1 (first use)
+				// assumption is that Items are sorted by ATS based on their use date
+				if ((otUsagesTO.getDate() != null) && otUsagesTO.getItem() == 1) {
+					firstUseDate = otUsagesTO.getDate();
 				}
+				
+				
 				useDates.add(date);
 			}
-
-			/* First use date */
-			firstuseDate = Collections.min(useDates);
 		}
 		/*
 		 * VoidCode in the ATS Query Ticket response greater than 0 or less than
@@ -457,10 +447,10 @@ public class WDWQueryEligibleProductsRules {
 				 * ResidentInd is Y and DayCount = 1 and the first use date is
 				 * older than 14 days
 				 */
-				if ((firstuseDate != null)
+				if ((firstUseDate != null)
 						&& (productTO.isResidentInd() == true)
 						&& (productTO.getDayCount() == 1)
-						&& (getDayDifference(firstuseDate) > 14)) {
+						&& (getDayDifference(firstUseDate) > 14)) {
 					logger.sendEvent("ResidentInd and first use date validation fails.",EventType.DEBUG, THISINSTANCE);
 					isInEligibleProductFlag = true;
 				}
@@ -468,10 +458,10 @@ public class WDWQueryEligibleProductsRules {
 				 * resident flag is 'Y' and DayCount > 1, and the first use date
 				 * is older than six months (185 days).
 				 */
-				if ((firstuseDate != null)
+				if ((firstUseDate != null)
 						&& (productTO.isResidentInd() == true)
 						&& (productTO.getDayCount() > 1)
-						&& (getDayDifference(firstuseDate) > 185)) {
+						&& (getDayDifference(firstUseDate) > 185)) {
 					isInEligibleProductFlag = true;
 					logger.sendEvent("ResidentInd ,first use date and DayCount validation fails.",EventType.DEBUG, THISINSTANCE);
 				}
@@ -486,20 +476,6 @@ public class WDWQueryEligibleProductsRules {
 	}
 
 	/**
-	 * To get the day difference for the day argument.
-	 * 
-	 * @param date
-	 *            the date
-	 * @return the day difference
-	 */
-	private static long getDayDifference(Date date) {
-
-		long difference = new Date().getTime() - date.getTime()
-				/ NUMBER_FOR_DAYCOUNT;
-		return difference;
-	}
-
-	/**
 	 * To get the day difference for the GregorianCalendar argument.
 	 * 
 	 * @param calendar
@@ -508,7 +484,7 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	private static long getDayDifference(GregorianCalendar calendar) {
 
-		long difference = new Date().getTime() - calendar.getTime().getTime()
+		long difference = (new Date().getTime() - calendar.getTime().getTime())
 				/ NUMBER_FOR_DAYCOUNT;
 		return difference;
 	}

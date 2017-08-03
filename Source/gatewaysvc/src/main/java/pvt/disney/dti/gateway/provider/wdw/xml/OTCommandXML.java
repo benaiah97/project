@@ -38,6 +38,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTransactionDSSNTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTVoucherTO;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
@@ -792,6 +793,63 @@ public class OTCommandXML implements TransformConstants {
                 .toString());
       }
     }
+  }
+  
+  /**
+   * Sets the transfer object for ticket usage based on the parsed XML provided.
+   * 
+   * @param usageNodeList
+   *            List of Usage Nodes
+   * @param otTktTO
+   *            The Omni Ticket Ticket Info Transfer Object that needs to be populated.
+   * @throws DTIException
+   *             for any missing fields or parsing exceptions.
+   */
+  static void setOTTicketInfoUsages(List<Node> usageNodeList, OTTicketInfoTO otTktTO) throws DTIException {
+
+    // Usages
+	if ((usageNodeList != null) && (usageNodeList.size() > 0)) {
+		for (/* each */Node usageNode : /* in */usageNodeList) {
+		
+		    if (usageNode != null) {
+		      OTUsagesTO usage = new OTUsagesTO();
+		
+		      Node itemNumber = usageNode.selectSingleNode("Item");
+		      Node usageType = usageNode.selectSingleNode("UsageType");
+		      Node siteNumber = usageNode.selectSingleNode("SiteNumber");
+		      Node gate = usageNode.selectSingleNode("Gate");
+		      Node date = usageNode.selectSingleNode("Date");
+		      Node time = usageNode.selectSingleNode("Time");
+		      
+		      if ((itemNumber == null) || (usageType == null) || (siteNumber == null) 
+		    		  || (gate == null) || (date == null) || (time == null)) {
+		    	  throw new DTIException(
+				          OTCommandXML.class,
+				          DTIErrorCode.TP_INTERFACE_FAILURE,
+				          "Ticket provider returned XML with an incomplete Usages element.");
+		      }
+		      
+		      usage.setItem(new Integer(itemNumber.getText()));
+		      usage.setUsageType(new Integer(usageType.getText()));		      
+		      usage.setSiteNumber(new Integer(siteNumber.getText()));		      
+		      usage.setGate(gate.getText());		      
+		      		      
+		      usage.setTime(time.getText());
+		      
+		      try {
+		    	  usage.setDate(date.getText());
+		      }
+		      catch (ParseException pe) {
+		        throw new DTIException(
+		            OTManageReservationXML.class,
+		            DTIErrorCode.TP_INTERFACE_FAILURE,
+		            "Ticket provider returned XML with an invalid Usage Date element: " + pe
+		                .toString());
+		      }
+		      otTktTO.getUsagesList().add(usage);
+		    }
+		}
+	}
   }
 
   /**

@@ -234,7 +234,10 @@ public class OTQueryTicketXML {
       OTCommandXML.setOTTicketInfoValidity(aNode, otTktInfoTO);
 
       // TicketFlag (ignored)
-      // Usages (ignored)
+      
+      // Usages
+      List<Node> usageNodeList = (List<Node>) aNode.selectNodes("Usages");
+      OTCommandXML.setOTTicketInfoUsages(usageNodeList, otTktInfoTO);
 
       // TicketAttribute
       Node ticketAttrNode = aNode.selectSingleNode("TicketAttribute");
