@@ -728,5 +728,4 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			}
 		}
 	}
-
 }
