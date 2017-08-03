@@ -6,11 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-
 import javax.xml.datatype.DatatypeFactory;
-
-import org.apache.commons.lang.StringUtils;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -28,7 +24,6 @@ import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
-import pvt.disney.dti.gateway.data.common.EnttlGuidTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -48,7 +43,6 @@ import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
-
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -232,17 +226,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// If Picture is not present in response marking resultType as INELIGIBLE
 				
 				// visualId
-				String visualId = gwDataRespTO.getVisualID();
+				//String visualId = gwDataRespTO.getVisualID();
 				
 				// contactGUID
-				String contactGUID=null;
+			/*	String contactGUID=null;*/
 				
 				// usage
 				int useNo=0;
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
 							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
+					
+					if(globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() != null){
+						useNo = globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo();
+					}
 
-					useNo = globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo();
+					
 				}
 				if ((globalGuestProduct.getGwDataRespTO().getHasPicture() == null)) {
 					// TODO need to verify if Haspicture is NO ||
@@ -253,19 +251,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
 				}
 				
-				// check contact and contact GUID
-				if ((globalGuestProduct.getGwDataRespTO().getContact() != null)
-							&& (globalGuestProduct.getGwDataRespTO().getContact().size() > 0)){
-					contactGUID= globalGuestProduct.getGwDataRespTO().getContact().get(0).getContactGUID();
-				}
-				
-				//check GUID
-				if(StringUtils.isBlank(contactGUID)){
-					
-					logger.sendEvent("Contact GUID is not found ", EventType.DEBUG,
-								THISINSTANCE);
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
-				}
 				
 				// Check usage 
 				if(useNo==0){
@@ -275,10 +260,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 				//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
 				
-				// Step 3B if contact GUID is present, Insert the GUID for GUID_ENTL Table
-				if (contactGUID != null) {
-					processGUID(visualId, contactGUID);
-				}
 			
 				// Step 4 :: Check the Upgrade PLU's from DLR response and filter with list from UpgradeCatalogTO
 				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
@@ -443,34 +424,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	}
 
 	/**
-	 * Process GUID.
-	 *
-	 * @param guid
-	 *           the guid
-	 * @param visualid
-	 *           the visualid
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	private static void processGUID(String guid, String visualid) throws DTIException {
-		/* Step 3B */
-		try {
-			// Checking for the visual Id in ENTTL_GUID insert if no visualid is
-			// present
-			EnttlGuidTO entGuid = ProductKey.getGuId(visualid);
-
-			if (entGuid == null) {
-				// Inserting the visual id in table ENTTL_GUID
-				ProductKey.insertGuId(visualid, guid);
-			}
-		} catch (Exception dtie) {
-			logger.sendEvent("database exception occured " + dtie.getMessage(), EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(TransformRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-						"Provider responded with a non-numeric status code.");
-		}
-	}
-
-	/**
 	 * Gets the upgraded product.
 	 *
 	 * @return the upgraded product
@@ -487,7 +440,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
 			return newProductCatalogTO;
 		}
-		/* Call to fetch the saleable ProductList */
+		/* Call to fetch the sale able ProductList */
 		try {
 			upGradeCatalogTo = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DTITransactionTO.TPI_CODE_DLR);
 
@@ -596,7 +549,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 
 					/* Cell */
-					if (contact.getEmail() != null) {
+					if (contact.getCell() != null) {
 						ticketDemo.setCellPhone(contact.getCell());
 					}
 
