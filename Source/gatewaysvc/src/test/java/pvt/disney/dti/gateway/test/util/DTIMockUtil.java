@@ -73,7 +73,7 @@ import com.disney.util.Loader;
  */
 public class DTIMockUtil extends CommonTestUtils {
 
-	Text to make compilation fail for CICD TESTING!
+	CICD TESTING - Text to make compilation fail!
 		
 	/** The attribute rs. */
 	static ResultSet attributeRs = null;
