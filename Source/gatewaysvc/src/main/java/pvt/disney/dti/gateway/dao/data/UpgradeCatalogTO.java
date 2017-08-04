@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
 
 /**
  * This class is the representation of the upgrade possibilities. This class is
@@ -193,6 +194,38 @@ public class UpgradeCatalogTO implements Serializable {
 
       for (/* each */DBProductTO aProduct : /* in */productList) {
          if (subclasses.contains(aProduct.getDaySubclass())) {
+            newList.add(aProduct);
+         }
+      }
+
+      productList = newList;
+
+      return productList.size();
+   }
+   
+   /**
+    * Keep all of the day subclasses in the upgrade catalog that are also in the
+    * day subclass list. If a null or empty list is passed in, there are no
+    * changes to the upgrade catalog. If the catalog is empty, there are no
+    * changes to the catalog. STEP 4A WDW
+    * 
+    * @param daySubclassList
+    */
+   public int keepDaySubclasses(boolean temp, ArrayList<UpgrdPathSeqTO> list) {
+
+      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
+      if ((list == null) || (list.size() == 0) || (productList.size() == 0)) {
+         return productList.size();
+      }
+
+      /*HashSet<String> subclasses = new HashSet<String>();
+      for ( each UpgrdPathSeqTO daySubclass :  in list) {
+         subclasses.add(daySubclass.getDaySubclass());
+      }*/
+
+      for (/* each */DBProductTO aProduct : /* in */productList) {
+         if (list.contains(aProduct.getDaySubclass())) {
             newList.add(aProduct);
          }
       }

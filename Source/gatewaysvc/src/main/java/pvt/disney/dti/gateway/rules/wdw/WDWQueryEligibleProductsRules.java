@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
@@ -210,10 +212,6 @@ public class WDWQueryEligibleProductsRules {
 	@SuppressWarnings("unused")
 	static void transformResponseBody(DTITransactionTO dtiTxn,
 			OTCommandTO otCmdTO, DTIResponseTO dtiRespTO) throws DTIException {
-		/*
-		 * TODO space this out, need to change format/style, Todd 06-23-2017 JTL
-		 * will share the formatter with everyone
-		 */
 
 		/* Adding QueryEligibleProductsRequestTO to look if this can be used */
 		QueryEligibleProductsRequestTO dtiReq = (QueryEligibleProductsRequestTO) dtiTxn
@@ -293,10 +291,29 @@ public class WDWQueryEligibleProductsRules {
 				/* Step 4:: get the Upgraded List */
 				if (globalUpgradeProduct != null) {
 
-					newProductcatalogList = globalUpgradeProduct.getProductList();
-					logger.sendEvent("product found in new product list is."+newProductcatalogList,EventType.DEBUG,THISINSTANCE);
-					/* if no product is found return No Product */
-					if (newProductcatalogList == null) {
+					// Step 4A
+					// path id from guest product to
+					BigInteger pathId = guestproductTO.getDbproductTO().getUpgrdPathId();
+					
+					// sub class list
+					ArrayList<UpgrdPathSeqTO> subClassObjList =  ProductKey.getProductUpgrade(pathId);
+					
+					// retrieve sub classes from the list
+					ArrayList<String> subClassList = new ArrayList<String>();
+					if (subClassObjList != null) {
+						for (UpgrdPathSeqTO seqTO : subClassObjList) {
+							subClassList.add(seqTO.getDaySubclass());
+						}
+					}
+					
+					// filter the products based on sub classes 
+					logger.sendEvent("Orignal list is obtained before filteration."+globalUpgradeProduct.getProductList(),EventType.DEBUG,THISINSTANCE);
+					globalUpgradeProduct.keepDaySubclasses(subClassList);
+										
+					logger.sendEvent("Final list is obtained after filteration."+globalUpgradeProduct.getProductList(),EventType.DEBUG,THISINSTANCE);
+					
+					// if no product is found return No Product
+					if (globalUpgradeProduct.getProductListCount() == 0) {
 						logger.sendEvent("No product found in new product list .",EventType.DEBUG,THISINSTANCE);
 						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 					}
@@ -374,16 +391,12 @@ public class WDWQueryEligibleProductsRules {
 	public static boolean validateInEligibleProducts(
 			OTTicketInfoTO otTicketInfo, DBProductTO productTO)
 			throws DTIException {
-
+		
+		/*isInEligibleProductFlag*/
 		boolean isInEligibleProductFlag = false;
-
-		GregorianCalendar date = null;
-
-		ArrayList<OTUsagesTO> usagesTOs = null;
-
-		String biometricTemplet = null;
-
-		GregorianCalendar firstUseDate = null;
+		
+		/*firstuseDate*/
+		GregorianCalendar firstuseDate = null;
 		/* Getting Ticket details */
 
 		/* Void Code */
@@ -393,87 +406,112 @@ public class WDWQueryEligibleProductsRules {
 		GregorianCalendar endDate = otTicketInfo.getValidityEndDate();
 
 		/* Usages */
-		usagesTOs = otTicketInfo.getUsagesList();
+		ArrayList<OTUsagesTO> usagesTOs = otTicketInfo.getUsagesList();
 
 		/* Bio metric Template */
-		biometricTemplet = otTicketInfo.getBiometricTemplate();
+		String	biometricTemplet = otTicketInfo.getBiometricTemplate();
+
+		/* isResident */
+		boolean isResident = productTO.isResidentInd();
+
+		/* dayCount */
+		Integer dayCount = productTO.getDayCount();
 
 		/* Getting the usages details */
 
-		List<GregorianCalendar> useDates = new ArrayList<GregorianCalendar>();
+		List<GregorianCalendar> useDates = new ArrayList<>();
 
 		if ((usagesTOs != null) && (usagesTOs.size() > 0)) {
 
 			for (OTUsagesTO otUsagesTO : usagesTOs) {
-				// find first use date by pulling in Item Number 1 (first use)
-				// assumption is that Items are sorted by ATS based on their use date
-				if ((otUsagesTO.getItem() != null) && (otUsagesTO.getItem() == 1)) {
-					firstUseDate = otUsagesTO.getDate();
-				}
-				
-				
-				useDates.add(date);
+				useDates.add(otUsagesTO.getDate());
+				firstuseDate = Collections.min(useDates);
 			}
-		}
-		/*
-		 * VoidCode in the ATS Query Ticket response greater than 0 or less than
-		 * or equal to 100
-		 */
-		if ((voidCode != null) && ((voidCode > 0) && (voidCode <= 100))) {
-			logger.sendEvent("VoidCode validation fails.",EventType.DEBUG, THISINSTANCE);
+		} else {
+			/* Rule 3 : Usages must have one entry and */
 			return isInEligibleProductFlag = true;
 		}
-		/* Usages must have one entry and BiometricTemplate must have one entry */
-		if (((usagesTOs != null) && ((usagesTOs.size() == 0)) || (biometricTemplet == null))) {
-			logger.sendEvent("usagesTOs or biometricTemplet validation fails.",EventType.DEBUG, THISINSTANCE);
-			return isInEligibleProductFlag = true;
+		try {
+			/* Rule 1 :UpgrdPathId is 0 */
+			BigInteger upGrdPath = productTO.getUpgrdPathId();
+			if ((upGrdPath == null) || (upGrdPath.intValue() == 0)) {
+
+				logger.sendEvent("UpgrdPathId value :: " + upGrdPath
+						+ " :: Validation Failed", EventType.DEBUG,
+						THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+
+			/*
+			 * Rule 2 : VoidCode in the ATS Query Ticket response greater than 0
+			 * or less than or equal to 100
+			 */
+			if ((voidCode != null) && ((voidCode > 0) && (voidCode <= 100))) {
+
+				logger.sendEvent("Void Code is ." + " :: Validation Failed",
+						EventType.DEBUG, THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+
+			/* Rule 3: BiometricTemplate must have one entry */
+			if (biometricTemplet == null) {
+				logger.sendEvent("biometricTemplet is: +" + biometricTemplet
+						+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+
+			/* Rule 4 :ResidentInd is N and Validity EndDate less than today */
+
+			if ((endDate != null) && (isResident == false)
+					&& (getDayDifference(endDate) > 0)) {
+				logger.sendEvent("ResidentInd is: " + isResident
+						+ "and Validity EndDate is :" + endDate
+						+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+
+			/*
+			 * Rule 5: ResidentInd is Y and DayCount = 1 and the first use date
+			 * is older than 14 days
+			 */
+
+			if ((firstuseDate != null) && (isResident == true)
+					&& (dayCount == 1)
+					&& (getDayDifference(firstuseDate) > 14)) {
+				logger.sendEvent("ResidentInd is :" + isResident
+						+ "Day count is :" + dayCount + "and first use date "
+						+ ":" + firstuseDate + " validation Failed.",
+						EventType.DEBUG, THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+
+			/*
+			 * Rule 6: resident flag is 'Y' and DayCount > 1, and the first use
+			 * date is older than six months (185 days).
+			 */
+			if ((firstuseDate != null) && (isResident == true)
+					&& (dayCount > 1)
+					&& (getDayDifference(firstuseDate) > 185)) {
+				logger.sendEvent("ResidentInd is :" + isResident
+						+ "first use date is :" + firstuseDate
+						+ " and DayCount is: " + dayCount
+						+ "Validation Failed.", EventType.DEBUG, THISINSTANCE);
+				return isInEligibleProductFlag = true;
+			}
+		} catch (Exception e) {
+
+			logger.sendEvent("Exception executing validateInEligibleProducts: "
+					+ e.toString(), EventType.EXCEPTION, THISINSTANCE);
+			throw new DTIException(WDWQueryEligibleProductsRules.class,
+					DTIErrorCode.DTI_DATA_ERROR,"Exception executing validateInEligibleProducts");
 		}
 
-		if (productTO != null) {
-			try {
-				/* UpgrdPathId is 0 */
-				if ((productTO.getUpgrdPathId() != null)
-						&& (productTO.getUpgrdPathId().intValue() == 0)) {
-					logger.sendEvent("UpgrdPathId validation fails.",EventType.DEBUG, THISINSTANCE);
-					isInEligibleProductFlag = true;
-				}
-				/* ResidentInd is N and Validity EndDate less than today */
-				if ((endDate != null) && (productTO.isResidentInd() == false)
-						&& (getDayDifference(endDate) > 0)) {
-					logger.sendEvent("ResidentInd and Validity EndDate validation fails.",EventType.DEBUG, THISINSTANCE);
-					isInEligibleProductFlag = true;
-				}
-				/*
-				 * ResidentInd is Y and DayCount = 1 and the first use date is
-				 * older than 14 days
-				 */
-				if ((firstUseDate != null)
-						&& (productTO.isResidentInd() == true)
-						&& (productTO.getDayCount() == 1)
-						&& (getDayDifference(firstUseDate) > 14)) {
-					logger.sendEvent("ResidentInd and first use date validation fails.",EventType.DEBUG, THISINSTANCE);
-					isInEligibleProductFlag = true;
-				}
-				/*
-				 * resident flag is 'Y' and DayCount > 1, and the first use date
-				 * is older than six months (185 days).
-				 */
-				if ((firstUseDate != null)
-						&& (productTO.isResidentInd() == true)
-						&& (productTO.getDayCount() > 1)
-						&& (getDayDifference(firstUseDate) > 185)) {
-					isInEligibleProductFlag = true;
-					logger.sendEvent("ResidentInd ,first use date and DayCount validation fails.",EventType.DEBUG, THISINSTANCE);
-				}
-			} catch (Exception e) {
-				logger.sendEvent("Exception executing validateInEligibleProducts: "+ e.toString(), EventType.EXCEPTION,THISINSTANCE);
-				throw new DTIException(WDWQueryEligibleProductsRules.class,DTIErrorCode.DTI_DATA_ERROR,"Exception executing validateInEligibleProducts");
-			}
-		}
-		logger.sendEvent("validateInEligibleProducts method end returing:"+isInEligibleProductFlag,EventType.DEBUG, THISINSTANCE);
+		logger.sendEvent("validateInEligibleProducts method end returing:"
+				+ isInEligibleProductFlag, EventType.DEBUG, THISINSTANCE);
 		return isInEligibleProductFlag;
 
 	}
+
 
 	/**
 	 * To get the day difference for the GregorianCalendar argument.
@@ -484,7 +522,7 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	private static long getDayDifference(GregorianCalendar calendar) {
 
-		long difference = (new Date().getTime() - calendar.getTime().getTime())
+		long difference = new Date().getTime() - calendar.getTime().getTime()
 				/ NUMBER_FOR_DAYCOUNT;
 		return difference;
 	}
@@ -506,7 +544,10 @@ public class WDWQueryEligibleProductsRules {
 			ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
 
 		OTTicketInfoTO otTicketInfo = guestProductTO.getOtTicketInfo();
-
+		
+		/*firstUsageDate*/
+	//	GregorianCalendar firstUsageDate = null;
+		 
 		/* dbProductTO from GuestProductTO */
 		DBProductTO dbProductTO = guestProductTO.getDbproductTO();
 
@@ -639,7 +680,6 @@ public class WDWQueryEligibleProductsRules {
 					}
 				}
 			}
-
 		}
 
 		dtiTicketTO.addTicketDemographic(dtiDemoTO);
@@ -714,7 +754,19 @@ public class WDWQueryEligibleProductsRules {
 
 		dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
 		dtiTicketTO.setTktTax(otTicketInfo.getTax());
-
+		
+		
+		ArrayList<GregorianCalendar> usageDates=new ArrayList<>(); 
+		if(guestProductTO.getOtTicketInfo().getUsagesList()!=null && guestProductTO.getOtTicketInfo().getUsagesList().size()>0){
+			
+			for(OTUsagesTO usage:guestProductTO.getOtTicketInfo().getUsagesList()){
+				usageDates.add(usage.getDate());
+			}
+		}
+		
+		/*firstDateString*/
+		GregorianCalendar firstUseDate = Collections.min(usageDates);
+		
 		logger.sendEvent("upgradedProductTOList found :"+upgradedProductTOList,EventType.DEBUG, THISINSTANCE);
 		/* Eligible product */
 		if (upgradedProductTOList != null) {
@@ -762,8 +814,8 @@ public class WDWQueryEligibleProductsRules {
 					Integer dayCount = productTO.getDayCount();
 
 					Calendar calendar = Calendar.getInstance();
-					if (dbProductTO.getStartSaleDate() != null) {
-						calendar.setTime(dbProductTO.getStartSaleDate()
+					if (firstUseDate != null) {
+						calendar.setTime(firstUseDate
 								.getTime());
 						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
 
@@ -782,7 +834,6 @@ public class WDWQueryEligibleProductsRules {
 				dtiTicketTO.addEligibleProducts(eligibleProductsTO);
 			}
 		}
-
 	}
 
 }
