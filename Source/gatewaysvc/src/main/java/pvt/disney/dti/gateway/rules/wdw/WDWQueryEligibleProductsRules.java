@@ -264,6 +264,8 @@ public class WDWQueryEligibleProductsRules {
 					
 					logger.sendEvent("Guest Type information not found ",EventType.DEBUG,THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+					dtiTicketTO.setTktItem(otTicketInfo.getItem());
+					
 					dtiResRespTO.add(dtiTicketTO);
 					return;
 				}
@@ -307,24 +309,36 @@ public class WDWQueryEligibleProductsRules {
 					}
 					
 					// filter the products based on sub classes 
-					logger.sendEvent("Orignal list is obtained before filteration."+globalUpgradeProduct.getProductList(),EventType.DEBUG,THISINSTANCE);
+					logger.sendEvent("Orignal list is obtained before step 4A."+globalUpgradeProduct.getProductListCount(),EventType.DEBUG,THISINSTANCE);
 					globalUpgradeProduct.keepDaySubclasses(subClassList);
 										
-					logger.sendEvent("Final list is obtained after filteration."+globalUpgradeProduct.getProductList(),EventType.DEBUG,THISINSTANCE);
+					logger.sendEvent("Final list is obtained after step 4A filteration."+globalUpgradeProduct.getProductListCount(),EventType.DEBUG,THISINSTANCE);
+					
+					// 4B	
+					//TODO
+					
+					// Step 4C comparing the product catalog list with guest standard price 
+					globalUpgradeProduct.removeProductsLowerThan(guestproductTO.getDbproductTO().getStandardRetailTax());
+					logger.sendEvent("Final list is obtained after step 4C filteration."+globalUpgradeProduct.getProductListCount(),EventType.DEBUG,THISINSTANCE);
+					
 					
 					// if no product is found return No Product
 					if (globalUpgradeProduct.getProductListCount() == 0) {
 						logger.sendEvent("No product found in new product list .",EventType.DEBUG,THISINSTANCE);
 						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+						
 					}
 				} else {
 					logger.sendEvent("No product found in upgraded product .",EventType.DEBUG,THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
-
+					
 				}
 
 				/* Step 5 setting up the detail in Ticket TO */
 				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO,globalUpgradeProduct.getProductList());
+				if(dtiTicketTO.getResultType()==null){
+					dtiTicketTO.setResultType(ResultType.ELIGIBLE);
+				}
 
 				dtiResRespTO.add(dtiTicketTO);
 			}
