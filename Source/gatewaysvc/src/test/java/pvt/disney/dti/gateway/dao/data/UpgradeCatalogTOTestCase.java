@@ -1,14 +1,20 @@
 package pvt.disney.dti.gateway.dao.data;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.data.common.EntityTO;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 /**
  * 
@@ -352,5 +358,53 @@ public class UpgradeCatalogTOTestCase {
       
       return aProdList;
    }
+
+	@Test
+	public final void testRetainNegativeUpgrade() {
+		BigDecimal greaterPrice = new BigDecimal("2.00");
+		BigDecimal equalPrice = new BigDecimal("1.00");
+		EntityTO entityTO = new EntityTO();
+		String tpsCode = "WDW-ATS";
+		UpgradeCatalogTO upgradeCatalogTO = new UpgradeCatalogTO();
+		DTIMockUtil.processMockprepareAndExecuteSql();
+		try {	
+			upgradeCatalogTO = ProductKey
+					.getAPUpgradeCatalog(entityTO, tpsCode);
+		} catch (DTIException e) {
+			Assert.fail("UnExpected");
+		}
+		
+		 /*Scenario 1:: When guestproductTO's standardRetailPrice is greater then DBProductTO's unitPrice*/
+				upgradeCatalogTO.retainPostiveApUpgrades(greaterPrice);
+		assertEquals(0, upgradeCatalogTO.getProductList().size());
+		
+		/*Scenario 2:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
+	 
+			upgradeCatalogTO.retainPostiveApUpgrades(equalPrice);
+		assertEquals(0, upgradeCatalogTO.getProductList().size());
+	
+
+	}
+	 
+	@Test
+public void testRetainPostiveUpgrade(){
+		BigDecimal lesserPrice = new BigDecimal("0.00");
+		EntityTO entityTO = new EntityTO();
+		String tpsCode = "WDW-ATS";
+		UpgradeCatalogTO upgradeCatalogTO = new UpgradeCatalogTO();
+		DTIMockUtil.processMockprepareAndExecuteSql();
+		try {	
+			upgradeCatalogTO = ProductKey
+					.getAPUpgradeCatalog(entityTO, tpsCode);
+		} catch (DTIException e) {
+			Assert.fail("UnExpected");
+	}
+		
+		 /*Scenario 3:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
+		
+		upgradeCatalogTO.retainPostiveApUpgrades(lesserPrice);
+		assertEquals(1, upgradeCatalogTO.getProductList().size());
+		
+	}
 
 }
