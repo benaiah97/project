@@ -179,10 +179,11 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		 */
 		inElegibleFlag = false;
 		try {
-			otUsagesTO.setDate("17-07-22");
+			otUsagesTO.setDate("17-07-07");
 		} catch (ParseException pe) {
 			Assert.fail("Date Parse Exception" + pe.getMessage());
 		}
+		otUsagesTO.setItem(new Integer(1));
 		otTicketInfoTO.setVoidCode(new Integer(101));
 		usagesList.add(otUsagesTO);
 		otTicketInfoTO.setUsagesList(usagesList);
@@ -244,8 +245,8 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		 */
 		inElegibleFlag = false;
 		try {
+			//otUsagesTO.setDate("12-07-06");
 			otUsagesTO.setDate("12-07-06");
-			otUsagesTO.setDate("17-07-06");
 		} catch (ParseException pe) {
 			Assert.fail("Date Parse Exception" + pe.getMessage());
 		}

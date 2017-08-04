@@ -407,7 +407,7 @@ public class WDWQueryEligibleProductsRules {
 			for (OTUsagesTO otUsagesTO : usagesTOs) {
 				// find first use date by pulling in Item Number 1 (first use)
 				// assumption is that Items are sorted by ATS based on their use date
-				if ((otUsagesTO.getDate() != null) && otUsagesTO.getItem() == 1) {
+				if ((otUsagesTO.getItem() != null) && (otUsagesTO.getItem() == 1)) {
 					firstUseDate = otUsagesTO.getDate();
 				}
 				
