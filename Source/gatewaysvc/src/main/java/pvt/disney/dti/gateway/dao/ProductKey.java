@@ -85,7 +85,8 @@ public class ProductKey {
 	 */
 	private static final String GET_PRODUCTS_FROM_TYPCODE = "GET_PRODUCTS_FROM_TYPCODE";
 
-	private static final String GET_PRODUCTS_PRODUCT_UPGRADE = "GET_PRODUCTS_PRODUCT_UPGRADE";
+	 /** Constant indicating the Day sub class. */
+	  private static final String GET_DAY_SUB_CLASS = "GET_DAY_SUB_CLASS";
 
 	/**
 	 * Returns an array of products found on the order.
@@ -893,10 +894,10 @@ public class ProductKey {
 	 * @throws DTIException
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<UpgrdPathSeqTO> getProductUpgrade(BigInteger pathId)
+	public static ArrayList<UpgrdPathSeqTO> getSubClassesForAp(BigInteger pathId)
 			throws DTIException {
 
-		logger.sendEvent("Entering getProductUpgrade()", EventType.DEBUG,
+		logger.sendEvent("Entering getSubClassesForAp()", EventType.DEBUG,
 				THISINSTANCE);
 
 		ArrayList<UpgrdPathSeqTO> result = null;
@@ -908,25 +909,25 @@ public class ProductKey {
 			logger.sendEvent("About to getInstance from DAOHelper",
 					EventType.DEBUG, THISINSTANCE);
 			DAOHelper helper = DAOHelper
-					.getInstance(GET_PRODUCTS_PRODUCT_UPGRADE);
+					.getInstance(GET_DAY_SUB_CLASS);
 
 			// Run the SQL
 			logger.sendEvent(
-					"About to processQuery:  GET_PRODUCTS_PRODUCT_UPGRADE",
+					"About to processQuery:  GET_DAY_SUB_CLASS",
 					EventType.DEBUG, THISINSTANCE);
 			result = (ArrayList<UpgrdPathSeqTO>) helper.processQuery(values);
 
 			// Debug
-			logger.sendEvent("getProductUpgrade found products.",
+			logger.sendEvent("getSubClassesForAp found products.",
 					EventType.DEBUG, THISINSTANCE, result, null);
 
 		} catch (Exception e) {
 			logger.sendEvent(
-					"Exception executing getProductUpgrade: " + e.toString(),
+					"Exception executing getSubClassesForAp: " + e.toString(),
 					EventType.WARN, THISINSTANCE);
 			throw new DTIException(ProductKey.class,
 					DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getProductUpgrade", e);
+					"Exception executing getSubClassesForAp", e);
 		}
 		return result;
 	}

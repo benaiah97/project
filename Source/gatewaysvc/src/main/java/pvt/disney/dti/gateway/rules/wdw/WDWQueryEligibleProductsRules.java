@@ -296,7 +296,7 @@ public class WDWQueryEligibleProductsRules {
 					BigInteger pathId = guestproductTO.getDbproductTO().getUpgrdPathId();
 					
 					// sub class list
-					ArrayList<UpgrdPathSeqTO> subClassObjList =  ProductKey.getProductUpgrade(pathId);
+					ArrayList<UpgrdPathSeqTO> subClassObjList =  ProductKey.getSubClassesForAp(pathId);
 					
 					// retrieve sub classes from the list
 					ArrayList<String> subClassList = new ArrayList<String>();
