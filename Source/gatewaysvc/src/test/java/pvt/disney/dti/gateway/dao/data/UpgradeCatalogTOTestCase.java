@@ -375,12 +375,12 @@ public class UpgradeCatalogTOTestCase {
 		}
 		
 		 /*Scenario 1:: When guestproductTO's standardRetailPrice is greater then DBProductTO's unitPrice*/
-				upgradeCatalogTO.retainPostiveApUpgrades(greaterPrice);
+				upgradeCatalogTO.retainPositiveApUpgrades(greaterPrice);
 		assertEquals(0, upgradeCatalogTO.getProductList().size());
 		
 		/*Scenario 2:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
 	 
-			upgradeCatalogTO.retainPostiveApUpgrades(equalPrice);
+			upgradeCatalogTO.retainPositiveApUpgrades(equalPrice);
 		assertEquals(0, upgradeCatalogTO.getProductList().size());
 	
 
@@ -402,7 +402,7 @@ public void testRetainPostiveUpgrade(){
 		
 		 /*Scenario 3:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
 		
-		upgradeCatalogTO.retainPostiveApUpgrades(lesserPrice);
+		upgradeCatalogTO.retainPositiveApUpgrades(lesserPrice);
 		assertEquals(1, upgradeCatalogTO.getProductList().size());
 		
 	}

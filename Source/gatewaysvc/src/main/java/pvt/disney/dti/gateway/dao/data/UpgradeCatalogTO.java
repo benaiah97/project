@@ -290,12 +290,12 @@ public class UpgradeCatalogTO implements Serializable {
    }
    
    /**
-    * Retain postive ap upgrades.
+    * Retain positive ap upgrades.
     *
     * @param unitPrice the unit price
     * @return the int
     */
-   public int retainPostiveApUpgrades(BigDecimal standardRetailPrice){
+   public int retainPositiveApUpgrades(BigDecimal standardRetailPrice){
 
 	      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
 
@@ -307,6 +307,7 @@ public class UpgradeCatalogTO implements Serializable {
 	      productList = newList;
 	      return productList.size();
 	   }
+   
 
 
 }

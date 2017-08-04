@@ -266,6 +266,8 @@ public class WDWQueryEligibleProductsRules {
 					
 					logger.sendEvent("Guest Type information not found ",EventType.DEBUG,THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+					dtiTicketTO.setTktItem(otTicketInfo.getItem());
+					
 					dtiResRespTO.add(dtiTicketTO);
 					return;
 				}
@@ -292,18 +294,24 @@ public class WDWQueryEligibleProductsRules {
 
 				/* Step 4:: get the Upgraded List */
 				if (globalUpgradeProduct != null) {
-
-					globalUpgradeProduct.retainPostiveApUpgrades(guestproductTO.getDbproductTO().getStandardRetailPrice());
-					newProductcatalogList = globalUpgradeProduct.getProductList();
-					logger.sendEvent("product found in new product list is."+newProductcatalogList,EventType.DEBUG,THISINSTANCE);
+					
+					// Step 4A
+					logger.sendEvent("Orignal List of the upgradable product ."+globalUpgradeProduct.getProductListCount(),EventType.DEBUG,THISINSTANCE);
+					globalUpgradeProduct.retainPositiveApUpgrades(guestproductTO.getDbproductTO().getStandardRetailPrice());
+					
+					logger.sendEvent("List of the upgradable product after 4A ."+globalUpgradeProduct.getProductListCount(),EventType.DEBUG,THISINSTANCE);
+					
 					/* if no product is found return No Product */
-					if (newProductcatalogList == null) {
+					if (globalUpgradeProduct.getProductList() == null) {
+						
 						logger.sendEvent("No product found in new product list .",EventType.DEBUG,THISINSTANCE);
 						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 					}
 				} else {
 					logger.sendEvent("No product found in upgraded product .",EventType.DEBUG,THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
+					dtiTicketTO.setTktItem(otTicketInfo.getItem());
+					
 
 				}
 
