@@ -4,18 +4,20 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
-
 import com.disney.exception.WrappedException;
 
-public class UpgrdPathSeqResult implements ResultSetProcessor{
+/**
+ * The Class DaySubClassResult.
+ */
+public class DaySubClassResult implements ResultSetProcessor{
 	ArrayList<UpgrdPathSeqTO> pathSeqTOList =new ArrayList<UpgrdPathSeqTO>();
+	
 	/**
-	 * Constructor for UpgrdPathSeqResult
+	 * Constructor for DaySubClassResult
 	 */
-	public UpgrdPathSeqResult() {
+	public DaySubClassResult() {
 		super();
 	}
 
