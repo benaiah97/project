@@ -590,9 +590,6 @@ public class WDWQueryEligibleProductsRules {
 
 		OTTicketInfoTO otTicketInfo = guestProductTO.getOtTicketInfo();
 		
-		/*firstUsageDate*/
-	//	GregorianCalendar firstUsageDate = null;
-		 
 		/* dbProductTO from GuestProductTO */
 		DBProductTO dbProductTO = guestProductTO.getDbproductTO();
 
@@ -797,14 +794,12 @@ public class WDWQueryEligibleProductsRules {
 			dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());
 		}
 
-		dtiTicketTO.setTktPrice(otTicketInfo.getPrice());
-		dtiTicketTO.setTktTax(otTicketInfo.getTax());
-		
-		
+		// Usages Information : first usage date
 		ArrayList<GregorianCalendar> usageDates=new ArrayList<>(); 
-		if(guestProductTO.getOtTicketInfo().getUsagesList()!=null && guestProductTO.getOtTicketInfo().getUsagesList().size()>0){
-			
-			for(OTUsagesTO usage:guestProductTO.getOtTicketInfo().getUsagesList()){
+		if ((guestProductTO.getOtTicketInfo().getUsagesList() != null)
+					&& (guestProductTO.getOtTicketInfo().getUsagesList().size() > 0)) {
+
+			for (OTUsagesTO usage : guestProductTO.getOtTicketInfo().getUsagesList()) {
 				usageDates.add(usage.getDate());
 			}
 		}
@@ -892,7 +887,7 @@ public class WDWQueryEligibleProductsRules {
 	   */
 	  public static void applyWDWQueryTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
-	    QueryTicketRequestTO reqTO = (QueryTicketRequestTO) dtiTxn.getRequest()
+	    QueryEligibleProductsRequestTO reqTO = (QueryEligibleProductsRequestTO) dtiTxn.getRequest()
 	        .getCommandBody();
 	    ArrayList<TicketTO> aTktList = reqTO.getTktList();
 
