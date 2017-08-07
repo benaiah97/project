@@ -6,9 +6,13 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import com.disney.util.PropertyHelper;
 
 import pvt.disney.dti.gateway.data.common.DBProductTO;
-import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
+import pvt.disney.dti.gateway.util.ResourceLoader;
 
 /**
  * This class is the representation of the upgrade possibilities. This class is
@@ -20,8 +24,59 @@ import pvt.disney.dti.gateway.data.common.UpgrdPathSeqTO;
  */
 public class UpgradeCatalogTO implements Serializable {
 
+   /** The Constant serialVersionUID. */
    private static final long serialVersionUID = 1L;
-
+    
+   /** The Constant PLAT. */
+   private static final String PLAT="PLAT";
+   
+   /** The Constant PLATPLUS. */
+   private static final String PLATPLUS="PLATPLUS";
+   
+   /** The Constant EPCTAFT4. */
+   private static final String EPCTAFT4="EPCTAFT4";
+   
+   /** The Constant GOLD. */
+   private static final String GOLD="GOLD";
+   
+   /** The Constant SILVER. */
+   private static final String SILVER="SILVER";
+   
+   /** The Constant WEEKDAY. */
+   private static final String WEEKDAY="WEEKDAY";
+   
+   /** The Constant WP. */
+   private static final String WP="WP";
+   
+   /** The Constant WPAFT2. */
+   private static final String WPAFT2="WPAFT2";
+   
+   /** The plat list. */
+   private static String PLAT_LIST[]=null;
+   
+   /** The epctaft4 list. */
+   private static String EPCTAFT4_LIST[]=null;
+   
+   /** The gold list. */
+   private static String GOLD_LIST[]=null;
+   
+   /** The silver list. */
+   private static String SILVER_LIST[]=null;
+   
+   /** The weekday list. */
+   private static String WEEKDAY_LIST[]=null;
+   
+   /** The wp list. */
+   private static String WP_LIST[]=null;
+   
+   /** The wpaft2 list. */
+   private static String WPAFT2_LIST[]=null;
+   
+   /**
+	 * Properties file
+	 */
+	private Properties props;
+   
    /** The list of products that are eligible for upgrade. */
    private ArrayList<DBProductTO> productList = new ArrayList<DBProductTO>();
 
@@ -202,38 +257,6 @@ public class UpgradeCatalogTO implements Serializable {
 
       return productList.size();
    }
-   
-   /**
-    * Keep all of the day subclasses in the upgrade catalog that are also in the
-    * day subclass list. If a null or empty list is passed in, there are no
-    * changes to the upgrade catalog. If the catalog is empty, there are no
-    * changes to the catalog. STEP 4A WDW
-    * 
-    * @param daySubclassList
-    */
-   public int keepDaySubclasses(boolean temp, ArrayList<UpgrdPathSeqTO> list) {
-
-      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
-
-      if ((list == null) || (list.size() == 0) || (productList.size() == 0)) {
-         return productList.size();
-      }
-
-      /*HashSet<String> subclasses = new HashSet<String>();
-      for ( each UpgrdPathSeqTO daySubclass :  in list) {
-         subclasses.add(daySubclass.getDaySubclass());
-      }*/
-
-      for (/* each */DBProductTO aProduct : /* in */productList) {
-         if (list.contains(aProduct.getDaySubclass())) {
-            newList.add(aProduct);
-         }
-      }
-
-      productList = newList;
-
-      return productList.size();
-   }
 
    /**
     * A simple method to return the list of subclasses presently found in the
@@ -322,14 +345,13 @@ public class UpgradeCatalogTO implements Serializable {
       return productList.size();
    }
    
-   
    /**
-    * Retain postive ap upgrades.
+    * Retain positive ap upgrades.
     *
     * @param unitPrice the unit price
     * @return the int
     */
-   public int retainPostiveApUpgrades(BigDecimal standardRetailPrice){
+   public int retainPositiveApUpgrades(BigDecimal standardRetailPrice){
 
 	      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
 
@@ -341,5 +363,137 @@ public class UpgradeCatalogTO implements Serializable {
 	      productList = newList;
 	      return productList.size();
 	   }
+   
+   /**
+    * Retain site details, will check for disqualification rule for each of the subclass in the productList 
+    *
+    * @param siteList the site list
+    * @return the int
+    */
+	public int disqualifyProduct(ArrayList<String> siteList) {
+
+		// read the details from property file
+		readProperties();
+		ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
+
+		HashSet<String> usageSiteSet = new HashSet<String>();
+		for (/* each */String siteDetail : /* in */siteList) {
+			usageSiteSet.add(siteDetail);
+		}
+
+		for (/* each */DBProductTO aProduct : /* in */productList) {
+
+			// iterate through each of the productList to check the subclass
+			switch (aProduct.getDaySubclass()) {
+
+			// PLAT
+			case PLAT:
+				if (checkProduct(usageSiteSet, PLAT_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// PLAT PLUS
+			case PLATPLUS:
+				newList.add(aProduct);
+				break;
+
+			// EPCTAFT4
+			case EPCTAFT4:
+				if (checkProduct(usageSiteSet, EPCTAFT4_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// GOLD
+			case GOLD:
+				if (checkProduct(usageSiteSet, GOLD_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// SILVER
+			case SILVER:
+				if (checkProduct(usageSiteSet, SILVER_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// WEEKDAY
+			case WEEKDAY:
+				if (checkProduct(usageSiteSet, WEEKDAY_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// WP
+			case WP:
+				if (checkProduct(usageSiteSet, WP_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+
+			// WPAFT2
+			case WPAFT2:
+				if (checkProduct(usageSiteSet, WPAFT2_LIST)) {
+					newList.add(aProduct);
+				}
+				break;
+			}
+
+		}
+		productList = newList;
+		return productList.size();
+	}
+
+	
+	/**
+	 * Check product.
+	 *
+	 * @param usageSiteSet the usage site set
+	 * @param siteList the site list
+	 * @return true, if successful
+	 */
+	private boolean checkProduct(HashSet<String> usageSiteSet, String[] siteList) {
+		int count = 0;
+		boolean disqualifyFlag=false;
+		for (String site : siteList) {
+			if (usageSiteSet.contains(site)) {
+				count++;
+			}
+		}
+		if (count == 0) {
+			disqualifyFlag=true;
+		}
+		return disqualifyFlag;
+	}
+	
+	
+	/**
+	 * Read properties.
+	 */
+	private void readProperties() {
+		
+		// Read Properties 
+		ResourceBundle rb = ResourceLoader.getResourceBundle("dtiApp");
+		props = ResourceLoader.convertResourceBundleToProperties(rb);
+		
+		String plat = PropertyHelper.readPropsValue("PLAT_LIST", props, null);
+		String epctaft4 = PropertyHelper.readPropsValue("EPCTAFT4_LIST", props, null);
+		String gold = PropertyHelper.readPropsValue("GOLD_LIST", props, null);
+		String silver = PropertyHelper.readPropsValue("SILVER_LIST", props, null);
+		String weekday = PropertyHelper.readPropsValue("WEEKDAY_LIST", props, null);
+		String wp = PropertyHelper.readPropsValue("WP_LIST", props, null);
+		String wpaft2 = PropertyHelper.readPropsValue("WPAFT2_LIST", props, null);
+
+		PLAT_LIST = plat.split(",");
+		EPCTAFT4_LIST = epctaft4.split(",");
+		GOLD_LIST = gold.split(",");
+		SILVER_LIST = silver.split(",");
+		WEEKDAY_LIST = weekday.split(",");
+		WP_LIST = wp.split(",");
+		WPAFT2_LIST = wpaft2.split(",");
+
+	}
 
 }

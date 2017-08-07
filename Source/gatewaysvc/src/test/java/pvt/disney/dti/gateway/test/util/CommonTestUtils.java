@@ -71,6 +71,16 @@ public class CommonTestUtils {
 		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
 		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
 		
+
+		
+		props.setProperty("PLAT_LIST", "75,78,85");
+		props.setProperty("EPCTAFT4_LIST", "75,78,85,71,73,86");
+		props.setProperty("GOLD_LIST", "75,78,85");
+		props.setProperty("SILVER_LIST", "75,78,85");
+		props.setProperty("WEEKDAY_LIST", "75,78,85");
+		props.setProperty("WPAFT2_LIST", "72,85,71,73,86");
+		props.setProperty("WP_LIST", "72,85,71,73,86");
+		
 		return props;
 	}
 

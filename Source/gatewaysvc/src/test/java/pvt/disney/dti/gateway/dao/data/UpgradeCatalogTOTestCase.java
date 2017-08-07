@@ -7,12 +7,14 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
+import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
 /**
@@ -20,13 +22,18 @@ import pvt.disney.dti.gateway.test.util.DTIMockUtil;
  * @author lewit019
  * This is the test case for UpgradeCatalogTO.
  */
-public class UpgradeCatalogTOTestCase {
+public class UpgradeCatalogTOTestCase extends CommonTestUtils{
    
    public final static String PDTCODE1 = "AAA01";
    public final static String PDTCODE2 = "BBB02";
    public final static String PDTCODE3 = "CCC03";
    public final static String PDTCODE4 = "DDD04";
    public final static String PDTCODE5 = "EEE05";
+   
+   @Before
+  	public void setUp(){
+  		setMockProperty();  
+     }
 
    // int addDLRProduct(String pdtCode, BigDecimal unitPrice, BigDecimal tax,
    // String dayClass, String daySubclass, String plu)
@@ -378,14 +385,14 @@ public class UpgradeCatalogTOTestCase {
 		 /*Scenario 1:: When guestproductTO's standardRetailPrice is greater then DBProductTO's unitPrice*/
 		 
 		
-		upgradeCatalogTO.retainPostiveApUpgrades(greaterPrice);
+		upgradeCatalogTO.removeProductsLowerThan(greaterPrice);
 		assertEquals(0, upgradeCatalogTO.getProductList().size());
 		
 		
 		 /*Scenario 2:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
 		 
 		
-		upgradeCatalogTO.retainPostiveApUpgrades(equalPrice);
+		upgradeCatalogTO.removeProductsLowerThan(equalPrice);
 		assertEquals(0, upgradeCatalogTO.getProductList().size());
 	
 
@@ -407,10 +414,60 @@ public class UpgradeCatalogTOTestCase {
 		
 		 /*Scenario 3:: When guestproductTO's standardRetailPrice == DBProductTO's unitPrice*/
 		
-		upgradeCatalogTO.retainPostiveApUpgrades(lesserPrice);
+		upgradeCatalogTO.removeProductsLowerThan(lesserPrice);
 		assertEquals(1, upgradeCatalogTO.getProductList().size());
 		
 	}
+	
+	
+	 @Test
+		public void testdisqualifyProduct() {
+			UpgradeCatalogTO upGradeCataTo = new UpgradeCatalogTO();
+			ArrayList<DBProductTO> productList = new ArrayList<DBProductTO>();
+
+			DBProductTO aProduct = new DBProductTO();
+			aProduct.setPdtCode("1");
+			aProduct.setUnitPrice(new BigDecimal(1.0));
+			aProduct.setTax(new BigDecimal(1.0));
+			aProduct.setDayClass("AP");
+			aProduct.setDaySubclass("PLAT");
+			productList.add(aProduct);
+			aProduct = new DBProductTO();
+
+			aProduct.setPdtCode("3");
+			aProduct.setUnitPrice(new BigDecimal(3.0));
+			aProduct.setTax(new BigDecimal(1.0));
+			aProduct.setDayClass("AP");
+			aProduct.setDaySubclass("EPCTAFT4");
+			productList.add(aProduct);
+			upGradeCataTo.setProductList(productList);
+			ArrayList<String> siteList = new ArrayList<String>();
+			
+			siteList.add("78");
+			siteList.add("81");
+			upGradeCataTo.disqualifyProduct(siteList);
+			assertEquals(upGradeCataTo.getProductListCount(),0);
+			
+			upGradeCataTo = new UpgradeCatalogTO();
+			aProduct = new DBProductTO();
+			aProduct.setPdtCode("1");
+			aProduct.setUnitPrice(new BigDecimal(1.0));
+			aProduct.setTax(new BigDecimal(1.0));
+			aProduct.setDayClass("AP");
+			aProduct.setDaySubclass("PLATPLUS");
+			productList = new ArrayList<DBProductTO>();
+			productList.add(aProduct);
+			upGradeCataTo.setProductList(productList);
+			
+			 siteList = new ArrayList<String>();
+			
+			siteList.add("78");
+			siteList.add("81");
+			upGradeCataTo.disqualifyProduct(siteList);
+			assertEquals(upGradeCataTo.getProductListCount(),1);
+			
+			
+		}
 	
 	
 	
