@@ -614,7 +614,8 @@ public class GWQueryEligibleProductsTicketXML {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void extractUsageRecords(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-				Element usageRecords) throws DTIException {
+ Element usageRecords)
+			throws DTIException {
 
 		// UpGradePLU Response
 		Node linReqResp = usageRecords;
