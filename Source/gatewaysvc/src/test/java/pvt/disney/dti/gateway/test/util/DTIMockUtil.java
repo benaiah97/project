@@ -73,6 +73,7 @@ import com.disney.util.Loader;
  */
 public class DTIMockUtil extends CommonTestUtils {
 
+		
 	/** The attribute rs. */
 	static ResultSet attributeRs = null;
 
