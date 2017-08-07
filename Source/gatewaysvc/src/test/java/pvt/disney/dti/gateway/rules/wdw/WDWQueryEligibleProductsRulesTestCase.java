@@ -1,12 +1,16 @@
 package pvt.disney.dti.gateway.rules.wdw;
 
+import static org.junit.Assert.*;
+
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+
 import org.junit.Assert;
 import org.junit.Test;
+
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
@@ -23,6 +27,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTQueryTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicData;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTFieldTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
@@ -103,10 +108,13 @@ public class WDWQueryEligibleProductsRulesTestCase {
 
 	}
 
+
+	
+	
 	/**
 	 * Test transform response body.
 	 */
-	//@Test
+	@Test
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);
@@ -114,22 +122,24 @@ public class WDWQueryEligibleProductsRulesTestCase {
 				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
 		DTIRequestTO request = new DTIRequestTO();
-		dtiTxn.setRequest(request);
-		CommandBodyTO body = new QueryEligibleProductsRequestTO();
-		dtiTxn.getRequest().setCommandBody(body);
+		TicketTO ticketTO = new TicketTO();
+		EntityTO entityTO = new EntityTO();
 		OTQueryTicketTO queryTicketTO = new OTQueryTicketTO();
 		OTTicketInfoTO oTTicketInfoTO = new OTTicketInfoTO();
+		CommandBodyTO body = new QueryEligibleProductsRequestTO();
+		OTDemographicData demographicData = new OTDemographicData();
+		QueryEligibilityProductsResponseTO queryEligibilityProductsResponseTO = new QueryEligibilityProductsResponseTO();
+		OTTicketTO ticket = new OTTicketTO();
+		OTFieldTO oTFieldTO=new OTFieldTO(1, 	1, "Str/ing");
+		demographicData.getDemoDataList().add(oTFieldTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.getRequest().setCommandBody(body);
 		oTTicketInfoTO.setTicketType(new BigInteger("1"));
 		oTTicketInfoTO.setPayPlan("YES");
-		OTDemographicData demographicData = new OTDemographicData();
 		oTTicketInfoTO.setSeasonPassDemo(demographicData);
-		OTTicketTO ticket = new OTTicketTO();
 		oTTicketInfoTO.setTicket(ticket);
 		queryTicketTO.getTicketInfoList().add(oTTicketInfoTO);
 		otCmdTO.setQueryTicketTO(queryTicketTO);
-		QueryEligibilityProductsResponseTO queryEligibilityProductsResponseTO = new QueryEligibilityProductsResponseTO();
-		TicketTO ticketTO = new TicketTO();
-		EntityTO entityTO = new EntityTO();
 		queryEligibilityProductsResponseTO.add(ticketTO);
 		dtiTxn.setEntityTO(entityTO);
 		DTIMockUtil.processMockprepareAndExecuteSql();
@@ -140,6 +150,68 @@ public class WDWQueryEligibleProductsRulesTestCase {
 			Assert.fail(e.getMessage());
 		}
 	}
+
+
+	/**
+	 * Test transform response body.
+	 * when TicketType=null
+	 */
+	@Test
+	public void testTransformResponseBodyTicketTypenull() {
+		DTITransactionTO dtiTxn = new DTITransactionTO(
+				TransactionType.QUERYELIGIBLEPRODUCTS);
+		OTCommandTO otCmdTO = new OTCommandTO(
+				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
+		OTQueryTicketTO queryTicketTO=new OTQueryTicketTO();
+		DTIResponseTO dtiRespTO = new DTIResponseTO();
+		DTIRequestTO request = new DTIRequestTO();
+		CommandBodyTO body = new QueryEligibleProductsRequestTO();
+		OTTicketInfoTO oTTicketInfoTO=new OTTicketInfoTO();
+		queryTicketTO.getTicketInfoList().add(oTTicketInfoTO);
+		otCmdTO.setQueryTicketTO(queryTicketTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.getRequest().setCommandBody(body);
+		
+		try {
+			WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn,
+					otCmdTO, dtiRespTO);
+		} catch (DTIException e) {
+			assertEquals("Ticket Provided is incorrect",e.getLogMessage());
+		}
+	}
+
+	/**
+	 * Test transform response body.
+	 * when ProductsTktNbr=null
+
+	 */
+	@Test
+	public void testTransformResponseBodydbProductsTktNbrnull() {
+		DTITransactionTO dtiTxn = new DTITransactionTO(
+				TransactionType.QUERYELIGIBLEPRODUCTS);
+		OTCommandTO otCmdTO = new OTCommandTO(
+				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
+		OTQueryTicketTO queryTicketTO=new OTQueryTicketTO();
+		DTIResponseTO dtiRespTO = new DTIResponseTO();
+		DTIRequestTO request = new DTIRequestTO();
+		CommandBodyTO body = new QueryEligibleProductsRequestTO();
+		OTTicketInfoTO oTTicketInfoTO=new OTTicketInfoTO();
+		queryTicketTO.getTicketInfoList().add(oTTicketInfoTO);
+		oTTicketInfoTO.setTicketType(new BigInteger("1"));
+		otCmdTO.setQueryTicketTO(queryTicketTO);
+		dtiTxn.setRequest(request);
+		dtiTxn.getRequest().setCommandBody(body);
+		
+		try {
+			WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn,
+					otCmdTO, dtiRespTO);
+		} catch (DTIException e) {
+			assertEquals("getProductsTktNbr tktNbr is null.",e.getLogMessage());
+		}
+	}
+	
+	
+	
 
 	/**
 	 * Test Case for ValidateInEligibleProducts
