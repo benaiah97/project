@@ -415,7 +415,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 */
 	public static void applyDLRQueryTicketRules(DTITransactionTO dtiTxn) throws DTIException {
 
-		QueryTicketRequestTO reqTO = (QueryTicketRequestTO) dtiTxn.getRequest().getCommandBody();
+		QueryEligibleProductsRequestTO reqTO = (QueryEligibleProductsRequestTO) dtiTxn.getRequest().getCommandBody();
 		ArrayList<TicketTO> aTktList = reqTO.getTktList();
 		TicketTO aTicketTO = aTktList.get(0);
 

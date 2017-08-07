@@ -49,6 +49,7 @@ import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.rules.dlr.DLRBusinessRules;
+import pvt.disney.dti.gateway.rules.dlr.DLRQueryEligibilityProductsRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRQueryTicketRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRRenewEntitlementRules;
 import pvt.disney.dti.gateway.rules.dlr.DLRReservationRules;
@@ -61,6 +62,7 @@ import pvt.disney.dti.gateway.rules.hkd.HKDReservationRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWAssociateMediaToAccountRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWBusinessRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWCreateTicketRules;
+import pvt.disney.dti.gateway.rules.wdw.WDWQueryEligibleProductsRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWQueryTicketRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWRenewEntitlementRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWReservationRules;
@@ -341,7 +343,7 @@ public abstract class BusinessRules {
     if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) DLRQueryTicketRules
         .applyDLRQueryTicketRules(dtiTxn);
     else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) WDWQueryTicketRules
-        .applyWDWQueryTicketRules(dtiTxn);
+    .applyWDWQueryTicketRules(dtiTxn);
 
     return;
 
@@ -863,19 +865,36 @@ public abstract class BusinessRules {
    * @throws DTIException
    *             should any rule fail.
    */
-public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTIException{
+	public static void applyEligibleProductRules(DTITransactionTO dtiTxn) throws DTIException {
 
-	    // RULE: Is this a QueryEligibleProducts Rule TO?
-	    CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
-	    if (commandBody.getClass() != QueryEligibleProductsRequestTO.class) {
-	      throw new DTIException(
-	          BusinessRules.class,
-	          DTIErrorCode.DTI_PROCESS_ERROR,
-	          "Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
-	    }
-	    return;
-	  
-  }
+		// RULE: Is this a QueryEligibleProducts Rule TO?
+		CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
+		if (commandBody.getClass() != QueryEligibleProductsRequestTO.class) {
+			throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+						"Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
+		}
+
+		// RULE: Is there only one ticket on a Query Ticket, as expected?
+		QueryEligibleProductsRequestTO queryReq = (QueryEligibleProductsRequestTO) commandBody;
+		ArrayList<TicketTO> aTktList = queryReq.getTktList();
+		TicketRules.validateOnlyOneTicketOnRequest(aTktList);
+
+		// Apply Transaction-centric, Provider-centric rules
+		String tpiCode = dtiTxn.getTpiCode();
+		if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR))
+			DLRQueryEligibilityProductsRules.applyDLRQueryTicketRules(dtiTxn);
+		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW))
+			WDWQueryEligibleProductsRules.applyWDWQueryTicketRules(dtiTxn);
+
+		// RULE : if the sale Type provided is other than UPGRADE
+		queryReq = (QueryEligibleProductsRequestTO) commandBody;
+		aTktList = queryReq.getTktList();
+		if (aTktList.get(0).getSaleType().compareToIgnoreCase("UPGRADE") != 0) {
+			throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
+						"Internal Error:  Sale Type is provided other than UPGRADE");
+		}
+
+	}
   
   /**
    * Apply upgrade entitlement business rules.

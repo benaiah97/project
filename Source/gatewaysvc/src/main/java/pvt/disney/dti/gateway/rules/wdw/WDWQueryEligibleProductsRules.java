@@ -10,8 +10,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.xml.datatype.DatatypeFactory;
+
 import org.apache.commons.lang.StringUtils;
+
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
@@ -22,6 +25,7 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
+import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
@@ -40,6 +44,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
+
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -875,5 +880,26 @@ public class WDWQueryEligibleProductsRules {
 			}
 		}
 	}
+	 /**
+	   * If a type of transaction has a specific number of provider centric rules, implement them here, but if there are a very limited set of rules, mostly common to both providers, implement in the BusinessRules in the parent package.<BR>
+	   * Currently implements the following rules: <BR>
+	   * RULE: Validate that ticket presented is of valid format.
+	   * 
+	   * @param dtiTxn
+	   *            the transaction object for this request
+	   * @throws DTIException
+	   *             for any rules error.
+	   */
+	  public static void applyWDWQueryTicketRules(DTITransactionTO dtiTxn) throws DTIException {
+
+	    QueryTicketRequestTO reqTO = (QueryTicketRequestTO) dtiTxn.getRequest()
+	        .getCommandBody();
+	    ArrayList<TicketTO> aTktList = reqTO.getTktList();
+
+	    // Validate that ticket presented is of valid format.
+	    WDWBusinessRules.validateInBoundWDWTickets(aTktList);
+
+	    return;
+	  }
 
 }
