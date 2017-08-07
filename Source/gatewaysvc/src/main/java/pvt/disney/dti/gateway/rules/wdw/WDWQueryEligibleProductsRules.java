@@ -10,11 +10,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.xml.datatype.DatatypeFactory;
-
 import org.apache.commons.lang.StringUtils;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
@@ -25,7 +22,6 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
-import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
@@ -44,7 +40,6 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
-
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -293,6 +288,9 @@ public class WDWQueryEligibleProductsRules {
 					
 					logger.sendEvent("DbProductTO next level validation fail. ",EventType.DEBUG,THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+                   dtiTicketTO.setTktItem(otTicketInfo.getItem());
+					dtiResRespTO.add(dtiTicketTO);
+					//return;
 				}
 
 				/* Step 4:: get the Upgraded List */
@@ -301,10 +299,15 @@ public class WDWQueryEligibleProductsRules {
 					// Step 4A
 					// path id from guest product to
 					BigInteger pathId = guestproductTO.getDbproductTO().getUpgrdPathId();
-
+					
 					// sub class list
-					ArrayList<UpgrdPathSeqTO> subClassObjList = ProductKey.getSubClassesForAp(pathId);
-
+					ArrayList<UpgrdPathSeqTO> subClassObjList =null;
+					
+                    if(pathId!=null){
+                    	
+					// sub class list
+					 subClassObjList = ProductKey.getSubClassesForPathId(pathId.intValue());
+                    }
 					// retrieve sub classes from the list
 					ArrayList<String> subClassList = new ArrayList<String>();
 					if (subClassObjList != null) {
@@ -759,12 +762,16 @@ public class WDWQueryEligibleProductsRules {
 		}
 		/* payplan */
 		tktStatus.setStatusItem(PAYLAN);
-		if ((otTicketInfo.getPayPlan() != null)
-				&& (otTicketInfo.getPayPlan().compareToIgnoreCase(YES) == 0)) {
+		
+		if ((otTicketInfo.getPayPlan() != null)&& (otTicketInfo.getPayPlan().compareToIgnoreCase(YES) == 0 
+		&& (guestProductTO.getDbproductTO().isResidentInd() == true) && (otTicketInfo.getUsagesList().size() > 0) )) {
+			
 			tktStatus.setStatusValue(YES);
+		
 		} else {
 			tktStatus.setStatusValue(NO);
 		}
+
 
 		/* Add the tktStatus to ticket */
 		tktStatusList.add(tktStatus);

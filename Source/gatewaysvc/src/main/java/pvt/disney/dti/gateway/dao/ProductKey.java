@@ -894,7 +894,7 @@ public class ProductKey {
 	 * @throws DTIException
 	 */
 	@SuppressWarnings("unchecked")
-	public static ArrayList<UpgrdPathSeqTO> getSubClassesForAp(BigInteger pathId)
+	public static ArrayList<UpgrdPathSeqTO> getSubClassesForPathId(Integer pathId)
 			throws DTIException {
 
 		logger.sendEvent("Entering getSubClassesForAp()", EventType.DEBUG,
