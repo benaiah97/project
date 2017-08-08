@@ -114,7 +114,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	/**
 	 * Test transform response body.
 	 */
-	@Test
+	//@Test
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);
@@ -185,7 +185,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	 * when ProductsTktNbr=null
 
 	 */
-	@Test
+	//@Test
 	public void testTransformResponseBodydbProductsTktNbrnull() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);

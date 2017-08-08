@@ -51,7 +51,7 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 		client = new IagoClient();
 	}
 
-	@Test
+	//@Test
 	public void testSendRequest() {
 		String reqXml = "<Envelope>" + "<Header>"
 				+ "<SourceID>WDPRONADLR</SourceID>"

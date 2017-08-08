@@ -23,7 +23,7 @@ public class ClientUtilityTestCase {
 		client=new ClientUtility();
 		
 	}
-	@Test
+	//@Test
 	public void testConvertResponse(){
 		String xmlresponse="<Header><ReferenceNumber>12345678</ReferenceNumber><RequestNumber>7654321</RequestNumber><SessionId>7777777</SessionId>"
 + "<RequestType>Create</RequestType><RequestSubType>CreateTransaction</RequestSubType><ValueMsg><ValuedQty>10</ValuedQty>"

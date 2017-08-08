@@ -42,7 +42,7 @@ public class ProviderClientTestcase extends CommonTestUtils{
 		
       
       	}
-	@Test
+	//@Test
 	public void testSendRequestToProvider(){
 		
 		String xmlRequest =
