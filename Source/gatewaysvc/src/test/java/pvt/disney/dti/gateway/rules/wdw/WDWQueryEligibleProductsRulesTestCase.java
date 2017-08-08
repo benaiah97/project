@@ -356,7 +356,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		try {
 			inElegibleFlag = WDWQueryEligibleProductsRules
 					.validateInEligibleProducts(otTicketInfoTO, dbProductTO);
-			Assert.assertTrue(inElegibleFlag);
+			Assert.assertFalse(inElegibleFlag);
 		} catch (DTIException dtie) {
 			Assert.fail("Unexpected Exception" + dtie.getMessage());
 		}
