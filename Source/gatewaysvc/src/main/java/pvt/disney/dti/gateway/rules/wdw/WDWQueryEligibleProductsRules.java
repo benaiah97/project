@@ -295,19 +295,19 @@ public class WDWQueryEligibleProductsRules {
 				/* Step 4:: get the Upgraded List */
 				if (globalUpgradeProduct != null) {
 
-					// Step 4A
-					// path id from guest product to
+					/*Step 4A
+					 path id from guest product to*/
 					BigInteger pathId = guestproductTO.getDbproductTO().getUpgrdPathId();
 					
-					// sub class list
+					/*sub class list*/
 					ArrayList<UpgrdPathSeqTO> subClassObjList =null;
 					
                     if(pathId!=null){
                     	
-					// sub class list
+					/*sub class list*/
 					 subClassObjList = ProductKey.getSubClassesForPathId(pathId.intValue());
                     }
-					// retrieve sub classes from the list
+					/*retrieve sub classes from the list*/
 					ArrayList<String> subClassList = new ArrayList<String>();
 					if (subClassObjList != null) {
 						for (UpgrdPathSeqTO seqTO : subClassObjList) {
@@ -315,7 +315,7 @@ public class WDWQueryEligibleProductsRules {
 						}
 					}
 
-					// filter the products based on sub classes
+					/*filter the products based on sub classes*/
 					logger.sendEvent("Orignal list is obtained before step 4A." + globalUpgradeProduct.getProductListCount(),
 								EventType.DEBUG, THISINSTANCE);
 					globalUpgradeProduct.keepDaySubclasses(subClassList);
@@ -323,19 +323,19 @@ public class WDWQueryEligibleProductsRules {
 					logger.sendEvent("Final list is obtained after step 4A filteration."
 											+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
 
-					// 4B
-					// If the Product Catalog List is not empty then proceed with 4B
+					/*4B
+					If the Product Catalog List is not empty then proceed with 4B*/
 					if (globalUpgradeProduct.getProductListCount() > 0) {
 
 						ArrayList<String> usageSiteList = new ArrayList<String>();
 
-						// If at least 1 usages is there
+						/*If at least 1 usages is there*/
 						if ((guestproductTO.getOtTicketInfo().getUsagesList() != null)
 									&& (guestproductTO.getOtTicketInfo().getUsagesList().size() > 0)) {
 
 							for (/* each */OTUsagesTO usagesTO : /* in */guestproductTO.getOtTicketInfo().getUsagesList()) {
 
-								// if site No is present in the usages
+								/*if site No is present in the usages*/
 								if (usagesTO.getSiteNumber() != null) {
 									usageSiteList.add(String.valueOf(usagesTO.getSiteNumber()));
 								}
@@ -350,12 +350,12 @@ public class WDWQueryEligibleProductsRules {
 					logger.sendEvent("Final list is obtained after step 4B filteration."
 											+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
 
-					// Step 4C comparing the product catalog list with gueststandardprice
+					/*Step 4C comparing the product catalog list with gueststandardprice*/
 					globalUpgradeProduct.removeProductsLowerThan(guestproductTO.getDbproductTO().getStandardRetailTax());
 					logger.sendEvent("Final list is obtained after step 4C filteration."
 											+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
 
-					// if no product is found return No Product
+					/*if no product is found return No Product*/
 					if (globalUpgradeProduct.getProductListCount() == 0) {
 						logger.sendEvent("No product found in new product list .", EventType.DEBUG, THISINSTANCE);
 						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
