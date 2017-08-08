@@ -567,7 +567,9 @@ public class GWQueryEligibleProductsTicketXML {
 			// String PLU - this is PLU for the current guest ticket
 			if (element.getName().compareTo("PLU") == 0) {
 				String plu = element.getText();
+				dataRespTO.addPluList(plu);
 				dataRespTO.setPlu(plu);
+
 			}
 
 			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that

@@ -874,7 +874,7 @@ public abstract class BusinessRules {
 						"Internal Error:  Non-void EligibleProduct transaction class passed to applyEligibleProductRules.");
 		}
 
-		// RULE: Is there only one ticket on a Query Ticket, as expected?
+		// RULE: Is there only one ticket on a Query Eligible Product Ticket, as expected?
 		QueryEligibleProductsRequestTO queryReq = (QueryEligibleProductsRequestTO) commandBody;
 		ArrayList<TicketTO> aTktList = queryReq.getTktList();
 		TicketRules.validateOnlyOneTicketOnRequest(aTktList);

@@ -721,8 +721,8 @@ public class ProductKey {
 	 * @throws DTIException
 	 */
 	@SuppressWarnings("unchecked")
-	public static DBProductTO getProductsByTktName(String tktName) throws DTIException {
-		
+	public static DBProductTO getProductsByTktName(ArrayList<String> tktName) throws DTIException {
+
 		DBProductTO result = null;
 
 		logger.sendEvent("Entering getProductsByTktName()", EventType.DEBUG, THISINSTANCE);
@@ -730,36 +730,52 @@ public class ProductKey {
 		// Retrieve and validate the parameters
 		if (tktName == null || tktName.isEmpty()) {
 			throw new DTIException(ProductKey.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-				"getProductByTktName DB routine is found missing parameters");
+						"getProductByTktName DB routine is found missing parameters");
 		}
+
+		// Create a set of unique product code strings
+		HashSet<String> tktNameSet = new HashSet<String>();
+		for /* each */(String tktNameString : /* in */tktName) {
+
+			tktNameSet.add(tktNameString);
+		}
+
+		Object[] queryParms = { DBUtil.createSQLInList(tktNameSet) };
 		
+
+		// Get instance of Query Builder (Replaces "%")
+		DBQueryBuilder qBuilder = new DBQueryBuilder();
+
 		try {
-			
+
 			// Set tktName (PLU Number) as a parameter for query
-			Object[] values = {tktName};
-	
+			Object[] values = {};
+
 			// Prepare query
 			logger.sendEvent("About to getInstance from DAOHelper", EventType.DEBUG, THISINSTANCE);
 			DAOHelper helper = DAOHelper.getInstance(GET_PRODUCTS_FROM_NAME);
 
 			// Run the SQL
 			logger.sendEvent("About to processQuery:  GET_PRODUCTS_FROM_NAME", EventType.DEBUG, THISINSTANCE);
-			ArrayList<DBProductTO> resultSet = (ArrayList<DBProductTO>) helper.processQuery(values);
+			ArrayList<DBProductTO> resultSet = (ArrayList<DBProductTO>) helper.processQuery(values,
+						queryParms, qBuilder);
 			if (resultSet != null) {
-				logger.sendEvent("getProductsByTktName() found " + resultSet.size() + " products", EventType.INFO, THISINSTANCE);
-				// taking the first product if multiple are found as per the requirements
+				logger.sendEvent("getProductsByTktName() found " + resultSet.size() + " products", EventType.INFO,
+							THISINSTANCE);
+				// taking the first product if multiple are found as per the
+				// requirements
 				result = resultSet.get(0);
 			}
-			
+
 		} catch (Exception e) {
-			logger.sendEvent(
-					"Exception executing getProductsByTktName: " + e.toString(), EventType.WARN, THISINSTANCE);
+			logger.sendEvent("Exception executing getProductsByTktName: " + e.toString(), EventType.WARN, THISINSTANCE);
 			throw new DTIException(ProductKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getProductsByTktName", e);
+						"Exception executing getProductsByTktName", e);
 		}
-		
+
 		if (result != null) {
-			logger.sendEvent("getProductsByTktName() picking up Product with " + result.getPdtCode() + " product code", EventType.INFO, THISINSTANCE);
+			logger.sendEvent("getProductsByTktName() picking up Product with " + result.getPdtCode() + " product code",
+						EventType.INFO, THISINSTANCE);
 		}
 
 		return result;

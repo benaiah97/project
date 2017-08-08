@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+
 import javax.xml.datatype.DatatypeFactory;
+
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -17,7 +19,6 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
-import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
@@ -43,6 +44,7 @@ import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.rules.TransformRules;
+
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
@@ -205,14 +207,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// putting up the orignal response in GuestProductTO
 		globalGuestProduct.setGwDataRespTO(gwDataRespTO);
 
-		/* PLU obtained from GWDataresponse */
-		String PLU = gwDataRespTO.getPlu();
+		/* PLU's obtained from GWDataresponse */
+		ArrayList<String> PLUs=gwDataRespTO.getPluList();
 
 		/* throw error if ticket not found */
-		if (PLU != null) {
+		if (PLUs != null) {
 
 			// executing Query to pull up Guest Ticket detail by PLU
-			DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPlu());
+			DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPluList());
 
 			// Process only if details are found
 			if (dBProduct != null) {
@@ -233,16 +235,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 								THISINSTANCE);
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
 				}
-				
-				
-				// Check usage 
+								
+				// Check usage
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
 							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
-					
-					if((globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo()==0)){
-						
-						logger.sendEvent("No Usage is there ", EventType.DEBUG,
-									THISINSTANCE);
+
+					if ((globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0)) {
+
+						logger.sendEvent("No Usage is there ", EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setResultType(ResultType.INELIGIBLE);
 					}
 					//TODO verify if the transaction should stop if step 3 A is INELIGIBLE
@@ -319,7 +319,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		} else {
 			
 			logger.sendEvent("No Ticket Type Information fetched", EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TICKET_INVALID, "Ticket Provided is incorrect");
+			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.INVALID_TICKET_ID, "In valid Ticket Id ");
 
 		}
 		return getQueryEligibleCommand(dtiTktTO,dtiRespTO,dtiTxn);
