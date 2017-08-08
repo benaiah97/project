@@ -269,9 +269,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						
 						logger.sendEvent("Final List of Salaeable Product Obtaned " + globalUpgradeProduct.getProductListCount(), EventType.DEBUG,
 									THISINSTANCE);
-						// checking if result Type is null or no value is set 
-						if(dtiTktTO.getResultType()==null){
-							dtiTktTO.setResultType(ResultType.ELIGIBLE);
+					
+						// if the product list is empty put the result type as INELIGIBLE
+						if(globalUpgradeProduct.getProductListCount()==0){
+							dtiTktTO.setResultType(ResultType.INELIGIBLE);
 						}
 					} else {
 						
