@@ -569,8 +569,7 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	private static long getDayDifference(GregorianCalendar calendar) {
 
-		long difference = new Date().getTime() - calendar.getTime().getTime()
-				/ NUMBER_FOR_DAYCOUNT;
+		long difference = (new Date().getTime() - calendar.getTime().getTime())/ NUMBER_FOR_DAYCOUNT;
 		return difference;
 	}
 
