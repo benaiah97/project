@@ -110,16 +110,19 @@ public class WDWQueryEligibleProductsRulesTestCase {
 
 
 	
+
 	
 	/**
 	 * Test transform response body.
+	 * Result type =INELIGIBLE
 	 */
-	//@Test
+	@Test
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);
 		OTCommandTO otCmdTO = new OTCommandTO(
 				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
+		CommonTestUtils common=new CommonTestUtils();
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
 		DTIRequestTO request = new DTIRequestTO();
 		TicketTO ticketTO = new TicketTO();
@@ -129,13 +132,36 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		CommandBodyTO body = new QueryEligibleProductsRequestTO();
 		OTDemographicData demographicData = new OTDemographicData();
 		QueryEligibilityProductsResponseTO queryEligibilityProductsResponseTO = new QueryEligibilityProductsResponseTO();
+		ArrayList<OTUsagesTO> usagesList=new ArrayList<OTUsagesTO>();
+		OTUsagesTO oTUsagesTO=new OTUsagesTO();
 		OTTicketTO ticket = new OTTicketTO();
 		OTFieldTO oTFieldTO=new OTFieldTO(1, 	1, "Str/ing");
+		OTFieldTO addroTFieldTO=new OTFieldTO(4, 	1, "Address");
+		OTFieldTO addoTFieldTO=new OTFieldTO(5, 	1, "Address");
+		GregorianCalendar date=new GregorianCalendar();
+		GregorianCalendar validityEndDate=new GregorianCalendar();
+		GregorianCalendar validityStartDate=new GregorianCalendar();
+		try {
+			ticket.setTDssn("12-10-2017", "site", "station", "number");
+		} catch (ParseException e1) {
+			Assert.fail("Parsing Exception occured");
+		}
+		validityStartDate.set(2017, 01, 31);
+		oTUsagesTO.setSiteNumber(1);
+		validityEndDate.set(2017, 12,03);
+		date.set(2017, 07, 22);
+		oTUsagesTO.setDate(date);
+		usagesList.add(oTUsagesTO);
 		demographicData.getDemoDataList().add(oTFieldTO);
+		demographicData.getDemoDataList().add(addroTFieldTO);
+		demographicData.getDemoDataList().add(addoTFieldTO);
 		dtiTxn.setRequest(request);
 		dtiTxn.getRequest().setCommandBody(body);
+		oTTicketInfoTO.setValidityStartDate(validityStartDate);
 		oTTicketInfoTO.setTicketType(new BigInteger("1"));
+		oTTicketInfoTO.setBiometricTemplate("biometricTemplate");
 		oTTicketInfoTO.setPayPlan("YES");
+		oTTicketInfoTO.setUsagesList(usagesList);
 		oTTicketInfoTO.setSeasonPassDemo(demographicData);
 		oTTicketInfoTO.setTicket(ticket);
 		queryTicketTO.getTicketInfoList().add(oTTicketInfoTO);
@@ -143,7 +169,8 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		queryEligibilityProductsResponseTO.add(ticketTO);
 		dtiTxn.setEntityTO(entityTO);
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		try {
+		common.setMockProperty();
+	try {
 			WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn,
 					otCmdTO, dtiRespTO);
 		} catch (DTIException e) {
