@@ -282,7 +282,6 @@ public class WDWQueryEligibleProductsRules {
 				/*
 				 * Step 3 Pass the DbProductTO to next level of validation
 				 */
-
 				if (validateInEligibleProducts(otTicketInfo,
 						guestproductTO.getDbproductTO())) {
 					
@@ -290,7 +289,7 @@ public class WDWQueryEligibleProductsRules {
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
                    dtiTicketTO.setTktItem(otTicketInfo.getItem());
 					dtiResRespTO.add(dtiTicketTO);
-					//return;
+					return;
 				}
 
 				/* Step 4:: get the Upgraded List */
