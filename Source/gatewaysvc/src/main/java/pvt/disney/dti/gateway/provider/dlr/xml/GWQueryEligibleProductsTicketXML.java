@@ -32,7 +32,6 @@ public class GWQueryEligibleProductsTicketXML {
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
 
 	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
-	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
 
 	/**
 	 * Adds the query ticket element.
@@ -215,7 +214,6 @@ public class GWQueryEligibleProductsTicketXML {
 		GWQueryTicketRespTO qtRespTO = new GWQueryTicketRespTO();
 
 		Element dataRespElement = null;
-		Element upgradePluElement = null;
 
 		for (Iterator<org.dom4j.Element> i = qryRespElement.elementIterator(); i.hasNext();) {
 			Element element = i.next();
@@ -715,8 +713,10 @@ public class GWQueryEligibleProductsTicketXML {
 			Node priceNode = linRecord.selectSingleNode("Price");
 			if (priceNode != null) {
 				String inText = priceNode.getText();
-				upgratePLU.setPrice(new BigDecimal(inText));
-
+				if (inText != null) {
+					inText = inText.replace(",", "");
+					upgratePLU.setPrice(new BigDecimal(inText));
+				}
 			}
 
 			// Upgraded Price
