@@ -30,6 +30,14 @@ import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
  *
  */
 public class QueryEligibleProductsXML {
+	
+	private static final String ADULT = "Adult";
+	private static final String CHILD = "Child";
+	private static final String ANY = "Any";
+	private static final String INELIGIBLE = "INELIGIBLE";
+	private static final String NOPRODUCTS = "NOPRODUCTS";
+	private static final String ELIGIBLE = "ELIGIBLE";
+	
 	/**
 	 * When passed the JAXB object, return the DTI application object.
 	 * 
@@ -227,11 +235,11 @@ public class QueryEligibleProductsXML {
 			if (aTicketTO.getGuestType() != null) {
 				String prodGuestType = null;
 				if (aTicketTO.getGuestType().compareTo(GuestType.ADULT) == 0) {
-					prodGuestType = "Adult";
+					prodGuestType = ADULT;
 				} else if (aTicketTO.getGuestType().compareTo(GuestType.CHILD) == 0) {
-					prodGuestType = "Child";
+					prodGuestType = CHILD;
 				} else {
-					prodGuestType = "Any";
+					prodGuestType = ANY;
 				}
 				qName = new QName("ProdGuestType");
 				JAXBElement<String> pdtGuest = new JAXBElement(qName, prodGuestType.getClass(), prodGuestType);
@@ -381,11 +389,11 @@ public class QueryEligibleProductsXML {
 			String result = null;
 			if (aTicketTO.getResultType() != null) {
 				if (aTicketTO.getResultType().compareTo(ResultType.NOPRODUCTS) == 0) {
-					result = "NOPRODUCTS";
+					result = NOPRODUCTS;
 				} else if (aTicketTO.getResultType().compareTo(ResultType.ELIGIBLE) == 0) {
-					result = "ELIGIBLE";
+					result = ELIGIBLE;
 				} else {
-					result = "INELIGIBLE";
+					result = INELIGIBLE;
 				}
 
 			}

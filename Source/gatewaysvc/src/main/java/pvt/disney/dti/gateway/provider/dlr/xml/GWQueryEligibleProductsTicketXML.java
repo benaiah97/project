@@ -30,7 +30,8 @@ public class GWQueryEligibleProductsTicketXML {
 	/** Event logger. */
 	private static final EventLogger logger = EventLogger.getLogger(GWQueryTicketXML.class.getCanonicalName());
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
-
+	private static final String COMMA_STRING = ",";
+	private static final String EMPTY_STRING = ",";
 	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
 
 	/**
@@ -716,7 +717,7 @@ public class GWQueryEligibleProductsTicketXML {
 			if (priceNode != null) {
 				String inText = priceNode.getText();
 				if (inText != null) {
-					inText = inText.replace(",", "");
+					inText = inText.replace(COMMA_STRING, EMPTY_STRING);
 					upgratePLU.setPrice(new BigDecimal(inText));
 				}
 			}
