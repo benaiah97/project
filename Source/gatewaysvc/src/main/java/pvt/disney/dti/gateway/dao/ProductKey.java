@@ -913,11 +913,18 @@ public class ProductKey {
 	public static ArrayList<UpgrdPathSeqTO> getSubClassesForPathId(Integer pathId)
 			throws DTIException {
 
-		logger.sendEvent("Entering getSubClassesForAp()", EventType.DEBUG,
+		logger.sendEvent("Entering getSubClassesForPathId()", EventType.DEBUG,
 				THISINSTANCE);
 
 		ArrayList<UpgrdPathSeqTO> result = null;
 
+		// Retrieve and validate the parameters
+		if ((pathId == null)) {
+			throw new DTIException(ProductKey.class,
+					DTIErrorCode.INVALID_PRODUCT_CODE,
+					"getSubClassesForPathId DB routine found null pathId.");
+		}
+		
 		Object[] values = {pathId};
 		try {
 
@@ -934,16 +941,16 @@ public class ProductKey {
 			result = (ArrayList<UpgrdPathSeqTO>) helper.processQuery(values);
 
 			// Debug
-			logger.sendEvent("getSubClassesForAp found products.",
+			logger.sendEvent("getSubClassesForPathId found products.",
 					EventType.DEBUG, THISINSTANCE, result, null);
 
 		} catch (Exception e) {
 			logger.sendEvent(
-					"Exception executing getSubClassesForAp: " + e.toString(),
+					"Exception executing getSubClassesForPathId: " + e.toString(),
 					EventType.WARN, THISINSTANCE);
 			throw new DTIException(ProductKey.class,
 					DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getSubClassesForAp", e);
+					"Exception executing getSubClassesForPathId", e);
 		}
 		return result;
 	}
