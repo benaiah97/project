@@ -8885,14 +8885,18 @@ import java.text.SimpleDateFormat
 def testStep = testRunner.testCase.getTestStepByName( "transmission - InfoSys BRAVO Product Catalog Updated" );
 log.info( "Step 1: Obtained request." )
 
-
 //get date in "MM/dd/yyyy" 
 def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+testRunner.testCase.setPropertyValue("factor", String.valueOf(1))
+
+def uniqueIdA = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+111000000)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueIdA)
 //Extract First 20 character
 Payload_ID = workString.substring(0,20)
 
@@ -8959,7 +8963,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -8976,7 +8980,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -9058,7 +9062,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9075,7 +9079,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9153,7 +9157,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9170,7 +9174,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9255,7 +9259,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9272,7 +9276,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9341,20 +9345,20 @@ else if(failedMap.size() > 0)
 def testStep = testRunner.testCase.getTestStepByName( "transmission - InfoSys BRAVO Product Catalog Updated" );
 log.info( "Step 1: Obtained request." )
 
-
 //get date in "MM/dd/yyyy" 
 def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdB = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+222000000)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueIdB)
 Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
-log.info "Payload_ID value is set to: " + Payload_ID 
-
-</script></con:config></con:testStep><con:testStep type="groovy" name="Transfer_ProductCode" id="08cee12e-a52c-4dbd-936d-7bd68b37e5da"><con:settings/><con:config><script>import jxl.*; 
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="groovy" name="Transfer_ProductCode" id="08cee12e-a52c-4dbd-936d-7bd68b37e5da"><con:settings/><con:config><script>import jxl.*; 
 import com.eviware.soapui.support.xml.XmlUtils;
 import java.text.SimpleDateFormat
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
@@ -9483,7 +9487,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9500,7 +9504,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9579,7 +9583,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9596,7 +9600,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -9675,7 +9679,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9692,7 +9696,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9777,7 +9781,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9794,7 +9798,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -9858,7 +9862,49 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170710149992392</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-07-10</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="23a334ca-18c5-44f4-826d-8d649f7c802f" failOnError="false" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Upgrade Alpha Life Cycle Test" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="3704517b-415d-4418-adc0-25d2a7e649f7"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="484419c9-a3fc-487e-96a7-0fa333edb50a" name="Copy of transmission - WDW Reservation 2.10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="Copy of transmission - WDW Reservation 2.10" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="46fee0f6-7cff-434c-b262-5c96f052ba26"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/Users/vganda/Ticketing/S-283282_AP_Upgrade_Step_1_4_Implementation/DTIGateway/Source/config/schemas/query_eligible_products_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9992017022014400524</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-03-20</TransmitDate>
+         <TransmitTime>02:41:45.955</TransmitTime>
+         <TktSeller>
+            <TSMAC>DA6626</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>001</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2017-03-29</CmdDate>
+            <CmdTime>02:41:45.955</CmdTime>
+            <CmdInvoice>2018895220000011272</CmdInvoice>
+            <CmdDevice>PAULH</CmdDevice>
+            <CmdOperator>PAULH</CmdOperator>
+            <CmdActor>SYS</CmdActor>
+         </CommandHeader>
+         <QueryEligibleProductsRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktNID>12000623061700010</TktNID>
+               </TktID>
+                <SaleType>UPGRADE</SaleType>
+             </Ticket>
+         </QueryEligibleProductsRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:credentials><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170712150007754</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-07-12</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>3</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="23a334ca-18c5-44f4-826d-8d649f7c802f" failOnError="false" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Upgrade Alpha Life Cycle Test" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="3704517b-415d-4418-adc0-25d2a7e649f7"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 // get request property
 def testStep = testRunner.testCase.getTestStepByName( "transmission - InfoSys BRAVO Product Catalog Updated" );
 log.info( "Step 1: Obtained request." )
@@ -9869,8 +9915,13 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+testRunner.testCase.setPropertyValue("factor", String.valueOf(1))
+
+def uniqueIdA = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringA = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+111000000)
+def workStringA = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueIdA)
 //Payload_ID = workString.substring(0,20)
 
 sdf = new SimpleDateFormat("yyyy-MM-dd")
@@ -9943,7 +9994,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -9960,7 +10011,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10040,7 +10091,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10057,7 +10108,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -10137,7 +10188,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10154,7 +10205,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10240,7 +10291,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10257,7 +10308,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10327,6 +10378,8 @@ else if(failedMap.size() > 0)
 def testStep = testRunner.testCase.getTestStepByName( "transmission - InfoSys BRAVO Product Catalog Updated" );
 log.info( "Step 1: Obtained request." )
 
+def uniqueIdB = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -10334,7 +10387,7 @@ sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringB = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + 222000000)
+def workStringB = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdB)
 //Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID_Product",workStringB.substring(0,20) )
@@ -10389,7 +10442,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10406,7 +10459,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10485,7 +10538,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10502,7 +10555,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10580,7 +10633,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10597,7 +10650,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10682,7 +10735,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10699,7 +10752,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10795,8 +10848,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdC = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringC = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+ 333000000)
+def workStringC = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+ uniqueIdC)
 //Payload_ID = workString.substring(0,20)
 
 //To set Payload_ID property Value
@@ -10883,7 +10939,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10900,7 +10956,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -10980,7 +11036,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -10997,7 +11053,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -11075,7 +11131,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11092,7 +11148,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -11178,7 +11234,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11195,7 +11251,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -11292,8 +11348,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdD = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringD = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + 444000000)
+def workStringD = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdD)
 //Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID_QueryTicket",workStringD.substring(0,20))
@@ -11365,7 +11424,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11382,7 +11441,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -11463,7 +11522,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11480,7 +11539,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -11559,7 +11618,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11576,7 +11635,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -11662,7 +11721,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11679,7 +11738,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 //Loop through the rows of excel sheet starting from the second row
 for (int i = 1; i &lt; sheet.getRows(); i++) 
@@ -11754,8 +11813,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdE = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringE = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + 555000000)
+def workStringE = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdE)
 //Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID_Void",workStringE.substring(0,20))
@@ -11823,7 +11885,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11840,7 +11902,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -11921,7 +11983,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -11938,7 +12000,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -12017,7 +12079,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12034,7 +12096,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -12120,7 +12182,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12137,7 +12199,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -12213,8 +12275,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdF = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringF = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +   (System.currentTimeMillis() + 666000000)
+def workStringF = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +   (System.currentTimeMillis() + uniqueIdF)
 //Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID_ProductUpgradeEntitlement",workStringF.substring(0,20))
@@ -12267,7 +12332,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12284,7 +12349,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 //Loop through the rows of excel sheet starting from the second row
 for (int i = 1; i &lt; sheet.getRows(); i++) 
@@ -12362,7 +12427,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12379,7 +12444,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 //Loop through the rows of excel sheet starting from the second row
@@ -12457,7 +12522,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12474,7 +12539,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -12560,7 +12625,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12577,7 +12642,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -12666,8 +12731,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+def uniqueIdG = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringG = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + 777000000)
+def workStringG = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdG)
 //Payload_ID = workStringG.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID_UpgradeEntitlement",workStringG.substring(0,20))
@@ -12749,7 +12817,7 @@ def elements
 
 //Get the Project path using Properties
 projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
-projectpath = projectFile.substring(0, projectFile.lastIndexOf("/"));
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
 //def projectpath = groovyUtils.projectPath  
 
 if   (projectpath.toLowerCase().contains("jenkins")) { 
@@ -12766,7 +12834,7 @@ log.info "Current test step name : " + currentTeststep
 
 
 //Read Excel LifeCycleValidation.xls for pareameterization
-Workbook workbook = Workbook.getWorkbook(new File(projectpath +"/LifeCycleValidation.xls"))
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
 Sheet sheet = workbook.getSheet(0)
 
 
@@ -12826,4 +12894,4 @@ else if(failedMap.size() > 0)
 {
 	log.info "These headers are not returned in the response : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>CurrentDate</con:name><con:value>2017-07-10</con:value></con:property><con:property><con:name>Payload_ID_CreatTicket</con:name><con:value>91120170710149979429</con:value></con:property><con:property><con:name>Payload_ID_Product</con:name><con:value>91120170710149990531</con:value></con:property><con:property><con:name>Payload_ID_UpgradeAlpha</con:name><con:value>91120170710150001631</con:value></con:property><con:property><con:name>Payload_ID_QueryTicket</con:name><con:value>91120170710150012732</con:value></con:property><con:property><con:name>Payload_ID_Void</con:name><con:value>91120170710150023832</con:value></con:property><con:property><con:name>Payload_ID_ProductUpgradeEntitlement</con:name><con:value>91120170710150034933</con:value></con:property><con:property><con:name>Payload_ID_UpgradeEntitlement</con:name><con:value>91120170710150046033</con:value></con:property><con:property><con:name>ProductCode_Create</con:name><con:value>1001A</con:value></con:property><con:property><con:name>ProductPrice_Create</con:name><con:value>125.67</con:value></con:property><con:property><con:name>ProductCode_UpgradeAlpha</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeAlpha</con:name><con:value>125.67</con:value></con:property><con:property><con:name>MagicTrack1_Create</con:name><con:value>AFUZV7TSTCVWSXTTB5STVVSSVGSS4SSSSSSZFZZV7TSTCVWSXTTB5STVVSSVGSS4SSSSSSZ</con:value></con:property><con:property><con:name>ProductCode_UpgradeEntitlement</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeEntitlement</con:name><con:value>125.67</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>CurrentDate</con:name><con:value>2017-07-12</con:value></con:property><con:property><con:name>Payload_ID_CreatTicket</con:name><con:value>91120170712149996636</con:value></con:property><con:property><con:name>Payload_ID_Product</con:name><con:value>91120170712150007737</con:value></con:property><con:property><con:name>Payload_ID_UpgradeAlpha</con:name><con:value>91120170712150018838</con:value></con:property><con:property><con:name>Payload_ID_QueryTicket</con:name><con:value>91120170712150029938</con:value></con:property><con:property><con:name>Payload_ID_Void</con:name><con:value>91120170712150041039</con:value></con:property><con:property><con:name>Payload_ID_ProductUpgradeEntitlement</con:name><con:value>91120170712150052139</con:value></con:property><con:property><con:name>Payload_ID_UpgradeEntitlement</con:name><con:value>91120170712150063240</con:value></con:property><con:property><con:name>ProductCode_Create</con:name><con:value>1001A</con:value></con:property><con:property><con:name>ProductPrice_Create</con:name><con:value>125.67</con:value></con:property><con:property><con:name>ProductCode_UpgradeAlpha</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeAlpha</con:name><con:value>125.67</con:value></con:property><con:property><con:name>MagicTrack1_Create</con:name><con:value>KFGCAM878RAB7E88QM77X4777977F777777CFXCAM878RAB7E88QM77X4777977F777777C</con:value></con:property><con:property><con:name>ProductCode_UpgradeEntitlement</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeEntitlement</con:name><con:value>125.67</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>8</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
