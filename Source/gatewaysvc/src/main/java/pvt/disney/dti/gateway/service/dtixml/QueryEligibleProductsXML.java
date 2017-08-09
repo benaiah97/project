@@ -113,15 +113,16 @@ public class QueryEligibleProductsXML {
 		aTicketTO.setDssn(tempCalendar, tktDssn.getTktSite(), tktDssn.getTktStation(), tktDssn.getTktNbr());
 	}
 
+	
 	/**
-	 * When the ticket if of type DSSN
-	 * 
-	 * @param aTicketTO
-	 * @param aTicket
+	 * Sets the ticket mag.
+	 *
+	 * @param aTicketTO the a ticket TO
+	 * @param aTicket the a ticket
 	 */
 	private static void setTicketMag(TicketTO aTicketTO, QueryEligibleProductsRequest.Ticket aTicket) {
 
-		// fetching the value of TktDSSN from ticket
+		// fetching the value of tktMag from ticket
 		QueryEligibleProductsRequest.Ticket.TktID.Mag tktMag = aTicket.getTktID().getMag();
 
 		String mag1 = tktMag.getMagTrack1();
@@ -404,7 +405,7 @@ public class QueryEligibleProductsXML {
 			aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 
 			// EligibleProducts
-			if (aTicketTO.getEligibleProducts() != null && aTicketTO.getEligibleProducts().size() > 0) {
+			if ((aTicketTO.getEligibleProducts() != null) && (aTicketTO.getEligibleProducts().size() > 0)) {
 
 				for (EligibleProductsTO eligibleProduct : aTicketTO.getEligibleProducts()) {
 

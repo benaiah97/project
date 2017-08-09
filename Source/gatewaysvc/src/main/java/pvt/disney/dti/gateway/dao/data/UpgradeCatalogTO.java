@@ -24,53 +24,138 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
  */
 public class UpgradeCatalogTO implements Serializable {
 
-   /** The Constant serialVersionUID. */
-   private static final long serialVersionUID = 1L;
-    
-   /** The Constant PLAT. */
-   private static final String PLAT="PLAT";
-   
-   /** The Constant PLATPLUS. */
-   private static final String PLATPLUS="PLATPLUS";
-   
-   /** The Constant EPCTAFT4. */
-   private static final String EPCTAFT4="EPCTAFT4";
-   
-   /** The Constant GOLD. */
-   private static final String GOLD="GOLD";
-   
-   /** The Constant SILVER. */
-   private static final String SILVER="SILVER";
-   
-   /** The Constant WEEKDAY. */
-   private static final String WEEKDAY="WEEKDAY";
-   
-   /** The Constant WP. */
-   private static final String WP="WP";
-   
-   /** The Constant WPAFT2. */
-   private static final String WPAFT2="WPAFT2";
-   
-   /** The plat list. */
-   private static String PLAT_LIST[]=null;
-   
-   /** The epctaft4 list. */
-   private static String EPCTAFT4_LIST[]=null;
-   
-   /** The gold list. */
-   private static String GOLD_LIST[]=null;
-   
-   /** The silver list. */
-   private static String SILVER_LIST[]=null;
-   
-   /** The weekday list. */
-   private static String WEEKDAY_LIST[]=null;
-   
-   /** The wp list. */
-   private static String WP_LIST[]=null;
-   
-   /** The wpaft2 list. */
-   private static String WPAFT2_LIST[]=null;
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 1L;
+
+	/** The Constant WMK. */
+	private static final String WMK = "71";
+
+	/** The Constant WEC. */
+	private static final String WEC = "72";
+
+	/** The Constant WST. */
+	private static final String WST = "73";
+
+	/** The Constant WPI. */
+	@SuppressWarnings("unused")
+	private static final String WPI = "74";
+
+	/** The Constant WTL. */
+	private static final String WTL = "75";
+
+	/** The Constant WDI. */
+	@SuppressWarnings("unused")
+	private static final String WDI = "76";
+
+	/** The Constant WRC. */
+	@SuppressWarnings("unused")
+	private static final String WRC = "77";
+
+	/** The Constant WBB. */
+	private static final String WBB = "78";
+
+	/** The Constant WDR. */
+	@SuppressWarnings("unused")
+	private static final String WDR = "79";
+
+	/** The Constant WTS. */
+	@SuppressWarnings("unused")
+	private static final String WTS = "80";
+
+	/** The Constant WNR. */
+	@SuppressWarnings("unused")
+	private static final String WNR = "84";
+
+	/** The Constant WSC. */
+	private static final String WSC = "85";
+
+	/** The Constant WAK. */
+	private static final String WAK = "86";
+
+	/** The Constant WFP. */
+	@SuppressWarnings("unused")
+	private static final String WFP = "88";
+
+	/** The Constant WCQ. */
+	@SuppressWarnings("unused")
+	private static final String WCQ = "89";
+
+	/** The Constant WRS. */
+	@SuppressWarnings("unused")
+	private static final String WRS = "90";
+
+	/** The Constant WSG. */
+	@SuppressWarnings("unused")
+	private static final String WSG = "91";
+
+	/** The Constant WOR. */
+	@SuppressWarnings("unused")
+	private static final String WOR = "92";
+
+	/** The Constant WDW. */
+	@SuppressWarnings("unused")
+	private static final String WDW = "93";
+
+	/** The Constant WEA. */
+	@SuppressWarnings("unused")
+	private static final String WEA = "83";
+
+	/** The Constant WSA. */
+	@SuppressWarnings("unused")
+	private static final String WSA = "81";
+
+	/** The Constant WMA. */
+	@SuppressWarnings("unused")
+	private static final String WMA = "82";
+
+	/** The Constant WAA. */
+	@SuppressWarnings("unused")
+	private static final String WAA = "87";
+
+	/** The Constant PLAT. */
+	private static final String PLAT = "PLAT";
+
+	/** The Constant PLATPLUS. */
+	private static final String PLATPLUS = "PLATPLUS";
+
+	/** The Constant EPCTAFT4. */
+	private static final String EPCTAFT4 = "EPCTAFT4";
+
+	/** The Constant GOLD. */
+	private static final String GOLD = "GOLD";
+
+	/** The Constant SILVER. */
+	private static final String SILVER = "SILVER";
+
+	/** The Constant WEEKDAY. */
+	private static final String WEEKDAY = "WEEKDAY";
+
+	/** The Constant WP. */
+	private static final String WP = "WP";
+
+	/** The Constant WPAFT2. */
+	private static final String WPAFT2 = "WPAFT2";
+
+	/** The plat list. */
+	private static String PLAT_LIST[] = { WTL, WBB, WSC };
+
+	/** The epctaft4 list. */
+	private static String EPCTAFT4_LIST[] = { WTL, WBB, WSC, WMK, WST, WAK };
+
+	/** The gold list. */
+	private static String GOLD_LIST[] = { WTL, WBB, WSC };
+
+	/** The silver list. */
+	private static String SILVER_LIST[] = { WTL, WBB, WSC };
+
+	/** The weekday list. */
+	private static String WEEKDAY_LIST[] = { WTL, WBB, WSC };
+
+	/** The wp list. */
+	private static String WP_LIST[] = { WEC, WSC, WMK, WST, WAK };
+
+	/** The wpaft2 list. */
+	private static String WPAFT2_LIST[] = { WEC, WSC, WMK, WST, WAK };
    
    /**
 	 * Properties file
@@ -373,7 +458,7 @@ public class UpgradeCatalogTO implements Serializable {
 	public int disqualifyProduct(ArrayList<String> siteList) {
 
 		// read the details from property file
-		readProperties();
+	   //	readProperties(); 
 		ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
 
 		HashSet<String> usageSiteSet = new HashSet<String>();

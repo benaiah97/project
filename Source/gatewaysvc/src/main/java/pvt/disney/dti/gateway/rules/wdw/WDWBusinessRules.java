@@ -1236,12 +1236,16 @@ public class WDWBusinessRules {
       switch (requestType) {
       
       case QUERYTICKET:
+    	  
     	  // Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
        if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYTICKET){
+    	   
     	  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
        }
+       
     	// if the transaction type is of Query Eligible Products
        else if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS){
+    	   
     	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
        }
        break;

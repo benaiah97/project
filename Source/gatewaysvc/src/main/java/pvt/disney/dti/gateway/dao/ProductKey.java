@@ -728,7 +728,7 @@ public class ProductKey {
 		logger.sendEvent("Entering getProductsByTktName()", EventType.DEBUG, THISINSTANCE);
 
 		// Retrieve and validate the parameters
-		if (tktName == null || tktName.isEmpty()) {
+		if ((tktName == null)|| (tktName.isEmpty())) {
 			throw new DTIException(ProductKey.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
 						"getProductByTktName DB routine is found missing parameters");
 		}
@@ -798,7 +798,7 @@ public class ProductKey {
 		ArrayList<DBProductTO> result = null;
 
 		// Retrieve and validate the parameters
-		if ((tktNbr == null)) {
+		if (tktNbr == null) {
 			throw new DTIException("getProductsTktNbr tktNbr is null.");
 		}
 		// Create a set of unique product code strings
@@ -859,7 +859,7 @@ public class ProductKey {
 		ArrayList<DBProductTO> result = null;
 
 		// Retrieve and validate the parameters
-		if ((upgrdTypCode == null)) {
+		if (upgrdTypCode == null) {
 			throw new DTIException("getProductsForSeller upgrdTypCode is null.");
 		}
 		// Create a set of unique product code strings
