@@ -18,17 +18,17 @@ SEE https://docs.docker.com/engine/reference/commandline/docker/#child-commands 
 ################################################################################
 
 docker-machine ip
-docker build -t dtiproductadmin:latest .
-docker run --name productadmin -it -p 8080:8080 -p 8000:8000 --rm dtiproductadmin:latest
-docker exec -i -t productadmin /bin/bash 
-docker stop productadmin
-docker kill productadmin
+docker build -t dtigateway:latest .
+docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:latest
+docker exec -i -t gateway /bin/bash 
+docker stop gateway
+docker kill gateway
 docker ps -a
 docker images (useful for listing images for cleanup)
 docker rm  <name or id> (remove one or more containers)
 docker rmi (remove one or more images)
-docker top productadmin
-docker stats productadmin
+docker top gateway
+docker stats gateway
 docker info
 
 ################################################################################
@@ -69,7 +69,7 @@ If you need to use a different config, the supply the build argument CONFIG and 
 If you need to use a differnt timezone, then supply the build argument TIMEZONE and a value such as Asia/Hong_Kong
 
 For example: to use the domestic DEV config:
-
+ 
 docker build --build-arg CONFIG=LOCAL -t dtigateway:DEV .
 
 For example: to use the HKDL Local config:
