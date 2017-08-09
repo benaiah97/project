@@ -314,7 +314,7 @@ public class TestProductkey extends CommonTestDao{
 			result=ProductKey.getProductFromTicketType(providerTicketType);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	}
 	/**
@@ -343,16 +343,52 @@ public class TestProductkey extends CommonTestDao{
 					dtie.getLogMessage());
 		}
 		/* Scenario::3 Passing object after mocking DB */
-		//
 		
 		try {
 			DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.PdtCodeTktNbrResult");
 			result=ProductKey.getProductCodeFromTktNbr(tktNbr);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
-			//Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
 	
+		
+	}
+	
+	/**
+	 * Test case for GetSubClassesForPathId
+	 */
+	@Test
+	public void testGetSubClassesForPathId()
+	{
+		Integer pathId = null;
+		
+		/* Scenario::1 Passing pathId as null*/
+		try {
+			ProductKey.getSubClassesForPathId(pathId);
+		} catch (DTIException dtie) {
+			assertEquals(DTIErrorCode.INVALID_PRODUCT_CODE, dtie.getDtiErrorCode());
+			assertEquals("getSubClassesForPathId DB routine found null pathId.",
+					dtie.getLogMessage());
+		}
+		
+		/* Scenario::2 Passing object without mocking DB */
+		pathId = 1;
+		try {
+			ProductKey.getSubClassesForPathId(pathId);
+		} catch (DTIException dtie) {
+			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC, dtie.getDtiErrorCode());
+			assertEquals("Exception executing getSubClassesForPathId",
+					dtie.getLogMessage());
+		}
+		
+		/* Scenario::3 Passing object after mocking DB */
+		try {
+			DTIMockUtil.mockResultProcessor("pvt.disney.dti.gateway.dao.result.DaySubClassResult");
+			ProductKey.getSubClassesForPathId(pathId);
+		} catch (DTIException dtie) {
+			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+		}
 		
 	}
 

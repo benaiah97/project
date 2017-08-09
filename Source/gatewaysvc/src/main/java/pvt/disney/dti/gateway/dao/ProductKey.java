@@ -728,7 +728,7 @@ public class ProductKey {
 		logger.sendEvent("Entering getProductsByTktName()", EventType.DEBUG, THISINSTANCE);
 
 		// Retrieve and validate the parameters
-		if (tktName == null || tktName.isEmpty()) {
+		if ((tktName == null)|| (tktName.isEmpty())) {
 			throw new DTIException(ProductKey.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
 						"getProductByTktName DB routine is found missing parameters");
 		}
@@ -798,7 +798,7 @@ public class ProductKey {
 		ArrayList<DBProductTO> result = null;
 
 		// Retrieve and validate the parameters
-		if ((tktNbr == null)) {
+		if (tktNbr == null) {
 			throw new DTIException("getProductsTktNbr tktNbr is null.");
 		}
 		// Create a set of unique product code strings
@@ -859,7 +859,7 @@ public class ProductKey {
 		ArrayList<DBProductTO> result = null;
 
 		// Retrieve and validate the parameters
-		if ((upgrdTypCode == null)) {
+		if (upgrdTypCode == null) {
 			throw new DTIException("getProductsForSeller upgrdTypCode is null.");
 		}
 		// Create a set of unique product code strings
@@ -913,11 +913,18 @@ public class ProductKey {
 	public static ArrayList<UpgrdPathSeqTO> getSubClassesForPathId(Integer pathId)
 			throws DTIException {
 
-		logger.sendEvent("Entering getSubClassesForAp()", EventType.DEBUG,
+		logger.sendEvent("Entering getSubClassesForPathId()", EventType.DEBUG,
 				THISINSTANCE);
 
 		ArrayList<UpgrdPathSeqTO> result = null;
 
+		// Retrieve and validate the parameters
+		if ((pathId == null)) {
+			throw new DTIException(ProductKey.class,
+					DTIErrorCode.INVALID_PRODUCT_CODE,
+					"getSubClassesForPathId DB routine found null pathId.");
+		}
+		
 		Object[] values = {pathId};
 		try {
 
@@ -934,16 +941,16 @@ public class ProductKey {
 			result = (ArrayList<UpgrdPathSeqTO>) helper.processQuery(values);
 
 			// Debug
-			logger.sendEvent("getSubClassesForAp found products.",
+			logger.sendEvent("getSubClassesForPathId found products.",
 					EventType.DEBUG, THISINSTANCE, result, null);
 
 		} catch (Exception e) {
 			logger.sendEvent(
-					"Exception executing getSubClassesForAp: " + e.toString(),
+					"Exception executing getSubClassesForPathId: " + e.toString(),
 					EventType.WARN, THISINSTANCE);
 			throw new DTIException(ProductKey.class,
 					DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					"Exception executing getSubClassesForAp", e);
+					"Exception executing getSubClassesForPathId", e);
 		}
 		return result;
 	}
