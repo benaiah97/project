@@ -208,27 +208,26 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// Putting up the original response in GuestProductTO
 		globalGuestProduct.setGwDataRespTO(gwDataRespTO);
 
-		// PLU's obtained from GWDataresponse , in case if multiple PLU's are there
-		// throw error if ticket not found 
+		// PLU's obtained from GWDataresponse , in case if multiple PLU's are there throw error if ticket not found 
 		if ((gwDataRespTO.getPluList() != null) && (gwDataRespTO.getPluList().size() > 0)) {
 
-		// executing Query to pull up Guest Ticket detail by PLU
-			DBProductTO dBProduct = ProductKey
-					.getProductsByTktName(gwDataRespTO.getPluList());
+			// executing Query to pull up Guest Ticket detail by PLU
+			DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPluList());
 
-		// Process only if details are found
+			// Process only if details are found
 			if (dBProduct != null) {
 				globalGuestProduct.setDbproductTO(dBProduct);
 
-		// Step 2 : fetch the details List of Salable product
-				UpgradeCatalogTO globalUpgradeProduct = ProductKey
-						.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
+				// Step 2 : fetch the details List of Salable product
+				UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
-		          // Step 3A : If Picture is not present in response marking resultType as INELIGIBLE
+				// Step 3A : If Picture is not present in response marking resultType as INELIGIBLE
 				if (globalGuestProduct.getGwDataRespTO().getHasPicture() == null) {
+					
 					// TODO need to verify if Haspicture is NO ||
 					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
 					// == 0)) {
+					
 					logger.sendEvent("Has Picture is not found ",
 							EventType.DEBUG, THISINSTANCE);
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
@@ -275,6 +274,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						}
 					} else {
 
+						//if no upgrade product found mark the result as INELIGIBLE and stop transaction
 						logger.sendEvent("No Upgradable Product found ",
 								EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
@@ -291,7 +291,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				} else {
 					
-					// if no upgrade PLUs mark the result as INELIGIBLE and stop transaction
+					// if no upgrade PLUs from the response mark the result as INELIGIBLE and stop transaction
 					logger.sendEvent("PLU List from the DLR response is empty ",EventType.DEBUG, THISINSTANCE);
 
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
@@ -299,8 +299,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					dtiTktTO.setTktItem(new BigInteger(ITEM_1));
 					String visualId = gwDataRespTO.getVisualID();
 					dtiTktTO.setExternal(visualId);
-					// TODO need to verify this with do we need to stop and skip
-					// step 5
+					// TODO need to verify this with do we need to stop and skip step 5
 					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
 				}
 
@@ -692,7 +691,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					}
 				} catch (Exception e) {
 					logger.sendEvent("Exception caught while parsing the first Usage Date "
-									+ e.toString(), EventType.WARN,THISINSTANCE);
+									+ e.toString(), EventType.EXCEPTION,THISINSTANCE);
 					throw new DTIException(
 							DLRQueryEligibilityProductsRules.class,
 							DTIErrorCode.UNDEFINED_CRITICAL_ERROR,

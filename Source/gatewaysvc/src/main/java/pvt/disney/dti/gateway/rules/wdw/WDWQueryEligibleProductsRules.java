@@ -249,11 +249,10 @@ public class WDWQueryEligibleProductsRules {
 				if (otTicketInfo.getTicketType() != null) {
 					tktNbr.add(otTicketInfo.getTicketType());
 				} else {
-					logger.sendEvent("Ticket type not found ", EventType.DEBUG,
+					logger.sendEvent("Ticket type not found ", EventType.EXCEPTION,
 							THISINSTANCE);
 					throw new DTIException(WDWQueryEligibleProductsRules.class,
-							DTIErrorCode.TICKET_INVALID,
-							"Ticket Provided is incorrect");
+							DTIErrorCode.INVALID_TICKET_ID,"Ticket Provided is incorrect");
 				}
 
 				// Step 1 : Call this method get the list of DB products for the guest
@@ -262,6 +261,7 @@ public class WDWQueryEligibleProductsRules {
 
 				// if no guest Type information is found then ticket is INELIGIBLE and transaction stops
 				if (guestproductTO.getDbproductTO() == null) {
+					
 					logger.sendEvent("Guest Type information not found ",
 							EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
@@ -276,11 +276,10 @@ public class WDWQueryEligibleProductsRules {
 							dtiTxn.getEntityTO(), WDW_TPS_CODE);
 				}
 
-				// Step 3 : Validation of guest product against specified criteria 
+				// Step 3 : Validation of guest product detail against specified criteria 
 				if (validateInEligibleProducts(otTicketInfo,
 						guestproductTO.getDbproductTO())) {
-					logger.sendEvent(
-							"DbProductTO next level validation fail. ",
+					logger.sendEvent("Validation of guest Product Failed",
 							EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 				}
@@ -292,34 +291,29 @@ public class WDWQueryEligibleProductsRules {
 					BigInteger pathId = guestproductTO.getDbproductTO()
 							.getUpgrdPathId();
 
-					// Sub class list
-					ArrayList<UpgrdPathSeqTO> subClassObjList = null;
-
-					if (pathId != null) {
-						
-						subClassObjList = ProductKey
-								.getSubClassesForPathId(pathId.intValue());
-					}
-
-					// retrieve sub classes from the list
+					// Sub Class List 
 					ArrayList<String> subClassList = new ArrayList<String>();
-					if (subClassObjList != null) {
-						for (UpgrdPathSeqTO seqTO : subClassObjList) {
-							subClassList.add(seqTO.getDaySubclass());
+
+					// Retrieve only if Upgrade Path id is not null  
+					if (pathId != null) {
+						ArrayList<UpgrdPathSeqTO> subClassObjList = ProductKey.getSubClassesForPathId(pathId.intValue());
+
+						// retrieve sub classes from the list
+						if (subClassObjList != null) {
+							for (UpgrdPathSeqTO seqTO : subClassObjList) {
+								subClassList.add(seqTO.getDaySubclass());
+							}
 						}
 					}
 
 					// filter the products based on sub classes 
 					logger.sendEvent("Orignal list is obtained before step 4A."
-							+ globalUpgradeProduct.getProductListCount(),
-							EventType.DEBUG, THISINSTANCE);
+							+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+					
 					globalUpgradeProduct.keepDaySubclasses(subClassList);
 
-					logger.sendEvent(
-							"Final list is obtained after step 4A filteration."
-									+ globalUpgradeProduct
-											.getProductListCount(),
-							EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Final list is obtained after step 4A filteration."
+									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
 
 					
 					// Step 4B : If the Product Catalog List is not empty then proceed
@@ -343,20 +337,15 @@ public class WDWQueryEligibleProductsRules {
 						}
 					}
 
-					logger.sendEvent(
-							"Final list is obtained after step 4B filteration."
-									+ globalUpgradeProduct.getProductListCount(),
-							EventType.DEBUG, THISINSTANCE);
-
+					logger.sendEvent("Final list is obtained after step 4B filteration."
+									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
 					
 					// Step 4C : Comparing the product catalog list with guest standard price
 					globalUpgradeProduct.removeProductsLowerThan(guestproductTO
 							.getDbproductTO().getStandardRetailTax());
-					logger.sendEvent(
-							"Final list is obtained after step 4C filteration."
-									+ globalUpgradeProduct
-											.getProductListCount(),
-							EventType.DEBUG, THISINSTANCE);
+					
+					logger.sendEvent("Final list is obtained after step 4C filteration."
+									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
 
 					// if no product is found return No Product 
 					if (globalUpgradeProduct.getProductListCount() == 0) {
@@ -482,9 +471,9 @@ public class WDWQueryEligibleProductsRules {
 			// Rule 1 : UpgrdPathId is 0 
 			BigInteger upGrdPath = productTO.getUpgrdPathId();
 			if ((upGrdPath == null) || (upGrdPath.intValue() == 0)) {
+				
 				logger.sendEvent("UpgrdPathId value :: " + upGrdPath
-						+ " :: Validation Failed", EventType.DEBUG,
-						THISINSTANCE);
+						+ " :: Validation Failed", EventType.DEBUG,THISINSTANCE);
 				return isInEligibleProductFlag = true;
 			}
 
@@ -496,10 +485,10 @@ public class WDWQueryEligibleProductsRules {
 				return isInEligibleProductFlag = true;
 			}
 
-			// Rule 3 : Biometric Template must have one entry 
+			// Rule 3 : Bio metric Template must have one entry 
 			if (biometricTemplate == null) {
 				
-				logger.sendEvent("biometricTemplet is: +" + biometricTemplate
+				logger.sendEvent("biometricTemplate is: +" + biometricTemplate
 						+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
 				
 				return isInEligibleProductFlag = true;
@@ -519,6 +508,7 @@ public class WDWQueryEligibleProductsRules {
 			// Rule 5 : ResidentInd is Y and DayCount = 1 and the first use date is older than 14 days
 			if ((firstuseDate != null) && (isResident == true)
 					&& (dayCount == 1) && (getDayDifference(firstuseDate) > 14)) {
+				
 				logger.sendEvent("ResidentInd is :" + isResident
 						+ "Day count is :" + dayCount + "and first use date "
 						+ ":" + firstuseDate + " validation Failed.",
@@ -529,6 +519,7 @@ public class WDWQueryEligibleProductsRules {
 			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use date is older than six months (185 days).
 			if ((firstuseDate != null) && (isResident == true)
 					&& (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
+				
 				logger.sendEvent("ResidentInd is :" + isResident
 						+ "first use date is :" + firstuseDate
 						+ " and DayCount is: " + dayCount
@@ -536,14 +527,14 @@ public class WDWQueryEligibleProductsRules {
 				return isInEligibleProductFlag = true;
 			}
 		} catch (Exception e) {
+			
 			logger.sendEvent("Exception executing validateInEligibleProducts: "
 					+ e.toString(), EventType.EXCEPTION, THISINSTANCE);
 			throw new DTIException(WDWQueryEligibleProductsRules.class,
 					DTIErrorCode.DTI_DATA_ERROR,
 					"Exception executing validateInEligibleProducts");
 		}
-		logger.sendEvent("validateInEligibleProducts method end returing:"
-				+ isInEligibleProductFlag, EventType.DEBUG, THISINSTANCE);
+	
 		return isInEligibleProductFlag;
 	}
 
