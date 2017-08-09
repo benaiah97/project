@@ -5,3 +5,4 @@ devnull.log
 *.log
 log_*.xml
 log_*.zip
+cobertura.ser
