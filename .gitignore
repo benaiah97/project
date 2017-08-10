@@ -1,2 +1,7 @@
 Source/docker/target/
 Source/gatewaysvc/dupResults.txt
+failure.log
+devnull.log
+*.log
+log_*.xml
+log_*.zip

@@ -459,9 +459,7 @@ public class PaymentRules {
         }
       }
     }
-
     return;
-
   }
 
   /**

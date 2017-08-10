@@ -31,7 +31,7 @@
 		<appender-ref ref="VIEWER_ARCHIVE" />
 	</appender>
 	<appender class="com.disney.log4j.appender.ArchiveRollingFileAppender" name="VIEWER_ARCHIVE">
-		<param name="File" value="c:/logs/dti//viewer/log.xml" />
+		<param name="File" value="c:/logs/dti/viewer/log.xml" />
 		<param name="MaxFileSize" value="64KB" />
 		<param name="ZipTimestamp" value="yyyyMMdd" />
 		<layout class="com.disney.log4j.EventXmlLayout" />

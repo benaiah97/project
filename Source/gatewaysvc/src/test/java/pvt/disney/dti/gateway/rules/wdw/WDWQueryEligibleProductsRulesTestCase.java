@@ -146,6 +146,8 @@ public class WDWQueryEligibleProductsRulesTestCase {
 		} catch (ParseException e1) {
 			Assert.fail("Parsing Exception occured");
 		}
+		ticketTO.setAccountId("1");
+		ticketTO.setBarCode("5668764");
 		validityStartDate.set(2017, 01, 31);
 		oTUsagesTO.setSiteNumber(1);
 		validityEndDate.set(2017, 12,03);
