@@ -31,7 +31,7 @@ public class GWQueryEligibleProductsTicketXML {
 	private static final EventLogger logger = EventLogger.getLogger(GWQueryTicketXML.class.getCanonicalName());
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
 	private static final String COMMA_STRING = ",";
-	private static final String EMPTY_STRING = ",";
+	private static final String EMPTY_STRING = "";
 	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
 
 	/**

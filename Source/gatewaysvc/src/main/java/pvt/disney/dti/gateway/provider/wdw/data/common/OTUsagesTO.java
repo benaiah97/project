@@ -31,6 +31,7 @@ public class OTUsagesTO implements Serializable {
 	/** The date time. */
 	private GregorianCalendar date;
 
+	/** The time. */
 	private String time;
 
 	/**

@@ -890,11 +890,10 @@ public abstract class BusinessRules {
 		queryReq = (QueryEligibleProductsRequestTO) commandBody;
 		aTktList = queryReq.getTktList();
 		if (aTktList.get(0).getSaleType().compareToIgnoreCase("UPGRADE") != 0) {
-			throw new DTIException(BusinessRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
-						"Internal Error:  Sale Type is provided other than UPGRADE");
+			throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+						"Sale Type provided other than UPGRADE: " + aTktList.get(0).getSaleType());
 		}
-
-	}
+	  }
   
   /**
    * Apply upgrade entitlement business rules.

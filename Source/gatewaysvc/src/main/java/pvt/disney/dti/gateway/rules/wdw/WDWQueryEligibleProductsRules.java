@@ -78,7 +78,8 @@ public class WDWQueryEligibleProductsRules {
 
 	/** Constant indicating the Query Eligible Products XSD. */
 	private final static String NO_NAMESPACE_SCHEMA_LOCATION = "query_eligible_products_request.xsd";
-
+	//TODO might need to change the request XSD
+	
 	/** Constant text for ITEM ONE (1). */
 	private final static String ITEMONE = "1";
 
@@ -184,8 +185,6 @@ public class WDWQueryEligibleProductsRules {
 
 		otTicketInfo.setTicketSearchMode(otTicket);
 
-		// otTicketList.add(otTicketInfo);
-
 		otQryTkt.getTicketInfoList().add(otTicketInfo);
 
 		// Set the Query Ticket TO on the command
@@ -246,83 +245,101 @@ public class WDWQueryEligibleProductsRules {
 				TicketTO dtiTicketTO = new TicketTO();
 				ArrayList<BigInteger> tktNbr = new ArrayList<BigInteger>();
 
-				if (otTicketInfo.getTicketType() != null) {
-					tktNbr.add(otTicketInfo.getTicketType());
-				} else {
+				if (otTicketInfo.getTicketType() == null) {
 					logger.sendEvent("Ticket type not found ", EventType.EXCEPTION,
-							THISINSTANCE);
-					throw new DTIException(WDWQueryEligibleProductsRules.class,
-							DTIErrorCode.INVALID_TICKET_ID,"Ticket Provided is incorrect");
+								THISINSTANCE);
+						throw new DTIException(WDWQueryEligibleProductsRules.class,
+								DTIErrorCode.TP_INTERFACE_FAILURE,"Provider returned no ticket on a successful query ticket.");
+				} else {
+					tktNbr.add(otTicketInfo.getTicketType());
 				}
 
-				// Step 1 : Call this method get the list of DB products for the guest
+				// Step 1 : To get the list of DB products for the guest
 				GuestProductTO guestproductTO = setGuestProductDetails(
 						otTicketInfo, dtiTicketTO, tktNbr);
 
 				// if no guest Type information is found then ticket is INELIGIBLE and transaction stops
 				if (guestproductTO.getDbproductTO() == null) {
-					
-					logger.sendEvent("Guest Type information not found ",
-							EventType.DEBUG, THISINSTANCE);
+
+					logger.sendEvent("DB product of guestproductTO not found ", EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
-					dtiTicketTO.setTktItem(otTicketInfo.getItem());
+					
+					// populating the ticket Information 
+					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
 					dtiResRespTO.add(dtiTicketTO);
 					return;
 				}
+				//TODO need to check the logger and error messages , should match the exact what happened
 
 				// Step 2 : Putting a check to avoid multiple calls in case of multiple tickets
 				if (globalUpgradeProduct == null) {
-					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(
-							dtiTxn.getEntityTO(), WDW_TPS_CODE);
-				}
+					globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), WDW_TPS_CODE);
 
-				// Step 3 : Validation of guest product detail against specified criteria 
-				if (validateInEligibleProducts(otTicketInfo,
-						guestproductTO.getDbproductTO())) {
-					logger.sendEvent("Validation of guest Product Failed",
-							EventType.DEBUG, THISINSTANCE);
+					if ((globalUpgradeProduct == null) || (globalUpgradeProduct.getProductListCount() == 0)) {
+						dtiTicketTO.setResultType(ResultType.NOPRODUCTS);
+
+						// populating the ticket Information
+						setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
+						dtiResRespTO.add(dtiTicketTO);
+						return;
+					}
+				}
+				
+				
+				// Step 3 : Validation of guest product detail against specified criteria
+				if (validateInEligibleProducts(otTicketInfo, guestproductTO.getDbproductTO())) {
+
+					logger.sendEvent("Validation for product failed at step 3", EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setResultType(ResultType.INELIGIBLE);
+					
+					// populating the ticket Information
+					setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
+					dtiResRespTO.add(dtiTicketTO);
+					return;
+
 				}
 
-				// Step 4: get the Upgraded List
+				// Step 4: look for list salable product list (product catalog) from step 2 and do refining of the list  
 				if (globalUpgradeProduct != null) {
 					
-					// Step 4A path id from guest product to
-					BigInteger pathId = guestproductTO.getDbproductTO()
-							.getUpgrdPathId();
+					// Step 4A: validate the list of the subclasses for AP Upgrades for path Id obtained in guest product detail in step 1  
+					
+					// path id from guest product to
+					BigInteger pathId = guestproductTO.getDbproductTO().getUpgrdPathId();
 
 					// Sub Class List 
 					ArrayList<String> subClassList = new ArrayList<String>();
 
-					// Retrieve only if Upgrade Path id is not null  
+					// Retrieve subclasses list only if Upgrade Path id is not null  
 					if (pathId != null) {
 						ArrayList<UpgrdPathSeqTO> subClassObjList = ProductKey.getSubClassesForPathId(pathId.intValue());
 
-						// retrieve sub classes from the list
 						if (subClassObjList != null) {
-							for (UpgrdPathSeqTO seqTO : subClassObjList) {
+							for (/* each */UpgrdPathSeqTO seqTO : /* in */subClassObjList) {
 								subClassList.add(seqTO.getDaySubclass());
 							}
 						}
 					}
 
 					// filter the products based on sub classes 
-					logger.sendEvent("Orignal list is obtained before step 4A."
-							+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Orignal list obtained before step 4A." + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 					
+					// matching the sub class list retrieved with product catalog.  
 					globalUpgradeProduct.keepDaySubclasses(subClassList);
 
-					logger.sendEvent("Final list is obtained after step 4A filteration."
-									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Final list obtained after step 4A." + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 
 					
-					// Step 4B : If the Product Catalog List is not empty then proceed
+					// Step 4B :validates the site details obtained in the WDW response and compares with site list of subclasses list of each of the product catalog
 					if (globalUpgradeProduct.getProductListCount() > 0) {
 						ArrayList<String> usageSiteList = new ArrayList<String>();
 
-						// If at least 1 usages is there 
+						// 
 						if ((guestproductTO.getOtTicketInfo().getUsagesList() != null)
 								&& (guestproductTO.getOtTicketInfo().getUsagesList().size() > 0)) {
+							
 							for (/* each */OTUsagesTO usagesTO : /* in */guestproductTO.getOtTicketInfo().getUsagesList()) {
 								
 								// if site No is present in the usages 
@@ -337,21 +354,19 @@ public class WDWQueryEligibleProductsRules {
 						}
 					}
 
-					logger.sendEvent("Final list is obtained after step 4B filteration."
-									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Final list is obtained after step 4B." + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 					
 					// Step 4C : Comparing the product catalog list with guest standard price
 					globalUpgradeProduct.removeProductsLowerThan(guestproductTO
 							.getDbproductTO().getStandardRetailTax());
 					
-					logger.sendEvent("Final list is obtained after step 4C filteration."
-									+ globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Final list is obtained after step 4C." + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 
 					// if no product is found return No Product 
 					if (globalUpgradeProduct.getProductListCount() == 0) {
-						logger.sendEvent(
-								"No product found in new product list .",
-								EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("No product found in new product list.", EventType.DEBUG, THISINSTANCE);
 						dtiTicketTO.setResultType(ResultType.INELIGIBLE);
 
 					}
@@ -363,8 +378,9 @@ public class WDWQueryEligibleProductsRules {
 				}
 
 				// Step 5 : Setting up the detail in Ticket TO 
-				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO,
-						globalUpgradeProduct.getProductList());
+				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
+				
+				// check if result type is not null
 				if (dtiTicketTO.getResultType() == null) {
 					dtiTicketTO.setResultType(ResultType.ELIGIBLE);
 				}
@@ -372,7 +388,6 @@ public class WDWQueryEligibleProductsRules {
 				dtiResRespTO.add(dtiTicketTO);
 			}
 		}
-
 	}
 
 	/**
@@ -390,27 +405,24 @@ public class WDWQueryEligibleProductsRules {
 	 */
 	public static GuestProductTO setGuestProductDetails(
 			OTTicketInfoTO otTicketInfo, TicketTO dtiTktTO,
-			ArrayList<BigInteger> tktNbr) throws DTIException {
+				ArrayList<BigInteger> tktNbr) throws DTIException {
 
-		// This method is used for processing step 1 
+		// This method is used for processing step 1
 		GuestProductTO guestProductTO = new GuestProductTO();
-		ArrayList<DBProductTO> dbProductTO = null;
 
-		// Retrieving the product details for GuestProduct 
-		dbProductTO = ProductKey.getProductsfromTktNbr(tktNbr);
+		// Setting up GWDataRequestRespTO in case of WDW
+		guestProductTO.setOtTicketInfo(otTicketInfo);
+		
+		// Retrieving the product details for GuestProduct
+		ArrayList<DBProductTO> dbProductTO = ProductKey.getProductsfromTktNbr(tktNbr);
 
 		if ((dbProductTO != null) && (dbProductTO.size() > 0)) {
-			logger.sendEvent(
-					"GuestProduct found as ." + dbProductTO.toString(),
-					EventType.DEBUG, THISINSTANCE);
-			
+			logger.sendEvent("Product details found as ." + dbProductTO.toString(), EventType.DEBUG, THISINSTANCE);
+
 			guestProductTO.setDbproductTO(dbProductTO.get(0));
 
-			// Setting up GWDataRequestRespTO in case of DLR 
-			guestProductTO.setOtTicketInfo(otTicketInfo);
-
-		} 
-		// Return the GuestProductTO 
+		}
+		// Return the GuestProductTO
 		return guestProductTO;
 	}
 
@@ -464,23 +476,24 @@ public class WDWQueryEligibleProductsRules {
 				firstuseDate = Collections.min(useDates);
 			}
 		} else {
+			
 			// Rule 3 : Usages must have one entry 
 			return isInEligibleProductFlag = true;
 		}
 		try {
+			
 			// Rule 1 : UpgrdPathId is 0 
 			BigInteger upGrdPath = productTO.getUpgrdPathId();
 			if ((upGrdPath == null) || (upGrdPath.intValue() == 0)) {
 				
-				logger.sendEvent("UpgrdPathId value :: " + upGrdPath
-						+ " :: Validation Failed", EventType.DEBUG,THISINSTANCE);
+				logger.sendEvent("UpgrdPathId value :: " + upGrdPath + " :: Validation Failed", EventType.DEBUG,
+							THISINSTANCE);
 				return isInEligibleProductFlag = true;
 			}
 
 			// Rule 2 : VoidCode in the ATS Query Ticket response greater than 0 or less than or equal to 100
 			if ((voidCode != null) && ((voidCode > 0) && (voidCode <= 100))) {
-				logger.sendEvent("Void Code is ." + " :: Validation Failed",
-						EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("Void Code is ." + " :: Validation Failed", EventType.DEBUG, THISINSTANCE);
 				
 				return isInEligibleProductFlag = true;
 			}
@@ -488,8 +501,8 @@ public class WDWQueryEligibleProductsRules {
 			// Rule 3 : Bio metric Template must have one entry 
 			if (biometricTemplate == null) {
 				
-				logger.sendEvent("biometricTemplate is: +" + biometricTemplate
-						+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("biometricTemplate is: +" + biometricTemplate + ":: Validation Failed", EventType.DEBUG,
+							THISINSTANCE);
 				
 				return isInEligibleProductFlag = true;
 			}
@@ -498,9 +511,8 @@ public class WDWQueryEligibleProductsRules {
 			if ((endDate != null) && (isResident == false)
 					&& (getDayDifference(endDate) > 0)) {
 				
-				logger.sendEvent("ResidentInd is: " + isResident
-						+ "and Validity EndDate is :" + endDate
-						+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("ResidentInd is: " + isResident + "and Validity EndDate is :" + endDate
+							+ ":: Validation Failed", EventType.DEBUG, THISINSTANCE);
 				
 				return isInEligibleProductFlag = true;
 			}
@@ -509,10 +521,8 @@ public class WDWQueryEligibleProductsRules {
 			if ((firstuseDate != null) && (isResident == true)
 					&& (dayCount == 1) && (getDayDifference(firstuseDate) > 14)) {
 				
-				logger.sendEvent("ResidentInd is :" + isResident
-						+ "Day count is :" + dayCount + "and first use date "
-						+ ":" + firstuseDate + " validation Failed.",
-						EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("ResidentInd is :" + isResident + "Day count is :" + dayCount + "and first use date "
+							+ ":" + firstuseDate + " validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return isInEligibleProductFlag = true;
 			}
 
@@ -520,10 +530,8 @@ public class WDWQueryEligibleProductsRules {
 			if ((firstuseDate != null) && (isResident == true)
 					&& (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
 				
-				logger.sendEvent("ResidentInd is :" + isResident
-						+ "first use date is :" + firstuseDate
-						+ " and DayCount is: " + dayCount
-						+ "Validation Failed.", EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("ResidentInd is :" + isResident + "first use date is :" + firstuseDate
+							+ " and DayCount is: " + dayCount + "Validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return isInEligibleProductFlag = true;
 			}
 		} catch (Exception e) {
@@ -531,8 +539,8 @@ public class WDWQueryEligibleProductsRules {
 			logger.sendEvent("Exception executing validateInEligibleProducts: "
 					+ e.toString(), EventType.EXCEPTION, THISINSTANCE);
 			throw new DTIException(WDWQueryEligibleProductsRules.class,
-					DTIErrorCode.DTI_DATA_ERROR,
-					"Exception executing validateInEligibleProducts");
+					DTIErrorCode.TP_CRITICAL_FAILURE,
+					"Exception Occured in ValidateInEligibleProducts");
 		}
 	
 		return isInEligibleProductFlag;
@@ -566,31 +574,43 @@ public class WDWQueryEligibleProductsRules {
 	private static void setQueryEligibleResponseCommand(
 			GuestProductTO guestProductTO, TicketTO dtiTicketTO,
 			ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
+		
+		// Omni ticket Info <TicketInfo >fetched from the Query Ticket response 
 		OTTicketInfoTO otTicketInfo = guestProductTO.getOtTicketInfo();
 
 		// dbProductTO from GuestProductTO 
 		DBProductTO dbProductTO = guestProductTO.getDbproductTO();
+		
+		if (dbProductTO != null) {
+			// Prod Code
+			dtiTicketTO.setProdCode(dbProductTO.getPdtCode());
+
+			// ProdGuestType
+			dtiTicketTO.setGuestType(dbProductTO.getGuestType());
+
+			// Product Price
+			dtiTicketTO.setTktPrice(dbProductTO.getStandardRetailPrice());
+
+			// Product Tax
+			dtiTicketTO.setTktTax(dbProductTO.getStandardRetailTax());
+		}
+		
+		// Ticket from TicketInfo <TicketInfo>
 		OTTicketTO otTicketTO = otTicketInfo.getTicket();
 
 		// Tkt Item 
 		dtiTicketTO.setTktItem(otTicketInfo.getItem());
-
-		// Prod Code 
-		dtiTicketTO.setProdCode(dbProductTO.getPdtCode());
-
-		// ProdGuestType 
-		dtiTicketTO.setGuestType(dbProductTO.getGuestType());
-
+		
 		// Ticket Demo 
 		DemographicsTO dtiDemoTO = new DemographicsTO();
 		ArrayList<OTFieldTO> otFieldList = new ArrayList<OTFieldTO>();
 		if ((otTicketInfo != null)
 				&& (otTicketInfo.getSeasonPassDemo() != null)) {
 			otFieldList = otTicketInfo.getSeasonPassDemo().getDemoDataList();
+			
+			logger.sendEvent("DemoDataList found with size:" + otFieldList.size(), EventType.DEBUG, THISINSTANCE);
 		}
 		
-		logger.sendEvent("demoDataList found :" + otFieldList, EventType.DEBUG,
-				THISINSTANCE);
 		for (/* each */OTFieldTO anOTField : /* in */otFieldList) {
 			
 			// FirstName 
@@ -683,21 +703,17 @@ public class WDWQueryEligibleProductsRules {
 			}
 
 			// DOB
-			if (anOTField.getFieldIndex().equals(
-					OTFieldTO.WDW_TKTDEMO_DTE_OF_BIRTH)) {
+			if (anOTField.getFieldIndex().equals(OTFieldTO.WDW_TKTDEMO_DTE_OF_BIRTH)) {
 				if (anOTField.getFieldValue() != null) {
 					String dobString = anOTField.getFieldValue();
 					try {
-						dtiDemoTO.setDateOfBirth(OTCommandTO
-								.convertTicketDOB(dobString));
+						dtiDemoTO.setDateOfBirth(OTCommandTO.convertTicketDOB(dobString));
 					} catch (ParseException pe) {
-						logger.sendEvent("Date formate is not of proper type ",
-								EventType.EXCEPTION, THISINSTANCE);
-						throw new DTIException(
-								WDWQueryEligibleProductsRules.class,
-								DTIErrorCode.DTI_DATA_ERROR,
-								"Ticket provider returned XML with an invalid ticket demographic date of birth: "
-										+ pe.toString());
+
+						logger.sendEvent("Date formate is not of proper type ", EventType.EXCEPTION, THISINSTANCE);
+						throw new DTIException(WDWQueryEligibleProductsRules.class, DTIErrorCode.TP_CRITICAL_FAILURE,
+									"Ticket provider returned XML with an invalid ticket demographic date of birth: "
+												+ pe.toString());
 					}
 				}
 			}
@@ -714,12 +730,6 @@ public class WDWQueryEligibleProductsRules {
 			dtiTicketTO.setTktValidityValidEnd(otTicketInfo
 					.getValidityEndDate());
 		}
-
-		// Product Price 
-		dtiTicketTO.setTktPrice(dbProductTO.getStandardRetailPrice());
-
-		// Product Tax
-		dtiTicketTO.setTktTax(dbProductTO.getStandardRetailTax());
 
 		// Ticket Status BIOMETRIC and PAYPLAN 
 		ArrayList<TktStatusTO> tktStatusList = dtiTicketTO.getTktStatusList();
@@ -771,7 +781,14 @@ public class WDWQueryEligibleProductsRules {
 		if (StringUtils.isNotBlank(otTicketTO.getExternalTicketCode())) {
 			dtiTicketTO.setExternal(otTicketTO.getExternalTicketCode());
 		}
-
+		
+		// if result type is INELIGIBLE or NOPRODUCTS no need for checking or displaying upgrdable productList
+		if ((dtiTicketTO.getResultType() == ResultType.INELIGIBLE)
+					|| (dtiTicketTO.getResultType() == ResultType.NOPRODUCTS)) {
+			return;
+		}
+		
+		
 		// Usages Information : first usage date
 		ArrayList<GregorianCalendar> usageDates = new ArrayList<>();
 		
@@ -787,8 +804,7 @@ public class WDWQueryEligibleProductsRules {
 		// FirstDate String 
 		GregorianCalendar firstUseDate = Collections.min(usageDates);
 
-		logger.sendEvent("upgradedProductTOList found :"
-				+ upgradedProductTOList, EventType.DEBUG, THISINSTANCE);
+		logger.sendEvent("upgradedProductTOList found :",EventType.DEBUG, THISINSTANCE);
 		
 		// Eligible product 
 		if (upgradedProductTOList != null) {
@@ -835,11 +851,12 @@ public class WDWQueryEligibleProductsRules {
 								.newInstance().newXMLGregorianCalendar(gc));
 					}
 				} catch (Exception e) {
+					
 					logger.sendEvent("Exception caught while parsing the first Usage Date "
 							+ e.toString(), EventType.EXCEPTION,THISINSTANCE);
 					throw new DTIException(WDWQueryEligibleProductsRules.class,
-							DTIErrorCode.DTI_DATA_ERROR,
-							"Provider responded with a non-numeric status code.");
+							DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+							"Provider responded with a non-numeric usage Date.");
 				}
 				// add the eligible product element to the list 
 				dtiTicketTO.addEligibleProducts(eligibleProductsTO);
@@ -847,6 +864,7 @@ public class WDWQueryEligibleProductsRules {
 		}
 	}
 
+	
 	/**
 	 * If a type of transaction has a specific number of provider centric rules,
 	 * implement them here, but if there are a very limited set of rules, mostly

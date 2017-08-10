@@ -223,107 +223,112 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				// Step 3A : If Picture is not present in response marking resultType as INELIGIBLE
 				if (globalGuestProduct.getGwDataRespTO().getHasPicture() == null) {
-					
+
 					// TODO need to verify if Haspicture is NO ||
 					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
 					// == 0)) {
-					
-					logger.sendEvent("Has Picture is not found ",
-							EventType.DEBUG, THISINSTANCE);
+
+					logger.sendEvent("Has Picture is not found ", EventType.DEBUG, THISINSTANCE);
 					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					
+					// populating the ticket information , provide the product catalog as null
+					setTicketValues(globalGuestProduct, dtiTktTO, null);
+
+					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
 				}
 
-				// Check usage
+				// Check usage if no usage is there put the result type as INELIGIBLE
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
-						&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
+							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
 
 					if (globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0) {
 
-						logger.sendEvent("No Usage is there ", EventType.DEBUG,THISINSTANCE);
+						logger.sendEvent("No Usage is there ", EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+
+						// populating the ticket information , provide the product catalog as null
+						setTicketValues(globalGuestProduct, dtiTktTO, null);
+
+						return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
 					}
-					// TODO verify if the transaction should stop if step 3 A is
-					// INELIGIBLE
 				}
 
-				// Step 4 :: Check the Upgrade PLU's from DLR response and filter with list from UpgradeCatalogTO
-				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct
-						.getGwDataRespTO().getUpgradePLUList();
+				// Step 4 :: Check the Upgrade PLU's from DLR response and filter
+				// with list from UpgradeCatalogTO
+				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
-				if ((upGradedPLuList != null) && (upGradedPLuList.size() > 0)) {
+				if ((upGradedPLuList == null) || (upGradedPLuList.size() == 0)) {
 
-					if (globalUpgradeProduct.getProductListCount() > 0) {
+					// if no upgrade PLUs from the response mark the result as INELIGIBLE and stop transaction
+					logger.sendEvent("PLU List from the DLR response is empty ", EventType.DEBUG, THISINSTANCE);
 
+					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+
+					// populating the ticket information , provide the product catalog as null
+					setTicketValues(globalGuestProduct, dtiTktTO, null);
+
+					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+
+				} else if (globalUpgradeProduct.getProductListCount() == 0) {
+
+						// if no upgrade product found mark the result as INELIGIBLE and stop transaction
+						logger.sendEvent("No Upgradable Product found ", EventType.DEBUG, THISINSTANCE);
+						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
+
+						// populating the ticket information , provide the product catalog as null
+						setTicketValues(globalGuestProduct, dtiTktTO, null);
+
+						return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+						
+					} else {
 						ArrayList<String> PLUList = new ArrayList<String>();
 						for (UpgradePLU upgradePLU : upGradedPLuList) {
 							PLUList.add(upgradePLU.getPLU());
 						}
 
-						logger.sendEvent("Orignal List of Salable Product Obtaned "+
-						globalUpgradeProduct.getProductListCount(),EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("Orignal List of Salable Product." + globalUpgradeProduct.getProductListCount(),
+									EventType.DEBUG, THISINSTANCE);
 
-						// Filter for the PLU's from response (Step 1) with what obtained Step 2
+						// Comparing the PLU's from response (Step 1) with product catalog detail obtained in Step 2
 						globalUpgradeProduct.retainDLRPLUs(PLUList);
 
-						logger.sendEvent("Final List of Salable Product Obtaned "+ globalUpgradeProduct.getProductListCount(),
-								EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("Final List of Salable Product." + globalUpgradeProduct.getProductListCount(),
+									EventType.DEBUG, THISINSTANCE);
 
-						// if the product list is empty put the result type as INELIGIBLE
+						// if the product list obtained after comparison is empty put the result type as  NOPRODUCTS
 						if (globalUpgradeProduct.getProductListCount() == 0) {
-							dtiTktTO.setResultType(ResultType.INELIGIBLE);
+							dtiTktTO.setResultType(ResultType.NOPRODUCTS);
+
+							// populating the ticket information , provide the product catalog as null
+							setTicketValues(globalGuestProduct, dtiTktTO, null);
+
+							return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
 						}
-					} else {
-
-						//if no upgrade product found mark the result as INELIGIBLE and stop transaction
-						logger.sendEvent("No Upgradable Product found ",
-								EventType.DEBUG, THISINSTANCE);
-						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
-
-						dtiTktTO.setTktItem(new BigInteger(ITEM_1));
-						String visualId = gwDataRespTO.getVisualID();
-						dtiTktTO.setExternal(visualId);
-
-						// TODO need to verify this with do we need to stop and
-						// skip step 5
-						return getQueryEligibleCommand(dtiTktTO, dtiRespTO,
-								dtiTxn);
 					}
+				
 
-				} else {
-					
-					// if no upgrade PLUs from the response mark the result as INELIGIBLE and stop transaction
-					logger.sendEvent("PLU List from the DLR response is empty ",EventType.DEBUG, THISINSTANCE);
-
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
-
-					dtiTktTO.setTktItem(new BigInteger(ITEM_1));
-					String visualId = gwDataRespTO.getVisualID();
-					dtiTktTO.setExternal(visualId);
-					// TODO need to verify this with do we need to stop and skip step 5
-					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
-				}
-
-				// Step 5 : Mapping the globalGuestProduct and globalUpgradeProduct to response
-				setTicketValues(globalGuestProduct, dtiTktTO,
-						globalUpgradeProduct.getProductList());
+				// Step 5 : Mapping the globalGuestProduct and globalUpgradeProduct
+				// to response
+				setTicketValues(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
 
 				// set the result type as ELIGIBLE if result type is not present
 				if (dtiTktTO.getResultType() == null) {
 					dtiTktTO.setResultType(ResultType.ELIGIBLE);
 				}
-
 			} else {
 
-				logger.sendEvent("No PLU's List  fetched from DTI Ticketing System",
-						EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
 				dtiTktTO.setResultType(ResultType.INELIGIBLE);
+
+				// populating the ticket information , provide the product catalog
+				// as null
+				setTicketValues(globalGuestProduct, dtiTktTO, null);
 			}
 		} else {
 
-			logger.sendEvent("No Ticket Type Information fetched",
-					EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRQueryEligibilityProductsRules.class,
-					DTIErrorCode.INVALID_TICKET_ID, "In valid Ticket Id ");
+			logger.sendEvent("No Ticket Type Information fetched", EventType.EXCEPTION, THISINSTANCE);
+			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.INVALID_TICKET_ID,
+						"In valid Ticket Id ");
 
 		}
 		return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
@@ -448,231 +453,225 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 */
 	private static void setTicketValues(GuestProductTO guestProductTO,
 			TicketTO dtiTktTO, ArrayList<DBProductTO> upgradedProductTOList)
-			throws DTIException {
+ throws DTIException {
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
 
 		DemographicsTO ticketDemo = new DemographicsTO();
 		EligibleProductsTO eligibleProductsTO;
 
-		// Guest Product Detail 
+		// Guest Product Detail
 		DBProductTO dbProductTO = guestProductTO.getDbproductTO();
 		GWDataRequestRespTO gwDataRespTO = guestProductTO.getGwDataRespTO();
 
 		if (dbProductTO != null) {
-			// Set TktItem: Always only one. 
-			dtiTktTO.setTktItem(new BigInteger(ITEM_1));
 
-			// Set TktID (for DLR it's External) 
-			String visualId = gwDataRespTO.getVisualID();
-			dtiTktTO.setExternal(visualId);
-
+			// Prod Code
 			dtiTktTO.setProdCode(dbProductTO.getPdtCode());
 
-			// ProdGuestType 
+			// ProdGuestType
 			dtiTktTO.setGuestType(dbProductTO.getGuestType());
 
-			// Contact 
-			if ((gwDataRespTO.getContact() != null)
-					&& (gwDataRespTO.getContact().size() > 0)) {
+			// SRP Price
+			dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
 
-				Contact contact = gwDataRespTO.getContact().get(0);
-
-				// FirstName 
-				if (contact.getFirstName() != null) {
-					ticketDemo.setFirstName(contact.getFirstName());
-				}
-
-				// LastName 
-				if (contact.getLastName() != null) {
-					ticketDemo.setLastName(contact.getLastName());
-				}
-
-				// Addr1 
-				if (contact.getStreet1() != null) {
-					ticketDemo.setAddr1(contact.getStreet1());
-				}
-
-				// Addr2 
-				if (contact.getStreet2() != null) {
-					ticketDemo.setAddr2(contact.getStreet2());
-				}
-
-				// City 
-				if (contact.getCity() != null) {
-					ticketDemo.setCity(contact.getCity());
-				}
-
-				// State 
-				if (contact.getState() != null) {
-					ticketDemo.setState(contact.getState());
-				}
-
-				// ZIP 
-				if (contact.getZip() != null) {
-					ticketDemo.setZip(contact.getZip());
-				}
-
-				// Country 
-				if (contact.getCountryCode() != null) {
-					ticketDemo.setCountry(contact.getCountryCode());
-				}
-
-				// Telephone 
-				if (contact.getPhone() != null) {
-					ticketDemo.setTelephone(contact.getPhone());
-				}
-
-				// Cell 
-				if (contact.getCell() != null) {
-					ticketDemo.setCellPhone(contact.getCell());
-				}
-
-				// Email 
-				if (contact.getEmail() != null) {
-					ticketDemo.setEmail(contact.getEmail());
-				}
-
-				// Gender 
-				if (contact.getGender() != null) {
-
-					if (contact.getGender().equalsIgnoreCase("Male")) {
-						ticketDemo.setGender(GenderType.MALE);
-					} else if (contact.getGender().equalsIgnoreCase("Female")) {
-						ticketDemo.setGender(GenderType.FEMALE);
-					} else {
-						ticketDemo.setGender(GenderType.UNSPECIFIED);
-					}
-				}
-
-				// DOB 
-				if (contact.getDob() != null) {
-					ticketDemo.setDateOfBirth(contact.getDob());
-				}
-
-				dtiTktTO.addTicketDemographic(ticketDemo);
-
-			}
-			// Demographics Info end
+			// SRP Tax
+			dtiTktTO.setTktTax(dbProductTO.getStandardRetailTax());
 
 			// TktValidity ValidStart and ValidEnd
 			boolean startDateSet = false;
-			if (gwDataRespTO.getItemKind() == GWDataRequestRespTO.ItemKind.REGULAR_TICKET) {
-				if ((gwDataRespTO.getDateSold() != null) || (gwDataRespTO.getTicketDate() != null) 
+			if ((gwDataRespTO.getDateSold() != null) || (gwDataRespTO.getTicketDate() != null)
 						|| (gwDataRespTO.getStartDateTime() != null)) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartSaleDate());
-					startDateSet = true;
-				}
-
-				boolean endDateSet = false;
-				if ((gwDataRespTO.getExpirationDate() != null) || (gwDataRespTO.getEndDateTime() != null)) {
-					dtiTktTO.setTktValidityValidEnd(dbProductTO
-							.getEndValidDate());
-					endDateSet = true;
-				}
-				
-	           // Note: HARD CODED!!! Arbitrarily set the end date if the start date is set. This conforms with the other provider.
-				if ((startDateSet == true) && (endDateSet == false)) {
-					dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(2099,
-							11, 31));
-				}
-			} else {
-				if (gwDataRespTO.getDateOpened() != null) {
-					dtiTktTO.setTktValidityValidStart(dbProductTO
-							.getStartValidDate());
-				}
-
-				if (gwDataRespTO.getValidUntil() != null) {
-					dtiTktTO.setTktValidityValidEnd(dbProductTO
-							.getStartValidDate());
-				}
+				dtiTktTO.setTktValidityValidStart(dbProductTO.getStartSaleDate());
+				startDateSet = true;
 			}
 
-			// SRP Price 
-			dtiTktTO.setTktPrice(dbProductTO.getStandardRetailPrice());
-
-			// SRP Tax 
-			dtiTktTO.setTktTax(dbProductTO.getStandardRetailTax());
-
-			// Ticket Status PICTURE YES or NO and PAY Plan Present YES or NO
-
-			ArrayList<TktStatusTO> tktStatusList = dtiTktTO.getTktStatusList();
-			TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
-
-			// Picture 
-			tktStatus.setStatusItem(PICTURE);
-
-			if ((gwDataRespTO.getHasPicture() != null)
-					&& (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
-				tktStatus.setStatusValue(YES);
-			} else {
-				tktStatus.setStatusValue(NO);
+			boolean endDateSet = false;
+			if ((gwDataRespTO.getExpirationDate() != null) || (gwDataRespTO.getEndDateTime() != null)) {
+				dtiTktTO.setTktValidityValidEnd(dbProductTO.getEndValidDate());
+				endDateSet = true;
 			}
-			tktStatusList.add(tktStatus);
 
-			tktStatusList = dtiTktTO.getTktStatusList();
-			tktStatus = dtiTktTO.new TktStatusTO();
-
-			// Pay plan 
-			tktStatus.setStatusItem(PAYPLAN);
-			if ((gwDataRespTO.getPayPlan() != null)
-					&& (gwDataRespTO.getPayPlan().compareToIgnoreCase(YES) == 0)) {
-				tktStatus.setStatusValue(YES);
-			} else {
-				tktStatus.setStatusValue(NO);
+			// Note: HARD CODED!!! Arbitrarily set the end date if the start date
+			// is set. This conforms with the other provider.
+			if ((startDateSet == true) && (endDateSet == false)) {
+				dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(2099, 11, 31));
 			}
-			tktStatusList.add(tktStatus);
 		}
+
+		// Set TktItem: Always only one.
+		dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+
+		// Set TktID (for DLR it's External)
+		String visualId = gwDataRespTO.getVisualID();
+		dtiTktTO.setExternal(visualId);
+
+		// Contact
+		if ((gwDataRespTO.getContact() != null) && (gwDataRespTO.getContact().size() > 0)) {
+
+			Contact contact = gwDataRespTO.getContact().get(0);
+
+			// FirstName
+			if (contact.getFirstName() != null) {
+				ticketDemo.setFirstName(contact.getFirstName());
+			}
+
+			// LastName
+			if (contact.getLastName() != null) {
+				ticketDemo.setLastName(contact.getLastName());
+			}
+
+			// Addr1
+			if (contact.getStreet1() != null) {
+				ticketDemo.setAddr1(contact.getStreet1());
+			}
+
+			// Addr2
+			if (contact.getStreet2() != null) {
+				ticketDemo.setAddr2(contact.getStreet2());
+			}
+
+			// City
+			if (contact.getCity() != null) {
+				ticketDemo.setCity(contact.getCity());
+			}
+
+			// State
+			if (contact.getState() != null) {
+				ticketDemo.setState(contact.getState());
+			}
+
+			// ZIP
+			if (contact.getZip() != null) {
+				ticketDemo.setZip(contact.getZip());
+			}
+
+			// Country
+			if (contact.getCountryCode() != null) {
+				ticketDemo.setCountry(contact.getCountryCode());
+			}
+
+			// Telephone
+			if (contact.getPhone() != null) {
+				ticketDemo.setTelephone(contact.getPhone());
+			}
+
+			// Cell
+			if (contact.getCell() != null) {
+				ticketDemo.setCellPhone(contact.getCell());
+			}
+
+			// Email
+			if (contact.getEmail() != null) {
+				ticketDemo.setEmail(contact.getEmail());
+			}
+
+			// Gender
+			if (contact.getGender() != null) {
+
+				if (contact.getGender().equalsIgnoreCase("Male")) {
+					ticketDemo.setGender(GenderType.MALE);
+				} else if (contact.getGender().equalsIgnoreCase("Female")) {
+					ticketDemo.setGender(GenderType.FEMALE);
+				} else {
+					ticketDemo.setGender(GenderType.UNSPECIFIED);
+				}
+			}
+
+			// DOB
+			if (contact.getDob() != null) {
+				ticketDemo.setDateOfBirth(contact.getDob());
+			}
+
+			dtiTktTO.addTicketDemographic(ticketDemo);
+
+		}
+		// Demographics Info end
+
 		
+		
+
+		// Ticket Status PICTURE YES or NO and PAY Plan Present YES or NO
+
+		ArrayList<TktStatusTO> tktStatusList = dtiTktTO.getTktStatusList();
+		TktStatusTO tktStatus = dtiTktTO.new TktStatusTO();
+
+		// Picture
+		tktStatus.setStatusItem(PICTURE);
+
+		if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
+			tktStatus.setStatusValue(YES);
+		} else {
+			tktStatus.setStatusValue(NO);
+		}
+		tktStatusList.add(tktStatus);
+
+		tktStatusList = dtiTktTO.getTktStatusList();
+		tktStatus = dtiTktTO.new TktStatusTO();
+
+		// Pay plan
+		tktStatus.setStatusItem(PAYPLAN);
+		if ((gwDataRespTO.getPayPlan() != null) && (gwDataRespTO.getPayPlan().compareToIgnoreCase(YES) == 0)) {
+			tktStatus.setStatusValue(YES);
+		} else {
+			tktStatus.setStatusValue(NO);
+		}
+		tktStatusList.add(tktStatus);
+
 		ArrayList<GregorianCalendar> useTimeList = new ArrayList<GregorianCalendar>();
 
 		// for the first use Date
-		if ((gwDataRespTO.getUsageRecords() != null)
-				&& (gwDataRespTO.getUsageRecords().size() > 0)) {
+		if ((gwDataRespTO.getUsageRecords() != null) && (gwDataRespTO.getUsageRecords().size() > 0)) {
 
 			for (UsageRecord usage : gwDataRespTO.getUsageRecords()) {
 				useTimeList.add(usage.getUseTime());
 			}
 		}
-		
+
 		// Sorting to get the first Usage Date
 		Collections.sort(useTimeList);
 
 		GregorianCalendar firstUsageDateValue = useTimeList.get(0);
-		logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(),
-				EventType.DEBUG, THISINSTANCE);
+		logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(), EventType.DEBUG, THISINSTANCE);
 
-		// Eligible products 
+		// Eligible products
 		if ((upgradedProductTOList != null) && (upgradedProductTOList.size() > 0)) {
 			for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {
 
 				eligibleProductsTO = new EligibleProductsTO();
 
-				// set the product code 
+				// set the product code
 				eligibleProductsTO.setProdCode(productTO.getPdtCode());
 
-				// set the actual product price 
-				prodPrice = dbProductTO.getUnitPrice();
+				// set the actual product price
+				prodPrice = productTO.getUnitPrice();
 
-				eligibleProductsTO.setProdPrice(prodPrice.toString());
+				eligibleProductsTO.setProdPrice(String.valueOf(prodPrice));
 
-				// set the actual product tax 
-				prodTax = dbProductTO.getTax();
+				// set the actual product tax
+				prodTax = productTO.getTax();
 
 				eligibleProductsTO.setProdTax(prodTax);
+				
+				//Upgraded Price
+				if ((guestProductTO.getDbproductTO() != null)
+							&& (guestProductTO.getDbproductTO().getStandardRetailPrice() != null)) {
+					// set the upgraded product price
+					prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
 
-				// set the upgraded product price 
-				prodUpgradePrice = prodPrice.subtract(guestProductTO
-						.getDbproductTO().getStandardRetailPrice());
+					eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
+				}
+				
+				//Upgraded Tax
+				if ((guestProductTO.getDbproductTO() != null)
+							&& (guestProductTO.getDbproductTO().getStandardRetailTax() != null)) {
+					// set the upgraded product tax
+					prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
 
-				eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
+					eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
 
-				// set the upgraded product tax 
-				prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
-
-				eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
-
-				// set the validity 
+				}
+				
+				// set the validity
 				try {
 					Integer dayCount = productTO.getDayCount();
 
@@ -686,23 +685,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						GregorianCalendar gc = new GregorianCalendar();
 						gc.setTime(calendar.getTime());
 
-						eligibleProductsTO.setValidEnd(DatatypeFactory
-								.newInstance().newXMLGregorianCalendar(gc));
+						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
 					}
 				} catch (Exception e) {
-					logger.sendEvent("Exception caught while parsing the first Usage Date "
-									+ e.toString(), EventType.EXCEPTION,THISINSTANCE);
-					throw new DTIException(
-							DLRQueryEligibilityProductsRules.class,
-							DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-							"Internal Error: Invalid First Use Date");
+					logger.sendEvent("Exception caught while parsing the first Usage Date " + e.toString(),
+								EventType.EXCEPTION, THISINSTANCE);
+					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+								"Provider responded with a non-numeric usage Date.");
 				}
-				
-				// add the eligible product element to the list 
+
+				// add the eligible product element to the list
 				dtiTktTO.addEligibleProducts(eligibleProductsTO);
 
-				logger.sendEvent("Setting all the data in GuestProductTo",
-						EventType.DEBUG, dtiTktTO.toString());
+				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
 		}
 	}

@@ -228,68 +228,68 @@ public class WDWBusinessRules {
     String xmlRequest = null;
     TransactionType requestType = dtiTxn.getTransactionType();
 
-    switch (requestType) {
+		switch (requestType) {
 
-    case QUERYTICKET:
-      xmlRequest = WDWQueryTicketRules.transformRequest(dtiTxn);
-      break;
+		case QUERYTICKET:
+			xmlRequest = WDWQueryTicketRules.transformRequest(dtiTxn);
+			break;
 
-    case UPGRADEALPHA:
-      xmlRequest = WDWUpgradeAlphaRules.transformRequest(dtiTxn);
-      break;
+		case UPGRADEALPHA:
+			xmlRequest = WDWUpgradeAlphaRules.transformRequest(dtiTxn);
+			break;
 
-    case VOIDTICKET:
-      xmlRequest = WDWVoidTicketRules.transformRequest(dtiTxn);
-      break;
+		case VOIDTICKET:
+			xmlRequest = WDWVoidTicketRules.transformRequest(dtiTxn);
+			break;
 
-    case RESERVATION:
-      xmlRequest = WDWReservationRules.transformRequest(dtiTxn);
-      break;
+		case RESERVATION:
+			xmlRequest = WDWReservationRules.transformRequest(dtiTxn);
+			break;
 
-    case UPDATETICKET:
-      xmlRequest = WDWUpdateTicketRules.transformRequest(dtiTxn);
-      break;
+		case UPDATETICKET:
+			xmlRequest = WDWUpdateTicketRules.transformRequest(dtiTxn);
+			break;
 
-    case UPDATETRANSACTION:
-      xmlRequest = WDWUpdateTransactionRules.transformRequest(dtiTxn);
-      break;
+		case UPDATETRANSACTION:
+			xmlRequest = WDWUpdateTransactionRules.transformRequest(dtiTxn);
+			break;
 
-    case CREATETICKET:
-      xmlRequest = WDWCreateTicketRules.transformRequest(dtiTxn);
-      break;
+		case CREATETICKET:
+			xmlRequest = WDWCreateTicketRules.transformRequest(dtiTxn);
+			break;
 
-    case UPGRADEENTITLEMENT: // 2.10
-      xmlRequest = WDWUpgradeEntitlementRules.transformRequest(dtiTxn);
-      break;
+		case UPGRADEENTITLEMENT: // 2.10
+			xmlRequest = WDWUpgradeEntitlementRules.transformRequest(dtiTxn);
+			break;
 
-    case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
-      xmlRequest = WDWAssociateMediaToAccountRules.transformRequest(dtiTxn);
-      break;
+		case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
+			xmlRequest = WDWAssociateMediaToAccountRules.transformRequest(dtiTxn);
+			break;
 
-    case TICKERATEENTITLEMENT: // 2.16.1 BIEST001
-      xmlRequest = WDWTickerateEntitlementRules.transformRequest(dtiTxn);
-      break;
+		case TICKERATEENTITLEMENT: // 2.16.1 BIEST001
+			xmlRequest = WDWTickerateEntitlementRules.transformRequest(dtiTxn);
+			break;
 
-    case RENEWENTITLEMENT: // As of 2.16.1, JTL
-      xmlRequest = WDWRenewEntitlementRules.transformRequest(dtiTxn);
-      break;
+		case RENEWENTITLEMENT: // As of 2.16.1, JTL
+			xmlRequest = WDWRenewEntitlementRules.transformRequest(dtiTxn);
+			break;
 
-    case QUERYRESERVATION: // As of 2.16.1 BIEST001
-      xmlRequest = WDWQueryReservationRules.transformRequest(dtiTxn);
-      break;
-      
-    case VOIDRESERVATION: // As of 2.16.3, JTL
-      xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
-      break;  
-      
-    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade Service
-        xmlRequest = WDWQueryEligibleProductsRules.transformRequest(dtiTxn);
-        break;  
+		case QUERYRESERVATION: // As of 2.16.1 BIEST001
+			xmlRequest = WDWQueryReservationRules.transformRequest(dtiTxn);
+			break;
 
-    default:
-      throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
-          "Invalid WDW transaction type sent to DTI Gateway.  Unsupported.");
-    }
+		case VOIDRESERVATION: // As of 2.16.3, JTL
+			xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
+			break;
+
+		case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade Service AR
+			xmlRequest = WDWQueryEligibleProductsRules.transformRequest(dtiTxn);
+			break;
+
+		default:
+			throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
+						"Invalid WDW transaction type sent to DTI Gateway.  Unsupported.");
+		}
 
     return xmlRequest;
   }
@@ -1233,125 +1233,131 @@ public class WDWBusinessRules {
       OTTransactionType requestType = otCmdTO.getTxnType();
       TransactionType dtiTransType = dtiTxn.getTransactionType();
 
-      switch (requestType) {
-      
-      case QUERYTICKET:
-    	  
-    	  // Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
-       if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYTICKET){
-    	   
-    	  WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-       }
-       
-    	// if the transaction type is of Query Eligible Products
-       else if(dtiTxn.getTransactionType()==DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS){
-    	   
-    	  WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-       }
-       break;
+			switch (requestType) {
 
-      case UPGRADETICKET:
+			case QUERYTICKET:
 
-        /*
-         * With 2.10, the complexity here increases slightly as a single
-         * response type from ATS can be translated into two different commands
-         * with DTI. The answer here is NOT to create "faux" ATS return
-         * transaction types (which don't exist) but rather to condition
-         * translation of the response based upon the transaction currently
-         * understood by the DTI Transaction Object. It's the ultimate arbiter
-         * of what the in-bound command context was supposed to be.
-         */
-        if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.UPGRADEALPHA) {
-          WDWUpgradeAlphaRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          // Always update upgrade alpha responses in reporting
-          // tables.
-          ArchiveKey.updateUpgradeAlphaResponse(dtiTxn);
+				// Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
+				if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
-        } else { // Upgrade Entitlement
-          WDWUpgradeEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        }
-        break;
+					WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				}
 
-      case VOIDTICKET:
-        WDWVoidTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        // Always update upgrade alpha responses in reporting tables.
-        ArchiveKey.updateVoidTicketResponse(dtiTxn);
-        break;
+				// if the transaction type is of Query Eligible Products
+				else if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS) {
 
-      case MANAGERESERVATION: // As of 2.16.1 BIEST001
+					WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				}
+				break;
 
-        switch (dtiTransType) {
+			case UPGRADETICKET:
 
-        case RESERVATION:
-          WDWReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          break;
+				/*
+				 * With 2.10, the complexity here increases slightly as a single
+				 * response type from ATS can be translated into two different
+				 * commands with DTI. The answer here is NOT to create "faux" ATS
+				 * return transaction types (which don't exist) but rather to
+				 * condition translation of the response based upon the transaction
+				 * currently understood by the DTI Transaction Object. It's the
+				 * ultimate arbiter of what the in-bound command context was
+				 * supposed to be.
+				 */
+				if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.UPGRADEALPHA) {
+					WDWUpgradeAlphaRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					// Always update upgrade alpha responses in reporting
+					// tables.
+					ArchiveKey.updateUpgradeAlphaResponse(dtiTxn);
 
-        case QUERYRESERVATION:
-          WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          break;
-          
-        case VOIDRESERVATION:
-          WDWVoidReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          break;          
+				} else { // Upgrade Entitlement
+					WDWUpgradeEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				}
+				break;
 
-        default:
-          break;
+			case VOIDTICKET:
+				WDWVoidTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				// Always update upgrade alpha responses in reporting tables.
+				ArchiveKey.updateVoidTicketResponse(dtiTxn);
+				break;
 
-        }
+			case MANAGERESERVATION: // As of 2.16.1 BIEST001
 
-        break;
+				switch (dtiTransType) {
 
-      case UPDATETICKET:
-        WDWUpdateTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+				case RESERVATION:
+					WDWReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					break;
 
-      case UPDATETRANSACTION:
-        WDWUpdateTransactionRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+				case QUERYRESERVATION:
+					WDWQueryReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					break;
 
-      case CREATETRANSACTION:
-        WDWCreateTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+				case VOIDRESERVATION:
+					WDWVoidReservationRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					break;
 
-      case MULTIENTITLEMENTACCOUNT:
+				default:
+					break;
 
-        // 2.16.1 BIEST001
-        // The MultiEntitlementAccount signature is quite diverse in the number
-        // of functions
-        // that it controls in the RFID space. It provides the ability to Create
-        // Entitlements (legacy and electronic),
-        // Transfer Entitlements from one account to another, Order Entitlements
-        // so that certain tickets have usage applied first,
-        // Create Electronic Accounts w/ or w/out media and entitlements on
-        // them, Query Account, Merge the contents of one account
-        // to a different account, Change the Status of an account, Associate
-        // Media to an Account, Deassociate Media from an Account,
-        // and Change the Status of Media.
+				}
 
-        // The response comes back identical for all of these things...but we
-        // need to know what function was originally called
+				break;
 
-        switch (dtiTransType) {
-        case ASSOCIATEMEDIATOACCOUNT:
-          WDWAssociateMediaToAccountRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          break;
-        case TICKERATEENTITLEMENT:
-          WDWTickerateEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-          break;
-        default:
-          break;
-        }
+			case UPDATETICKET:
+				WDWUpdateTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				break;
 
-        break;
+			case UPDATETRANSACTION:
+				WDWUpdateTransactionRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				break;
 
-      case RENEWTICKET: // As of 2.16.1, JTL
-        WDWRenewEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
-        break;
+			case CREATETRANSACTION:
+				WDWCreateTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				break;
 
-      default:
-        throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
-            "Invalid WDW transaction response sent to DTI Gateway.  Unsupported.");
-      }
+			case MULTIENTITLEMENTACCOUNT:
+
+				// 2.16.1 BIEST001
+				// The MultiEntitlementAccount signature is quite diverse in the
+				// number
+				// of functions
+				// that it controls in the RFID space. It provides the ability to
+				// Create
+				// Entitlements (legacy and electronic),
+				// Transfer Entitlements from one account to another, Order
+				// Entitlements
+				// so that certain tickets have usage applied first,
+				// Create Electronic Accounts w/ or w/out media and entitlements on
+				// them, Query Account, Merge the contents of one account
+				// to a different account, Change the Status of an account,
+				// Associate
+				// Media to an Account, Deassociate Media from an Account,
+				// and Change the Status of Media.
+
+				// The response comes back identical for all of these things...but
+				// we
+				// need to know what function was originally called
+
+				switch (dtiTransType) {
+				case ASSOCIATEMEDIATOACCOUNT:
+					WDWAssociateMediaToAccountRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					break;
+				case TICKERATEENTITLEMENT:
+					WDWTickerateEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+					break;
+				default:
+					break;
+				}
+
+				break;
+
+			case RENEWTICKET: // As of 2.16.1, JTL
+				WDWRenewEntitlementRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
+				break;
+
+			default:
+				throw new DTIException(TransformRules.class, DTIErrorCode.COMMAND_NOT_AUTHORIZED,
+							"Invalid WDW transaction response sent to DTI Gateway.  Unsupported.");
+			}
 
     }
 
