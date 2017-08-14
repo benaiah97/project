@@ -13,8 +13,7 @@
   </wsdl:message>
   <wsdl:message name="TransmissionResponse">
     <wsdl:part name="TransmissionResponse" element="transAns:Transmission"/>
-  </wsdl:message>
-  <wsdl:portType name="DisneyTicketingServicePortType">
+  </wsdl:message><wsdl:portType name="DisneyTicketingServicePortType">
     <wsdl:operation name="transmission">
       <wsdl:input message="tns:TransmissionRequest"/>
       <wsdl:output message="tns:TransmissionResponse"/>
