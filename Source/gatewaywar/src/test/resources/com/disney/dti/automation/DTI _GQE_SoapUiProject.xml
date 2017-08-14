@@ -12208,11 +12208,11 @@ datemmddyyyy=sdf.format(date)
 
 testRunner.testCase.setPropertyValue("factor", String.valueOf(1))
 
-def uniqueIdA = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueIdA)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
 //Extract First 20 character
 Payload_ID = workString.substring(0,20)
 
@@ -12663,11 +12663,11 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
-def uniqueIdB = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueIdB)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
 Payload_ID = workString.substring(0,20)
 
 //To set Payload_ID property Value
@@ -13170,20 +13170,25 @@ import java.text.SimpleDateFormat
 
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
+//Get Ticket NIDs from multiple tickets
 def responseHolderProduct = groovyUtils.getXmlHolder("transmission - WDW Reservation 2.10#Response")
 
+//Ticket list for dynamic tickets data
 def tickets = []
 
+//Generates the xPath dynamically
 def xpath1 = "//Transmission[1]/Payload[1]/Command[1]/ReservationResponse[1]/Ticket[";
 def xpath2 = "]/TktID[1]/TktNID[1]"
 def xpath
 
 def count = 1
 
+//Loop iterates infinite times until ticket IDs exist in WDW Reservation response
 while (true) {
 	xpath = xpath1 + count + xpath2
 	TktNID = responseHolderProduct[xpath]
 	if (TktNID == []) {
+		//When there are no more tickets
 		break;
 	} else {
 		tickets &lt;&lt; TktNID
@@ -13191,18 +13196,20 @@ while (true) {
 	}
 }
 
-//testRunner.testCase.setPropertyValue("TktNID", responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/ReservationResponse[1]/Ticket[1]/TktID[1]/TktNID[1]"])
+log.info " Ticket NIds : " + tickets.toString()
+
+//setting the tickets value in the custom properties
 testRunner.testCase.setPropertyValue("tickets", tickets.toString())</script></con:config></con:testStep><con:testStep type="groovy" name="Transfer ResCode" id="4632f084-97ba-4d59-bb92-911324aec1e2"><con:settings/><con:config><script>import jxl.*; 
 import com.eviware.soapui.support.xml.XmlUtils;
 import java.text.SimpleDateFormat
 
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
-//Get Product Code and price
+//Get Reservation Code
 def responseHolderProduct = groovyUtils.getXmlHolder("transmission - WDW Reservation 2.10#Response")
 ResCode = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/ReservationResponse[1]/Reservation[1]/ResCode[1]"]
 
-//To set Product code and price property Value
+//setting the Reservation Code in the custom properties
 testRunner.testCase.setPropertyValue("ResCode",ResCode)
 
 log.info "ResCode property is set to value: " +  ResCode</script></con:config></con:testStep><con:testStep type="groovy" name="Generate Payload for QueryReservation" id="e59b7655-a801-4d2e-86de-df64f1dbdc12"><con:settings/><con:config><script>import jxl.*; 
@@ -13212,22 +13219,22 @@ import java.text.SimpleDateFormat
 
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
-//Set payload ID in transmission - WDW Reservation
+//Set payload ID in transmission - WDW QueryReservation
 //get date in "MM/dd/yyyy" 
 def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
-def uniqueIdD = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringD = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdD)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueId)
 
 //To set Payload_ID property Value
-testRunner.testCase.setPropertyValue("Payload_ID",workStringD.substring(0,20))
+testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
 
-log.info "Payload_ID value is set to: " + workStringD.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW QueryReservation" id="ce57e115-a023-437e-8612-407f75b5d9a0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW QueryReservation" id="2d50eef8-27a8-4886-928b-5dc458c73ead"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/queryreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW QueryReservation" id="ce57e115-a023-437e-8612-407f75b5d9a0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW QueryReservation" id="2d50eef8-27a8-4886-928b-5dc458c73ead"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/queryreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
@@ -13672,22 +13679,22 @@ import java.text.SimpleDateFormat
 
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
-//Set payload ID in transmission - WDW Reservation
+//Set payload ID in transmission - WDW VoidReservation
 //get date in "MM/dd/yyyy" 
 def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
-def uniqueIdD = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
 //Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workStringD = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdD)
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueId)
 
 //To set Payload_ID property Value
-testRunner.testCase.setPropertyValue("Payload_ID",workStringD.substring(0,20))
+testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
 
-log.info "Payload_ID value is set to: " + workStringD.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
@@ -14131,6 +14138,7 @@ import java.text.SimpleDateFormat
 import java.text.SimpleDateFormat
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
+//Enable transmission - WDW Reservation QueryTicket after void by default
 testRunner.testCase.testSteps['transmission - WDW Reservation QueryTicket after void'].disabled = false
 
 //Set payload ID in transmission - WDW Reservation QueryTicket after void
@@ -14139,29 +14147,37 @@ def date = new Date()
 sdf = new SimpleDateFormat("MM/dd/yyyy")
 datemmddyyyy=sdf.format(date)
 
+//Get the tickets NIDs from properties
 String tickets = testRunner.testCase.getPropertyValue("tickets")
+
+//convering String to array
 def ticketList = tickets[1..tickets.length()-2].tokenize(',')
 
 for (int i = 0; i &lt; ticketList.size(); i++) {
-	def uniqueIdD = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+	def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 	testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 	
 	//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-	def workStringD = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueIdD)
-	//Payload_ID = workString.substring(0,20)
+	def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueId)
+	
 	//To set Payload_ID property Value
-	testRunner.testCase.setPropertyValue("Payload_ID",workStringD.substring(0,20))
+	testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
+	
+	//To set TicketNId property value. Mandatory to trim to remove spaces with the ticketIDs
 	testRunner.testCase.setPropertyValue("TktNId",ticketList[i].trim())
 	
-	log.info "Payload_ID value is set to: " + workStringD.substring(0,20)
+	log.info "Payload_ID value is set to: " + workString.substring(0,20)
 	log.info "TktNId[" +i+ "] value is set to: " + ticketList[i].trim()
 
+	//invokes the query ticket
 	status = testRunner.runTestStepByName("transmission - WDW Reservation QueryTicket after void").getStatus();
 	flag = false;
-	
+
+	//check if the response is OK
 	if(!flag &amp;&amp; ('OK').equals(status.toString())) {
 		responseHolderProduct = groovyUtils.getXmlHolder("transmission - WDW Reservation QueryTicket after void#Response")
 		voidable = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryTicketResponse[1]/Ticket[1]/TktStatus[1]/StatusValue[1]"]
+		//if the response is OK, check if ticket status value has NO for item Voidable
 		if (('YES').equals(voidable.toString())) {
 			flag = true;
 			assert false //Ticket is not voided;
@@ -14175,9 +14191,11 @@ for (int i = 0; i &lt; ticketList.size(); i++) {
 
 
 if (flag) {
+	//check and fail if there are any failures
 	testRunner.fail("Invalid Ticket/Ticket not voided")
 } else {
 	// skip the last test step
+	//Disable transmission - WDW Reservation QueryTicket after void
 	testRunner.testCase.testSteps['transmission - WDW Reservation QueryTicket after void'].disabled = true
 }</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW Reservation QueryTicket after void" id="fbd8181f-36ad-43e6-bebf-91857d4b10de" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation QueryTicket after void" id="91ddca26-606b-4afd-ab1a-676c5c488daf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
   <Payload> 
@@ -14619,7 +14637,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170811150311531</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-08-11</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>7</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>12000911081700008</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>GFFC76464646</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[12000911081700007, 12000911081700008]</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="23a334ca-18c5-44f4-826d-8d649f7c802f" failOnError="false" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Upgrade Alpha Life Cycle Test" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="3704517b-415d-4418-adc0-25d2a7e649f7"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170814150337169</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-08-14</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>7</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>12000514081700003</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>ANDL90676667</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[12000514081700002, 12000514081700003]</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="23a334ca-18c5-44f4-826d-8d649f7c802f" failOnError="false" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Upgrade Alpha Life Cycle Test" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="3704517b-415d-4418-adc0-25d2a7e649f7"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 // get request property
 def testStep = testRunner.testCase.getTestStepByName( "transmission - InfoSys BRAVO Product Catalog Updated" );
 log.info( "Step 1: Obtained request." )
