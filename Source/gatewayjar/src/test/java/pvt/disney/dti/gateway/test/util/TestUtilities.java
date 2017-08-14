@@ -1,9 +1,12 @@
 package pvt.disney.dti.gateway.test.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.dom4j.DocumentException;
@@ -319,6 +322,29 @@ public static org.dom4j.Document getDom4jDocFromFile(String aFileName) throws IO
 	  return document;
 
   }
-  
+
+
+/**
+ * @param inputStream
+ * @return
+ */
+public static String getXMLFromFile(InputStream inputStream){
+	BufferedInputStream bis = new BufferedInputStream(inputStream);
+	ByteArrayOutputStream buf = new ByteArrayOutputStream();
+	int result;
+	try {
+		result = bis.read();
+		while(result != -1) {
+		    buf.write((byte) result);
+		    result = bis.read();
+		}
+		buf.close();
+		bis.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return buf.toString();
+}
+
   
 }

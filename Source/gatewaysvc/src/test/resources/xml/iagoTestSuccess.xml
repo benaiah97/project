@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soapenv:Envelope
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope">
+	<soapenv:Header>
+		<SourceID>WDPRONADLR</SourceID>
+		<MessageID>0</MessageID>
+		<MessageType>CreateTickets</MessageType>
+		<TimeStamp>2017-04-05 16:04:15</TimeStamp>
+	</soapenv:Header>
+	<soapenv:Body>
+		<TicketCreation>
+			<CustomerID>300000783</CustomerID>
+			<Tickets>
+				<Ticket>
+					<PLU>20876</PLU>
+					<Price>179.00</Price>
+				</Ticket>
+				<Ticket>
+					<PLU>20876</PLU>
+					<Price>179.00</Price>
+				</Ticket>
+			</Tickets>
+			<Payments>
+				<Payment>
+					<PaymentCode>42</PaymentCode>
+					<Description>Charge</Description>
+					<Endorsement>123456789</Endorsement>
+					<Amount>358.00</Amount>
+				</Payment>
+			</Payments>
+		</TicketCreation>
+	</soapenv:Body>
+</soapenv:Envelope>

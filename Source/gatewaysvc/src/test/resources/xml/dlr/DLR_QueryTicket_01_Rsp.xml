@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<Envelope>
+	<Header>
+		<MessageID>123456</MessageID>
+		<MessageType>QueryTicketResponse</MessageType>
+		<SourceID>DLRMerch</SourceID>
+		<TimeStamp>2009-01-23 11:38:20</TimeStamp>
+		<EchoData />
+		<SystemFields />
+	</Header>
+	<Body>
+		<Status>
+			<StatusCode>0</StatusCode>
+			<StatusText>OK</StatusText>
+		</Status>
+		<QueryTicketResponse>
+			<DataRequestResponse>
+				<DateSold>2009-03-14 07:08:09</DateSold>
+				<DateOpened>2009-03-14 00:00:00</DateOpened>
+				<ItemKind>2</ItemKind>
+				<Kind>1</Kind>
+				<LockedOut>NO</LockedOut>
+				<Price>134</Price>
+				<Returnable>YES</Returnable>
+				<Status>0</Status>
+				<Tax>0</Tax>
+				<UseCount>0</UseCount>
+				<ValidUntil>2017-04-14 00:00:00</ValidUntil>
+				<VisualID>5555555555555555</VisualID>
+				<PassKindName>1</PassKindName>
+				<DateUsed>2017-04-14 00:00:00</DateUsed>
+				<UseCount>1</UseCount>
+				<FirstName>First</FirstName>
+				<LastName>Last</LastName>
+				<Street1>1</Street1>
+				<Street2>2</Street2>
+				<City>city</City>
+				<State>NJ</State>
+				<Zip>123456</Zip>
+				<CountryCode>1</CountryCode>
+				<Phone>1234567890</Phone>
+				<Email>test@test.com</Email>
+				<Gender>1</Gender>
+				<genderRespString>Male</genderRespString>
+				</DataRequestResponse>
+		</QueryTicketResponse>
+	</Body>
+</Envelope>

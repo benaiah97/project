@@ -205,7 +205,7 @@ public class TicketRules {
     // Validate the exceptions, if specified. They must be more than
     // MaxTicket
     if (prntTktCntMaxException > 0) {
-      if (prntTktCntMaxException <= maxTicketLimit) {
+      if (prntTktCntMaxException < maxTicketLimit) {
         throw new DTIException(TicketRules.class, DTIErrorCode.DTI_DATA_ERROR,
             "Data set-up failure:  PrntTktCntMax is less or equal to MaxTicket, " + prntTktCntMaxException + " versus "
                 + maxTicketLimit);

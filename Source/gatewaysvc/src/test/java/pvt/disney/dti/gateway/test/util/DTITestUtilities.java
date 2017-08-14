@@ -1,14 +1,22 @@
 package pvt.disney.dti.gateway.test.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.SAXReader;
+import org.w3c.dom.Document;
 
 public class DTITestUtilities {
 
@@ -28,7 +36,6 @@ public class DTITestUtilities {
 		StringBuffer sb = new StringBuffer();
 
 		try {
-
 			FileReader file = new FileReader(fileName);
 			BufferedReader buff = new BufferedReader(file);
 			boolean eof = false;
@@ -52,7 +59,40 @@ public class DTITestUtilities {
 		return xml;
 
 	}
+	
+	public static String getXMLFromFile(InputStream inputStream){
+		BufferedInputStream bis = new BufferedInputStream(inputStream);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		int result;
+		try {
+			result = bis.read();
+			while(result != -1) {
+			    buf.write((byte) result);
+			    result = bis.read();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return buf.toString();
+	}
 
+	
+	public static String getXMLfromFile(InputStream inputStream) throws IOException{
+		BufferedInputStream bis = new BufferedInputStream(inputStream);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		int result = bis.read();
+		while(result != -1) {
+		    buf.write((byte) result);
+		    result = bis.read();
+		}
+		
+		
+		return buf.toString();
+		
+	}
+	
 	/**
 	 * A simple routine to locate the value of a unique XML tag in an XML
 	 * string. returns empty string if tag is empty.

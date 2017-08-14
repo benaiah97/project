@@ -1,12 +1,15 @@
 ---
-RACE
+DTI gatewaysvc
 ---
 
 
-Welome to the RACE Documentation
+Welome to the DTI gatewaysvc Documentation
 
-  RACE is a standalone utlity jar to provide the capability to generate unique
-  reservation codes for Park bookings.
+  The Disney Ticketing Interface (DTI) Gateway is a common service ticket sellers 
+  can use to activate, query, void, and reserve Disney Theme Park tickets 
+  (for delivery by mail, print at home, or as will-call). 
+  A communications gateway written using Java 1.7, JAXB, and DOM4J running on 
+  Tomcat. Secure (HTTPS using Entrust certificate). Oracle RDBMS, running on Linux. 
 
 
   * Managed Service Partner: N/A
@@ -15,9 +18,7 @@ Welome to the RACE Documentation
 
   * Key Customers: DTI, HKDL, WDW
 
-  * Original Developer: Shannon Moon (code), Tamra Biese (algorithm)
-
   * Configuration Item: N/A
 
-  * Tier: N/A
+  * Tier: 1
 
