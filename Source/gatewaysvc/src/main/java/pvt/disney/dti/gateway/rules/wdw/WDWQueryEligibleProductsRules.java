@@ -402,11 +402,7 @@ public class WDWQueryEligibleProductsRules {
 
 				}
 
-				// check if result type is not null
-				if (dtiTicketTO.getUpgradeEligibilityStatus() == null) {
-					dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
-				}
-				
+			
 				// Step 5 : Setting up the detail in Ticket TO 
 				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
 				dtiResRespTO.add(dtiTicketTO);
@@ -879,6 +875,8 @@ public class WDWQueryEligibleProductsRules {
 				dtiTicketTO.addEligibleProducts(eligibleProductsTO);
 			}
 		}
+		// Setting the result type as ELIGIBLE
+		dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
 		return;
 	}
 
