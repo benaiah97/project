@@ -148,6 +148,7 @@ public class DLRBusinessRules {
         dtiTxn=DLRUpgradeEntitlementRules.transformResponse(dtiTxn,
       	  xmlResponse);
         break;
+        
     default:
       throw new DTIException(
           TransformRules.class,

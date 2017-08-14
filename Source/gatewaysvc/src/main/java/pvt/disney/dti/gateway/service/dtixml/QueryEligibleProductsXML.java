@@ -17,9 +17,9 @@ import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.request.xsd.QueryEligibleProductsRequest;
 import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
 
@@ -388,10 +388,10 @@ public class QueryEligibleProductsXML {
 			// ResultStatus
 
 			String result = null;
-			if (aTicketTO.getResultType() != null) {
-				if (aTicketTO.getResultType().compareTo(ResultType.NOPRODUCTS) == 0) {
+			if (aTicketTO.getUpgradeEligibilityStatus() != null) {
+				if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.NOPRODUCTS) == 0) {
 					result = NOPRODUCTS;
-				} else if (aTicketTO.getResultType().compareTo(ResultType.ELIGIBLE) == 0) {
+				} else if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.ELIGIBLE) == 0) {
 					result = ELIGIBLE;
 				} else {
 					result = INELIGIBLE;

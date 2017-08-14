@@ -7,7 +7,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+
+import org.apache.commons.lang.StringUtils;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -26,9 +29,9 @@ import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
@@ -208,130 +211,133 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// Putting up the original response in GuestProductTO
 		globalGuestProduct.setGwDataRespTO(gwDataRespTO);
 
-		// PLU's obtained from GWDataresponse , in case if multiple PLU's are there throw error if ticket not found 
-		if ((gwDataRespTO.getPluList() != null) && (gwDataRespTO.getPluList().size() > 0)) {
+		// PLU's obtained from GWDataresponse , there throw error if no ticket found 
+		if ((gwDataRespTO.getPluList() == null)) {
+			
+			logger.sendEvent("Provider returned no ticket on a successful query ticket.", EventType.EXCEPTION, THISINSTANCE);
+			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+						"Provider returned no ticket on a successful query ticket.");
+		} else {
 
-			// executing Query to pull up Guest Ticket detail by PLU
-			DBProductTO dBProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPluList());
+			// Retrieving the list of guest Product detail for PLU
+			DBProductTO guestDbProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPluList());
 
 			// Process only if details are found
-			if (dBProduct != null) {
-				globalGuestProduct.setDbproductTO(dBProduct);
+			if (guestDbProduct == null) {
+				logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
+				dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-				// Step 2 : fetch the details List of Salable product
+				// Populating the ticket information , provide the product catalog
+				// as null
+
+				setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
+
+				return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+
+			} else {
+				// Putting the dbProduct to guestDbProduct
+				globalGuestProduct.setDbproductTO(guestDbProduct);
+
+				// Fetch the details List of Sellable product
 				UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
-				// Step 3A : If Picture is not present in response marking resultType as INELIGIBLE
-				if (globalGuestProduct.getGwDataRespTO().getHasPicture() == null) {
+				// If Picture is not present in response marking resultType as
+				// INELIGIBLE
+				if (StringUtils.isBlank(globalGuestProduct.getGwDataRespTO().getHasPicture())) {
 
 					// TODO need to verify if Haspicture is NO ||
 					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
 					// == 0)) {
 
-					logger.sendEvent("Has Picture is not found ", EventType.DEBUG, THISINSTANCE);
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
-					
-					// populating the ticket information , provide the product catalog as null
-					setTicketValues(globalGuestProduct, dtiTktTO, null);
+					logger.sendEvent("Tag 'HasPicture' is not found or has no value.", EventType.DEBUG, THISINSTANCE);
+					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+					// populating the ticket information , with sellable products as null
+					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
+
+					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 				}
 
-				// Check usage if no usage is there put the result type as INELIGIBLE
+				// Check usage if no usage is there put the result type as  INELIGIBLE
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
 							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
 
 					if (globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0) {
 
-						logger.sendEvent("No Usage is there ", EventType.DEBUG, THISINSTANCE);
-						dtiTktTO.setResultType(ResultType.INELIGIBLE);
+						logger.sendEvent("Usage Information for guest is not provided..", EventType.DEBUG, THISINSTANCE);
+						dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-						// populating the ticket information , provide the product catalog as null
-						setTicketValues(globalGuestProduct, dtiTktTO, null);
+						// populating the ticket information , with sellable products as null
+						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+						return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					}
 				}
 
-				// Step 4 :: Check the Upgrade PLU's from DLR response and filter
-				// with list from UpgradeCatalogTO
+				// Upgraded PLU List from Response
 				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
+				// If Upgraded PLU List is empty
 				if ((upGradedPLuList == null) || (upGradedPLuList.size() == 0)) {
 
-					// if no upgrade PLUs from the response mark the result as INELIGIBLE and stop transaction
-					logger.sendEvent("PLU List from the DLR response is empty ", EventType.DEBUG, THISINSTANCE);
+					// if no upgrade PLUs from the response , result is INELIGIBLE
+					// and transaction is stopped
+					logger.sendEvent("Provider has not provided any Upgraded PLU list.", EventType.DEBUG, THISINSTANCE);
 
-					dtiTktTO.setResultType(ResultType.INELIGIBLE);
+					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-					// populating the ticket information , provide the product catalog as null
-					setTicketValues(globalGuestProduct, dtiTktTO, null);
+					// populating the ticket information , with sellable products as null
+					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-					return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 				} else if (globalUpgradeProduct.getProductListCount() == 0) {
 
-						// if no upgrade product found mark the result as INELIGIBLE and stop transaction
-						logger.sendEvent("No Upgradable Product found ", EventType.DEBUG, THISINSTANCE);
-						dtiTktTO.setResultType(ResultType.NOPRODUCTS);
+					// If no Sellable product found , result is INELIGIBLE and
+					// transaction is stopped
+					logger.sendEvent("No Sellable Product found.", EventType.DEBUG, THISINSTANCE);
+					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
-						// populating the ticket information , provide the product catalog as null
-						setTicketValues(globalGuestProduct, dtiTktTO, null);
+					// populating the ticket information , with sellable products as null
+					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
-						
-					} else {
-						ArrayList<String> PLUList = new ArrayList<String>();
-						for (UpgradePLU upgradePLU : upGradedPLuList) {
-							PLUList.add(upgradePLU.getPLU());
-						}
+					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
-						logger.sendEvent("Orignal List of Salable Product." + globalUpgradeProduct.getProductListCount(),
-									EventType.DEBUG, THISINSTANCE);
+				} else {
 
-						// Comparing the PLU's from response (Step 1) with product catalog detail obtained in Step 2
-						globalUpgradeProduct.retainDLRPLUs(PLUList);
+					// Check the UpgradePLUList from DLR response and compare with each Sellable Product List
+					ArrayList<String> PLUList = new ArrayList<String>();
 
-						logger.sendEvent("Final List of Salable Product." + globalUpgradeProduct.getProductListCount(),
-									EventType.DEBUG, THISINSTANCE);
-
-						// if the product list obtained after comparison is empty put the result type as  NOPRODUCTS
-						if (globalUpgradeProduct.getProductListCount() == 0) {
-							dtiTktTO.setResultType(ResultType.NOPRODUCTS);
-
-							// populating the ticket information , provide the product catalog as null
-							setTicketValues(globalGuestProduct, dtiTktTO, null);
-
-							return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
-						}
+					for (/* each */UpgradePLU upgradePLU : /* in */upGradedPLuList) {
+						PLUList.add(upgradePLU.getPLU());
 					}
-				
 
-				// Step 5 : Mapping the globalGuestProduct and globalUpgradeProduct
-				// to response
-				setTicketValues(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
+					logger.sendEvent("Orignal List of Sellable Product." + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 
-				// set the result type as ELIGIBLE if result type is not present
-				if (dtiTktTO.getResultType() == null) {
-					dtiTktTO.setResultType(ResultType.ELIGIBLE);
+					// Comparing each PLU's from response with each Sellable Product
+					globalUpgradeProduct.retainDLRPLUs(PLUList);
+
+					logger.sendEvent("Final List of Sellable Product after comaprison with each UpgradedPLU'S."
+								+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
+
+					// if the product list obtained after comparison is empty put the result type as NOPRODUCTS
+					if (globalUpgradeProduct.getProductListCount() == 0) {
+						dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
+
+						// populating the ticket information , with sellable products as null
+						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
+
+						return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+					} else {
+
+						// Step 5 : Mapping the globalGuestProduct and globalUpgradeProduct to response
+						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
+					}
 				}
-			} else {
-
-				logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
-				dtiTktTO.setResultType(ResultType.INELIGIBLE);
-
-				// populating the ticket information , provide the product catalog
-				// as null
-				setTicketValues(globalGuestProduct, dtiTktTO, null);
 			}
-		} else {
-
-			logger.sendEvent("No Ticket Type Information fetched", EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.INVALID_TICKET_ID,
-						"In valid Ticket Id ");
-
-		}
-		return getQueryEligibleCommand(dtiTktTO, dtiRespTO, dtiTxn);
+		} 
+		return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 	}
 
 	/**
@@ -345,7 +351,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 *            the dti txn
 	 * @return the query eligible command
 	 */
-	private static DTITransactionTO getQueryEligibleCommand(TicketTO dtiTktTO,
+	private static DTITransactionTO setQueryEligibleTransaction(TicketTO dtiTktTO,
 			DTIResponseTO dtiRespTO, DTITransactionTO dtiTxn) {
 		QueryEligibilityProductsResponseTO qtResp = new QueryEligibilityProductsResponseTO();
 
@@ -439,21 +445,17 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		return;
 	}
 
+
 	/**
 	 * Sets the query eligible response command.
-	 * 
-	 * @param upgradedProduct
-	 *            the upgraded product
-	 * @param dtiTktTO
-	 *            the dti tkt TO
-	 * @param gwDataRespTO
-	 *            the gw data resp TO
-	 * @throws DTIException
-	 *             the DTI exception
+	 *
+	 * @param guestProductTO the guest product TO
+	 * @param dtiTktTO the dti tkt TO
+	 * @param upgradedProductTOList the upgraded product TO list
+	 * @throws DTIException the DTI exception
 	 */
-	private static void setTicketValues(GuestProductTO guestProductTO,
-			TicketTO dtiTktTO, ArrayList<DBProductTO> upgradedProductTOList)
- throws DTIException {
+	private static void setQueryEligibleResponseCommand(GuestProductTO guestProductTO, TicketTO dtiTktTO,
+				ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
 
 		DemographicsTO ticketDemo = new DemographicsTO();
@@ -616,6 +618,12 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			tktStatus.setStatusValue(NO);
 		}
 		tktStatusList.add(tktStatus);
+		
+		// if result type is INELIGIBLE or NOPRODUCTS no need for checking or displaying eligible productList
+		if ((dtiTktTO.getUpgradeEligibilityStatus() == UpgradeEligibilityStatusType.INELIGIBLE)
+					|| (dtiTktTO.getUpgradeEligibilityStatus() == UpgradeEligibilityStatusType.NOPRODUCTS)) {
+			return;
+		}
 
 		ArrayList<GregorianCalendar> useTimeList = new ArrayList<GregorianCalendar>();
 
@@ -626,7 +634,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				useTimeList.add(usage.getUseTime());
 			}
 		}
-
 		// Sorting to get the first Usage Date
 		Collections.sort(useTimeList);
 
@@ -687,11 +694,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
 					}
-				} catch (Exception e) {
+				} catch (DatatypeConfigurationException e) {
 					logger.sendEvent("Exception caught while parsing the first Usage Date " + e.toString(),
 								EventType.EXCEPTION, THISINSTANCE);
-					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-								"Provider responded with a non-numeric usage Date.");
+					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+								"Provider responded with a invalid usage Date.");
 				}
 
 				// add the eligible product element to the list
@@ -700,5 +707,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
 		}
+		
+		// set the status as ELIGIBLE
+		dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
 	}
 }
