@@ -18,7 +18,7 @@ public class DTISoapUITest {
 	/**
 	 * Test case for DTI-GQE SoapUI Automation
 	 */
-	//@Test
+	@Test
 	public void testDTISoapUI() {
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("com.disney.dti.automation.xmlPath");
 		String GQE_XML_PATH = resourceBundle.getString("GQE_XML_PATH");
