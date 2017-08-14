@@ -420,54 +420,6 @@ public class UpgradeCatalogTOTestCase extends CommonTestUtils{
 	}
 	
 	
-	 @Test
-		public void testdisqualifyProduct() {
-			UpgradeCatalogTO upGradeCataTo = new UpgradeCatalogTO();
-			ArrayList<DBProductTO> productList = new ArrayList<DBProductTO>();
-
-			DBProductTO aProduct = new DBProductTO();
-			aProduct.setPdtCode("1");
-			aProduct.setUnitPrice(new BigDecimal(1.0));
-			aProduct.setTax(new BigDecimal(1.0));
-			aProduct.setDayClass("AP");
-			aProduct.setDaySubclass("PLAT");
-			productList.add(aProduct);
-			aProduct = new DBProductTO();
-
-			aProduct.setPdtCode("3");
-			aProduct.setUnitPrice(new BigDecimal(3.0));
-			aProduct.setTax(new BigDecimal(1.0));
-			aProduct.setDayClass("AP");
-			aProduct.setDaySubclass("EPCTAFT4");
-			productList.add(aProduct);
-			upGradeCataTo.setProductList(productList);
-			ArrayList<String> siteList = new ArrayList<String>();
-			
-			siteList.add("78");
-			siteList.add("81");
-			upGradeCataTo.disqualifyProduct(siteList);
-			assertEquals(upGradeCataTo.getProductListCount(),0);
-			
-			upGradeCataTo = new UpgradeCatalogTO();
-			aProduct = new DBProductTO();
-			aProduct.setPdtCode("1");
-			aProduct.setUnitPrice(new BigDecimal(1.0));
-			aProduct.setTax(new BigDecimal(1.0));
-			aProduct.setDayClass("AP");
-			aProduct.setDaySubclass("PLATPLUS");
-			productList = new ArrayList<DBProductTO>();
-			productList.add(aProduct);
-			upGradeCataTo.setProductList(productList);
-			
-			 siteList = new ArrayList<String>();
-			
-			siteList.add("78");
-			siteList.add("81");
-			upGradeCataTo.disqualifyProduct(siteList);
-			assertEquals(upGradeCataTo.getProductListCount(),1);
-			
-			
-		}
 	
 	
 	

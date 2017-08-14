@@ -44,6 +44,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
+import pvt.disney.dti.gateway.rules.ProductRules;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
@@ -299,8 +300,9 @@ public class WDWQueryEligibleProductsRules {
 				// Look for list sellable product list (product catalog) from step 2 and refine the list 
 				if ((globalUpgradeProduct != null) && (globalUpgradeProduct.getProductListCount() > 0)) {
 					
-					logger.sendEvent("Orignal list of sellable producs." + globalUpgradeProduct.getProductListCount(),
+					logger.sendEvent("Original list of sellable products. " + globalUpgradeProduct.getProductListCount(),
 								EventType.DEBUG, THISINSTANCE);	
+					// TODO add toString() in globalUpgradeProduct and guestProductTO to display the whole list toString limit concise info, prodCode, '' next prodCode  
 					// Validate the list of the day sub classes for AP Upgrades for Upgrade Path Id obtained in method getGuestProductDetails
 					
 					// path id from guest product to
@@ -322,12 +324,12 @@ public class WDWQueryEligibleProductsRules {
 						}
 					}
 					
-					logger.sendEvent("Day Sub Class List." + daySubClassList.size(), EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("Day Sub Class List. " + daySubClassList.size(), EventType.DEBUG, THISINSTANCE);
 					// filter the products based on sub classes 
 					// matching the sub class list retrieved with product catalog.  
 					globalUpgradeProduct.keepDaySubclasses(daySubClassList);
 
-					logger.sendEvent("Final list obtained after filtering sellable products with Day Sub Class List." + globalUpgradeProduct.getProductListCount(),
+					logger.sendEvent("Final list obtained after filtering sellable products with Day Sub Class List Count. [" + globalUpgradeProduct.getProductListCount() +"]",
 								EventType.DEBUG, THISINSTANCE);
 
 					
@@ -349,9 +351,11 @@ public class WDWQueryEligibleProductsRules {
 							}
 						}
 						
-						logger.sendEvent("List of site fetched used by the guest." + usageSiteList.size(), EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("List of site fetched used by the guest. " + usageSiteList.size(), EventType.DEBUG, THISINSTANCE);
+						// TODO add a count add the site no from the list 
 						if (usageSiteList.size() > 0) {
-							globalUpgradeProduct.disqualifyProduct(usageSiteList);
+							ProductRules.disqualifyProduct(usageSiteList,globalUpgradeProduct);
+						
 						}
 						
 						logger.sendEvent("Final list obtained after filtering sellable products with site List." + globalUpgradeProduct.getProductListCount(),
