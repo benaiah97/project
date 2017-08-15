@@ -964,10 +964,12 @@ public class HKDReservationRules {
     String language = dtiCliDataTO.getDemoLanguage();
     String clientType = dtiCliDataTO.getClientType();
 
-    if (language == null) {
-      throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-          "ClientData DemoLanguage cannot be null.");
-    }
+//    XSD specifies optional, so eliminating check here, marked for removal 8/15/2017
+//    if (language == null) {
+//      throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+//          "ClientData DemoLanguage cannot be null.");
+//    }
+    
     if (clientType == null) {
       throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "ClientData ClientType cannot be null.");
@@ -1066,7 +1068,7 @@ public class HKDReservationRules {
 
     // ResponseType
     dtiResRespTO.setResponseType(otMngResTO.getCommandType());
-
+    
     // Ticket List
     ArrayList<TicketTO> dtiTktList = dtiResRespTO.getTicketList();
     ArrayList<HkdOTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
