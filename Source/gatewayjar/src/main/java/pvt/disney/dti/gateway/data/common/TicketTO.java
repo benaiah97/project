@@ -325,7 +325,7 @@ public class TicketTO implements Serializable, Cloneable {
 	private String replacedByPass;
 
 	/** The upgrade eligibility status. */
-	private UpgradeEligibilityStatusType upgradeEligibilityStatus=UpgradeEligibilityStatusType.INELIGIBLE ; // RASTA006 2.17.3
+	private UpgradeEligibilityStatusType upgradeEligibilityStatus=UpgradeEligibilityStatusType.ELIGIBLE ; // RASTA006 2.17.3
 	
 	/** get the sale Type for the current ticket */
 	private String saleType;

@@ -300,16 +300,20 @@ public class UpgradeCatalogTO implements Serializable {
 	 */
 	@Override
 	public String toString() {
-	   StringBuffer output = new StringBuffer();
-      output.append("Product List [ prod Code :");
-      
-      for (DBProductTO aProduct : productList) {
-          if (aProduct.getPdtCode()!= null) 
-            output.append(aProduct.getPdtCode());
-          output.append(",\t");
-      }
-      output.append("]");
-      return output.toString();
+		StringBuffer output = new StringBuffer();
+		int count = 0;
+		output.append("Product List [ prod Code :");
+		for (DBProductTO aProduct : productList) {
+			count++;
+			if (aProduct.getPdtCode() != null)
+				output.append(aProduct.getPdtCode());
+			if (count < productList.size()) {
+				output.append(",\t");
+			}
+
+		}
+		output.append("]");
+		return output.toString();
 	}
    
    
