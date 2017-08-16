@@ -1,2 +1,6 @@
 Source/docker/target/
 Source/gatewaysvc/dupResults.txt
+Source/gatewaysvc/c:/logs/dti/viewer
+Source/logs
+cobertura.ser
+*.log

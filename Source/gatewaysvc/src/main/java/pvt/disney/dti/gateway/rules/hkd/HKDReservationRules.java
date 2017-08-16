@@ -1061,12 +1061,12 @@ public class HKDReservationRules {
     String language = dtiCliDataTO.getDemoLanguage();
     String clientType = dtiCliDataTO.getClientType();
 
-//    XSD specifies optional, so eliminating check here, marked for removal 8/15/2017
-//    if (language == null) {
-//      throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-//          "ClientData DemoLanguage cannot be null.");
-//    }
-    
+//    XSD specifies optional, utilized in some SQL so defaulting
+    if (language == null || language.length() == 0) {	
+    		dtiCliDataTO.setDemoLanguage("en");
+    		language="en";
+    }
+   
     if (clientType == null) {
       throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "ClientData ClientType cannot be null.");
