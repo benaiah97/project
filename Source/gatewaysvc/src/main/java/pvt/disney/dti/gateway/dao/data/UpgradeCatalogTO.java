@@ -27,13 +27,6 @@ public class UpgradeCatalogTO implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-
-   
-   /**
-	 * Properties file
-	 */
-	private Properties props;
-   
    /** The list of products that are eligible for upgrade. */
    private ArrayList<DBProductTO> productList = new ArrayList<DBProductTO>();
 
@@ -301,25 +294,14 @@ public class UpgradeCatalogTO implements Serializable {
 
       return productList.size();
    }
-   
-   /**
-    * Retain positive ap upgrades.
-    *
-    * @param unitPrice the unit price
-    * @return the int
-    */
-   public int retainPositiveApUpgrades(BigDecimal standardRetailPrice){
 
-	      ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
-
-	      for (/* each */DBProductTO aProduct : /* in */productList) {
-	    	  if(aProduct.getUnitPrice().subtract(standardRetailPrice).compareTo(BigDecimal.ZERO)>0){
-	    		  newList.add(aProduct);
-	    	  }
-	      }
-	      productList = newList;
-	      return productList.size();
-	   }
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UpgradeCatalogTO [productList=" + productList + "]";
+	}
    
-  
+   
 }

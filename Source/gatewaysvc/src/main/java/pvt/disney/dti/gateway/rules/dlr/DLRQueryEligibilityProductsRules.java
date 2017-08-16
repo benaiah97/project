@@ -153,7 +153,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		if (gwBodyTO == null) {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Internal Error:  Gateway XML allowed a response with null body.");
 		}
 
@@ -161,7 +161,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		if (gwStatusTO == null) {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Internal Error:  Gateway XML allowed a response with null status.");
 		}
 
@@ -169,7 +169,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		if (statusString == null) {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
-					DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Internal Error:  Gateway XML allowed a response with null status code.");
 		}
 

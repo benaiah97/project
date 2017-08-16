@@ -6,14 +6,8 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 
-// 
 /**
  * The Class GuestProductTO.
- */
-
-/**
- * @author amrastog
- *
  */
 public class GuestProductTO {
 

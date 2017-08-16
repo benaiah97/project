@@ -94,22 +94,13 @@ public class GWQueryEligibleProductsTicketXML {
 		dataRequestStanza.addElement("Field").addText("DOB");
 		dataRequestStanza.addElement("Field").addText("Gender");
 
-		if (visualID.length() == DLR_TEMP_ENTITLEMENT_LENGTH) {
-			Element lineageStanza = dataRequestStanza.addElement("LineageRecords");
-			lineageStanza.addElement("Field").addText("Amount");
-			lineageStanza.addElement("Field").addText("Valid");
-			lineageStanza.addElement("Field").addText("Status");
-			lineageStanza.addElement("Field").addText("VisualID");
-			lineageStanza.addElement("Field").addText("ExpirationDate");
-		}
-
 		// Adding new field for the QEP Command
 		dataRequestStanza.addElement("Field").addText("UpgradePLUList");
-		dataRequestStanza.addElement("Field").addText("Contact");
-		dataRequestStanza.addElement("Field").addText("HasPicture");
+		//dataRequestStanza.addElement("Field").addText("HasPicture"); DON'T NEED AS FOR NOW
 		dataRequestStanza.addElement("Field").addText("PLU");
 		Element usageElement = dataRequestStanza.addElement("UsageRecords");
-		usageElement.addElement("Field").addText("*");
+		usageElement.addElement("Field").addText("UseTime"); 
+		usageElement.addElement("Field").addText("UseNo");
 
 		return;
 	}
@@ -676,6 +667,7 @@ public class GWQueryEligibleProductsTicketXML {
 		}
 
 	}
+	
 
 	/**
 	 * Extract upgrade PLU.

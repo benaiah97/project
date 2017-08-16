@@ -351,14 +351,15 @@ public class WDWQueryEligibleProductsRules {
 							}
 						}
 						
-						logger.sendEvent("List of site fetched used by the guest. " + usageSiteList.size(), EventType.DEBUG, THISINSTANCE);
-						// TODO add a count add the site no from the list 
-						if (usageSiteList.size() > 0) {
-							ProductRules.disqualifyProduct(usageSiteList,globalUpgradeProduct);
+						logger.sendEvent("List of site fetched used by the guest. " + usageSiteList, EventType.DEBUG, THISINSTANCE);
 						
+						if (usageSiteList.size() > 0) {
+
+							// Rule to disqualify the day sub class 
+							ProductRules.disqualifyProduct(usageSiteList, globalUpgradeProduct);
 						}
 						
-						logger.sendEvent("Final list obtained after filtering sellable products with site List." + globalUpgradeProduct.getProductListCount(),
+						logger.sendEvent("Final list obtained after filtering sellable products with site List. " + globalUpgradeProduct.getProductListCount(),
 									EventType.DEBUG, THISINSTANCE);
 						
 						if (globalUpgradeProduct.getProductListCount() > 0) {
@@ -379,7 +380,7 @@ public class WDWQueryEligibleProductsRules {
 						}
 						
 					} else {
-						logger.sendEvent("No product found in new product list.", EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("No product found in new product list. ", EventType.DEBUG, THISINSTANCE);
 						dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 						
 						// populating the ticket Information
