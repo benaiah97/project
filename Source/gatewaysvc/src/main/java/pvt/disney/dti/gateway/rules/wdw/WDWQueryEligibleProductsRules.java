@@ -300,8 +300,11 @@ public class WDWQueryEligibleProductsRules {
 				// Look for list sellable product list (product catalog) from step 2 and refine the list 
 				if ((globalUpgradeProduct != null) && (globalUpgradeProduct.getProductListCount() > 0)) {
 					
-					logger.sendEvent("Original list of sellable products. " + globalUpgradeProduct.getProductListCount(),
-								EventType.DEBUG, THISINSTANCE);	
+					logger.sendEvent("Original list of sellable products. " + globalUpgradeProduct.toString(),
+								EventType.DEBUG, THISINSTANCE);
+					
+					logger.sendEvent("Original no sellable products. " + globalUpgradeProduct.getProductListCount(),
+								EventType.DEBUG, THISINSTANCE);
 					// TODO add toString() in globalUpgradeProduct and guestProductTO to display the whole list toString limit concise info, prodCode, '' next prodCode  
 					// Validate the list of the day sub classes for AP Upgrades for Upgrade Path Id obtained in method getGuestProductDetails
 					
@@ -324,12 +327,12 @@ public class WDWQueryEligibleProductsRules {
 						}
 					}
 					
-					logger.sendEvent("Day Sub Class List. " + daySubClassList.size(), EventType.DEBUG, THISINSTANCE);
-					// filter the products based on sub classes 
-					// matching the sub class list retrieved with product catalog.  
+					logger.sendEvent("Day Sub Class List. " + daySubClassList, EventType.DEBUG, THISINSTANCE);
+					
+					// Match the day sub class list with list of sellable products   
 					globalUpgradeProduct.keepDaySubclasses(daySubClassList);
 
-					logger.sendEvent("Final list obtained after filtering sellable products with Day Sub Class List Count. [" + globalUpgradeProduct.getProductListCount() +"]",
+					logger.sendEvent("List obtained after filtering the sellable products with Day Sub Class List. [" + globalUpgradeProduct.toString() +"]",
 								EventType.DEBUG, THISINSTANCE);
 
 					
@@ -345,8 +348,7 @@ public class WDWQueryEligibleProductsRules {
 								
 								// if site No is present in the usages 
 								if (usagesTO.getSiteNumber() != null) {
-									usageSiteList.add(String.valueOf(usagesTO
-											.getSiteNumber()));
+									usageSiteList.add(String.valueOf(usagesTO.getSiteNumber()));
 								}
 							}
 						}
@@ -355,24 +357,39 @@ public class WDWQueryEligibleProductsRules {
 						
 						if (usageSiteList.size() > 0) {
 
-							// Rule to disqualify the day sub class 
+							// Rule to disqualify the day sub class based upon disqualification rules for usage sites
 							ProductRules.disqualifyProduct(usageSiteList, globalUpgradeProduct);
 						}
 						
-						logger.sendEvent("Final list obtained after filtering sellable products with site List. " + globalUpgradeProduct.getProductListCount(),
+						logger.sendEvent("List obtained after filtering sellable products with site List. " + globalUpgradeProduct.toString(),
 									EventType.DEBUG, THISINSTANCE);
 						
 						if (globalUpgradeProduct.getProductListCount() > 0) {
 
-							// Add products from sellable products whose unit price is greater then standard retail Price 
-							globalUpgradeProduct
-										.removeProductsLowerThan(guestproductTO.getDbproductTO().getStandardRetailPrice());
+							// Standard Retail Price
+							BigDecimal standardRetailPrice = guestproductTO.getDbproductTO().getStandardRetailPrice();
+							
+							if ((standardRetailPrice != null) && (standardRetailPrice.compareTo(BigDecimal.ZERO) > 0)) {
 
-							logger.sendEvent("Final List of Sellable Products Obtained after removing products whose unit price is less than "+guestproductTO.getDbproductTO().getStandardRetailPrice()+". "+ globalUpgradeProduct.getProductListCount(),
+								// Add products from sellable products whose unit price is greater then standard retail Price
+								globalUpgradeProduct.removeProductsLowerThan(guestproductTO.getDbproductTO()
+											.getStandardRetailPrice());
+
+								logger.sendEvent(	"List of Sellable Products Obtained after removing products whose unit price is less than "
+														+ guestproductTO.getDbproductTO().getStandardRetailPrice() + ". "
+														+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
+							}
+
+							logger.sendEvent("Final list of sellable products obtained. " + globalUpgradeProduct.toString(),
 										EventType.DEBUG, THISINSTANCE);
+
+							// Step 5 : Setting up the detail in Ticket TO
+							setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
+							dtiResRespTO.add(dtiTicketTO);
+
 						}else{
-							logger.sendEvent("No product found in new product list.", EventType.DEBUG, THISINSTANCE);
-							dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
+							logger.sendEvent("No sellable product found in new product list.", EventType.DEBUG, THISINSTANCE);
+							dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 							// populating the ticket Information
 							setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
 							dtiResRespTO.add(dtiTicketTO);
@@ -380,8 +397,8 @@ public class WDWQueryEligibleProductsRules {
 						}
 						
 					} else {
-						logger.sendEvent("No product found in new product list. ", EventType.DEBUG, THISINSTANCE);
-						dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
+						logger.sendEvent("No sellable product found in new product list. ", EventType.DEBUG, THISINSTANCE);
+						dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 						
 						// populating the ticket Information
 						setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
@@ -389,11 +406,10 @@ public class WDWQueryEligibleProductsRules {
 						return;
 					}
 
-					// if no product is found return No Product 
 					if (globalUpgradeProduct.getProductListCount() == 0) {
 						
-						logger.sendEvent("No product found in new product list.", EventType.DEBUG, THISINSTANCE);
-						dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
+						logger.sendEvent("No sellable product found in new product list. ", EventType.DEBUG, THISINSTANCE);
+						dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 						// populating the ticket Information
 						setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, null);
 						dtiResRespTO.add(dtiTicketTO);
@@ -401,16 +417,11 @@ public class WDWQueryEligibleProductsRules {
 
 					}
 				} else {
-					logger.sendEvent("No product found in upgraded product .",
-							EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("No sellable product found. ", EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
 				}
-
-			
-				// Step 5 : Setting up the detail in Ticket TO 
-				setQueryEligibleResponseCommand(guestproductTO, dtiTicketTO, globalUpgradeProduct.getProductList());
-				dtiResRespTO.add(dtiTicketTO);
+				
 			}
 		}
 	}
@@ -442,7 +453,7 @@ public class WDWQueryEligibleProductsRules {
 		ArrayList<DBProductTO> dbProductTO = ProductKey.getProductsfromTktNbr(tktNbr);
 
 		if ((dbProductTO != null) && (dbProductTO.size() > 0)) {
-			logger.sendEvent("Product details found as ." + dbProductTO.toString(), EventType.DEBUG, THISINSTANCE);
+			logger.sendEvent("Product details found as. " + guestProductTO.toString(), EventType.DEBUG, THISINSTANCE);
 
 			guestProductTO.setDbproductTO(dbProductTO.get(0));
 

@@ -241,8 +241,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// Fetch the details List of Sellable product
 				UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
-				// If Picture is not present in response marking resultType as
-				// INELIGIBLE
+				/*// If Picture is not present in response marking resultType as INELIGIBLE // HasPicture as for now 
 				if (StringUtils.isBlank(globalGuestProduct.getGwDataRespTO().getHasPicture())) {
 
 					// TODO need to verify if Haspicture is NO ||
@@ -256,7 +255,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
 					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
-				}
+				}*/
 
 				// Check usage if no usage is there put the result type as  INELIGIBLE
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
@@ -599,12 +598,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		// Picture
 		tktStatus.setStatusItem(PICTURE);
-
-		if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
+		
+		// Removing Has Picture as for now 
+		/*if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
 			tktStatus.setStatusValue(YES);
 		} else {
 			tktStatus.setStatusValue(NO);
-		}
+		}*/
+		tktStatus.setStatusValue(NO);
 		tktStatusList.add(tktStatus);
 
 		tktStatusList = dtiTktTO.getTktStatusList();

@@ -300,7 +300,16 @@ public class UpgradeCatalogTO implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "UpgradeCatalogTO [productList=" + productList + "]";
+	   StringBuffer output = new StringBuffer();
+      output.append("Product List [ prod Code :");
+      
+      for (DBProductTO aProduct : productList) {
+          if (aProduct.getPdtCode()!= null) 
+            output.append(aProduct.getPdtCode());
+          output.append(",\t");
+      }
+      output.append("]");
+      return output.toString();
 	}
    
    

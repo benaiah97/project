@@ -564,15 +564,14 @@ public class GWQueryEligibleProductsTicketXML {
 
 			}
 
-			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that
-			// this ticket can upgrade to
+			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can upgrade to RASTA006
 			if (element.getName().compareTo("UpgradePLUList") == 0) {
-				extractUpgradePLU(dataRespTO, i, element);
+				extractUpgradePLUInfo(dataRespTO, i, element);
 			}
 
 			// Adding new Tag Contact
 			if (element.getName().compareTo("Contact") == 0) {
-				extractContact(dataRespTO, element);
+				extractContactInfo(dataRespTO, element);
 			}
 
 			// Adding new Has Picture Contact
@@ -583,7 +582,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 			// Adding new Usage details
 			if (element.getName().compareTo("UsageRequestResponse") == 0) {
-				extractUsageRecords(dataRespTO, i, element);
+				extractUsageRecordsInfo(dataRespTO, i, element);
 			}
 		}
 
@@ -593,24 +592,24 @@ public class GWQueryEligibleProductsTicketXML {
 	}
 
 	/**
-	 * Extract Usage records.
+	 * Extract Usage records Info.
 	 *
 	 * @param dataRespTO
 	 *           the data resp TO
 	 * @param i
 	 *           the i
-	 * @param usageRecords
+	 * @param usageRecordsResponse
 	 *           the usage records
 	 * @throws DTIException
 	 *            the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractUsageRecords(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
- Element usageRecords)
+	private static void extractUsageRecordsInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+ Element usageRecordsResponse)
 			throws DTIException {
 
 		// UpGradePLU Response
-		Node linReqResp = usageRecords;
+		Node linReqResp = usageRecordsResponse;
 
 		Node linRecords = linReqResp.selectSingleNode("UsageRecords");
 		if (linRecords == null) {
@@ -670,7 +669,7 @@ public class GWQueryEligibleProductsTicketXML {
 	
 
 	/**
-	 * Extract upgrade PLU.
+	 * Extract upgrade PLU Node information .
 	 *
 	 * @param dataRespTO
 	 *           the data resp TO
@@ -682,7 +681,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 *            the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractUpgradePLU(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+	private static void extractUpgradePLUInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
 				Element upGradePLUResponse) throws DTIException {
 
 		// UpGradePLU Response
@@ -724,7 +723,7 @@ public class GWQueryEligibleProductsTicketXML {
 			// Adding Pay Plan information
 			if (linReqResp.getName().compareTo("PaymentPlans") == 0) {
 				dataRespTO.setPayPlan("YES");
-				extractPayplan(upgratePLU, linReqResp);
+				extractPayplanInfo(upgratePLU, linReqResp);
 			}
 			// Save it to the array
 			dataRespTO.addUpgradePLUList(upgratePLU);
@@ -734,7 +733,7 @@ public class GWQueryEligibleProductsTicketXML {
 	/**
 	 * Extract pay plan.
 	 *
-	 * @param upgratePLU
+	 * @param upgradePLUNode
 	 *           the upgrate PLU
 	 * @param payPlanLineResponse
 	 *           the pay plan line response
@@ -742,7 +741,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 *            the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractPayplan(GWDataRequestRespTO.UpgradePLU upgratePLU, Node payPlanLineResponse)
+	private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
 				throws DTIException {
 
 		// Payment Plan Line response
@@ -756,7 +755,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 			// Create the inner class
 
-			GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgratePLU.new PaymentPlan();
+			GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgradePLUNode.new PaymentPlan();
 
 			// PayplanId
 			Node payPlanId = linRecord.selectSingleNode("PaymentPlanID");
@@ -779,7 +778,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 			}
 
-			upgratePLU.addPaymentPlans(paymentPlan);
+			upgradePLUNode.addPaymentPlans(paymentPlan);
 
 		}
 
@@ -796,7 +795,7 @@ public class GWQueryEligibleProductsTicketXML {
 	 *            the DTI exception
 	 */
 	@SuppressWarnings("unchecked")
-	private static void extractContact(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
+	private static void extractContactInfo(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
 
 		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
 

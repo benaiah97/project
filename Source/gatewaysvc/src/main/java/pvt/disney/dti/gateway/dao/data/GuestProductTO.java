@@ -80,4 +80,13 @@ public class GuestProductTO {
 		this.gwDataRespTO = gwDataRespTO;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GuestProductTO [dbproductTO=" + dbproductTO + "]";
+	}
+	
+
 }
