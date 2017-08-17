@@ -32,7 +32,6 @@ public class GWQueryEligibleProductsTicketXML {
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
 	private static final String COMMA_STRING = ",";
 	private static final String EMPTY_STRING = "";
-	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
 
 	/**
 	 * Adds the query ticket element.
@@ -530,11 +529,6 @@ public class GWQueryEligibleProductsTicketXML {
 				dataRespTO.setPassKindName(passKindName);
 			}
 
-			// Compound Tags (LineageRecords)
-			if (element.getName().compareTo("LineageRequestResponse") == 0) {
-				extractLineageInfo(dataRespTO, i, element);
-			}
-
 			// PM17616 - For item kind 1 end date time is not required from
 			// eGalaxy.
 			if ((itemKind == 1) && (dataRespTO.getEndDateTime() == null)) {
@@ -730,15 +724,13 @@ public class GWQueryEligibleProductsTicketXML {
 		}
 	}
 
+	
 	/**
-	 * Extract pay plan.
+	 * Extract payplan info for the pay plan tag.
 	 *
-	 * @param upgradePLUNode
-	 *           the upgrate PLU
-	 * @param payPlanLineResponse
-	 *           the pay plan line response
-	 * @throws DTIException
-	 *            the DTI exception
+	 * @param upgradePLUNode the upgrade PLU node
+	 * @param payPlanLineResponse the pay plan line response
+	 * @throws DTIException the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
@@ -1013,106 +1005,6 @@ public class GWQueryEligibleProductsTicketXML {
 
 		}
 		dataRespTO.addContactList(contact);
-
-	}
-
-	/**
-	 * Extracts the lineage info (this structure is complex).
-	 * 
-	 * @param dataRespTO
-	 * @param i
-	 * @param linReqResp
-	 * @throws DTIException
-	 * 
-	 *            <LineageRequestResponse> <LineageRecords> <LineageRecord>
-	 *            <Amount>199</Amount> <ExpirationDate>2012-08-24
-	 *            00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
-	 *            <VisualID>2937555200149073829</VisualID> </LineageRecord>
-	 * 
-	 */
-	@SuppressWarnings("rawtypes")
-	private static void extractLineageInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-				Element lineageRequestResponse) throws DTIException {
-
-		// LineageRequestResponse
-		Node linReqResp = lineageRequestResponse;
-
-		// LineageRecords
-		Node linRecords = linReqResp.selectSingleNode("LineageRecords");
-		if (linRecords == null) {
-			return;
-		}
-
-		List linRecordList = linRecords.selectNodes("LineageRecord");
-
-		for (int index = 0; index < linRecordList.size(); index++) {
-
-			Node linRecord = (Node) linRecordList.get(index);
-
-			// Create the inner class
-			GWDataRequestRespTO.LineageRecord lineageRecordTO = dataRespTO.new LineageRecord();
-
-			// Amount
-			Node amountNode = linRecord.selectSingleNode("Amount");
-			if (amountNode != null) {
-				String inText = amountNode.getText();
-				if (inText.contains("."))
-					lineageRecordTO.setAmount(new BigDecimal(inText));
-				else
-					lineageRecordTO.setAmount(new BigDecimal(inText + ".00"));
-			}
-
-			// Expiration Date
-			Node expireNode = linRecord.selectSingleNode("ExpirationDate");
-			if (expireNode != null) {
-				String inText = expireNode.getText();
-				if ((inText != null) && (inText != "")) {
-					GregorianCalendar expDate = UtilityXML.getGCalFromEGalaxyDate(inText);
-					if (expDate == null) {
-						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-									"Response GW XML LineageRecord has unparsable ExpirationDate: " + inText);
-					}
-					lineageRecordTO.setExpirationDate(expDate);
-				}
-			}
-
-			// Status
-			Node statusNode = linRecord.selectSingleNode("Status");
-			if (statusNode != null) {
-				String inText = statusNode.getText();
-				try {
-					lineageRecordTO.setStatus(Integer.decode(inText));
-				} catch (NumberFormatException nfe) {
-					throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML LineageRecord has non-numeric Status.");
-				}
-			}
-
-			// Valid
-			Node validNode = linRecord.selectSingleNode("Valid");
-			if (validNode != null) {
-				String validString = validNode.getText();
-				if (validString.equalsIgnoreCase("YES"))
-					lineageRecordTO.setValid(Boolean.valueOf(true));
-				else if (validString.equalsIgnoreCase("NO"))
-					lineageRecordTO.setValid(Boolean.valueOf(false));
-				else {
-					throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML LineageRecord has invalid value for Valid.");
-				}
-			}
-
-			// VisualID
-			Node visualIDNode = linRecord.selectSingleNode("VisualID");
-			if (visualIDNode != null) {
-				String inText = visualIDNode.getText();
-				lineageRecordTO.setVisualID(inText);
-			}
-
-			// Save it to the array
-			dataRespTO.addLineageRecord(lineageRecordTO);
-
-		}
 
 	}
 

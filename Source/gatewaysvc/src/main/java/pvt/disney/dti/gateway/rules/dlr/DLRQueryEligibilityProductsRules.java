@@ -32,7 +32,6 @@ import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.Contact;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UpgradePLU;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO.UsageRecord;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
@@ -201,18 +200,18 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		GWQueryTicketRespTO gwQryTktRespTO = gwBodyTO.getQueryTicketResponseTO();
 		GWDataRequestRespTO gwDataRespTO = gwQryTktRespTO.getDataRespTO();
 
-		// Step 1 : Creating GuestProductTO
+		// GuestProductTO
 		GuestProductTO globalGuestProduct = new GuestProductTO();
 
 		// Putting up the original response in GuestProductTO
 		globalGuestProduct.setGwDataRespTO(gwDataRespTO);
 
-		// PLU's obtained from GWDataresponse , there throw error if no ticket found 
+		// PLU's obtained from GWDataresponse , throw error if no PLU found.
 		if ((gwDataRespTO.getPluList() == null)) {
 			
-			logger.sendEvent("Provider returned no ticket on a successful query ticket.", EventType.EXCEPTION, THISINSTANCE);
+			logger.sendEvent("Provider returned no ticket on a successful query ticket. ", EventType.EXCEPTION, THISINSTANCE);
 			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-						"Provider returned no ticket on a successful query ticket.");
+						"Provider returned no ticket on a successful query ticket. ");
 		} else {
 
 			// Retrieving the list of guest Product detail for PLU
@@ -227,7 +226,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-				return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+				return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 			} else {
 				// Putting the dbProduct to guestDbProduct
@@ -245,14 +244,14 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						logger.sendEvent("Usage Information for guest is not provided. ", EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-						// populating the ticket information , with sellable products as null
+						// Populating the ticket information , with sellable products as null
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+						return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					}
 				}
 
-				// Upgraded PLU List from Response
+				// Upgraded PLU List from Galaxy
 				ArrayList<UpgradePLU> upGradedPLuList = globalGuestProduct.getGwDataRespTO().getUpgradePLUList();
 
 				// If Upgraded PLU List is empty
@@ -263,22 +262,21 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-					// populating the ticket information , with sellable products as null
+					// Populating the ticket information , with sellable products as null
 					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+					return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 				} else if (globalUpgradeProduct.getProductListCount() == 0) {
 
-					// If no Sellable product found , result is INELIGIBLE and
-					// transaction is stopped
-					logger.sendEvent("No Sellable Product found.", EventType.DEBUG, THISINSTANCE);
+					// If no Sellable product found , result is INELIGIBLE
+					logger.sendEvent("No Sellable Product found. ", EventType.DEBUG, THISINSTANCE);
 					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
-					// populating the ticket information , with sellable products as null
+					// Populating the ticket information , with sellable products as null
 					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+					return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 				} else {
 
@@ -295,7 +293,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					// Comparing each PLU's from response with each Sellable Product
 					globalUpgradeProduct.retainDLRPLUs(PLUList);
 
-					logger.sendEvent("Final List of Sellable Product after comaprison with each UpgradedPLU'S."
+					logger.sendEvent("Final List of Sellable Product after comaprison with each UpgradedPLU'S from Galaxy. "
 								+ globalUpgradeProduct.toString(), EventType.DEBUG, THISINSTANCE);
 
 					// if the product list obtained after comparison is empty put the result type as NOPRODUCTS
@@ -305,7 +303,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						// Populating the ticket information , with sellable products as null.
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+						return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					} else {
 
 						//Mapping the globalGuestProduct and globalUpgradeProduct to response.
@@ -314,21 +312,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 			}
 		} 
-		return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+		return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 	}
 
+	
 	/**
-	 * Gets the query eligible command.
-	 * 
-	 * @param dtiTktTO
-	 *            the dti tkt TO
-	 * @param dtiRespTO
-	 *            the dti resp TO
-	 * @param dtiTxn
-	 *            the dti txn
-	 * @return the query eligible command
+	 * Sets the query eligible product transaction.
+	 *
+	 * @param dtiTktTO the dti tkt TO
+	 * @param dtiRespTO the dti resp TO
+	 * @param dtiTxn the dti txn
+	 * @return the DTI transaction TO
 	 */
-	private static DTITransactionTO setQueryEligibleTransaction(TicketTO dtiTktTO,
+	private static DTITransactionTO setQueryEligibleProductTransaction(TicketTO dtiTktTO,
 			DTIResponseTO dtiRespTO, DTITransactionTO dtiTxn) {
 		QueryEligibilityProductsResponseTO qtResp = new QueryEligibilityProductsResponseTO();
 
@@ -484,90 +480,78 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		String visualId = gwDataRespTO.getVisualID();
 		dtiTktTO.setExternal(visualId);
 
-		// Contact
-		if ((gwDataRespTO.getContact() != null) && (gwDataRespTO.getContact().size() > 0)) {
+		// Demographics Information
 
-			Contact contact = gwDataRespTO.getContact().get(0);
-
-			// FirstName
-			if (contact.getFirstName() != null) {
-				ticketDemo.setFirstName(contact.getFirstName());
-			}
-
-			// LastName
-			if (contact.getLastName() != null) {
-				ticketDemo.setLastName(contact.getLastName());
-			}
-
-			// Addr1
-			if (contact.getStreet1() != null) {
-				ticketDemo.setAddr1(contact.getStreet1());
-			}
-
-			// Addr2
-			if (contact.getStreet2() != null) {
-				ticketDemo.setAddr2(contact.getStreet2());
-			}
-
-			// City
-			if (contact.getCity() != null) {
-				ticketDemo.setCity(contact.getCity());
-			}
-
-			// State
-			if (contact.getState() != null) {
-				ticketDemo.setState(contact.getState());
-			}
-
-			// ZIP
-			if (contact.getZip() != null) {
-				ticketDemo.setZip(contact.getZip());
-			}
-
-			// Country
-			if (contact.getCountryCode() != null) {
-				ticketDemo.setCountry(contact.getCountryCode());
-			}
-
-			// Telephone
-			if (contact.getPhone() != null) {
-				ticketDemo.setTelephone(contact.getPhone());
-			}
-
-			// Cell
-			if (contact.getCell() != null) {
-				ticketDemo.setCellPhone(contact.getCell());
-			}
-
-			// Email
-			if (contact.getEmail() != null) {
-				ticketDemo.setEmail(contact.getEmail());
-			}
-
-			// Gender
-			if (contact.getGender() != null) {
-
-				if (contact.getGender().equalsIgnoreCase("Male")) {
-					ticketDemo.setGender(GenderType.MALE);
-				} else if (contact.getGender().equalsIgnoreCase("Female")) {
-					ticketDemo.setGender(GenderType.FEMALE);
-				} else {
-					ticketDemo.setGender(GenderType.UNSPECIFIED);
-				}
-			}
-
-			// DOB
-			if (contact.getDob() != null) {
-				ticketDemo.setDateOfBirth(contact.getDob());
-			}
-
-			dtiTktTO.addTicketDemographic(ticketDemo);
-
+		// FirstName
+		if (gwDataRespTO.getFirstName() != null) {
+			ticketDemo.setFirstName(gwDataRespTO.getFirstName());
 		}
-		// Demographics Info end
 
-		
-		
+		// LastName
+		if (gwDataRespTO.getLastName() != null) {
+			ticketDemo.setLastName(gwDataRespTO.getLastName());
+		}
+
+		// Addr1
+		if (gwDataRespTO.getStreet1() != null) {
+			ticketDemo.setAddr1(gwDataRespTO.getStreet1());
+		}
+
+		// Addr2
+		if (gwDataRespTO.getStreet2() != null) {
+			ticketDemo.setAddr2(gwDataRespTO.getStreet2());
+		}
+
+		// City
+		if (gwDataRespTO.getCity() != null) {
+			ticketDemo.setCity(gwDataRespTO.getCity());
+		}
+
+		// State
+		if (gwDataRespTO.getState() != null) {
+			ticketDemo.setState(gwDataRespTO.getState());
+		}
+
+		// ZIP
+		if (gwDataRespTO.getZip() != null) {
+			ticketDemo.setZip(gwDataRespTO.getZip());
+		}
+
+		// Country
+		if (gwDataRespTO.getCountryCode() != null) {
+			ticketDemo.setCountry(gwDataRespTO.getCountryCode());
+		}
+
+		// Telephone
+		if (gwDataRespTO.getPhone() != null) {
+			ticketDemo.setTelephone(gwDataRespTO.getPhone());
+		}
+
+		// Email
+		if (gwDataRespTO.getEmail() != null) {
+			ticketDemo.setEmail(gwDataRespTO.getEmail());
+		}
+
+		// Gender
+		if (gwDataRespTO.getGender() != null) {
+
+			if (gwDataRespTO.getGenderRespString().equalsIgnoreCase("Male")) {
+				ticketDemo.setGender(GenderType.MALE);
+			} else if (gwDataRespTO.getGenderRespString().equalsIgnoreCase("Female")) {
+				ticketDemo.setGender(GenderType.FEMALE);
+			} else {
+				ticketDemo.setGender(GenderType.UNSPECIFIED);
+			}
+		}
+
+		// DOB
+		if (gwDataRespTO.getDateOfBirth() != null) {
+			ticketDemo.setDateOfBirth(gwDataRespTO.getDateOfBirth());
+		}
+
+		dtiTktTO.addTicketDemographic(ticketDemo);
+
+		// Demographics Info end
 
 		// Ticket Status PICTURE YES or NO and PAY Plan Present YES or NO
 
@@ -576,13 +560,13 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		// Picture
 		tktStatus.setStatusItem(PICTURE);
-		
-		// Removing Has Picture as for now 
-		/*if ((gwDataRespTO.getHasPicture() != null) && (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
-			tktStatus.setStatusValue(YES);
-		} else {
-			tktStatus.setStatusValue(NO);
-		}*/
+
+		// Removing Has Picture as for now
+		/*
+		 * if ((gwDataRespTO.getHasPicture() != null) &&
+		 * (gwDataRespTO.getHasPicture().compareToIgnoreCase(YES) == 0)) {
+		 * tktStatus.setStatusValue(YES); } else { tktStatus.setStatusValue(NO); }
+		 */
 		tktStatus.setStatusValue(NO);
 		tktStatusList.add(tktStatus);
 
@@ -597,8 +581,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			tktStatus.setStatusValue(NO);
 		}
 		tktStatusList.add(tktStatus);
-		
-		// if result type is INELIGIBLE or NOPRODUCTS no need for checking or displaying eligible productList
+
+		// if result type is INELIGIBLE or NOPRODUCTS no need for checking or
+		// displaying eligible productList
 		if ((dtiTktTO.getUpgradeEligibilityStatus() == UpgradeEligibilityStatusType.INELIGIBLE)
 					|| (dtiTktTO.getUpgradeEligibilityStatus() == UpgradeEligibilityStatusType.NOPRODUCTS)) {
 			return;
@@ -614,9 +599,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 			}
 		}
 		// Sorting to get the first Usage Date
-		Collections.sort(useTimeList);
-
-		GregorianCalendar firstUsageDateValue = useTimeList.get(0);
+		GregorianCalendar firstUsageDateValue = Collections.min(useTimeList);;
 		logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(), EventType.DEBUG, THISINSTANCE);
 
 		// Eligible products
@@ -625,39 +608,41 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				eligibleProductsTO = new EligibleProductsTO();
 
-				// set the product code
+				// Set the product code
 				eligibleProductsTO.setProdCode(productTO.getPdtCode());
 
-				// set the actual product price
+				// Set the actual product price
 				prodPrice = productTO.getUnitPrice();
 
 				eligibleProductsTO.setProdPrice(String.valueOf(prodPrice));
 
-				// set the actual product tax
+				// Set the actual product tax
 				prodTax = productTO.getTax();
 
 				eligibleProductsTO.setProdTax(prodTax);
-				
-				//Upgraded Price
+
+				// Upgraded Price
 				if ((guestProductTO.getDbproductTO() != null)
 							&& (guestProductTO.getDbproductTO().getStandardRetailPrice() != null)) {
-					// set the upgraded product price
+					
+					// Set the upgraded product price
 					prodUpgradePrice = prodPrice.subtract(guestProductTO.getDbproductTO().getStandardRetailPrice());
 
 					eligibleProductsTO.setUpgrdPrice(prodUpgradePrice.toString());
 				}
-				
-				//Upgraded Tax
+
+				// Upgraded Tax
 				if ((guestProductTO.getDbproductTO() != null)
 							&& (guestProductTO.getDbproductTO().getStandardRetailTax() != null)) {
-					// set the upgraded product tax
+					
+					// Set the upgraded product tax
 					prodUpgrdTax = prodTax.subtract(guestProductTO.getDbproductTO().getStandardRetailTax());
 
 					eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
 
 				}
-				
-				// set the validity
+
+				// Setting valid End Value
 				try {
 					Integer dayCount = productTO.getDayCount();
 
@@ -686,6 +671,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
 		}
-			
+
 	}
 }
