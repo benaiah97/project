@@ -10,8 +10,6 @@ import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.lang.StringUtils;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -55,8 +53,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 	/** Object instance used for logging. */
 	private static final DLRQueryEligibilityProductsRules THISINSTANCE = new DLRQueryEligibilityProductsRules();
-
-	public static final int DLR_ANNUAL_PASS_GRACE_PERIOD_HOURS = 30;
 
 	/** Numeric identifier indicating DLR */
 	public static final Integer DLR_ID = new Integer(1);
@@ -224,11 +220,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 			// Process only if details are found
 			if (guestDbProduct == null) {
-				logger.sendEvent("No PLU's List  fetched from DTI Ticketing System", EventType.DEBUG, THISINSTANCE);
+				logger.sendEvent("DB product of guestproductTO not found. ", EventType.DEBUG, THISINSTANCE);
 				dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-				// Populating the ticket information , provide the product catalog
-				// as null
+				// Populating the ticket information , provide the product catalog as null
 
 				setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
@@ -241,29 +236,13 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// Fetch the details List of Sellable product
 				UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
-				/*// If Picture is not present in response marking resultType as INELIGIBLE // HasPicture as for now 
-				if (StringUtils.isBlank(globalGuestProduct.getGwDataRespTO().getHasPicture())) {
-
-					// TODO need to verify if Haspicture is NO ||
-					// (globalGuestProduct.getGwDataRespTO().getHasPicture().compareTo("NO")
-					// == 0)) {
-
-					logger.sendEvent("Tag 'HasPicture' is not found or has no value.", EventType.DEBUG, THISINSTANCE);
-					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
-
-					// populating the ticket information , with sellable products as null
-					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
-
-					return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
-				}*/
-
 				// Check usage if no usage is there put the result type as  INELIGIBLE
 				if ((globalGuestProduct.getGwDataRespTO().getUsageRecords() != null)
 							&& (globalGuestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
 
 					if (globalGuestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0) {
 
-						logger.sendEvent("Usage Information for guest is not provided..", EventType.DEBUG, THISINSTANCE);
+						logger.sendEvent("Usage Information for guest is not provided. ", EventType.DEBUG, THISINSTANCE);
 						dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
 						// populating the ticket information , with sellable products as null
@@ -279,9 +258,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				// If Upgraded PLU List is empty
 				if ((upGradedPLuList == null) || (upGradedPLuList.size() == 0)) {
 
-					// if no upgrade PLUs from the response , result is INELIGIBLE
-					// and transaction is stopped
-					logger.sendEvent("Provider has not provided any Upgraded PLU list.", EventType.DEBUG, THISINSTANCE);
+					// If no upgrade PLUs from the response , result is INELIGIBLE.
+					logger.sendEvent("Provider has not provided any Upgraded PLU list. ", EventType.DEBUG, THISINSTANCE);
 
 					dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
@@ -311,26 +289,26 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						PLUList.add(upgradePLU.getPLU());
 					}
 
-					logger.sendEvent("Orignal List of Sellable Product." + globalUpgradeProduct.getProductListCount(),
+					logger.sendEvent("Orignal List of Sellable Product. " + globalUpgradeProduct.toString(),
 								EventType.DEBUG, THISINSTANCE);
 
 					// Comparing each PLU's from response with each Sellable Product
 					globalUpgradeProduct.retainDLRPLUs(PLUList);
 
 					logger.sendEvent("Final List of Sellable Product after comaprison with each UpgradedPLU'S."
-								+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
+								+ globalUpgradeProduct.toString(), EventType.DEBUG, THISINSTANCE);
 
 					// if the product list obtained after comparison is empty put the result type as NOPRODUCTS
 					if (globalUpgradeProduct.getProductListCount() == 0) {
 						dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
-						// populating the ticket information , with sellable products as null
+						// Populating the ticket information , with sellable products as null.
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
 						return setQueryEligibleTransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					} else {
 
-						// Step 5 : Mapping the globalGuestProduct and globalUpgradeProduct to response
+						//Mapping the globalGuestProduct and globalUpgradeProduct to response.
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, globalUpgradeProduct.getProductList());
 					}
 				}
@@ -708,8 +686,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				logger.sendEvent("Setting all the data in GuestProductTo", EventType.DEBUG, dtiTktTO.toString());
 			}
 		}
-		
-		// set the status as ELIGIBLE
-		dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
+			
 	}
 }

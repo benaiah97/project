@@ -261,7 +261,7 @@ public class WDWQueryEligibleProductsRules {
 				// if no guest Type information is found then ticket is INELIGIBLE and transaction stops
 				if (guestproductTO.getDbproductTO() == null) {
 
-					logger.sendEvent("DB product of guestproductTO not found ", EventType.DEBUG, THISINSTANCE);
+					logger.sendEvent("DB product of guestproductTO not found. ", EventType.DEBUG, THISINSTANCE);
 					dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 					
 					// populating the ticket Information 
