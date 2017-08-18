@@ -563,16 +563,11 @@ public class GWQueryEligibleProductsTicketXML {
 				extractUpgradePLUInfo(dataRespTO, i, element);
 			}
 
-			// Adding new Tag Contact
-			if (element.getName().compareTo("Contact") == 0) {
-				extractContactInfo(dataRespTO, element);
-			}
-
-			// Adding new Has Picture Contact
+			/*// Adding new Has Picture Contact
 			if (element.getName().compareTo("HasPicture") == 0) {
 				String hasPicture = element.getText();
 				dataRespTO.setHasPicture(hasPicture);
-			}
+			}*/
 
 			// Adding new Usage details
 			if (element.getName().compareTo("UsageRequestResponse") == 0) {
@@ -679,9 +674,9 @@ public class GWQueryEligibleProductsTicketXML {
 				Element upGradePLUResponse) throws DTIException {
 
 		// UpGradePLU Response
-		Node linReqResp = upGradePLUResponse;
+		Node upGradeLineResp = upGradePLUResponse;
 
-		List linRecordList = linReqResp.selectNodes("Item");
+		List linRecordList = upGradeLineResp.selectNodes("Item");
 
 		for (int index = 0; index < linRecordList.size(); index++) {
 
@@ -708,16 +703,16 @@ public class GWQueryEligibleProductsTicketXML {
 			}
 
 			// Upgraded Price
-			Node upgdpriceNode = linRecord.selectSingleNode("UpgradePrice");
-			if (upgdpriceNode != null) {
-				String inText = upgdpriceNode.getText();
+			Node upgdPriceNode = linRecord.selectSingleNode("UpgradePrice");
+			if (upgdPriceNode != null) {
+				String inText = upgdPriceNode.getText();
 				upgratePLU.setUpgradePrice(new BigDecimal(inText));
 
 			}
 			// Adding Pay Plan information
-			if (linReqResp.getName().compareTo("PaymentPlans") == 0) {
+			if (upGradeLineResp.getName().compareTo("PaymentPlans") == 0) {
 				dataRespTO.setPayPlan("YES");
-				extractPayplanInfo(upgratePLU, linReqResp);
+				extractPayplanInfo(upgratePLU, upGradeLineResp);
 			}
 			// Save it to the array
 			dataRespTO.addUpgradePLUList(upgratePLU);
@@ -737,9 +732,9 @@ public class GWQueryEligibleProductsTicketXML {
 				throws DTIException {
 
 		// Payment Plan Line response
-		Node linReqResp = payPlanLineResponse;
+		Node payPlanLineResp = payPlanLineResponse;
 
-		List linRecordList = linReqResp.selectNodes("PaymentPlan");
+		List linRecordList = payPlanLineResp.selectNodes("PaymentPlan");
 
 		for (int index = 0; index < linRecordList.size(); index++) {
 

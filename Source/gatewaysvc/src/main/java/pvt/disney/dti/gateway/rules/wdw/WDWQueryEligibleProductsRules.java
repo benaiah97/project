@@ -88,7 +88,7 @@ public class WDWQueryEligibleProductsRules {
 	private final static String WDW_TPS_CODE = "WDW-ATS";
 
 	/** The paylan. */
-	private static final String PAYLAN = "PAYPLAN";
+	private static final String PAYPLAN = "PAYPLAN";
 
 	/** The paylan. */
 	private static final String BIOMETRIC = "BIOMET";
@@ -101,6 +101,9 @@ public class WDWQueryEligibleProductsRules {
 
 	/** The Constant NUMBER_FOR_DAYCOUNT. */
 	private static final int NUMBER_FOR_DAYCOUNT = 24 * 60 * 60 * 1000;
+	
+	/** The Constant PAY_PLAN_IND. */
+	private static  boolean PAY_PLAN_IND = false;
 
 	/**
 	 * Transform the DTITransactionTO value object to the provider value objects
@@ -305,7 +308,7 @@ public class WDWQueryEligibleProductsRules {
 					
 					logger.sendEvent("Original no sellable products. " + globalUpgradeProduct.getProductListCount(),
 								EventType.DEBUG, THISINSTANCE);
-					// TODO add toString() in globalUpgradeProduct and guestProductTO to display the whole list toString limit concise info, prodCode, '' next prodCode  
+					  
 					// Validate the list of the day sub classes for AP Upgrades for Upgrade Path Id obtained in method getGuestProductDetails
 					
 					// path id from guest product to
@@ -512,7 +515,7 @@ public class WDWQueryEligibleProductsRules {
 			logger.sendEvent("Usages must have one entry :Validation Failed", EventType.DEBUG, THISINSTANCE);
 			return true;
 		}
-	
+		
 		try {
 			
 			// Rule 1 : UpgrdPathId is 0 
@@ -556,8 +559,14 @@ public class WDWQueryEligibleProductsRules {
 				logger.sendEvent("ResidentInd is :" + isResident + "Day count is :" + dayCount + "and first use date "
 							+ ":" + firstuseDate + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return true;
-			}
+			} else {
 
+				// Setting the pay plan as true , if condition does not match
+				PAY_PLAN_IND = true;
+			}
+			
+			
+			PAY_PLAN_IND = false;
 			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use date is older than six months (185 days).
 			if ((firstuseDate != null) && (isResident == true)
 					&& (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
@@ -565,6 +574,8 @@ public class WDWQueryEligibleProductsRules {
 				logger.sendEvent("ResidentInd is :" + isResident + "first use date is :" + firstuseDate
 							+ " and DayCount is: " + dayCount + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return true;
+			}else{
+				PAY_PLAN_IND = true;
 			}
 		} catch (Exception e) {
 			
@@ -779,8 +790,8 @@ public class WDWQueryEligibleProductsRules {
 		}
 		
 		// Pay plan
-		tktStatus.setStatusItem(PAYLAN);
-		if ((guestProductTO.getDbproductTO().isResidentInd() == true) && (otTicketInfo.getUsagesList().size() > 0)) {
+		tktStatus.setStatusItem(PAYPLAN);
+		if (PAY_PLAN_IND) {
 			tktStatus.setStatusValue(YES);
 		} else {
 			tktStatus.setStatusValue(NO);
@@ -864,7 +875,7 @@ public class WDWQueryEligibleProductsRules {
 						.getDbproductTO().getStandardRetailTax());
 				eligibleProductsTO.setUpgrdTax(prodUpgrdTax.toString());
 
-				// set the validity 
+				// set the valid end
 				try {
 					Integer dayCount = productTO.getDayCount();
 
@@ -891,8 +902,7 @@ public class WDWQueryEligibleProductsRules {
 				dtiTicketTO.addEligibleProducts(eligibleProductsTO);
 			}
 		}
-		// Setting the result type as ELIGIBLE
-		dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
+	
 		return;
 	}
 

@@ -115,7 +115,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	}
 
 	/**
-	 * Transforms a query ticket response string from the DLR provider and
+	 * Transforms a Query Eligible Product ticket response string from the DLR provider and
 	 * updates the DTITransactionTO object with the response information.
 	 * 
 	 * @param dtiTxn
@@ -226,7 +226,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 				setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-				return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+				return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 			} else {
 				// Putting the dbProduct to guestDbProduct
@@ -247,7 +247,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						// Populating the ticket information , with sellable products as null
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+						return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					}
 				}
 
@@ -265,7 +265,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					// Populating the ticket information , with sellable products as null
 					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-					return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+					return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 				} else if (globalUpgradeProduct.getProductListCount() == 0) {
 
@@ -276,7 +276,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 					// Populating the ticket information , with sellable products as null
 					setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-					return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+					return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 
 				} else {
 
@@ -303,7 +303,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						// Populating the ticket information , with sellable products as null.
 						setQueryEligibleResponseCommand(globalGuestProduct, dtiTktTO, null);
 
-						return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+						return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 					} else {
 
 						//Mapping the globalGuestProduct and globalUpgradeProduct to response.
@@ -312,9 +312,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				}
 			}
 		} 
-		return setQueryEligibleProductTransaction(dtiTktTO, dtiRespTO, dtiTxn);
+		return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
 	}
-
 	
 	/**
 	 * Sets the query eligible product transaction.
@@ -324,7 +323,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 	 * @param dtiTxn the dti txn
 	 * @return the DTI transaction TO
 	 */
-	private static DTITransactionTO setQueryEligibleProductTransaction(TicketTO dtiTktTO,
+	private static DTITransactionTO setQueryEligibleToDTITransaction(TicketTO dtiTktTO,
 			DTIResponseTO dtiRespTO, DTITransactionTO dtiTxn) {
 		QueryEligibilityProductsResponseTO qtResp = new QueryEligibilityProductsResponseTO();
 
