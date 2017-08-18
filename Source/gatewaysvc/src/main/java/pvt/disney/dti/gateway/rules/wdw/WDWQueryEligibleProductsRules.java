@@ -379,8 +379,8 @@ public class WDWQueryEligibleProductsRules {
 											.getStandardRetailPrice());
 
 								logger.sendEvent(	"List of Sellable Products Obtained after removing products whose unit price is less than "
-														+ guestproductTO.getDbproductTO().getStandardRetailPrice() + ". "
-														+ globalUpgradeProduct.getProductListCount(), EventType.DEBUG, THISINSTANCE);
+														+ guestproductTO.getDbproductTO().getStandardRetailPrice() + ": "
+														+ globalUpgradeProduct.toString(), EventType.DEBUG, THISINSTANCE);
 							}
 
 							logger.sendEvent("Final list of sellable products obtained. " + globalUpgradeProduct.toString(),
@@ -506,17 +506,20 @@ public class WDWQueryEligibleProductsRules {
 		
 		if ((usagesTOs != null) && (usagesTOs.size() > 0)) {
 			for (OTUsagesTO otUsagesTO : usagesTOs) {
-				useDates.add(otUsagesTO.getDate());
-				firstuseDate = Collections.min(useDates);
+				if (otUsagesTO.getDate() != null) {
+					useDates.add(otUsagesTO.getDate());
+					firstuseDate = Collections.min(useDates);
+				}
 			}
-		} else {
-
-			// Usages must have one entry
-			logger.sendEvent("Usages must have one entry :Validation Failed", EventType.DEBUG, THISINSTANCE);
-			return true;
-		}
+		} 
 		
 		try {
+			if(firstuseDate==null) {
+
+				// Usages must have at least one entry
+				logger.sendEvent("Usages must have one entry :Validation Failed", EventType.DEBUG, THISINSTANCE);
+				return true;
+			}
 			
 			// Rule 1 : UpgrdPathId is 0 
 			BigInteger upGrdPath = productTO.getUpgrdPathId();
@@ -553,9 +556,8 @@ public class WDWQueryEligibleProductsRules {
 			}
 
 			// Rule 5 : ResidentInd is Y and DayCount = 1 and the first use date is older than 14 days
-			if ((firstuseDate != null) && (isResident == true)
-					&& (dayCount == 1) && (getDayDifference(firstuseDate) > 14)) {
-				
+			if ((firstuseDate != null) && (isResident == true) && (dayCount == 1) && (getDayDifference(firstuseDate) > 14)) {
+
 				logger.sendEvent("ResidentInd is :" + isResident + "Day count is :" + dayCount + "and first use date "
 							+ ":" + firstuseDate + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return true;
@@ -565,16 +567,17 @@ public class WDWQueryEligibleProductsRules {
 				PAY_PLAN_IND = true;
 			}
 			
-			
 			PAY_PLAN_IND = false;
-			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use date is older than six months (185 days).
-			if ((firstuseDate != null) && (isResident == true)
-					&& (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
-				
+			
+			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use
+			// date is older than six months (185 days).
+			if ((firstuseDate != null) && (isResident == true) && (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
+
 				logger.sendEvent("ResidentInd is :" + isResident + "first use date is :" + firstuseDate
 							+ " and DayCount is: " + dayCount + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
 				return true;
-			}else{
+			} else {
+				
 				PAY_PLAN_IND = true;
 			}
 		} catch (Exception e) {

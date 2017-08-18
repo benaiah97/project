@@ -1092,10 +1092,6 @@ public class ProductRules {
    */
 	public static void disqualifyProduct(ArrayList<String> usageSiteList, UpgradeCatalogTO upGradeProductTO) {
 
-		// read the details from property file
-		// readProperties();
-		ArrayList<DBProductTO> newList = new ArrayList<DBProductTO>();
-
 		HashSet<String> usageSiteSet = new HashSet<String>();
 
 		for (/* each */String siteDetail : /* in */usageSiteList) {

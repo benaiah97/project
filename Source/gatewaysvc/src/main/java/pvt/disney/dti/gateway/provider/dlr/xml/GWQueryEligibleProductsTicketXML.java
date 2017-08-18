@@ -558,16 +558,16 @@ public class GWQueryEligibleProductsTicketXML {
 
 			}
 
-			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can upgrade to RASTA006
+			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can be upgraded to
 			if (element.getName().compareTo("UpgradePLUList") == 0) {
 				extractUpgradePLUInfo(dataRespTO, i, element);
 			}
 
-			/*// Adding new Has Picture Contact
-			if (element.getName().compareTo("HasPicture") == 0) {
-				String hasPicture = element.getText();
-				dataRespTO.setHasPicture(hasPicture);
-			}*/
+			/*
+			 * // Adding new Has Picture Contact if
+			 * (element.getName().compareTo("HasPicture") == 0) { String hasPicture
+			 * = element.getText(); dataRespTO.setHasPicture(hasPicture); }
+			 */
 
 			// Adding new Usage details
 			if (element.getName().compareTo("UsageRequestResponse") == 0) {
@@ -594,13 +594,12 @@ public class GWQueryEligibleProductsTicketXML {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void extractUsageRecordsInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
- Element usageRecordsResponse)
-			throws DTIException {
+				Element usageRecordsResponse) throws DTIException {
 
-		// UpGradePLU Response
-		Node linReqResp = usageRecordsResponse;
+		// Usage Record Response
+		Node usageLineResponse = usageRecordsResponse;
 
-		Node linRecords = linReqResp.selectSingleNode("UsageRecords");
+		Node linRecords = usageLineResponse.selectSingleNode("UsageRecords");
 		if (linRecords == null) {
 			return;
 		}
@@ -640,13 +639,10 @@ public class GWQueryEligibleProductsTicketXML {
 			if (useTimeNode != null) {
 				String useTime = useTimeNode.getText();
 				if ((useTime != null) && (useTime.length() > 0)) {
-					GregorianCalendar useDateTime = UtilityXML
-							.getGCalFromEGalaxyDate(useTime);
+					GregorianCalendar useDateTime = UtilityXML.getGCalFromEGalaxyDate(useTime);
 					if (useDateTime == null) {
-						throw new DTIException(GWQueryTicketXML.class,
-								DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML DataRequestResp has unparsable StartDateTime: "
-										+ useTime);
+						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+									"Response GW XML DataRequestResp has unparsable StartDateTime: " + useTime);
 					}
 					usageRecord.setUseTime(useDateTime);
 				}
@@ -656,18 +652,13 @@ public class GWQueryEligibleProductsTicketXML {
 
 	}
 	
-
 	/**
-	 * Extract upgrade PLU Node information .
+	 * Extract upgrade PLU info.
 	 *
-	 * @param dataRespTO
-	 *           the data resp TO
-	 * @param i
-	 *           the i
-	 * @param upGradePLUResponse
-	 *           the up grade PLU response
-	 * @throws DTIException
-	 *            the DTI exception
+	 * @param dataRespTO the data resp TO
+	 * @param i the i
+	 * @param upGradePLUResponse the up grade PLU response
+	 * @throws DTIException the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
 	private static void extractUpgradePLUInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
@@ -731,7 +722,7 @@ public class GWQueryEligibleProductsTicketXML {
 	private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
 				throws DTIException {
 
-		// Payment Plan Line response
+		// Payment Plan response
 		Node payPlanLineResp = payPlanLineResponse;
 
 		List linRecordList = payPlanLineResp.selectNodes("PaymentPlan");
@@ -768,238 +759,6 @@ public class GWQueryEligibleProductsTicketXML {
 			upgradePLUNode.addPaymentPlans(paymentPlan);
 
 		}
-
-	}
-
-	/**
-	 * Extract contact.
-	 *
-	 * @param dataRespTO
-	 *           the data resp TO
-	 * @param contactLineResponse
-	 *           the contact line response
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	@SuppressWarnings("unchecked")
-	private static void extractContactInfo(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
-
-		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
-
-		for (Iterator<org.dom4j.Element> i = contactLineResponse.elementIterator(); i.hasNext();) {
-
-			Element element = i.next();
-
-			// String First Name
-			if (element.getName().compareTo("FirstName") == 0) {
-				String firstName = element.getText();
-				contact.setFirstName(firstName);
-				continue;
-			}
-
-			// MiddleName
-			if (element.getName().compareTo("MiddleName") == 0) {
-				String middleName = element.getText();
-				contact.setMiddleName(middleName);
-				continue;
-			}
-
-			// String Last Name
-			if (element.getName().compareTo("LastName") == 0) {
-				String lastName = element.getText();
-				contact.setLastName(lastName);
-				continue;
-			}
-
-			// String IdentificationNo
-			if (element.getName().compareTo("IdentificationNo") == 0) {
-				String identificationNo = element.getText();
-				contact.setIdentificationNo(identificationNo);
-				continue;
-			}
-
-			// String Street1
-			if (element.getName().compareTo("Street1") == 0) {
-				String street1 = element.getText();
-				contact.setStreet1(street1);
-				continue;
-			}
-
-			// String Street2
-			if (element.getName().compareTo("Street2") == 0) {
-				String street2 = element.getText();
-				contact.setStreet2(street2);
-				continue;
-			}
-
-			// String Street3
-			if (element.getName().compareTo("Street3") == 0) {
-				String street3 = element.getText();
-				contact.setStreet3(street3);
-				continue;
-			}
-			// String City
-			if (element.getName().compareTo("City") == 0) {
-				String city = element.getText();
-				contact.setCity(city);
-				continue;
-			}
-
-			// String State
-			if (element.getName().compareTo("State") == 0) {
-				String state = element.getText();
-				contact.setState(state);
-				continue;
-			}
-
-			// String ZIP
-			if (element.getName().compareTo("ZIP") == 0) {
-				String zip = element.getText();
-				contact.setZip(zip);
-				continue;
-			}
-
-			// String CountryCode
-			if (element.getName().compareTo("CountryCode") == 0) {
-				String countryCode = element.getText();
-				contact.setCountryCode(countryCode);
-				continue;
-			}
-
-			// String Phone
-			if (element.getName().compareTo("Phone") == 0) {
-				String phone = element.getText();
-				contact.setPhone(phone);
-				continue;
-			}
-
-			// String Fax
-			if (element.getName().compareTo("Fax") == 0) {
-				String fax = element.getText();
-				contact.setFax(fax);
-				continue;
-			}
-
-			// String Cell
-			if (element.getName().compareTo("Cell") == 0) {
-				String cell = element.getText();
-				contact.setCell(cell);
-				continue;
-			}
-
-			// String Email
-			if (element.getName().compareTo("Email") == 0) {
-				String email = element.getText();
-				contact.setEmail(email);
-				continue;
-			}
-
-			// String ExternalID
-			if (element.getName().compareTo("ExternalID") == 0) {
-				String externalID = element.getText();
-				contact.setExternalId(externalID);
-				continue;
-			}
-
-			// String ContactGUID
-			if (element.getName().compareTo("ContactGUID") == 0) {
-				String contactGUID = element.getText();
-				contact.setContactGUID(contactGUID);
-				continue;
-			}
-
-			// String GalaxyContactID
-			if (element.getName().compareTo("GalaxyContactID") == 0) {
-				String galaxyContactID = element.getText();
-				contact.setGalaxyContactId(galaxyContactID);
-				continue;
-			}
-
-			// String JobTitle
-			if (element.getName().compareTo("JobTitle") == 0) {
-				String jobTitle = element.getText();
-				contact.setJobTitle(jobTitle);
-				continue;
-			}
-
-			// String Primary
-			if (element.getName().compareTo("Primary") == 0) {
-				String primary = element.getText();
-				contact.setPrimary(primary);
-				continue;
-			}
-
-			// String ContactNote
-			if (element.getName().compareTo("ContactNote") == 0) {
-				String contactNote = element.getText();
-				contact.setContactNote(contactNote);
-				continue;
-			}
-
-			// String NameTitleID
-			if (element.getName().compareTo("NameTitleID") == 0) {
-				String nameTitleID = element.getText();
-				contact.setNameTitleId(nameTitleID);
-				continue;
-			}
-
-			// String NameSuffixID
-			if (element.getName().compareTo("NameSuffixID") == 0) {
-				String nameSuffixID = element.getText();
-				contact.setNameSuffixId(nameSuffixID);
-				continue;
-			}
-
-			// String TotalPaymentContracts
-			if (element.getName().compareTo("TotalPaymentContracts") == 0) {
-				String totalPaymentContracts = element.getText();
-				contact.setTotalPaymentContracts(totalPaymentContracts);
-				continue;
-			}
-
-			// String AllowEmail
-			if (element.getName().compareTo("AllowEmail") == 0) {
-				String allowEmail = element.getText();
-				contact.setAllowMail(allowEmail);
-				continue;
-			}
-
-			// String AllowMailings
-			if (element.getName().compareTo("AllowMailings") == 0) {
-				String allowMailings = element.getText();
-				contact.setAllowMailing(allowMailings);
-				continue;
-			}
-
-			// Gregorian Calendar DOB (Date of Birth) As of 2.16.1, JTL
-			if (element.getName().equalsIgnoreCase("DOB")) {
-				String dobString = element.getText();
-				if ((dobString != null) && (dobString != "")) {
-					GregorianCalendar dateOfBirth = UtilityXML.getGCalFromEGalaxyDate(dobString);
-					if (dateOfBirth == null) {
-						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-									"Response GW XML DataRequestResp has unparsable DateUsed: " + dobString);
-					}
-					contact.setDob(dateOfBirth);
-				}
-				continue;
-			}
-
-			// String AgeGroup
-			if (element.getName().compareTo("AgeGroup") == 0) {
-				String ageGroup = element.getText();
-				contact.setAgeGroup(ageGroup);
-				continue;
-			}
-
-			// String Gender
-			if (element.getName().compareTo("Gender") == 0) {
-				String gender = element.getText();
-				contact.setGender(gender);
-			}
-
-		}
-		dataRespTO.addContactList(contact);
 
 	}
 
