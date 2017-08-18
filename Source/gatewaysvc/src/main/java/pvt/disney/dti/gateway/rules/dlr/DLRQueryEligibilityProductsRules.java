@@ -149,7 +149,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null body.");
+					"Gateway XML allowed a response with null body.");
 		}
 
 		GWStatusTO gwStatusTO = gwBodyTO.getStatusTO();
@@ -157,7 +157,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null status.");
+					"Gateway XML allowed a response with null status.");
 		}
 
 		String statusString = gwStatusTO.getStatusCode();
@@ -165,7 +165,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// throw bad provider response error
 			throw new DTIException(TransformRules.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null status code.");
+					"Gateway XML allowed a response with null status code.");
 		}
 
 		// Get the provider response status code
