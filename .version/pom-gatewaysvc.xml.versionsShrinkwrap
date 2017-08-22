@@ -3,7 +3,7 @@
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0-224.0.0.0</version>
+		<version>1.0.0-250.0.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
@@ -149,7 +149,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
 				<configuration>
 					<instrumentation>
 						<excludes>
@@ -164,7 +163,7 @@
 						</excludes>
 					</instrumentation>
 					<formats>
-						<format>html</format>
+						<format>xml</format>
 					</formats>
 				</configuration>
 				<executions>

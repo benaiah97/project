@@ -181,17 +181,91 @@ public class HKDReservationRules {
        String resCode = assignResCode(dtiTxn,dtiResReq);
        dtiResReq.getReservation().setResCode(resCode);
     }
+    
+
     return;
   }
 
   /**
-   * Assign res code.
-   *
-   * @param dtiTxn the dti txn
-   * @param dtiResReq the dti res req
+   * TODO:  After the new approach is validated, please remove. 
+   * Assign a reservation code based on reservation code rules. If it is not a
+   * rework, and the attribute is not set to not use race rescode generation,
+   * then create a new rescode and insert it into the the transaction id rescode
+   * xref table.
+   * 
+   * 
+   * @param dtiTxn
+   *          the dti txn
+   * @param dtiResReq
+   *          the dti res req
    * @return the string
-   * @throws DTIException the DTI exception
+   * @throws DTIException
+   *           the DTI exception
    */
+//  private static String assignResCode(DTITransactionTO dtiTxn, ReservationRequestTO dtiResReq) throws DTIException {
+//    String resCode = null;
+//    String sellerResPrefix = null;
+//    String payloadId = dtiTxn.getRequest().getPayloadHeader().getPayloadID();
+//    HashMap<CmdAttrCodeType, AttributeTO> attribMap = dtiTxn.getAttributeTOMap();
+//	
+//    boolean isRework = dtiTxn.isRework();
+//    //no check for RACE override for HKDL needed at this time
+//    
+////    // if this is a re-work, a reservation code should exist
+////    if (isRework) {
+////      // Get the reservation code array (there should only be one)
+////    	TransidRescodeTO rescodeTO = TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+////    	
+////    	// Contingency assignment (should be infrequent that res isn't found in DB for rework)
+////   	if (rescodeTO == null) {
+////        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+// //       String sellerResPrefix = resPrefixAttr.getAttrValue();
+////        // generate the rescode and insert it into the database payload/rescode
+////        // ref table
+////        resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+////        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+////    	} else {
+////    	  resCode = rescodeTO.getRescode();
+////    	}
+////    	
+////    } else { // it is not a rework so generate rescode from RACE utility
+////    	AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+////    	String sellerResPrefix = resPrefixAttr.getAttrValue();
+////    	// generate the rescode and insert it into the database payload/rescode
+////    	// ref table
+////    	resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+////    	TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+////    }
+////    return resCode;
+//    
+//    if ((isRework)) {
+//		  // Get the reservation code array (there should only be one)
+//		  TransidRescodeTO rescodeTO =  TransidRescodeKey.getTransidRescodeFromDB(payloadId);
+//		  
+//    // Contingency assignment (should be infrequent that res isn't found in DB for rework)
+//    if (rescodeTO == null) {
+//        AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+//        sellerResPrefix = resPrefixAttr.getAttrValue();
+//       resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+//    } else {
+//       resCode = rescodeTO.getRescode();
+//    }
+//
+//	  } else if ( (!isRework)) { //not rework, and no race override
+//		  AttributeTO resPrefixAttr = attribMap.get(CmdAttrCodeType.SELLER_RES_PREFIX);
+//	      sellerResPrefix = resPrefixAttr.getAttrValue();
+//		  resCode = createReservationCode(dtiTxn, sellerResPrefix, resCode, payloadId);
+//	  } else {
+//		    // and insert it into the database payload/rescode ref table	      
+//	      TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+//		    logger.sendEvent(
+//		            "HKD RACE_RES_OVERRIDE present for reservation code generation.",
+//		            EventType.INFO, THISOBJECT);
+//	  }
+//	  
+//	  return resCode;
+//  }
+
   private static String assignResCode(DTITransactionTO dtiTxn,
       ReservationRequestTO dtiResReq) throws DTIException {
     
@@ -248,43 +322,47 @@ public class HKDReservationRules {
             "Cannot generate reservation code after ten attempts.");
       }
     }
-    	return resCode;
+
+    return resCode;
   }
   
-//  /** TAGGED FOR REMOVAL 2017-07-24
-//  * Creates the reservation code by attempting multiple times if there is an insert problem.
-//  * TODO:  Address the fact that this method is no longer called. 
-//  * @param dtiTxn
-//  * @param resCode
-//  * @param payloadId
-//  * @return
-//  * @throws DTIException
-//  */
-// protected static String createReservationCode(DTITransactionTO dtiTxn, String sellerResPrefix, String resCode, String payloadId)
-//     throws DTIException {
-//   
-//   boolean inserted = false;
-//    int attemptCount = 0;
-//    
-//    while (inserted == false) {
-//      
-//      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
-//      try {
-//        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
-//        inserted = true;
-//      } catch (Exception e) {
-//        attemptCount++;
-//        logger.sendEvent(
-//            "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code.  Attempt: " + attemptCount, EventType.WARN, THISOBJECT);
-//        if (attemptCount >= 10) {
-//          logger.sendEvent(
-//              "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code after 10 attempts.", EventType.WARN, THISOBJECT);
-//          throw e;
-//        }
-//      }
-//    }
-//   return resCode;
-// }
+  /**
+  * Creates the reservation code by attempting multiple times if there is an insert problem.
+  * TODO:  Address the fact that this method is no longer called. 
+  * @param dtiTxn
+  * @param resCode
+  * @param payloadId
+  * @return
+  * @throws DTIException
+  */
+ protected static String createReservationCode(DTITransactionTO dtiTxn, String sellerResPrefix, String resCode, String payloadId)
+     throws DTIException {
+   
+   boolean inserted = false;
+    int attemptCount = 0;
+    
+    while (inserted == false) {
+      
+      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+      try {
+        TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
+        inserted = true;
+      } catch (Exception e) {
+        attemptCount++;
+        logger.sendEvent(
+            "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code.  Attempt: " + attemptCount, EventType.WARN, THISOBJECT);
+        if (attemptCount >= 10) {
+          logger.sendEvent(
+              "HKD RACE_RES_OVERRIDE failed to create an insert a valid res code after 10 attempts.", EventType.WARN, THISOBJECT);
+          throw e;
+        }
+      }
+    }
+    
+   return resCode;
+ }
+  
+  
   
   /**
    * Transform the DTITransactionTO value object to the provider value objects
@@ -304,6 +382,7 @@ public class HKDReservationRules {
     DTIRequestTO dtiRequest = dtiTxn.getRequest();
     CommandBodyTO dtiCmdBody = dtiRequest.getCommandBody();
     ReservationRequestTO dtiResReq = (ReservationRequestTO) dtiCmdBody;
+
 
     // === Command Level ===
     HkdOTCommandTO atsCommand = new HkdOTCommandTO(HkdOTCommandTO.OTTransactionType.MANAGERESERVATION);
@@ -368,6 +447,7 @@ public class HKDReservationRules {
     ReservationTO dtiRes = dtiResReq.getReservation();
     HkdOTReservationDataTO otRes = new HkdOTReservationDataTO();
 
+    
     //Check if this is a package that should be set as printed and validated
     // == Is this a package == //
     isPackage = helpIsPackage(dtiRes);
@@ -382,6 +462,24 @@ public class HKDReservationRules {
          otRes.setValidated(new Boolean(false));
     }
     
+    //OLD CODE being kept for historical reasons only
+//    if ((PRESALE.compareTo(dtiRes.getResSalesType()) == 0)
+//        || (MANUALMAILORDER.compareTo(dtiRes.getResSalesType()) == 0)) {
+//      otRes.setPrinted(new Boolean(false));
+//      otRes.setValidated(new Boolean(false));
+//    } else {
+//
+//      if (otPaymentList.size() == 0) { // no payment cannot be printed or
+//        // validated
+//        otRes.setPrinted(new Boolean(false));
+//        otRes.setValidated(new Boolean(false));
+//      } else {
+//        otRes.setPrinted(new Boolean(false));
+//        otRes.setValidated(new Boolean(false));
+//      }
+//
+//    }
+
     otManageRes.setReservationData(otRes);
 
     // TP Lookups
@@ -441,8 +539,7 @@ public class HKDReservationRules {
       otClientData.setClientUniqueId(NO_CLIENT_PROVIDED);
     } else {
       Integer clientNumber = null;
-      try { 
-    	    // NOTE: Cannot use Integer.decode() here, as some values are
+      try { // NOTE: Cannot use Integer.decode() here, as some values are
         // prefixed with zeros and
         // will be interpreted by that routine as "octal" values.
         int clientNum = Integer.parseInt(dtiClientData.getClientId());
@@ -964,10 +1061,12 @@ public class HKDReservationRules {
     String language = dtiCliDataTO.getDemoLanguage();
     String clientType = dtiCliDataTO.getClientType();
 
-    if (language == null) {
-      throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-          "ClientData DemoLanguage cannot be null.");
+//    XSD specifies optional, utilized in some SQL so defaulting
+    if (language == null || language.length() == 0) {	
+    		dtiCliDataTO.setDemoLanguage("en");
+    		language="en";
     }
+   
     if (clientType == null) {
       throw new DTIException(HKDReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "ClientData ClientType cannot be null.");
@@ -1066,7 +1165,7 @@ public class HKDReservationRules {
 
     // ResponseType
     dtiResRespTO.setResponseType(otMngResTO.getCommandType());
-
+    
     // Ticket List
     ArrayList<TicketTO> dtiTktList = dtiResRespTO.getTicketList();
     ArrayList<HkdOTTicketInfoTO> otTicketList = otMngResTO.getTicketInfoList();
