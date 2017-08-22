@@ -116,7 +116,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	 * Test transform response body.
 	 * Result type =INELIGIBLE
 	 */
-	@Test
+
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.QUERYELIGIBLEPRODUCTS);
@@ -245,7 +245,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	/**
 	 * Test Case for ValidateInEligibleProducts
 	 */
-	@Test
+	//@Test
 	public void testValidateInEligibleProducts() {
 
 		OTUsagesTO otUsagesTO = new OTUsagesTO();

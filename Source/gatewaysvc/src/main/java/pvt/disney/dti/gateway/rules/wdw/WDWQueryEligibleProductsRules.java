@@ -3,13 +3,13 @@ package pvt.disney.dti.gateway.rules.wdw;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -32,6 +32,7 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TicketTO.PayPlanEligibilityStatusType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
@@ -45,6 +46,7 @@ import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUsagesTO;
 import pvt.disney.dti.gateway.provider.wdw.xml.OTCommandXML;
 import pvt.disney.dti.gateway.rules.ProductRules;
+import pvt.disney.dti.gateway.util.UtilityXML;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
@@ -102,9 +104,9 @@ public class WDWQueryEligibleProductsRules {
 	/** The Constant NUMBER_FOR_DAYCOUNT. */
 	private static final int NUMBER_FOR_DAYCOUNT = 24 * 60 * 60 * 1000;
 	
-	/** The Constant PAY_PLAN_IND. */
-	private static  boolean PAY_PLAN_IND = false;
-
+	//Omni date (in the format of "yy-MM-dd") 
+	private static final SimpleDateFormat OMNI_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	
 	/**
 	 * Transform the DTITransactionTO value object to the provider value objects
 	 * and then pass those to XML Marshaling routines to create an XML string.
@@ -289,7 +291,7 @@ public class WDWQueryEligibleProductsRules {
 				
 				
 				// Validation of guest product detail against specified criteria
-				if (validateGuestProductHasValue(otTicketInfo, guestproductTO.getDbproductTO())) {
+				if (!validateGuestProductHasValue(otTicketInfo, guestproductTO.getDbproductTO())) {
 					
 					dtiTicketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 				
@@ -298,6 +300,11 @@ public class WDWQueryEligibleProductsRules {
 					dtiResRespTO.add(dtiTicketTO);
 					return;
 
+				}
+				
+				// Pay Plan Eligibility 
+				if(!validateGuestProductPayPlanEligible(otTicketInfo, guestproductTO.getDbproductTO())){
+					dtiTicketTO.setPayPlanEligibilityStatus(PayPlanEligibilityStatusType.NO);
 				}
 
 				// Look for list sellable product list (product catalog) from step 2 and refine the list 
@@ -477,7 +484,7 @@ public class WDWQueryEligibleProductsRules {
 	public static boolean validateGuestProductHasValue(
 			OTTicketInfoTO otTicketInfo, DBProductTO productTO)
 			throws DTIException {
-
+		
 		// firstuseDate 
 		GregorianCalendar firstuseDate = null;
 		
@@ -502,23 +509,20 @@ public class WDWQueryEligibleProductsRules {
 		Integer dayCount = productTO.getDayCount();
 
 		// Getting the usages details 
-		List<GregorianCalendar> useDates = new ArrayList<>();
-		
 		if ((usagesTOs != null) && (usagesTOs.size() > 0)) {
 			for (OTUsagesTO otUsagesTO : usagesTOs) {
-				if (otUsagesTO.getDate() != null) {
-					useDates.add(otUsagesTO.getDate());
-					firstuseDate = Collections.min(useDates);
+				if (otUsagesTO.getItem() == 1) {
+					firstuseDate = otUsagesTO.getDate();
+					break;
 				}
 			}
 		} 
-		
 		try {
 			if(firstuseDate==null) {
 
 				// Usages must have at least one entry
 				logger.sendEvent("Usages must have one entry :Validation Failed", EventType.DEBUG, THISINSTANCE);
-				return true;
+				return false;
 			}
 			
 			// Rule 1 : UpgrdPathId is 0 
@@ -527,14 +531,14 @@ public class WDWQueryEligibleProductsRules {
 				
 				logger.sendEvent("UpgrdPathId value is :" + upGrdPath + " :Validation Failed", EventType.DEBUG,
 							THISINSTANCE);
-				return true;
+				return false;
 			}
 
 			// Rule 2 : VoidCode in the ATS Query Ticket response greater than 0 or less than or equal to 100
 			if ((voidCode != null) && ((voidCode > 0) && (voidCode <= 100))) {
 				logger.sendEvent("Void Code value is :" + voidCode +" :Validation Failed", EventType.DEBUG, THISINSTANCE);
 				
-				return true;
+				return false;
 			}
 
 			// Rule 3 : Biometric Template must have one entry 
@@ -543,7 +547,7 @@ public class WDWQueryEligibleProductsRules {
 				logger.sendEvent("biometricTemplate is : +" + biometricTemplate + " :Validation Failed", EventType.DEBUG,
 							THISINSTANCE);
 				
-				return true;
+				return false;
 			}
 
 			// Rule 4 : ResidentInd is N and Validity EndDate less than today 
@@ -552,7 +556,7 @@ public class WDWQueryEligibleProductsRules {
 				logger.sendEvent("Resident Ind is: " + isResident + "and Validity EndDate is :" + endDate
 							+ " :Validation Failed", EventType.DEBUG, THISINSTANCE);
 				
-				return true;
+				return false;
 			}
 
 			// Rule 5 : ResidentInd is Y and DayCount = 1 and the first use date is older than 14 days
@@ -560,26 +564,17 @@ public class WDWQueryEligibleProductsRules {
 
 				logger.sendEvent("ResidentInd is :" + isResident + "Day count is :" + dayCount + "and first use date "
 							+ ":" + firstuseDate + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
-				return true;
-			} else {
-
-				// Setting the pay plan as true , if condition does not match
-				PAY_PLAN_IND = true;
-			}
+				return false;
+			} 
 			
-			PAY_PLAN_IND = false;
-			
-			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use
-			// date is older than six months (185 days).
+			// Rule 6 : resident flag is 'Y' and DayCount > 1, and the first use date is older than six months (185 days).
 			if ((firstuseDate != null) && (isResident == true) && (dayCount > 1) && (getDayDifference(firstuseDate) > 185)) {
 
 				logger.sendEvent("ResidentInd is :" + isResident + "first use date is :" + firstuseDate
 							+ " and DayCount is: " + dayCount + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
-				return true;
-			} else {
-				
-				PAY_PLAN_IND = true;
-			}
+				return false;
+			} 
+					
 		} catch (Exception e) {
 			
 			logger.sendEvent("Exception Occured while doing validation in validateGuestProductHasValue :" + e.toString(), EventType.EXCEPTION,
@@ -589,8 +584,41 @@ public class WDWQueryEligibleProductsRules {
 					"Exception Occured while doing validation in  validateGuestProductHasValue");
 		}
 	
-		return false;
+		return true;
 	}
+	
+	/**
+	 * Validate guest product pay plan eligible.
+	 *
+	 * @param otTicketInfo the ot ticket info
+	 * @param productTO the product TO
+	 * @return true, if successful
+	 * @throws DTIException the DTI exception
+	 */
+	public static boolean validateGuestProductPayPlanEligible(OTTicketInfoTO otTicketInfo, DBProductTO productTO)
+				throws DTIException {
+		
+		
+		// isResident
+		boolean isResident = productTO.isResidentInd();
+
+		GregorianCalendar firstuseDate = null;
+
+		// Usages
+		ArrayList<OTUsagesTO> usagesTOs = otTicketInfo.getUsagesList();
+
+		firstuseDate = usagesTOs.get(0).getDate();
+
+		// Rule 7
+		if ((isResident != true) || ((isResident == true) && (getDayDifference(firstuseDate) > 14))) {
+			return false;
+		}
+			
+		return true;
+
+	}
+	
+	
 
 	/**
 	 * To get the day difference for the GregorianCalendar argument.
@@ -794,7 +822,7 @@ public class WDWQueryEligibleProductsRules {
 		
 		// Pay plan
 		tktStatus.setStatusItem(PAYPLAN);
-		if (PAY_PLAN_IND) {
+		if (dtiTicketTO.getPayPlanEligibilityStatus() == PayPlanEligibilityStatusType.YES) {
 			tktStatus.setStatusValue(YES);
 		} else {
 			tktStatus.setStatusValue(NO);
@@ -833,19 +861,20 @@ public class WDWQueryEligibleProductsRules {
 		
 		
 		// Usages Information : first usage date
-		ArrayList<GregorianCalendar> usageDates = new ArrayList<>();
+		
+		// FirstDate String 
+		GregorianCalendar firstUseDate = null;
 		
 		if ((guestProductTO.getOtTicketInfo().getUsagesList() != null)
-				&& (guestProductTO.getOtTicketInfo().getUsagesList().size() > 0)) {
-			
-			for (OTUsagesTO usage : guestProductTO.getOtTicketInfo()
-					.getUsagesList()) {
-				usageDates.add(usage.getDate());
+					&& (guestProductTO.getOtTicketInfo().getUsagesList().size() > 0)) {
+
+			for (OTUsagesTO otUsagesTO : guestProductTO.getOtTicketInfo().getUsagesList()) {
+				if (otUsagesTO.getItem() == 1) {
+					firstUseDate = otUsagesTO.getDate();
+					break;
+				}
 			}
 		}
-
-		// FirstDate String 
-		GregorianCalendar firstUseDate = Collections.min(usageDates);
 
 		logger.sendEvent("upgradedProductTOList found :",EventType.DEBUG, THISINSTANCE);
 		
@@ -881,19 +910,20 @@ public class WDWQueryEligibleProductsRules {
 				// set the valid end
 				try {
 					Integer dayCount = productTO.getDayCount();
-
+					
 					Calendar calendar = Calendar.getInstance();
 					if (firstUseDate != null) {
 						calendar.setTime(firstUseDate.getTime());
 						calendar.add(Calendar.DAY_OF_MONTH, dayCount);
+						GregorianCalendar gc=new GregorianCalendar();
+					
+							gc.setTime(calendar.getTime());
 
-						GregorianCalendar gc = new GregorianCalendar();
-						gc.setTime(calendar.getTime());
-
-						eligibleProductsTO.setValidEnd(DatatypeFactory
-								.newInstance().newXMLGregorianCalendar(gc));
+							eligibleProductsTO.setValidEnd(gc);
+						
+						
 					}
-				} catch (DatatypeConfigurationException e) {
+				} catch (Exception e) {
 					
 					logger.sendEvent("Exception caught while parsing the first Usage Date "
 							+ e.toString(), EventType.EXCEPTION,THISINSTANCE);

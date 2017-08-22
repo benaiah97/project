@@ -80,7 +80,7 @@ public class AttributeKey {
   private static final String VR_DBSTRING = "VoidReservation"; // 2.16.3, JTL
   
   /** Constant value indicating Query Eligible Products XML text. */
-  private static final String EP_DBSTRING = "QueryEligProducts"; // AP Upgrade
+  private static final String QP_DBSTRING = "QueryEligProducts"; // AP Upgrade
 
   /**
    * Constructor for AttributeKey
@@ -289,7 +289,7 @@ public class AttributeKey {
       break; 
       
     case QUERYELIGIBLEPRODUCTS: // as of 2.17.3 RASTA006
-      commandCode = EP_DBSTRING; 
+      commandCode = QP_DBSTRING; 
      break;
 
     default:

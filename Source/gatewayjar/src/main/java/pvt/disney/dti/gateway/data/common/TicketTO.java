@@ -213,6 +213,13 @@ public class TicketTO implements Serializable, Cloneable {
 	public enum UpgradeEligibilityStatusType {
 		INELIGIBLE, NOPRODUCTS, ELIGIBLE
 	};
+	
+	/**
+	 * The  PayPlanEligibilityStatusType for providing the pay plan eligibilty Status.
+	 */
+	public enum PayPlanEligibilityStatusType {
+		YES,NO
+	};
 
 	/** The ticket item number. */
 	private BigInteger tktItem;
@@ -344,6 +351,9 @@ public class TicketTO implements Serializable, Cloneable {
 
 	/** get the guest type info */
 	private GuestType guestType;
+	
+	/** The pay plan eligibility status. */
+	private PayPlanEligibilityStatusType payPlanEligibilityStatus = PayPlanEligibilityStatusType.YES;
 
 	/**
 	 * @return the showGroup
@@ -1329,5 +1339,20 @@ public class TicketTO implements Serializable, Cloneable {
 	public void setGuestType(GuestType guestType) {
 		this.guestType = guestType;
 	}
+
+	/**
+	 * @return the payPlanEligibilityStatus
+	 */
+	public PayPlanEligibilityStatusType getPayPlanEligibilityStatus() {
+		return payPlanEligibilityStatus;
+	}
+
+	/**
+	 * @param payPlanEligibilityStatus the payPlanEligibilityStatus to set
+	 */
+	public void setPayPlanEligibilityStatus(PayPlanEligibilityStatusType payPlanEligibilityStatus) {
+		this.payPlanEligibilityStatus = payPlanEligibilityStatus;
+	}
+	
 
 }

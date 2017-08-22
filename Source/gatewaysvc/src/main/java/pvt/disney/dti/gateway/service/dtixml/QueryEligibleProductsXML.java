@@ -416,7 +416,9 @@ public class QueryEligibleProductsXML {
 					eligibleproduct.setProdTax(eligibleProduct.getProdTax());
 					eligibleproduct.setUpgrdPrice(eligibleProduct.getUpgrdPrice());
 					eligibleproduct.setUpgrdTax(eligibleProduct.getUpgrdTax());
-					eligibleproduct.setValidEnd(eligibleProduct.getValidEnd());
+					
+					XMLGregorianCalendar xCalDate = UtilXML.convertToXML(eligibleProduct.getValidEnd());
+					eligibleproduct.setValidEnd(xCalDate);
 					
 					qName = new QName("EligibleProducts");
 

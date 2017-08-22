@@ -23,11 +23,10 @@ import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO;
-import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TicketTO.PayPlanEligibilityStatusType;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
@@ -207,15 +206,16 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		globalGuestProduct.setGwDataRespTO(gwDataRespTO);
 
 		// PLU's obtained from GWDataresponse , throw error if no PLU found.
-		if ((gwDataRespTO.getPluList() == null)) {
-			
+		if ((gwDataRespTO.getPlu() == null)) {
+		
 			logger.sendEvent("Provider returned no ticket on a successful query ticket. ", EventType.EXCEPTION, THISINSTANCE);
 			throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
 						"Provider returned no ticket on a successful query ticket. ");
 		} else {
-
+				ArrayList<String> pluList=new ArrayList<String>();
+				pluList.add(gwDataRespTO.getPlu());
 			// Retrieving the list of guest Product detail for PLU
-			DBProductTO guestDbProduct = ProductKey.getProductsByTktName(gwDataRespTO.getPluList());
+			DBProductTO guestDbProduct = ProductKey.getProductsByTktName(pluList);
 
 			// Process only if details are found
 			if (guestDbProduct == null) {
@@ -285,6 +285,10 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 					for (/* each */UpgradePLU upgradePLU : /* in */upGradedPLuList) {
 						PLUList.add(upgradePLU.getPLU());
+						// Checking for the payPlan
+						if ((upgradePLU.getPaymentPlans() == null) || (upgradePLU.getPaymentPlans().size() == 0)) {
+							dtiTktTO.setPayPlanEligibilityStatus(PayPlanEligibilityStatusType.NO);
+						}
 					}
 
 					logger.sendEvent("Orignal List of Sellable Product. " + globalUpgradeProduct.toString(),
@@ -430,7 +434,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				ArrayList<DBProductTO> upgradedProductTOList) throws DTIException {
 		BigDecimal prodPrice = null, prodTax = null, prodUpgradePrice = null, prodUpgrdTax = null;
 
-		DemographicsTO ticketDemo = new DemographicsTO();
 		EligibleProductsTO eligibleProductsTO;
 
 		// Guest Product Detail
@@ -465,8 +468,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 				endDateSet = true;
 			}
 
-			// Note: HARD CODED!!! Arbitrarily set the end date if the start date
-			// is set. This conforms with the other provider.
+			// Note: HARD CODED!!! Arbitrarily set the end date if the start date is set. This conforms with the other provider.
 			if ((startDateSet == true) && (endDateSet == false)) {
 				dtiTktTO.setTktValidityValidEnd(new GregorianCalendar(2099, 11, 31));
 			}
@@ -478,79 +480,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		// Set TktID (for DLR it's External)
 		String visualId = gwDataRespTO.getVisualID();
 		dtiTktTO.setExternal(visualId);
-
-		// Demographics Information
-
-		// FirstName
-		if (gwDataRespTO.getFirstName() != null) {
-			ticketDemo.setFirstName(gwDataRespTO.getFirstName());
-		}
-
-		// LastName
-		if (gwDataRespTO.getLastName() != null) {
-			ticketDemo.setLastName(gwDataRespTO.getLastName());
-		}
-
-		// Addr1
-		if (gwDataRespTO.getStreet1() != null) {
-			ticketDemo.setAddr1(gwDataRespTO.getStreet1());
-		}
-
-		// Addr2
-		if (gwDataRespTO.getStreet2() != null) {
-			ticketDemo.setAddr2(gwDataRespTO.getStreet2());
-		}
-
-		// City
-		if (gwDataRespTO.getCity() != null) {
-			ticketDemo.setCity(gwDataRespTO.getCity());
-		}
-
-		// State
-		if (gwDataRespTO.getState() != null) {
-			ticketDemo.setState(gwDataRespTO.getState());
-		}
-
-		// ZIP
-		if (gwDataRespTO.getZip() != null) {
-			ticketDemo.setZip(gwDataRespTO.getZip());
-		}
-
-		// Country
-		if (gwDataRespTO.getCountryCode() != null) {
-			ticketDemo.setCountry(gwDataRespTO.getCountryCode());
-		}
-
-		// Telephone
-		if (gwDataRespTO.getPhone() != null) {
-			ticketDemo.setTelephone(gwDataRespTO.getPhone());
-		}
-
-		// Email
-		if (gwDataRespTO.getEmail() != null) {
-			ticketDemo.setEmail(gwDataRespTO.getEmail());
-		}
-
-		// Gender
-		if (gwDataRespTO.getGender() != null) {
-
-			if (gwDataRespTO.getGenderRespString().equalsIgnoreCase("Male")) {
-				ticketDemo.setGender(GenderType.MALE);
-			} else if (gwDataRespTO.getGenderRespString().equalsIgnoreCase("Female")) {
-				ticketDemo.setGender(GenderType.FEMALE);
-			} else {
-				ticketDemo.setGender(GenderType.UNSPECIFIED);
-			}
-		}
-
-		// DOB
-		if (gwDataRespTO.getDateOfBirth() != null) {
-			ticketDemo.setDateOfBirth(gwDataRespTO.getDateOfBirth());
-		}
-
-		dtiTktTO.addTicketDemographic(ticketDemo);
-
-		// Demographics Info end
 
 		// Ticket Status PICTURE YES or NO and PAY Plan Present YES or NO
 
@@ -574,7 +503,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
 		// Pay plan
 		tktStatus.setStatusItem(PAYPLAN);
-		if ((gwDataRespTO.getPayPlan() != null) && (gwDataRespTO.getPayPlan().compareToIgnoreCase(YES) == 0)) {
+		if (dtiTktTO.getPayPlanEligibilityStatus() == PayPlanEligibilityStatusType.YES) {
 			tktStatus.setStatusValue(YES);
 		} else {
 			tktStatus.setStatusValue(NO);
@@ -591,14 +520,16 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		ArrayList<GregorianCalendar> useTimeList = new ArrayList<GregorianCalendar>();
 
 		// for the first use Date
+		GregorianCalendar firstUsageDateValue = Collections.min(useTimeList);
 		if ((gwDataRespTO.getUsageRecords() != null) && (gwDataRespTO.getUsageRecords().size() > 0)) {
-
 			for (UsageRecord usage : gwDataRespTO.getUsageRecords()) {
-				useTimeList.add(usage.getUseTime());
+				if (usage.getUseNo() == 1) {
+					firstUsageDateValue = usage.getUseTime();
+				}
 			}
 		}
 		// Sorting to get the first Usage Date
-		GregorianCalendar firstUsageDateValue = Collections.min(useTimeList);;
+		
 		logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(), EventType.DEBUG, THISINSTANCE);
 
 		// Eligible products
@@ -655,9 +586,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 						GregorianCalendar gc = new GregorianCalendar();
 						gc.setTime(calendar.getTime());
 
-						eligibleProductsTO.setValidEnd(DatatypeFactory.newInstance().newXMLGregorianCalendar(gc));
+						eligibleProductsTO.setValidEnd(gc);
 					}
-				} catch (DatatypeConfigurationException e) {
+				} catch (Exception e) {
 					logger.sendEvent("Exception caught while parsing the first Usage Date " + e.toString(),
 								EventType.EXCEPTION, THISINSTANCE);
 					throw new DTIException(DLRQueryEligibilityProductsRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
