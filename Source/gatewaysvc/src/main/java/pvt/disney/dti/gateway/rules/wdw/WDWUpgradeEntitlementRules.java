@@ -349,8 +349,9 @@ public class WDWUpgradeEntitlementRules {
     ProductRules.validateWdwTicketDemo(tktListTO);
     
     // RULE: Validate that if the "installment" type of payment is present,
-    ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
-    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
+    // Commenting out these lines to temporarily resolve INC4506020 - ClassCastException on Upgrade from HERA 
+    /*ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
+    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);*/
 
   }
 
