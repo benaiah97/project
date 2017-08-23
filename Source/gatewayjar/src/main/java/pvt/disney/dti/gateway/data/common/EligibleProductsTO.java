@@ -1,6 +1,7 @@
 package pvt.disney.dti.gateway.data.common;
 
 import java.math.BigDecimal;
+import java.util.GregorianCalendar;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -13,7 +14,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class EligibleProductsTO {
 
 	/** product code */
-	protected Object prodCode;
+	protected String prodCode;
 
 	/** product price */
 	protected String prodPrice;
@@ -28,7 +29,7 @@ public class EligibleProductsTO {
 	protected String upgrdTax;
 
 	/** validity */
-	protected XMLGregorianCalendar validEnd;
+	protected GregorianCalendar validEnd;
 
 	/**
 	 * Gets the value of the prodCode property.
@@ -36,7 +37,7 @@ public class EligibleProductsTO {
 	 * @return possible object is {@link Object }
 	 * 
 	 */
-	public Object getProdCode() {
+	public String getProdCode() {
 		return prodCode;
 	}
 
@@ -47,7 +48,7 @@ public class EligibleProductsTO {
 	 *            allowed object is {@link Object }
 	 * 
 	 */
-	public void setProdCode(Object value) {
+	public void setProdCode(String value) {
 		this.prodCode = value;
 	}
 
@@ -141,7 +142,7 @@ public class EligibleProductsTO {
 	 * @return possible object is {@link XMLGregorianCalendar }
 	 * 
 	 */
-	public XMLGregorianCalendar getValidEnd() {
+	public GregorianCalendar getValidEnd() {
 		return validEnd;
 	}
 
@@ -152,7 +153,7 @@ public class EligibleProductsTO {
 	 *            allowed object is {@link XMLGregorianCalendar }
 	 * 
 	 */
-	public void setValidEnd(XMLGregorianCalendar value) {
+	public void setValidEnd(GregorianCalendar value) {
 		this.validEnd = value;
 	}
 

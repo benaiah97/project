@@ -80,7 +80,7 @@ public class AttributeKey {
   private static final String VR_DBSTRING = "VoidReservation"; // 2.16.3, JTL
   
   /** Constant value indicating Query Eligible Products XML text. */
-  private static final String EP_DBSTRING = "QueryEligibleProducts"; // AP Upgrade
+  private static final String QP_DBSTRING = "QueryEligProducts"; // AP Upgrade
 
   /**
    * Constructor for AttributeKey
@@ -288,8 +288,8 @@ public class AttributeKey {
       commandCode = VR_DBSTRING;
       break; 
       
-    case QUERYELIGIBLEPRODUCTS: // TODO 06-23-2017 JTL As a part of new AP Upgrade Service. Need to add entry for queryEligibleProducts in DB
-      commandCode = QT_DBSTRING; // right now keeping the entry for queryTicket
+    case QUERYELIGIBLEPRODUCTS: // as of 2.17.3 RASTA006
+      commandCode = QP_DBSTRING; 
      break;
 
     default:

@@ -2268,7 +2268,7 @@
 							<xs:element name="EligibleProducts" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="ProdCode"/>
+										<xs:element name="ProdCode" type="xs:string"/>
 										<xs:element name="ProdPrice" type="xs:string"/>
 										<xs:element name="ProdTax" type="xs:decimal"/>
 										<xs:element name="UpgrdPrice" type="xs:string" minOccurs="0"/>

@@ -6,8 +6,13 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import com.disney.util.PropertyHelper;
 
 import pvt.disney.dti.gateway.data.common.DBProductTO;
+import pvt.disney.dti.gateway.util.ResourceLoader;
 
 /**
  * This class is the representation of the upgrade possibilities. This class is
@@ -19,7 +24,8 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
  */
 public class UpgradeCatalogTO implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 1L;
 
    /** The list of products that are eligible for upgrade. */
    private ArrayList<DBProductTO> productList = new ArrayList<DBProductTO>();
@@ -289,4 +295,26 @@ public class UpgradeCatalogTO implements Serializable {
       return productList.size();
    }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuffer output = new StringBuffer();
+		int count = 0;
+		output.append("Product List [ prod Code :");
+		for (DBProductTO aProduct : productList) {
+			count++;
+			if (aProduct.getPdtCode() != null)
+				output.append(aProduct.getPdtCode());
+			if (count < productList.size()) {
+				output.append(",\t");
+			}
+
+		}
+		output.append("]");
+		return output.toString();
+	}
+   
+   
 }

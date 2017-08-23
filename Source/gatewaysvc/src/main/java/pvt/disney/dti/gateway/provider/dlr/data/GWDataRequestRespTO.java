@@ -191,6 +191,8 @@ public class GWDataRequestRespTO implements Serializable {
 	/** The PLU of the original ticket. */
 	private String plu; // As of 2.17.X NG
 	
+	private ArrayList<String> pluList=new ArrayList<String>(); // in case if we have multiple PLU's 
+	
 	/** The usage records. */
 	private ArrayList<UsageRecord> usageRecords=new ArrayList<GWDataRequestRespTO.UsageRecord>();
 
@@ -2163,6 +2165,25 @@ public class GWDataRequestRespTO implements Serializable {
 	 */
 	public void setPlu(String plu) {
 		this.plu = plu;
+	}
+	
+
+	/**
+	 * @return the pluList
+	 */
+	public ArrayList<String> getPluList() {
+		return pluList;
+	}
+
+	/**
+	 * @param pluList the pluList to set
+	 */
+	public void setPluList(ArrayList<String> pluList) {
+		this.pluList = pluList;
+	}
+	
+	public void addPluList(String plu) {
+		this.pluList .add(plu);
 	}
 
 	/**

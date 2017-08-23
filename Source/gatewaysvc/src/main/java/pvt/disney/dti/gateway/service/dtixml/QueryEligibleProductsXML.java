@@ -17,9 +17,9 @@ import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.request.xsd.QueryEligibleProductsRequest;
 import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
 
@@ -30,6 +30,14 @@ import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
  *
  */
 public class QueryEligibleProductsXML {
+	
+	private static final String ADULT = "Adult";
+	private static final String CHILD = "Child";
+	private static final String ANY = "Any";
+	private static final String INELIGIBLE = "INELIGIBLE";
+	private static final String NOPRODUCTS = "NOPRODUCTS";
+	private static final String ELIGIBLE = "ELIGIBLE";
+	
 	/**
 	 * When passed the JAXB object, return the DTI application object.
 	 * 
@@ -105,15 +113,16 @@ public class QueryEligibleProductsXML {
 		aTicketTO.setDssn(tempCalendar, tktDssn.getTktSite(), tktDssn.getTktStation(), tktDssn.getTktNbr());
 	}
 
+	
 	/**
-	 * When the ticket if of type DSSN
-	 * 
-	 * @param aTicketTO
-	 * @param aTicket
+	 * Sets the ticket mag.
+	 *
+	 * @param aTicketTO the a ticket TO
+	 * @param aTicket the a ticket
 	 */
 	private static void setTicketMag(TicketTO aTicketTO, QueryEligibleProductsRequest.Ticket aTicket) {
 
-		// fetching the value of TktDSSN from ticket
+		// fetching the value of tktMag from ticket
 		QueryEligibleProductsRequest.Ticket.TktID.Mag tktMag = aTicket.getTktID().getMag();
 
 		String mag1 = tktMag.getMagTrack1();
@@ -227,11 +236,11 @@ public class QueryEligibleProductsXML {
 			if (aTicketTO.getGuestType() != null) {
 				String prodGuestType = null;
 				if (aTicketTO.getGuestType().compareTo(GuestType.ADULT) == 0) {
-					prodGuestType = "Adult";
+					prodGuestType = ADULT;
 				} else if (aTicketTO.getGuestType().compareTo(GuestType.CHILD) == 0) {
-					prodGuestType = "Child";
+					prodGuestType = CHILD;
 				} else {
-					prodGuestType = "Any";
+					prodGuestType = ANY;
 				}
 				qName = new QName("ProdGuestType");
 				JAXBElement<String> pdtGuest = new JAXBElement(qName, prodGuestType.getClass(), prodGuestType);
@@ -379,13 +388,13 @@ public class QueryEligibleProductsXML {
 			// ResultStatus
 
 			String result = null;
-			if (aTicketTO.getResultType() != null) {
-				if (aTicketTO.getResultType().compareTo(ResultType.NOPRODUCTS) == 0) {
-					result = "NOPRODUCTS";
-				} else if (aTicketTO.getResultType().compareTo(ResultType.ELIGIBLE) == 0) {
-					result = "ELIGIBLE";
+			if (aTicketTO.getUpgradeEligibilityStatus() != null) {
+				if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.NOPRODUCTS) == 0) {
+					result = NOPRODUCTS;
+				} else if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.ELIGIBLE) == 0) {
+					result = ELIGIBLE;
 				} else {
-					result = "INELIGIBLE";
+					result = INELIGIBLE;
 				}
 
 			}
@@ -396,7 +405,7 @@ public class QueryEligibleProductsXML {
 			aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 
 			// EligibleProducts
-			if (aTicketTO.getEligibleProducts() != null && aTicketTO.getEligibleProducts().size() > 0) {
+			if ((aTicketTO.getEligibleProducts() != null) && (aTicketTO.getEligibleProducts().size() > 0)) {
 
 				for (EligibleProductsTO eligibleProduct : aTicketTO.getEligibleProducts()) {
 
@@ -407,7 +416,9 @@ public class QueryEligibleProductsXML {
 					eligibleproduct.setProdTax(eligibleProduct.getProdTax());
 					eligibleproduct.setUpgrdPrice(eligibleProduct.getUpgrdPrice());
 					eligibleproduct.setUpgrdTax(eligibleProduct.getUpgrdTax());
-					eligibleproduct.setValidEnd(eligibleProduct.getValidEnd());
+					
+					XMLGregorianCalendar xCalDate = UtilXML.convertToXML(eligibleProduct.getValidEnd());
+					eligibleproduct.setValidEnd(xCalDate);
 					
 					qName = new QName("EligibleProducts");
 

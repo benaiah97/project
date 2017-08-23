@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
+
 
 /**
  * This class encapsulates the various manifestations of a ticket (DSSN, TktNid,
@@ -206,6 +206,20 @@ public class TicketTO implements Serializable, Cloneable {
 	public enum TicketIdType {
 		DSSN_ID, MAG_ID, BARCODE_ID, TKTNID_ID, EXTERNAL_ID
 	};
+	
+	/**
+	 * The UpgradeEligibilityStatusType for providing the upgrade eligibility information.
+	 */
+	public enum UpgradeEligibilityStatusType {
+		INELIGIBLE, NOPRODUCTS, ELIGIBLE
+	};
+	
+	/**
+	 * The  PayPlanEligibilityStatusType for providing the pay plan eligibilty Status.
+	 */
+	public enum PayPlanEligibilityStatusType {
+		YES,NO
+	};
 
 	/** The ticket item number. */
 	private BigInteger tktItem;
@@ -317,9 +331,9 @@ public class TicketTO implements Serializable, Cloneable {
 	/** If this pass has been replaced, then what pass replaced it. */
 	private String replacedByPass;
 
-	/** get the eligibility criteria for the current ticket */
-	private ResultType resultType;
-
+	/** The upgrade eligibility status. */
+	private UpgradeEligibilityStatusType upgradeEligibilityStatus=UpgradeEligibilityStatusType.ELIGIBLE ; // RASTA006 2.17.3
+	
 	/** get the sale Type for the current ticket */
 	private String saleType;
 
@@ -337,6 +351,9 @@ public class TicketTO implements Serializable, Cloneable {
 
 	/** get the guest type info */
 	private GuestType guestType;
+	
+	/** The pay plan eligibility status. */
+	private PayPlanEligibilityStatusType payPlanEligibilityStatus = PayPlanEligibilityStatusType.YES;
 
 	/**
 	 * @return the showGroup
@@ -1214,16 +1231,16 @@ public class TicketTO implements Serializable, Cloneable {
 	/**
 	 * @return the resultType
 	 */
-	public ResultType getResultType() {
-		return resultType;
+	public UpgradeEligibilityStatusType getUpgradeEligibilityStatus() {
+		return upgradeEligibilityStatus;
 	}
 
 	/**
 	 * @param resultType
 	 *            the resultType to set
 	 */
-	public void setResultType(ResultType resultType) {
-		this.resultType = resultType;
+	public void setUpgradeEligibilityStatus(UpgradeEligibilityStatusType resultType) {
+		this.upgradeEligibilityStatus = resultType;
 	}
 
 	/**
@@ -1322,5 +1339,20 @@ public class TicketTO implements Serializable, Cloneable {
 	public void setGuestType(GuestType guestType) {
 		this.guestType = guestType;
 	}
+
+	/**
+	 * @return the payPlanEligibilityStatus
+	 */
+	public PayPlanEligibilityStatusType getPayPlanEligibilityStatus() {
+		return payPlanEligibilityStatus;
+	}
+
+	/**
+	 * @param payPlanEligibilityStatus the payPlanEligibilityStatus to set
+	 */
+	public void setPayPlanEligibilityStatus(PayPlanEligibilityStatusType payPlanEligibilityStatus) {
+		this.payPlanEligibilityStatus = payPlanEligibilityStatus;
+	}
+	
 
 }

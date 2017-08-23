@@ -98,7 +98,7 @@ public class LogKey {
                                                                             // BIEST001
   private static final Integer CMD_VOID_RESERVATION = new Integer(15); // 2.16.3,
                                                                        // JTL
-
+  private static final Integer CMD_QUERY_ELIGPRODUCTS = new Integer(16); // 2.16.3,
   /**
    * Constructor for LogKey
    */
@@ -822,7 +822,9 @@ public class LogKey {
     case VOIDRESERVATION: // 2.16.3, JTL
       commandCode = CMD_VOID_RESERVATION;
       break;
-
+    case QUERYELIGIBLEPRODUCTS: // 2.17.3, JTL
+       commandCode = CMD_QUERY_ELIGPRODUCTS;
+       break;
     default:
       commandCode = 0;
 

@@ -34,6 +34,7 @@ public class DTIFloodControl extends KeyMatchFloodControl {
   private final static String ASSOCMEDIA2ACCTSTRING    = "AM"; // CMD 13
   private final static String TICKERATEENTTLSTRING     = "TE"; // CMD 14
   private final static String VOIDRESERVATIONSTRING    = "VR"; // CMD 15
+  private final static String QUERYELIGPRODUCTSSTRING    = "QP"; // CMD 16
   
 
   /** Object holder for the singleton pattern. */
@@ -156,6 +157,9 @@ public class DTIFloodControl extends KeyMatchFloodControl {
     case VOIDRESERVATION:
       txnTypeString = VOIDRESERVATIONSTRING;
       break;
+    case QUERYELIGIBLEPRODUCTS: 
+   	txnTypeString = QUERYELIGPRODUCTSSTRING;
+   	break;
     default:
       return null; // Shouldn't be able to get here, but still fail gracefully.
     }
@@ -195,6 +199,7 @@ public class DTIFloodControl extends KeyMatchFloodControl {
     // If void or query, get all tickets listed.
     if ((txnType == TransactionType.VOIDTICKET) || 
         (txnType == TransactionType.QUERYTICKET) ||
+        (txnType == TransactionType.QUERYELIGIBLEPRODUCTS) ||
         (txnType == TransactionType.TICKERATEENTITLEMENT)) {
       String value = (String) txnMap.get(TiXMLHandler.TICKETS);
       if (value == null) {

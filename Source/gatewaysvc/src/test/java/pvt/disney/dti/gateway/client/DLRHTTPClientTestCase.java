@@ -38,7 +38,7 @@ public class DLRHTTPClientTestCase extends CommonTestUtils{
     
 
 	}
-	@Test
+	//@Test
 	public void testSendRequest(){
 		String reqXml =
 				"<Envelope>" +
