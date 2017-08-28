@@ -17,12 +17,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
-import com.disney.context.BaseContext;
-import com.disney.context.ContextManager;
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-import com.disney.util.PropertyHelper;
-
 import pvt.disney.dti.gateway.common.TiXMLHandler;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -43,6 +37,12 @@ import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 import pvt.disney.dti.gateway.util.flood.KeyBlockException;
 import pvt.disney.dti.gateway.util.flood.KeySuppressException;
+
+import com.disney.context.BaseContext;
+import com.disney.context.ContextManager;
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
+import com.disney.util.PropertyHelper;
 
 /**
  * The DTI Controller is the class where all gates (HTTP, Web-Services) drop
@@ -85,16 +85,6 @@ public class DTIController {
    * permitted on this end-point.
    */
   private static String tsMacExcludeList = "";
-  
-  /**
-   * DTIApp.Application
-   */
-  private static String application;
-  
-  /**
-   * DTIApp.Environment
-   */
-  private static String environment;
 
   /**
    * Constructor for DTIApp
@@ -109,30 +99,18 @@ public class DTIController {
     } catch (Throwable e) {
       eventLogger.sendEvent("THROWABLE initing props: " + e.toString(), EventType.FATAL, this);
     }
-/*
+
     try {
       floodControl = DTIFloodControl.getInstance(props);
     } catch (Exception e) {
       eventLogger.sendEvent("Unable to init flood control:  " + e.toString(), EventType.WARN, this);
-    }*/
+    }
 
     tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
 
     /** Forbid certain sellers from reaching this end-point. */
     tsMacExcludeList = PropertyHelper.readPropsValue(PropertyName.TSMAC_EXCLUSION, props, null);
 
-    /** Setting the application from property file. */
-    setApplication(PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null));
-    
-    /** Setting the environment from property file. */
-    setEnvironment(PropertyHelper.readPropsValue(PropertyName.DTI_ENVIRONMENT, props, null));
-    
-    try {
-         floodControl = DTIFloodControl.getInstance(getApplication(), getEnvironment());
-      } catch (Exception e) {
-        eventLogger.sendEvent("Unable to init flood control:  " + e.toString(), EventType.WARN, this);
-      }
-    
     return;
   }
 
@@ -733,33 +711,4 @@ public class DTIController {
     return value;
 
   }
-
-   /**
-    * @return the application
-    */
-   public static String getApplication() {
-      return application;
-   }
-   
-   /**
-    * @param application the application to set
-    */
-   public static void setApplication(String application) {
-      DTIController.application = application;
-   }
-   
-   /**
-    * @return the environment
-    */
-   public static String getEnvironment() {
-      return environment;
-   }
-   
-   /**
-    * @param environment the environment to set
-    */
-   public static void setEnvironment(String environment) {
-      DTIController.environment = environment;
-   }
-
 }
