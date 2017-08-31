@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with STS (x64) (https://spring.io/tools) by MOONS012 -->
 <!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD RESORT) -->
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Kevin Graham (Walt Disney World Co) -->
 <!--TiXML 1.0 12/17/02 Copyright The Walt Disney Company -->
@@ -22,6 +23,7 @@
 										<xs:element ref="UpdateTicketResponse" minOccurs="0"/>
 										<xs:element ref="UpdateTransactionResponse" minOccurs="0"/>
 										<xs:element ref="UpgradeEntitlementResponse" minOccurs="0"/>
+                                        <xs:element ref="UpdateDemographicsResponse" minOccurs="0"/>
 										<xs:element ref="QueryReservationResponse" minOccurs="0"/>
 										<xs:element ref="RenewEntitlementResponse" minOccurs="0"/>
 										<xs:element ref="AssociateMediaToAccountResponse" minOccurs="0"/>
@@ -1758,6 +1760,120 @@
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateDemographicsResponse">
+	   <xs:annotation>
+            <xs:appinfo>UpdateDemographicsResponse Note</xs:appinfo>
+                <xs:documentation xml:lang="en">
+                UpdateDemographic is not currently supported for WDW or DLR.
+            </xs:documentation>
+        </xs:annotation>
+	<xs:complexType>
+		<xs:sequence>
+			<xs:element name="Error">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ErrorCode" type="xs:integer">
+							<xs:annotation>
+								<xs:documentation>0 = no error</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ErrorShortDescription" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="25" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ErrorDescription" type="xs:string"
+							minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Error Description</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DemographicInfo" minOccurs="0"
+				maxOccurs="8">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Item">
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:minInclusive value="1" />
+									<xs:maxInclusive value="8" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="ItemStatus">
+							<xs:annotation>
+								<xs:documentation>Item Result Code</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer">
+									<xs:maxInclusive value="65000" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="DemographicType" type="xs:string"
+							minOccurs="0" />
+						<xs:element name="UniqueCode" type="xs:integer"
+							minOccurs="0" />
+						<xs:choice minOccurs="0">
+							<xs:sequence minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>DemographicType=M</xs:documentation>
+								</xs:annotation>
+								<xs:element name="ClientCategory" minOccurs="0">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="3" />
+											<xs:minLength value="1" />
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="ClientLanguage" type="xs:integer"
+									minOccurs="0" />
+							</xs:sequence>
+							<xs:element name="AssociationId" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>DemographicType=G</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+						<xs:element name="DemographicData" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Field" maxOccurs="30">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="FieldId" type="xs:integer" />
+												<xs:element name="FieldType" type="xs:integer" />
+												<xs:element name="FieldValue" type="xs:string" />
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="AcountId" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>DemographicType=L
+									NOT SUPPORTED YET
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:length value="17" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 	</xs:element>
 	<xs:element name="RenewEntitlementResponse">
 		<xs:complexType>
