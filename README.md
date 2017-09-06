@@ -1,4 +1,4 @@
 DTI-Gateway
 ===========
 
-TODO - Application setup guide
+TODO - Application setup guide.

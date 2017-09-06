@@ -30,9 +30,8 @@ public class GWQueryEligibleProductsTicketXML {
 	/** Event logger. */
 	private static final EventLogger logger = EventLogger.getLogger(GWQueryTicketXML.class.getCanonicalName());
 	private static final GWQueryEligibleProductsTicketXML logInstance = new GWQueryEligibleProductsTicketXML();
-
-	private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
-	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
+	private static final String COMMA_STRING = ",";
+	private static final String EMPTY_STRING = "";
 
 	/**
 	 * Adds the query ticket element.
@@ -94,22 +93,13 @@ public class GWQueryEligibleProductsTicketXML {
 		dataRequestStanza.addElement("Field").addText("DOB");
 		dataRequestStanza.addElement("Field").addText("Gender");
 
-		if (visualID.length() == DLR_TEMP_ENTITLEMENT_LENGTH) {
-			Element lineageStanza = dataRequestStanza.addElement("LineageRecords");
-			lineageStanza.addElement("Field").addText("Amount");
-			lineageStanza.addElement("Field").addText("Valid");
-			lineageStanza.addElement("Field").addText("Status");
-			lineageStanza.addElement("Field").addText("VisualID");
-			lineageStanza.addElement("Field").addText("ExpirationDate");
-		}
-
 		// Adding new field for the QEP Command
 		dataRequestStanza.addElement("Field").addText("UpgradePLUList");
-		dataRequestStanza.addElement("Field").addText("Contact");
-		dataRequestStanza.addElement("Field").addText("HasPicture");
+		//dataRequestStanza.addElement("Field").addText("HasPicture"); DON'T NEED AS FOR NOW
 		dataRequestStanza.addElement("Field").addText("PLU");
 		Element usageElement = dataRequestStanza.addElement("UsageRecords");
-		usageElement.addElement("Field").addText("*");
+		usageElement.addElement("Field").addText("UseTime"); 
+		usageElement.addElement("Field").addText("UseNo");
 
 		return;
 	}
@@ -215,7 +205,6 @@ public class GWQueryEligibleProductsTicketXML {
 		GWQueryTicketRespTO qtRespTO = new GWQueryTicketRespTO();
 
 		Element dataRespElement = null;
-		Element upgradePluElement = null;
 
 		for (Iterator<org.dom4j.Element> i = qryRespElement.elementIterator(); i.hasNext();) {
 			Element element = i.next();
@@ -540,11 +529,6 @@ public class GWQueryEligibleProductsTicketXML {
 				dataRespTO.setPassKindName(passKindName);
 			}
 
-			// Compound Tags (LineageRecords)
-			if (element.getName().compareTo("LineageRequestResponse") == 0) {
-				extractLineageInfo(dataRespTO, i, element);
-			}
-
 			// PM17616 - For item kind 1 end date time is not required from
 			// eGalaxy.
 			if ((itemKind == 1) && (dataRespTO.getEndDateTime() == null)) {
@@ -569,29 +553,25 @@ public class GWQueryEligibleProductsTicketXML {
 			// String PLU - this is PLU for the current guest ticket
 			if (element.getName().compareTo("PLU") == 0) {
 				String plu = element.getText();
+				dataRespTO.addPluList(plu);
 				dataRespTO.setPlu(plu);
+
 			}
 
-			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that
-			// this ticket can upgrade to
+			// Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that this ticket can be upgraded to
 			if (element.getName().compareTo("UpgradePLUList") == 0) {
-				extractUpgradePLU(dataRespTO, i, element);
+				extractUpgradePLUInfo(dataRespTO, i, element);
 			}
 
-			// Adding new Tag Contact
-			if (element.getName().compareTo("Contact") == 0) {
-				extractContact(dataRespTO, element);
-			}
-
-			// Adding new Has Picture Contact
-			if (element.getName().compareTo("HasPicture") == 0) {
-				String hasPicture = element.getText();
-				dataRespTO.setHasPicture(hasPicture);
-			}
+			/*
+			 * // Adding new Has Picture Contact if
+			 * (element.getName().compareTo("HasPicture") == 0) { String hasPicture
+			 * = element.getText(); dataRespTO.setHasPicture(hasPicture); }
+			 */
 
 			// Adding new Usage details
 			if (element.getName().compareTo("UsageRequestResponse") == 0) {
-				extractUsageRecords(dataRespTO, i, element);
+				extractUsageRecordsInfo(dataRespTO, i, element);
 			}
 		}
 
@@ -601,25 +581,25 @@ public class GWQueryEligibleProductsTicketXML {
 	}
 
 	/**
-	 * Extract Usage records.
+	 * Extract Usage records Info.
 	 *
 	 * @param dataRespTO
 	 *           the data resp TO
 	 * @param i
 	 *           the i
-	 * @param usageRecords
+	 * @param usageRecordsResponse
 	 *           the usage records
 	 * @throws DTIException
 	 *            the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractUsageRecords(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-				Element usageRecords) throws DTIException {
+	private static void extractUsageRecordsInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+				Element usageRecordsResponse) throws DTIException {
 
-		// UpGradePLU Response
-		Node linReqResp = usageRecords;
+		// Usage Record Response
+		Node usageLineResponse = usageRecordsResponse;
 
-		Node linRecords = linReqResp.selectSingleNode("UsageRecords");
+		Node linRecords = usageLineResponse.selectSingleNode("UsageRecords");
 		if (linRecords == null) {
 			return;
 		}
@@ -659,13 +639,10 @@ public class GWQueryEligibleProductsTicketXML {
 			if (useTimeNode != null) {
 				String useTime = useTimeNode.getText();
 				if ((useTime != null) && (useTime.length() > 0)) {
-					GregorianCalendar useDateTime = UtilityXML
-							.getGCalFromEGalaxyDate(useTime);
+					GregorianCalendar useDateTime = UtilityXML.getGCalFromEGalaxyDate(useTime);
 					if (useDateTime == null) {
-						throw new DTIException(GWQueryTicketXML.class,
-								DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML DataRequestResp has unparsable StartDateTime: "
-										+ useTime);
+						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+									"Response GW XML DataRequestResp has unparsable StartDateTime: " + useTime);
 					}
 					usageRecord.setUseTime(useDateTime);
 				}
@@ -674,27 +651,23 @@ public class GWQueryEligibleProductsTicketXML {
 		}
 
 	}
-
+	
 	/**
-	 * Extract upgrade PLU.
+	 * Extract upgrade PLU info.
 	 *
-	 * @param dataRespTO
-	 *           the data resp TO
-	 * @param i
-	 *           the i
-	 * @param upGradePLUResponse
-	 *           the up grade PLU response
-	 * @throws DTIException
-	 *            the DTI exception
+	 * @param dataRespTO the data resp TO
+	 * @param i the i
+	 * @param upGradePLUResponse the up grade PLU response
+	 * @throws DTIException the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractUpgradePLU(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+	private static void extractUpgradePLUInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
 				Element upGradePLUResponse) throws DTIException {
 
 		// UpGradePLU Response
-		Node linReqResp = upGradePLUResponse;
+		Node upGradeLineResp = upGradePLUResponse;
 
-		List linRecordList = linReqResp.selectNodes("Item");
+		List linRecordList = upGradeLineResp.selectNodes("Item");
 
 		for (int index = 0; index < linRecordList.size(); index++) {
 
@@ -714,45 +687,45 @@ public class GWQueryEligibleProductsTicketXML {
 			Node priceNode = linRecord.selectSingleNode("Price");
 			if (priceNode != null) {
 				String inText = priceNode.getText();
-				upgratePLU.setPrice(new BigDecimal(inText));
-
+				if (inText != null) {
+					inText = inText.replace(COMMA_STRING, EMPTY_STRING);
+					upgratePLU.setPrice(new BigDecimal(inText));
+				}
 			}
 
 			// Upgraded Price
-			Node upgdpriceNode = linRecord.selectSingleNode("UpgradePrice");
-			if (upgdpriceNode != null) {
-				String inText = upgdpriceNode.getText();
+			Node upgdPriceNode = linRecord.selectSingleNode("UpgradePrice");
+			if (upgdPriceNode != null) {
+				String inText = upgdPriceNode.getText();
 				upgratePLU.setUpgradePrice(new BigDecimal(inText));
 
 			}
 			// Adding Pay Plan information
-			if (linReqResp.getName().compareTo("PaymentPlans") == 0) {
+			if (upGradeLineResp.getName().compareTo("PaymentPlans") == 0) {
 				dataRespTO.setPayPlan("YES");
-				extractPayplan(upgratePLU, linReqResp);
+				extractPayplanInfo(upgratePLU, upGradeLineResp);
 			}
 			// Save it to the array
 			dataRespTO.addUpgradePLUList(upgratePLU);
 		}
 	}
 
+	
 	/**
-	 * Extract pay plan.
+	 * Extract payplan info for the pay plan tag.
 	 *
-	 * @param upgratePLU
-	 *           the upgrate PLU
-	 * @param payPlanLineResponse
-	 *           the pay plan line response
-	 * @throws DTIException
-	 *            the DTI exception
+	 * @param upgradePLUNode the upgrade PLU node
+	 * @param payPlanLineResponse the pay plan line response
+	 * @throws DTIException the DTI exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private static void extractPayplan(GWDataRequestRespTO.UpgradePLU upgratePLU, Node payPlanLineResponse)
+	private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
 				throws DTIException {
 
-		// Payment Plan Line response
-		Node linReqResp = payPlanLineResponse;
+		// Payment Plan response
+		Node payPlanLineResp = payPlanLineResponse;
 
-		List linRecordList = linReqResp.selectNodes("PaymentPlan");
+		List linRecordList = payPlanLineResp.selectNodes("PaymentPlan");
 
 		for (int index = 0; index < linRecordList.size(); index++) {
 
@@ -760,7 +733,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 			// Create the inner class
 
-			GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgratePLU.new PaymentPlan();
+			GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgradePLUNode.new PaymentPlan();
 
 			// PayplanId
 			Node payPlanId = linRecord.selectSingleNode("PaymentPlanID");
@@ -783,339 +756,7 @@ public class GWQueryEligibleProductsTicketXML {
 
 			}
 
-			upgratePLU.addPaymentPlans(paymentPlan);
-
-		}
-
-	}
-
-	/**
-	 * Extract contact.
-	 *
-	 * @param dataRespTO
-	 *           the data resp TO
-	 * @param contactLineResponse
-	 *           the contact line response
-	 * @throws DTIException
-	 *            the DTI exception
-	 */
-	@SuppressWarnings("unchecked")
-	private static void extractContact(GWDataRequestRespTO dataRespTO, Element contactLineResponse) throws DTIException {
-
-		GWDataRequestRespTO.Contact contact = dataRespTO.new Contact();
-
-		for (Iterator<org.dom4j.Element> i = contactLineResponse.elementIterator(); i.hasNext();) {
-
-			Element element = i.next();
-
-			// String First Name
-			if (element.getName().compareTo("FirstName") == 0) {
-				String firstName = element.getText();
-				contact.setFirstName(firstName);
-				continue;
-			}
-
-			// MiddleName
-			if (element.getName().compareTo("MiddleName") == 0) {
-				String middleName = element.getText();
-				contact.setMiddleName(middleName);
-				continue;
-			}
-
-			// String Last Name
-			if (element.getName().compareTo("LastName") == 0) {
-				String lastName = element.getText();
-				contact.setLastName(lastName);
-				continue;
-			}
-
-			// String IdentificationNo
-			if (element.getName().compareTo("IdentificationNo") == 0) {
-				String identificationNo = element.getText();
-				contact.setIdentificationNo(identificationNo);
-				continue;
-			}
-
-			// String Street1
-			if (element.getName().compareTo("Street1") == 0) {
-				String street1 = element.getText();
-				contact.setStreet1(street1);
-				continue;
-			}
-
-			// String Street2
-			if (element.getName().compareTo("Street2") == 0) {
-				String street2 = element.getText();
-				contact.setStreet2(street2);
-				continue;
-			}
-
-			// String Street3
-			if (element.getName().compareTo("Street3") == 0) {
-				String street3 = element.getText();
-				contact.setStreet3(street3);
-				continue;
-			}
-			// String City
-			if (element.getName().compareTo("City") == 0) {
-				String city = element.getText();
-				contact.setCity(city);
-				continue;
-			}
-
-			// String State
-			if (element.getName().compareTo("State") == 0) {
-				String state = element.getText();
-				contact.setState(state);
-				continue;
-			}
-
-			// String ZIP
-			if (element.getName().compareTo("ZIP") == 0) {
-				String zip = element.getText();
-				contact.setZip(zip);
-				continue;
-			}
-
-			// String CountryCode
-			if (element.getName().compareTo("CountryCode") == 0) {
-				String countryCode = element.getText();
-				contact.setCountryCode(countryCode);
-				continue;
-			}
-
-			// String Phone
-			if (element.getName().compareTo("Phone") == 0) {
-				String phone = element.getText();
-				contact.setPhone(phone);
-				continue;
-			}
-
-			// String Fax
-			if (element.getName().compareTo("Fax") == 0) {
-				String fax = element.getText();
-				contact.setFax(fax);
-				continue;
-			}
-
-			// String Cell
-			if (element.getName().compareTo("Cell") == 0) {
-				String cell = element.getText();
-				contact.setCell(cell);
-				continue;
-			}
-
-			// String Email
-			if (element.getName().compareTo("Email") == 0) {
-				String email = element.getText();
-				contact.setEmail(email);
-				continue;
-			}
-
-			// String ExternalID
-			if (element.getName().compareTo("ExternalID") == 0) {
-				String externalID = element.getText();
-				contact.setExternalId(externalID);
-				continue;
-			}
-
-			// String ContactGUID
-			if (element.getName().compareTo("ContactGUID") == 0) {
-				String contactGUID = element.getText();
-				contact.setContactGUID(contactGUID);
-				continue;
-			}
-
-			// String GalaxyContactID
-			if (element.getName().compareTo("GalaxyContactID") == 0) {
-				String galaxyContactID = element.getText();
-				contact.setGalaxyContactId(galaxyContactID);
-				continue;
-			}
-
-			// String JobTitle
-			if (element.getName().compareTo("JobTitle") == 0) {
-				String jobTitle = element.getText();
-				contact.setJobTitle(jobTitle);
-				continue;
-			}
-
-			// String Primary
-			if (element.getName().compareTo("Primary") == 0) {
-				String primary = element.getText();
-				contact.setPrimary(primary);
-				continue;
-			}
-
-			// String ContactNote
-			if (element.getName().compareTo("ContactNote") == 0) {
-				String contactNote = element.getText();
-				contact.setContactNote(contactNote);
-				continue;
-			}
-
-			// String NameTitleID
-			if (element.getName().compareTo("NameTitleID") == 0) {
-				String nameTitleID = element.getText();
-				contact.setNameTitleId(nameTitleID);
-				continue;
-			}
-
-			// String NameSuffixID
-			if (element.getName().compareTo("NameSuffixID") == 0) {
-				String nameSuffixID = element.getText();
-				contact.setNameSuffixId(nameSuffixID);
-				continue;
-			}
-
-			// String TotalPaymentContracts
-			if (element.getName().compareTo("TotalPaymentContracts") == 0) {
-				String totalPaymentContracts = element.getText();
-				contact.setTotalPaymentContracts(totalPaymentContracts);
-				continue;
-			}
-
-			// String AllowEmail
-			if (element.getName().compareTo("AllowEmail") == 0) {
-				String allowEmail = element.getText();
-				contact.setAllowMail(allowEmail);
-				continue;
-			}
-
-			// String AllowMailings
-			if (element.getName().compareTo("AllowMailings") == 0) {
-				String allowMailings = element.getText();
-				contact.setAllowMailing(allowMailings);
-				continue;
-			}
-
-			// Gregorian Calendar DOB (Date of Birth) As of 2.16.1, JTL
-			if (element.getName().equalsIgnoreCase("DOB")) {
-				String dobString = element.getText();
-				if ((dobString != null) && (dobString != "")) {
-					GregorianCalendar dateOfBirth = UtilityXML.getGCalFromEGalaxyDate(dobString);
-					if (dateOfBirth == null) {
-						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-									"Response GW XML DataRequestResp has unparsable DateUsed: " + dobString);
-					}
-					contact.setDob(dateOfBirth);
-				}
-				continue;
-			}
-
-			// String AgeGroup
-			if (element.getName().compareTo("AgeGroup") == 0) {
-				String ageGroup = element.getText();
-				contact.setAgeGroup(ageGroup);
-				continue;
-			}
-
-			// String Gender
-			if (element.getName().compareTo("Gender") == 0) {
-				String gender = element.getText();
-				contact.setGender(gender);
-			}
-
-		}
-		dataRespTO.addContactList(contact);
-
-	}
-
-	/**
-	 * Extracts the lineage info (this structure is complex).
-	 * 
-	 * @param dataRespTO
-	 * @param i
-	 * @param linReqResp
-	 * @throws DTIException
-	 * 
-	 *            <LineageRequestResponse> <LineageRecords> <LineageRecord>
-	 *            <Amount>199</Amount> <ExpirationDate>2012-08-24
-	 *            00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
-	 *            <VisualID>2937555200149073829</VisualID> </LineageRecord>
-	 * 
-	 */
-	@SuppressWarnings("rawtypes")
-	private static void extractLineageInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-				Element lineageRequestResponse) throws DTIException {
-
-		// LineageRequestResponse
-		Node linReqResp = lineageRequestResponse;
-
-		// LineageRecords
-		Node linRecords = linReqResp.selectSingleNode("LineageRecords");
-		if (linRecords == null) {
-			return;
-		}
-
-		List linRecordList = linRecords.selectNodes("LineageRecord");
-
-		for (int index = 0; index < linRecordList.size(); index++) {
-
-			Node linRecord = (Node) linRecordList.get(index);
-
-			// Create the inner class
-			GWDataRequestRespTO.LineageRecord lineageRecordTO = dataRespTO.new LineageRecord();
-
-			// Amount
-			Node amountNode = linRecord.selectSingleNode("Amount");
-			if (amountNode != null) {
-				String inText = amountNode.getText();
-				if (inText.contains("."))
-					lineageRecordTO.setAmount(new BigDecimal(inText));
-				else
-					lineageRecordTO.setAmount(new BigDecimal(inText + ".00"));
-			}
-
-			// Expiration Date
-			Node expireNode = linRecord.selectSingleNode("ExpirationDate");
-			if (expireNode != null) {
-				String inText = expireNode.getText();
-				if ((inText != null) && (inText != "")) {
-					GregorianCalendar expDate = UtilityXML.getGCalFromEGalaxyDate(inText);
-					if (expDate == null) {
-						throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-									"Response GW XML LineageRecord has unparsable ExpirationDate: " + inText);
-					}
-					lineageRecordTO.setExpirationDate(expDate);
-				}
-			}
-
-			// Status
-			Node statusNode = linRecord.selectSingleNode("Status");
-			if (statusNode != null) {
-				String inText = statusNode.getText();
-				try {
-					lineageRecordTO.setStatus(Integer.decode(inText));
-				} catch (NumberFormatException nfe) {
-					throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML LineageRecord has non-numeric Status.");
-				}
-			}
-
-			// Valid
-			Node validNode = linRecord.selectSingleNode("Valid");
-			if (validNode != null) {
-				String validString = validNode.getText();
-				if (validString.equalsIgnoreCase("YES"))
-					lineageRecordTO.setValid(Boolean.valueOf(true));
-				else if (validString.equalsIgnoreCase("NO"))
-					lineageRecordTO.setValid(Boolean.valueOf(false));
-				else {
-					throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-								"Response GW XML LineageRecord has invalid value for Valid.");
-				}
-			}
-
-			// VisualID
-			Node visualIDNode = linRecord.selectSingleNode("VisualID");
-			if (visualIDNode != null) {
-				String inText = visualIDNode.getText();
-				lineageRecordTO.setVisualID(inText);
-			}
-
-			// Save it to the array
-			dataRespTO.addLineageRecord(lineageRecordTO);
+			upgradePLUNode.addPaymentPlans(paymentPlan);
 
 		}
 

@@ -196,10 +196,10 @@ public class DTIErrorCode implements Serializable {
       "820", DTIErrorCode.ErrorScope.COMMAND, "Payment Amount Invalid");
   public final static DTIErrorCode PAYMENT_TYPE_INVALID = new DTIErrorCode(
       "821", DTIErrorCode.ErrorScope.COMMAND, "Payment Type Invalid");
-  public final static DTIErrorCode VOUCHER_INVALID = new DTIErrorCode("822",
-      DTIErrorCode.ErrorScope.COMMAND, "Voucher Invalid");
-  public final static DTIErrorCode VOUCHER_EXPIRED = new DTIErrorCode("823",
-      DTIErrorCode.ErrorScope.COMMAND, "Voucher Expired");
+  public final static DTIErrorCode VOUCHER_INVALID = new DTIErrorCode(
+	  "822", DTIErrorCode.ErrorScope.COMMAND, "Voucher Invalid");
+  public final static DTIErrorCode VOUCHER_EXPIRED = new DTIErrorCode(
+	  "823", DTIErrorCode.ErrorScope.COMMAND, "Voucher Expired");
   public final static DTIErrorCode MASTER_VOUCHER_EXPIRED = new DTIErrorCode(
       "824", DTIErrorCode.ErrorScope.COMMAND, "Master Voucher Expired");
   public final static DTIErrorCode MASTER_VOUCHER_INVALID = new DTIErrorCode(
@@ -225,7 +225,7 @@ public class DTIErrorCode implements Serializable {
   public final static DTIErrorCode INVALID_ACCOUNT = new DTIErrorCode("842",
       DTIErrorCode.ErrorScope.COMMAND, "One or more accounts invalid.");
   public final static DTIErrorCode INVALID_ACCOUNT_CREATION = new DTIErrorCode(
-      "843", DTIErrorCode.ErrorScope.COMMAND,
+      "843", DTIErrorCode.ErrorScope.COMMAND, 
       "Invalid account creation topology.");
   public final static DTIErrorCode INVALID_MIXED_ENTITLEMENTS = new DTIErrorCode(
       "844", DTIErrorCode.ErrorScope.COMMAND,      
@@ -236,8 +236,12 @@ public class DTIErrorCode implements Serializable {
   public final static DTIErrorCode PERFORMANCE_NOT_FOUND = new DTIErrorCode(
       "847", DTIErrorCode.ErrorScope.COMMAND,
       "Performance not found."); // As of 2.16.3, JTL
-  public final static DTIErrorCode TICKET_INVALID = new DTIErrorCode("850",
-      DTIErrorCode.ErrorScope.TICKET, "Ticket Invalid");
+  public final static DTIErrorCode SEATS_NOT_FOUND = new DTIErrorCode(
+	   "848", DTIErrorCode.ErrorScope.COMMAND, "No seats found."); 
+  public final static DTIErrorCode CLIENT_INFO_NOT_FOUND = new DTIErrorCode(
+	   "849", DTIErrorCode.ErrorScope.COMMAND, "Client Info Not Found");
+  public final static DTIErrorCode TICKET_INVALID = new DTIErrorCode(
+	   "850", DTIErrorCode.ErrorScope.TICKET, "Ticket Invalid");
   public final static DTIErrorCode TICKET_NOT_UPGRADEABLE = new DTIErrorCode(
       "851", DTIErrorCode.ErrorScope.COMMAND, "Ticket Not Upgradeable");
   public final static DTIErrorCode TICKET_ALREADY_USED = new DTIErrorCode(
@@ -259,6 +263,8 @@ public class DTIErrorCode implements Serializable {
       "871", DTIErrorCode.ErrorScope.COMMAND, "TP Interface Failure");
   public final static DTIErrorCode SCHEDULER_201_ERROR = new DTIErrorCode(
       "872", DTIErrorCode.ErrorScope.COMMAND, "201 Error");
+  public final static DTIErrorCode INVALID_RSERVATION_FLAG = new DTIErrorCode(
+	  "873", DTIErrorCode.ErrorScope.COMMAND, "Invalid Reservtion Flag");
   public final static DTIErrorCode TP_CONNECT_FAILURE = new DTIErrorCode(
       "880", DTIErrorCode.ErrorScope.COMMAND, "TP Connect Failure");
   public final static DTIErrorCode INVALID_COMMAND = new DTIErrorCode("881",

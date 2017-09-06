@@ -6,14 +6,8 @@ import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketInfoTO;
 
-// 
 /**
  * The Class GuestProductTO.
- */
-
-/**
- * @author amrastog
- *
  */
 public class GuestProductTO {
 
@@ -85,5 +79,14 @@ public class GuestProductTO {
 	public void setGwDataRespTO(GWDataRequestRespTO gwDataRespTO) {
 		this.gwDataRespTO = gwDataRespTO;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GuestProductTO [dbproductTO=" + dbproductTO + "]";
+	}
+	
 
 }

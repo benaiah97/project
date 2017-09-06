@@ -61,7 +61,7 @@ public class CommonTestUtils {
 		props.setProperty("POS.tktBroker", "DTIDV");
 		props.setProperty("ATS.SiteNumber", "120");
 		props.setProperty("ATS.MaxEncodeAllCount", "41");
-		props.setProperty("iago.endpoint", "http://aa.com");
+		props.setProperty("iago.endpoint", "http://localhost:8080/DTIWeb/DTIApp");
 		props.setProperty("iago.socketTimeout", "40000");
 		props.setProperty("iago.connectionTimeout", "8000");
 		props.setProperty("iago.socketTimeout.renewal", "100000");
@@ -70,6 +70,16 @@ public class CommonTestUtils {
 		props.setProperty("CONNECT_TIMEOUT_MILLIS", "5000");
 		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
 		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
+		
+
+		
+		props.setProperty("PLAT_LIST", "75,78,85");
+		props.setProperty("EPCTAFT4_LIST", "75,78,85,71,73,86");
+		props.setProperty("GOLD_LIST", "75,78,85");
+		props.setProperty("SILVER_LIST", "75,78,85");
+		props.setProperty("WEEKDAY_LIST", "75,78,85");
+		props.setProperty("WPAFT2_LIST", "72,85,71,73,86");
+		props.setProperty("WP_LIST", "72,85,71,73,86");
 		
 		return props;
 	}

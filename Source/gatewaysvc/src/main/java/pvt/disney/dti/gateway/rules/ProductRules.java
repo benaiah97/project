@@ -11,6 +11,7 @@ import java.util.HashSet;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.ValueConstants;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
@@ -34,6 +35,136 @@ public class ProductRules {
   public static final String UNSPECIFIED_GENDER = "U";
   /** String indicating a "Shipping" day class. */
   public static final String SHIPPING = "SHIP";
+  
+	/** The Constant WMK. */
+	private static final String WMK = "71";
+
+	/** The Constant WEC. */
+	private static final String WEC = "72";
+
+	/** The Constant WST. */
+	private static final String WST = "73";
+
+	/** The Constant WPI. */
+	@SuppressWarnings("unused")
+	private static final String WPI = "74";
+
+	/** The Constant WTL. */
+	private static final String WTL = "75";
+
+	/** The Constant WDI. */
+	@SuppressWarnings("unused")
+	private static final String WDI = "76";
+
+	/** The Constant WRC. */
+	@SuppressWarnings("unused")
+	private static final String WRC = "77";
+
+	/** The Constant WBB. */
+	private static final String WBB = "78";
+
+	/** The Constant WDR. */
+	@SuppressWarnings("unused")
+	private static final String WDR = "79";
+
+	/** The Constant WTS. */
+	@SuppressWarnings("unused")
+	private static final String WTS = "80";
+
+	/** The Constant WNR. */
+	@SuppressWarnings("unused")
+	private static final String WNR = "84";
+
+	/** The Constant WSC. */
+	private static final String WSC = "85";
+
+	/** The Constant WAK. */
+	private static final String WAK = "86";
+
+	/** The Constant WFP. */
+	@SuppressWarnings("unused")
+	private static final String WFP = "88";
+
+	/** The Constant WCQ. */
+	@SuppressWarnings("unused")
+	private static final String WCQ = "89";
+
+	/** The Constant WRS. */
+	@SuppressWarnings("unused")
+	private static final String WRS = "90";
+
+	/** The Constant WSG. */
+	@SuppressWarnings("unused")
+	private static final String WSG = "91";
+
+	/** The Constant WOR. */
+	@SuppressWarnings("unused")
+	private static final String WOR = "92";
+
+	/** The Constant WDW. */
+	@SuppressWarnings("unused")
+	private static final String WDW = "93";
+
+	/** The Constant WEA. */
+	@SuppressWarnings("unused")
+	private static final String WEA = "83";
+
+	/** The Constant WSA. */
+	@SuppressWarnings("unused")
+	private static final String WSA = "81";
+
+	/** The Constant WMA. */
+	@SuppressWarnings("unused")
+	private static final String WMA = "82";
+
+	/** The Constant WAA. */
+	@SuppressWarnings("unused")
+	private static final String WAA = "87";
+
+	/** The Constant PLAT. */
+	private static final String PLAT = "PLAT";
+
+	/** The Constant PLATPLUS. */
+	private static final String PLATPLUS = "PLATPLUS";
+
+	/** The Constant EPCTAFT4. */
+	private static final String EPCTAFT4 = "EPCTAFT4";
+
+	/** The Constant GOLD. */
+	private static final String GOLD = "GOLD";
+
+	/** The Constant SILVER. */
+	private static final String SILVER = "SILVER";
+
+	/** The Constant WEEKDAY. */
+	private static final String WEEKDAY = "WEEKDAY";
+
+	/** The Constant WP. */
+	private static final String WP = "WP";
+
+	/** The Constant WPAFT2. */
+	private static final String WPAFT2 = "WPAFT2";
+
+	/** The plat list. */
+	private static String PLAT_RULE_DISQUAL_LIST[] = { WTL, WBB, WSC };
+
+	/** The epctaft4 list. */
+	private static String EPCTAFT4_RULE_DISQUAL_LIST[] = { WTL, WBB, WSC, WMK, WST, WAK };
+
+	/** The gold list. */
+	private static String GOLD_RULE_DISQUAL_LIST[] = { WTL, WBB, WSC };
+
+	/** The silver list. */
+	private static String SILVER_RULE_DISQUAL_LIST[] = { WTL, WBB, WSC };
+
+	/** The weekday list. */
+	private static String WEEKDAY_RULE_DISQUAL_LIST[] = { WTL, WBB, WSC };
+
+	/** The wp list. */
+	private static String WP_RULE_DISQUAL_LIST[] = { WEC, WSC, WMK, WST, WAK };
+
+	/** The wpaft2 list. */
+	private static String WPAFT2_RULE_DISQUAL_LIST[] = { WEC, WSC, WMK, WST, WAK };
 
   /**
    * Validate products can be sold. <BR>
@@ -951,5 +1082,90 @@ public class ProductRules {
     return;
 
   }
+  
+  /**
+   * Retain site details, will check for disqualification rule for each of the daysubclass in the productList .
+   *
+   * @param usageSiteList contains the list of site no where ticket has been used  
+   * @param upGradeProductTO has the list of AP sellable product 
+   * @return the int
+   */
+	public static void disqualifyProduct(ArrayList<String> usageSiteList, UpgradeCatalogTO upGradeProductTO) {
+
+		HashSet<String> usageSiteSet = new HashSet<String>();
+
+		for (/* each */String siteDetail : /* in */usageSiteList) {
+			usageSiteSet.add(siteDetail);
+		}
+		ArrayList<String> daySubClassList = upGradeProductTO.getDaySubclasses();
+		for (/* each */String daySubclass : /* in */daySubClassList) {
+
+			// iterate through each of the productList to check the subclass
+			switch (daySubclass) {
+
+			case PLAT:
+				if (isDaySubClassDisqualfied(usageSiteSet, PLAT_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case PLATPLUS:
+				break;
+
+			case EPCTAFT4:
+				if (isDaySubClassDisqualfied(usageSiteSet, EPCTAFT4_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case GOLD:
+				if (isDaySubClassDisqualfied(usageSiteSet, GOLD_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case SILVER:
+				if (isDaySubClassDisqualfied(usageSiteSet, SILVER_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case WEEKDAY:
+				if (isDaySubClassDisqualfied(usageSiteSet, WEEKDAY_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case WP:
+				if (isDaySubClassDisqualfied(usageSiteSet, WP_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			case WPAFT2:
+				if (isDaySubClassDisqualfied(usageSiteSet, WPAFT2_RULE_DISQUAL_LIST)) {
+					upGradeProductTO.removeDaySubclass(daySubclass);
+					break;
+				}
+			default:
+				upGradeProductTO.removeDaySubclass(daySubclass);
+				break;
+
+			}
+		}
+
+	}
+
+	/**
+	 * Checks if is day sub class can be disqualfied .
+	 *
+	 * @param usageSiteSet the usage site set
+	 * @param daySubClassDisqualSiteList the day sub class disqualification site list 
+	 * @return true, if is day sub class disqualfied
+	 */
+	private static boolean isDaySubClassDisqualfied(HashSet<String> usageSiteSet, String[] daySubClassDisqualSiteList) {
+		
+		for (/* each */String daySubClassDisqualSite : /* in */ daySubClassDisqualSiteList) {
+			if (usageSiteSet.contains(daySubClassDisqualSite)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 }

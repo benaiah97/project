@@ -190,10 +190,10 @@ public class IagoClient {
 
 			URL url = new URL(ENDPOINT);
 
-			logger.sendEvent("About to send message to WDW provider system.",
+			logger.sendEvent("About to send message to ATS provider system.",
 					EventType.INFO, this);
 
-			// Open Connection to eGalaxy
+			// Open Connection 
 			conn = (URLConnection) url.openConnection();
 			conn.setDoInput(true);
 			conn.setDoOutput(true);

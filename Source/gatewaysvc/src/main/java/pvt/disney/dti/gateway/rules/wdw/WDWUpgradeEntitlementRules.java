@@ -19,14 +19,14 @@ import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
+import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTCommandTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTHeaderTO;
 import pvt.disney.dti.gateway.provider.wdw.data.OTUpgradeTicketTO;
+import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTPaymentTO.PaymentType;
-import pvt.disney.dti.gateway.provider.wdw.data.common.OTDemographicInfo;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTicketTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTTransactionDSSNTO;
 import pvt.disney.dti.gateway.provider.wdw.data.common.OTUpgradeTicketInfoTO;
@@ -349,8 +349,9 @@ public class WDWUpgradeEntitlementRules {
     ProductRules.validateWdwTicketDemo(tktListTO);
     
     // RULE: Validate that if the "installment" type of payment is present,
-    ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
-    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);
+    // Commenting out these lines to temporarily resolve INC4506020 - ClassCastException on Upgrade from HERA 
+    /*ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
+    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);*/
 
   }
 

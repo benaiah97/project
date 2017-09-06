@@ -25,10 +25,9 @@ import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.DemographicsTO.GenderType;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo;
-import pvt.disney.dti.gateway.data.common.ResultStatusTo.ResultType;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TicketIdType;
+import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.request.xsd.CommandHeader;
 import pvt.disney.dti.gateway.request.xsd.PayloadHeader;
 import pvt.disney.dti.gateway.request.xsd.PayloadHeader.Comm;
@@ -215,7 +214,7 @@ public class QueryEligibleProductsTestCase {
 		ticketTO.setExternal("External");
 		ticketTO.setTktPrice(new BigDecimal("111255.002"));
 		ticketTO.setTktTax(new BigDecimal("5.25"));
-		ticketTO.setResultType(ResultStatusTo.ResultType.ELIGIBLE);
+		ticketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.ELIGIBLE);
 		ticketTO.setGuestType(DBProductTO.GuestType.ADULT);
 		ticketTO.setProdCode("prodCode");
 		ticketTO.setUpgrdPrice(new BigDecimal("254543.245"));
@@ -256,7 +255,7 @@ public class QueryEligibleProductsTestCase {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
 		}
 		/*Scenario 4 :: ResultType= NOPRODUCTS*/
-		ticketTO.setResultType(ResultStatusTo.ResultType.NOPRODUCTS);
+		ticketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 		try {
 			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);
@@ -264,7 +263,7 @@ public class QueryEligibleProductsTestCase {
 			Assert.fail("UnExpected Exception Occured"+e.getMessage());
 		}
 		/*Scenario 5 :: ResultType= INELIGIBLE*/
-		ticketTO.setResultType(ResultStatusTo.ResultType.INELIGIBLE);
+		ticketTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 		try {
 			 queryEligibleProductsResponse	=QueryEligibleProductsXML.getJaxb(qryResRespTO, errorTO);
 			assertNotNull(queryEligibleProductsResponse);

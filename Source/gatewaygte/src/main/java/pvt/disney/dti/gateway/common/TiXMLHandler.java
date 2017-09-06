@@ -63,6 +63,7 @@ public class TiXMLHandler extends DefaultHandler {
   public static final String ASSOC_MEDIA2ACCT   = "AssociateMediaToAccount"; // CMD 13
   public static final String TICKERATE_ENTTL    = "TickerateEntitlement   "; // CMD 14
   public static final String VOID_RESERVATION   = "VoidReservation        "; // CMD 15
+  public static final String QUERY_ELIGIBILITYPRODUCTS   = "QueryEligProducts"; // CMD 16
 
   public static final String CREATE_TICKET_REQUEST = "CreateTicketRequest"; // CMD 1
   public static final String UPGRADE_ALPHA_REQUEST = "UpgradeAlphaRequest"; // CMD 2
@@ -77,6 +78,7 @@ public class TiXMLHandler extends DefaultHandler {
   public static final String ASSOC_MEDIA2ACCT_REQUEST = "AssociateMediaToAccountRequest"; // CMD 13
   public static final String TICKERATE_ENTTL_REQUEST = "TickerateEntitlementRequest"; // CMD 14
   public static final String VOID_RESERVATION_REQUEST = "VoidReservationRequest"; // CMD 15
+  public static final String QUERY_ELIGIBILITYPRODUCTS_REQUEST   = "QueryEligibleProductsRequest"; // CMD 16
   
   public static final String PAYLOAD_ID = "PayloadID";
   public static final String TS_MAC = "TSMAC";
@@ -333,6 +335,12 @@ public class TiXMLHandler extends DefaultHandler {
         txnType = TransactionType.VOIDRESERVATION;
       }
     }
+    if (doc.getElementsByTagName(QUERY_ELIGIBILITYPRODUCTS_REQUEST) != null) { // CMD 16
+       if (doc.getElementsByTagName(QUERY_ELIGIBILITYPRODUCTS_REQUEST).getLength() > 0) {
+         returnData.put(ACTION, QUERY_ELIGIBILITYPRODUCTS);
+         txnType = TransactionType.QUERYELIGIBLEPRODUCTS;
+       }
+     }
 
     returnData.put(TXN_TYPE, txnType);
 
