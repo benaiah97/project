@@ -1,80 +1,154 @@
+################################################################################################################
+USING DOCKER DURING DEVELOPMENT : AUTHOR: DR. SHAN MOON (MOONS012, SHAN.M.MOON@DISNEY.COM)
+################################################################################################################
 
 This document details how to use the docker images from a docker command line. Work
 is in progress to use a maven docker plugin to build images, but at this time
 we must run docker commands directly from a docker shell.
 
-This assumes you have already built the war and it is in the gatewaywar/target folder.
+This does not necesarilly use all recommended best practices for CI/CD pipelines.
+It is intended as a quick n dirty local docker solution to eliminate the need
+for local dev environment setup.
 
+It does not provide an in-depth explanation of docker synax, and uses simple examples for the purpose of
+getting started. In depth and high quality documentation can be found on docker.com. It would be pointless
+to reproduce it here. Be aware that an image and a container are not the same construct.
 
-Open a Docker shell
+See https://docs.docker.com/ for complete Docker documentation.
 
-Build the image locally or get it from the dti docker repository
-
-if building locally and not pulling from a repo,cd to DTIGateway/Source folder.
-
-This build command defaults to using the configs in dti-gateway-config/LOCAL
-It also defaults to eastern time zone.
-
+################################################################################################################
+LIST OF THE COMMANDS YOU WILL COMMONLY USE FOR DOCKER
+SEE https://docs.docker.com/engine/reference/commandline/docker/#child-commands FOR A FULL LIST OF COMMANDS
+################################################################################################################
+docker-machine ip
 docker build -t dtigateway:latest .
-
-If you need to use a different config, the supply the build argument CONFIG and a value, such as DEV_HK
-If you need to use a differnt timezone, then supply the build argument TIMEZONE and a value such as Asia/Hong_Kong
-
-For example: to use the domestic DEV config:
-
-docker build --build-arg CONFIG=LOCAL -t dtigateway:DEV .
-
-For example: to use the HKDL Local config:
-docker build --build-arg CONFIG=LOCAL_HK -t dtigateway:LOCAL_HK .
-
-Or to use the Hong Kong DEV configuration and specify the HKDL timezone
-docker build --build-arg CONFIG=DEV_HK --build-arg TIMEZONE=Asia/Hong_Kong -t dtigateway:DEV_HK .
-
-or 
-
-#NOTE: No image checked into a repo at this time.
-
-
-Run the container and start the default Tomcat server (CMD ["catalina.sh", "run"]):
-(assumes http and port 8080 and 8000 are free on your box)
-
-A few examples running different tagged images:
 docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:latest
-docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:DEV_HK
+docker exec -i -t gateway /bin/bash 
+docker stop gateway
+docker kill gateway
+docker ps -a
+docker images (useful for listing images for cleanup)
+docker rm  <name or id> (remove one or more containers)
+docker rmi (remove one or more images)
+dockers stop gateway
+docker stats gateway
+docker info
 
-docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:DEV_HK
+################################################################################################################
+PRE-REQUISITES
+################################################################################################################
+Pre-requisite requirements for running Docker are listed below. It is assumed that anyone competent enough to
+be working on this app has the basic core competency required to install/configure the pre-requisites below.
 
-docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:LOCAL_HK
+BIOS
+You must turn on support for virutalization in your BIOS settings. Most BIOS have this off by default.
 
-Find the IP of your docker machine 
-$ docker-machine ip
+DOCKER
+Windows 7: Install Docker Toolbox with VirtualBox (download from Docker.com)
+Window 10/OSX/Linux: Install native docker (download from Docker.com)
+
+DTIGATEWAY:
+This assumes you have already built the current application war, configs, jars, svc etc. and that they are
+present in their respective ${project.dir}/target folders.
+
+
+################################################################################################################
+BUILDING THE DOCKER IMAGE 
+################################################################################################################
+
+Open Docker quickstart terminal (Windows 7). Real operating systems just open a shell.
+
+Build the image locally or get it from the (yet non-existants) dti docker repository
+
+If building locally and pulling from a docker repsitory (which we are not yet) cd to DTIGateway/Source
+
+The command below builds the docker image, and names it dtigateway, and tags it latest. The . means
+run in the corrent dirctory and default to use the Dockerfile present there.
+
+    docker build -t dtigateway:latest .
+
+Every time you rebuild a war you need to rebuild the docker image. You can change the tag from latest if you
+wish and keep multiple versions in your local docker repository.
+
+OPTIONAL ARGUMENTS:
+TIMEZONE (sets time zone, default is ET, Americas/New_York)
+CONFIG   (sets environment, default is LOCAL)
+
+EXAMPLE WITH BOTH OPTIONAL ARGUMENTS
+docker build --build-arg CONFIG=DEV_HK --build-arg TIMEZONE=Asia/Hong_Kong -t dtigateway:DEV_HK .
+################################################################################################################
+RUNNING THE DOCKER CONTAINER FROM THE IMAGE
+################################################################################################################
+
+Run the docker container and start the default Tomcat server (CMD ["catalina.sh", "run"]):
+(assumes http and port 8080 (tomcat) and 8000 (jpda debugger) are free on your box. 
+You can remap to other ports as you choose and modify the command accordingly.)
+
+    docker run --name gateway -it -p 8080:8080 -p 8000:8000 --rm dtigateway:latest
+
+Find the IP of your docker machine. The default local network ip for dockker images 192.168.99.100 if you are using docker toolbox,
+If you use native docker you can use localhost or actual IP.
+    docker-machine ip
 
 You can then go to http://<ip>:8080 
 
 The Tomcat manager gui and admin gui are enabled.
 user: tomcat pw: dti
 
-To open a bash shell on a running container
+################################################################################################################
+RUNNING A SHELL (OR OTHER COMMAND) ON THE RUNNNING CONTAINER
+################################################################################################################
 
-get the list of running containers so you can grab an id or name
-docker ps
+This is how to pen a bash shell inside a running container so you can work within the image just like any
+remote machine (virtual or physical)
 
-docker exec -i -t <insert container id> /bin/bash #by ID
+Toget the list of running containers so you can grab an id or name use this command:
+    docker ps
+
+If you used the tags in the first example above:
+    docker exec -i -t gateway /bin/bash 
+    
+will attach to your running container.
+
+You can run the exec command and reference the container by ID or Name, syntax below:
+    docker exec -i -t <insert container id> /bin/bash #by ID
 or
- docker exec -i -t <insert container name> /bin/bash #by Name
- 
-  docker exec -i -t gateway /bin/bash
-  
-  The default local network ip for dockker images 192.168.99.100, so your
-  endpoint for SOAP  UI testing will probably be http://192.168.99.100:8080/DTIApp/DTIApp
-  (assumming you are using a IAGO.properties endoint that is http.
-  
-  Confirm this by checking the IP address of your docker machine as detailed above.
+    docker exec -i -t <insert container name> /bin/bash #by Name
+    
+################################################################################################################
+STOPPING THE DOCKER CONTAINER
+################################################################################################################    
+docker stop <name or id> 
+
+for our example:
+	docker stop gateway   
+
+################################################################################################################
+SSL
+################################################################################################################
   
   If you want to test with SSL for LOCAL configs you will have to change the
-  IAGO.properties endpoint and change the port mapping when run the tagged image,
+  the port mapping when run the tagged image, add provide an updates server.xml for tomcat and modify
+  the Dockerfile to use that when building the image. I might add that as a build argument at some point.
+  Also check the IAGO.properties endpoint and change the port mapping when run the tagged image,
   and we would probably have to modify the Docker file to custome the server.xml
   for tomcat to specify https. I might add that as a build argument at some point. 
+ 
   
+################################################################################################################
+READ BEFORE MAKING CHANGES TO THE DOCKERFILE
+################################################################################################################
   
   NOTE: If you make changes to the docker file use UNIX file format. Some properties with CR/LF can cause issues.
+
+################################################################################################################
+DOCKER TOOLBOX IMAGE RUNS OUT OF SPACE
+################################################################################################################
+
+If you are using docker toolbox on Windows and your VM runs out of space, prune unused images:
+    docker rmi $(docker images -q -f "dangling=true")
+
+Alternatively you can edit the json config in your <user home directory>/.docker and change the storage limit.
+Docker toolbox is not as robust as the native docker available on Linux/OSX/Windows 10 so know what you are
+doing before you change the machine config. You can always delete it and the docker quick terminal will
+recreate it next time you start.

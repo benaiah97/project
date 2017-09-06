@@ -31,21 +31,21 @@
 		<appender-ref ref="VIEWER_ARCHIVE" />
 	</appender>
 	<appender class="com.disney.log4j.appender.ArchiveRollingFileAppender" name="VIEWER_ARCHIVE">
-		<param name="File" value="c:/logs/dti//viewer/log.xml" />
+		<param name="File" value="./logs/dti//viewer/log.xml" />
 		<param name="MaxFileSize" value="64KB" />
 		<param name="ZipTimestamp" value="yyyyMMdd" />
 		<layout class="com.disney.log4j.EventXmlLayout" />
 	</appender>
 	<appender class="org.apache.log4j.FileAppender" name="GATE_FILE">
-		<param name="File" value="c:/logs/dti//DTIGATE.log" />
+		<param name="File" value="./logs/dti//DTIGATE.log" />
 		<layout class="pvt.disney.dti.gateway.util.FileLayout" />
 	</appender>
 	<appender class="org.apache.log4j.FileAppender" name="CLIENT_FILE">
-		<param name="File" value="c:/logs/dti//DTICLIENT.log" />
+		<param name="File" value="./logs/dti//DTICLIENT.log" />
 		<layout class="pvt.disney.dti.gateway.util.FileLayout" />
 	</appender>
 	<appender class="org.apache.log4j.FileAppender" name="DEVNULL">
-		<param name="File" value="c:/logs/dti/devnull.log" />
+		<param name="File" value="./logs/dti/devnull.log" />
 		<layout class="com.disney.log4j.EventTextLayout" />
 	</appender>
 	<appender class="org.apache.log4j.ConsoleAppender" name="STDOUT">
