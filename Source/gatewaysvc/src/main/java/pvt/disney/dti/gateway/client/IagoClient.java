@@ -154,13 +154,14 @@ public class IagoClient {
 	 * 
 	 */
 	public String sendRequest(DTITransactionTO dtiTxn, String xmlRequest, boolean convert) throws DTIException {
-
+		String campus = null;
 		URLConnection conn = null;
 		Document docResponse = null;
 		Document docRequest = null;
 
 		String xmlResponse = null;
 
+		campus = dtiTxn.getRequest().getPayloadHeader().getTarget();
 		// Convert to SOAP Format
 		if (convert == true) {
 			try {
@@ -252,7 +253,7 @@ public class IagoClient {
 			xmlMasked = PCIControl.overwritePciDataInXML(xmlResponse);
 
 			logger.sendEvent(
-					"Just received response from WDW provider system.",
+					"Just received response from " + campus + "provider system.",
 					EventType.INFO, this);
 			logger.sendEvent("IAGO Raw Response:" + xmlMasked, EventType.DEBUG,
 					this);

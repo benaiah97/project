@@ -4,3 +4,4 @@ Source/gatewaysvc/c:/logs/dti/viewer
 Source/logs
 cobertura.ser
 *.log
+Source/gatewaysvc/logs
