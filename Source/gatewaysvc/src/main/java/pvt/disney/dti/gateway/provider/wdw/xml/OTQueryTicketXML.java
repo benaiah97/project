@@ -352,6 +352,7 @@ public class OTQueryTicketXML {
    * @param otTktInfoTO the ot tkt info TO
    * @param upGradePLUResponse the up grade PLU response
    */
+  @SuppressWarnings("rawtypes")
   private static void setUpgradePLUItems(OTTicketInfoTO otTktInfoTO,Node upGradePLUResponse){
 
 		// UpGradePLU Response

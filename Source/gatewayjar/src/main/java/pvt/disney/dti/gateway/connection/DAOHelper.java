@@ -120,6 +120,7 @@ import com.disney.util.PropertyHelper;
  * @see UpdateBuilder
  * @see DeleteBuilder
  */
+@SuppressWarnings("rawtypes")
 public class DAOHelper
 {
     //~ Static variables/initializers --------------------------------------------------------------
@@ -380,7 +381,8 @@ public class DAOHelper
      * 
      * @return Collection a list of names
      */
-    public static Collection getDataAccessNames()
+    @SuppressWarnings("rawtypes")
+	public static Collection getDataAccessNames()
     {
         List list = new ArrayList();
         synchronized (theMap)

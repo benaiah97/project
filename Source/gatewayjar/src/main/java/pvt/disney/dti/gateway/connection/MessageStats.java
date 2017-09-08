@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.disney.logging.audit.Event;
 
+@SuppressWarnings("rawtypes")
 public class MessageStats
 {
     private String serviceType = null;
@@ -19,6 +20,7 @@ public class MessageStats
     private boolean shouldSort = true;
     private List events = null;
     
+    @SuppressWarnings("rawtypes")
     public MessageStats() {
 	timedEvents = new ArrayList();
 	events = new ArrayList();
@@ -96,7 +98,7 @@ public class MessageStats
 	    sortTimedEvents();
 	return timedEvents;
     }
-    
+    @SuppressWarnings("rawtypes")
     public List getEvents() {
 	return events;
     }

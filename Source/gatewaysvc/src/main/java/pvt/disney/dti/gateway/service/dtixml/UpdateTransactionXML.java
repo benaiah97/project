@@ -31,6 +31,7 @@ public class UpdateTransactionXML {
 	 * @throws JAXBException
 	 *             for any JAXB parsing issue.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static UpdateTransactionRequestTO getTO(
 			UpdateTransactionRequest uTranReq) throws JAXBException {
 
