@@ -199,7 +199,7 @@
 														<xs:restriction base="xs:date"/>
 													</xs:simpleType>
 												</xs:attribute>
-												<xs:attribute name="Gender use="optional"">
+												<xs:attribute name="Gender use="optional">
 													<xs:simpleType>
 														<xs:restriction base="xs:string">
 															<xs:minLength value="1"/>
