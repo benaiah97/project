@@ -142,8 +142,7 @@ public class TransmissionRespXML {
               && (responseIn.getResponse().getCommandBody() != null)) {
         setCommandBodyXML(responseIn, cmd, dtiErrorTO);
       }
-    } else if ((dtiErrorTO.getErrorCode().toString().equalsIgnoreCase(
-            DTIErrorCode.DUPLICATE_ORDER.getErrorCode()) )) {
+    } else if ( dtiErrorTO != null && dtiErrorTO.getErrorCode().toString().equalsIgnoreCase(DTIErrorCode.DUPLICATE_ORDER.getErrorCode()) ) {
           
           if (responseIn.getResponse().getCommandBody() != null) { //  JTL (Doesn't work, generates a happy, non-error answer)
             setCommandBodyXML(responseIn, cmd, dtiErrorTO);

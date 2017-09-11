@@ -198,7 +198,8 @@ public class DTIService {
       // Apply the transform rules
       String xmlRequest = TransformRules.changeToProviderFormat(dtiTxn);
       logger.sendEvent("Applied transform rules (DTI to Provider).", EventType.INFO, this);
-
+      logger.sendEvent("Provider request:" + xmlRequest, EventType.DEBUG, this);
+      
       // Acquire all log table key values
       LogKey.getLogTableKeys(dtiTxn);
 
@@ -213,7 +214,8 @@ public class DTIService {
       // Send to Provider
       String xmlResponse = ProviderClient.sendRequestToProvider(dtiTxn, xmlRequest);
       logger.sendEvent("Sent message to provider.", EventType.DEBUG, this);
-
+      logger.sendEvent("Provider reqponse:" + xmlResponse, EventType.DEBUG, this);
+      
       // Log the Out-bound TP Message
       LogKey.insertOTPLog(dtiTxn, xmlResponse);
       logger.sendEvent("Logged outbound TP message.", EventType.INFO, this);
@@ -222,8 +224,7 @@ public class DTIService {
       dtiTxn = TransformRules.changeToDtiFormat(dtiTxn, xmlResponse);
       logger.sendEvent("Applied transform rules (Provider to DTI).", EventType.INFO, this);
 
-    } catch (DTIException dtie) {
-
+    } catch (DTIException dtie) {	
       logger.sendEvent("DTI ERROR CODE: " + dtie.getDtiErrorCode().getErrorCode() + " - " + dtie.getLogMessage(),
           EventType.WARN, this);
       logger.sendEvent("DTI application class: " + dtie.getClassName().toString(), EventType.WARN, this);
@@ -274,7 +275,6 @@ public class DTIService {
       logger.sendEvent("Logged outbound TS message.", EventType.INFO, this);
 
     } catch (JAXBException je) {
-
       logger.sendEvent("Exception parsing resp object:  " + je.toString(), EventType.EXCEPTION, this);
       logger.sendEvent("Error code was: " + je.getErrorCode() + ":  " + je.getLocalizedMessage(), EventType.EXCEPTION,
           this);

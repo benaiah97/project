@@ -126,10 +126,9 @@ public class DTIController {
    * @throws IOException
    *             in case of communications issues.
    */
-  @SuppressWarnings("rawtypes")
-  public Document processRequest(InputStream inStream) throws IOException {
 
-    eventLogger.sendEvent("Entering processRequest(InputStream) ",
+  public Document processRequest(InputStream inStream) throws IOException {
+	  eventLogger.sendEvent("Entering processRequest(InputStream) ",
         EventType.DEBUG, this);
 
     String strInputFile = null;
@@ -147,10 +146,8 @@ public class DTIController {
     String maskedXMLRequest = null;
 
     try {
-
       // get the XML from the in-bound message
       try {
-
         docIn = org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
             .newInstance().newDocumentBuilder()
             .parse(new InputSource(inStream));
@@ -218,7 +215,6 @@ public class DTIController {
         dtitr.setPayloadId(payloadId);
         BaseContext bctx = new BaseContext(dtitr);
         ContextManager.getInstance().storeContext(bctx);
-
         eventLogger.sendEvent("Key fields extracted from inbound XML.",
             EventType.DEBUG, this);
 
@@ -232,7 +228,6 @@ public class DTIController {
         // Flood control will remove the block after a pre-configured period of
         // time.
         if (floodControl != null) {
-
           try {
 
             floodControl.setFloodControlActive(FLOODCONTROLACTIVE);
@@ -273,7 +268,6 @@ public class DTIController {
 
         }
         // FLOOD CONTROL ENDS **********************************************
-
         // *******************
         // Record the request.
         // *******************
@@ -289,7 +283,6 @@ public class DTIController {
         }
 
         boolean isFirstAttempt = true;
-
         eventLogger.sendEvent("Attempting to record request.", EventType.DEBUG, this);
 
         // Get the entity ID.
@@ -323,14 +316,12 @@ public class DTIController {
                 .sendEvent("Unable to log ITS info into consolidated table:  " + dtie
                         .toString(), EventType.WARN,this);
           }
-
         }
         catch (DTIException dtie) {
           eventLogger.sendEvent("EXCEPTION writing to INBOUND_TS_LOG: " + dtie
                   .toString(), EventType.WARN, this);
           throw dtie;
         }
-
         eventLogger.sendEvent("Request recorded (or was dupe).", EventType.DEBUG, this);
 
         if (blockedTransaction) {
@@ -382,7 +373,6 @@ public class DTIController {
         eventLogger.sendEvent(
             "About to create XML Document from response string.",
             EventType.DEBUG, this);
-
         try {
           docOut = DocumentBuilderFactoryImpl
               .newInstance()
@@ -407,7 +397,6 @@ public class DTIController {
 
     }
     catch (Exception ee) {
-
       eventLogger.sendEvent(
           "EXCEPTION processing request " + ee.toString(),
           EventType.EXCEPTION, this);
@@ -434,7 +423,6 @@ public class DTIController {
           ef.printStackTrace();
           docOut = buildErrorXMLForPOS((DTIException) ef, payloadId);
         }
-
         // Allow very permissive exception handling here to ensure seller
         // gets a response. Logging to the DTI TRANS LOG is OPTIONAL!
         try {
@@ -450,7 +438,6 @@ public class DTIController {
                 dtiErrorCode.getErrorName(), null, null,
                 new java.util.Date(), requestType, "Unknown");
           }
-
         }
         catch (Exception e) {
           e.printStackTrace();
