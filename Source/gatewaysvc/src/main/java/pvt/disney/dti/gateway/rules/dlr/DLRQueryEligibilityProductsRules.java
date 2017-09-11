@@ -520,18 +520,19 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 		ArrayList<GregorianCalendar> useTimeList = new ArrayList<GregorianCalendar>();
 
 		// for the first use Date
-		GregorianCalendar firstUsageDateValue = Collections.min(useTimeList);
+		GregorianCalendar firstUsageDateValue = null;
 		if ((gwDataRespTO.getUsageRecords() != null) && (gwDataRespTO.getUsageRecords().size() > 0)) {
 			for (UsageRecord usage : gwDataRespTO.getUsageRecords()) {
 				if (usage.getUseNo() == 1) {
 					firstUsageDateValue = usage.getUseTime();
+					
+					// Sorting to get the first Usage Date
+					logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(), EventType.DEBUG, THISINSTANCE);
+
 				}
 			}
 		}
-		// Sorting to get the first Usage Date
 		
-		logger.sendEvent("First Use Date:" + useTimeList.get(0).getTime(), EventType.DEBUG, THISINSTANCE);
-
 		// Eligible products
 		if ((upgradedProductTOList != null) && (upgradedProductTOList.size() > 0)) {
 			for (/* each */DBProductTO productTO : /* in */upgradedProductTOList) {

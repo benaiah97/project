@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
@@ -22,6 +23,7 @@ import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.UpgradeEligibilityStatusType;
 import pvt.disney.dti.gateway.request.xsd.QueryEligibleProductsRequest;
 import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
+import pvt.disney.dti.gateway.response.xsd.QueryTicketResponse;
 
 /**
  * This class is responsible for transforming the JAXB parsed request into a
@@ -388,7 +390,7 @@ public class QueryEligibleProductsXML {
 			// ResultStatus
 
 			String result = null;
-			if (aTicketTO.getUpgradeEligibilityStatus() != null) {
+			if ((aTicketTO.getUpgradeEligibilityStatus() != null) && (errorTO == null)) {
 				if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.NOPRODUCTS) == 0) {
 					result = NOPRODUCTS;
 				} else if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.ELIGIBLE) == 0) {
@@ -396,13 +398,14 @@ public class QueryEligibleProductsXML {
 				} else {
 					result = INELIGIBLE;
 				}
+				qName = new QName("ResultStatus");
+
+				JAXBElement<String> resultStatus = new JAXBElement(qName, result.getClass(), result);
+				aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 
 			}
 
-			qName = new QName("ResultStatus");
-
-			JAXBElement<String> resultStatus = new JAXBElement(qName, result.getClass(), result);
-			aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
+			
 
 			// EligibleProducts
 			if ((aTicketTO.getEligibleProducts() != null) && (aTicketTO.getEligibleProducts().size() > 0)) {
@@ -428,6 +431,22 @@ public class QueryEligibleProductsXML {
 
 				}
 			}
+			
+		// Ticket Error
+	      if ((errorTO != null) && (errorTO.getErrorScope() == DTIErrorCode.ErrorScope.TICKET)) {
+
+	        QueryTicketResponse.Ticket.TktError tktError = new QueryTicketResponse.Ticket.TktError();
+	        tktError.setTktErrorCode(errorTO.getErrorCode());
+	        tktError.setTktErrorType(errorTO.getErrorType());
+	        tktError.setTktErrorClass(errorTO.getErrorClass());
+	        tktError.setTktErrorText(errorTO.getErrorText());
+
+	        qName = new QName("TktError");
+	        JAXBElement<String> tktErrorElement = new JAXBElement(qName,
+	            tktError.getClass(), tktError);
+	        aTicket.getTktItemOrTktIDOrProdCode().add(tktErrorElement);
+	      }
+	        
 			
 			queryEligPrdResp.getTicket().add(aTicket);
 		}
