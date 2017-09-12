@@ -138,16 +138,10 @@ public class TransmissionRespXML {
         .getErrorScope() != DTIErrorCode.ErrorScope.MEDIA))) {
 
       if ((dtiErrorTO.getErrorCode().toString().compareTo(
-              DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode()) == 0) 
-              && (responseIn.getResponse().getCommandBody() != null)) {
+              DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode()) == 0) && (responseIn
+          .getResponse().getCommandBody() != null)) {
         setCommandBodyXML(responseIn, cmd, dtiErrorTO);
       }
-    } else if ( dtiErrorTO != null && dtiErrorTO.getErrorCode().toString().equalsIgnoreCase(DTIErrorCode.DUPLICATE_ORDER.getErrorCode()) ) {
-          
-          if (responseIn.getResponse().getCommandBody() != null) { //  JTL (Doesn't work, generates a happy, non-error answer)
-            setCommandBodyXML(responseIn, cmd, dtiErrorTO);
-          }
-
       else {
 
         if (cmd != null) {

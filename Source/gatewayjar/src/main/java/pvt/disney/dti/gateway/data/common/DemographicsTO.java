@@ -337,7 +337,7 @@ public class DemographicsTO implements Serializable {
     else if (genderString.trim().substring(0, 1).equalsIgnoreCase(GENDER_UNSPECIFIED_VALUE)) {
       this.gender = GenderType.UNSPECIFIED;
     }
-    else this.gender = GenderType.NOTPRESENT;
+    else this.gender = GenderType.UNSPECIFIED; //changed to unspecified from not present to support HKDL
   }
 
   /**
