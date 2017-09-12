@@ -60,9 +60,14 @@ public class DLRErrorRules {
 			errorCode = processQueryReservationErrorStatus(xmlResponse,
 					statusCode);
 			break;
-    case RENEWENTITLEMENT:
+			
+		case RENEWENTITLEMENT:
       errorCode = processRenewEntitlementErrorStatus(xmlResponse,
           statusCode);
+      
+		case QUERYELIGIBLEPRODUCTS:
+	      errorCode = processQueryEligibleProductErrorStatus(xmlResponse,
+	          statusCode);
       break;			
 		}
 		return errorCode;
@@ -186,6 +191,20 @@ public class DLRErrorRules {
 			}
 		}
 		// now we just hand back the error code and our work is done
+		return errorCode;
+	}
+	
+	/**
+	 * Process query eligible product error status.
+	 *
+	 * @param xmlResponse the xml response
+	 * @param statusCode the status code
+	 * @return the string
+	 */
+	protected static String processQueryEligibleProductErrorStatus(String xmlResponse,
+			String statusCode){
+		String errorCode = null;
+		errorCode=statusCode;
 		return errorCode;
 	}
 

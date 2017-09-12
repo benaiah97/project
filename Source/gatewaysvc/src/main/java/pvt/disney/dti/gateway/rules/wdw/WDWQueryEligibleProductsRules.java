@@ -245,6 +245,15 @@ public class WDWQueryEligibleProductsRules {
 		ArrayList<OTTicketInfoTO> otTicketList = otQryTicketTO
 				.getTicketInfoList();
 
+		// Error Handling
+		if(dtiRespTO.getDtiError()!=null){
+			TicketTO dtiTicketTO = new TicketTO();
+			for(TicketTO aTicketTO:dtiReq.getTktList()){
+				dtiResRespTO.add(aTicketTO);
+			}
+			return;
+		}
+		
 		// Iterate for each of the ticketInfo
 		if ((otTicketList != null) && (otTicketList.size() > 0)) {
 			for (OTTicketInfoTO otTicketInfo : otTicketList) {

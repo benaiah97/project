@@ -613,23 +613,9 @@ public class GWQueryEligibleProductsTicketXML {
 			// Create the inner class
 			GWDataRequestRespTO.UsageRecord usageRecord = dataRespTO.new UsageRecord();
 
-			// AccessCode
-			Node acessCode = linRecord.selectSingleNode("AccessCode");
-			if (acessCode != null) {
-				usageRecord.setAcessCode(acessCode.getText());
-
-			}
-
-			// ACP
-			Node acpNode = linRecord.selectSingleNode("ACP");
-			if (acpNode != null) {
-				String inText = acpNode.getText();
-				usageRecord.setAcp(inText);
-			}
-
 			// Use
 			Node useNoNode = linRecord.selectSingleNode("UseNo");
-			if (acpNode != null) {
+			if (useNoNode != null) {
 				int inText = Integer.valueOf(useNoNode.getText());
 				usageRecord.setUseNo(inText);
 			}
