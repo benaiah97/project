@@ -432,7 +432,7 @@ public class QueryEligibleProductsXML {
 				}
 			}
 			
-		// Ticket Error
+			// Ticket Error
 	      if ((errorTO != null) && (errorTO.getErrorScope() == DTIErrorCode.ErrorScope.TICKET)) {
 
 	        QueryTicketResponse.Ticket.TktError tktError = new QueryTicketResponse.Ticket.TktError();
