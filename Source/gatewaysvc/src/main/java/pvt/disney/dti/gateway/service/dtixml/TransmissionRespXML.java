@@ -136,21 +136,31 @@ public class TransmissionRespXML {
 
     if ((dtiErrorTO != null) && ((dtiErrorTO.getErrorScope() != DTIErrorCode.ErrorScope.TICKET) && (dtiErrorTO
         .getErrorScope() != DTIErrorCode.ErrorScope.MEDIA))) {
-
-      if ((dtiErrorTO.getErrorCode().toString().compareTo(
-              DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode()) == 0) && (responseIn
-          .getResponse().getCommandBody() != null)) {
-        setCommandBodyXML(responseIn, cmd, dtiErrorTO);
-      }
+    	
+    			if ((dtiErrorTO.getErrorCode().toString().compareTo(
+    				DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode()) == 0) && (responseIn
+            		  .getResponse().getCommandBody() != null)) {
+    			setCommandBodyXML(responseIn, cmd, dtiErrorTO);
+    			}
+    			//THIS IS REQUIRED FOR DUPLICATE ERROR CODE MSGS TO INCLUDE RESCODE, DO NOT REMOVE
+    			// in conjuction w/DTIErrorCode.populateDTIErrorResponse()
+    			else if ((dtiErrorTO.getErrorCode().toString().equalsIgnoreCase(
+    				DTIErrorCode.DUPLICATE_ORDER.getErrorCode()) )) {
+    				        
+    				if (responseIn.getResponse().getCommandBody() != null) { 
+    				setCommandBodyXML(responseIn, cmd, dtiErrorTO);
+    				}
+    			} //end else if duplicate order error code 
+    			
       else {
 
-        if (cmd != null) {
-          // Set an empty command body, to be compliant with XSDs.
-          setEmptyCommandBodyXML(responseIn, cmd);
-        }
-        else {
-          // DO NOT SET THE COMMAND BODY
-        }
+    	  		if (cmd != null) {
+    	  			// Set an empty command body, to be compliant with XSDs.
+    	  			setEmptyCommandBodyXML(responseIn, cmd);
+    	  		}
+    	  		else {
+    	  			// DO NOT SET THE COMMAND BODY
+    	  		}
 
       }
     }
