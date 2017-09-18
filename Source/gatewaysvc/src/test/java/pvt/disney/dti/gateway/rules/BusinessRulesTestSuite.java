@@ -14,6 +14,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(value = { ContentRulesTestCase.class, DateTimeRulesTestCase.class,
     EligibilityRulesTestCase.class, PaymentRulesTestCase.class,
     ProductRulesTestCase.class,
-    TransformRulesTestCase.class,BusinessRulesTestCase.class,CalmRulesTestCase.class })
+    TransformRulesTestCase.class,BusinessRulesTestCase.class })
 public class BusinessRulesTestSuite {
 }
