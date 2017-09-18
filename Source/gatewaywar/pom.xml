@@ -82,6 +82,30 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.smartbear.soapui</groupId>
+			<artifactId>soapui</artifactId>
+			<version>5.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eviware</groupId>
+			<artifactId>soapui</artifactId>
+			<version>4.5.1</version>
+		</dependency>
+
 
 		<!-- TESTING / JUNIT DEPENDENCIES -->
 		<dependency>
@@ -167,7 +191,7 @@
 			<artifactId>jsf-api</artifactId>
 			<version>2.1.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
