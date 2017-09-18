@@ -543,8 +543,9 @@ public abstract class BusinessRules {
         tktListTO, dbProdList, isTaxExempt));
 
     // RULE: Are the products required to have demographics? (As of 2.9)
-    ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
-
+    if (!dtiTxn.getRequest().getPayloadHeader().getTarget().contains("HKD") ) {
+    		ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
+    }
     // RULE: Is special eligibility required to sell these products?
     if (EligibilityRules.eligibilityRequired(dbProdList)) {
       String eligGrpCode = resReqTO.getEligibilityGroup();

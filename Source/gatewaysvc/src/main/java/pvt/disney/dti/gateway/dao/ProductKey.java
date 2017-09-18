@@ -759,7 +759,7 @@ public class ProductKey {
 			logger.sendEvent("About to processQuery:  GET_PRODUCTS_FROM_NAME", EventType.DEBUG, THISINSTANCE);
 			ArrayList<DBProductTO> resultSet = (ArrayList<DBProductTO>) helper.processQuery(values,
 						queryParms, qBuilder);
-			if (resultSet != null) {
+			if ((resultSet != null) && (resultSet.size() > 0)) {
 				logger.sendEvent("getProductsByTktName() found " + resultSet.size() + " products", EventType.INFO,
 							THISINSTANCE);
 				// taking the first product if multiple are found as per the

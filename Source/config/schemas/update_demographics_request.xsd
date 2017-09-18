@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
+    <xs:element name="Transmission">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Payload">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="PayloadHeader"/>
+                            <xs:element name="Command">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element ref="CommandHeader"/>
+                                        <xs:element ref="UpdateDemographicsRequest" minOccurs="0"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PayloadHeader">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="PayloadID">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="12"/>
+                            <xs:maxLength value="20"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Target">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="4"/>
+                            <xs:maxLength value="8"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Version">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="3"/>
+                            <xs:maxLength value="3"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Priority" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="ProcMethod" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="Comm">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Protocol" type="xs:string"/>
+                            <xs:element name="Method" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="TransmitDate" type="xs:date"/>
+                <xs:element name="TransmitTime" type="xs:string"/>
+                <xs:element name="TktSeller">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="TSMAC">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:minLength value="1"/>
+                                        <xs:maxLength value="15"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="TSSystem" type="xs:string"/>
+                            <xs:element name="TSLocation">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:minLength value="1"/>
+                                        <xs:maxLength value="15"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="TSSecurity" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="PostHdrWork" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="CommandCount" type="xs:integer"/>
+                <xs:element name="PayloadNote" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CommandHeader">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CmdItem" type="xs:integer"/>
+                <xs:element name="CmdProcRule" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Rule" type="xs:string"/>
+                            <xs:element name="Value" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="CmdTimeout" type="xs:integer" minOccurs="0"/>
+                <xs:element name="CmdDate" type="xs:date"/>
+                <xs:element name="CmdTime" type="xs:string"/>
+                <xs:element name="CmdInvoice" type="xs:string"/>
+                <xs:element name="CmdDevice" type="xs:string"/>
+                <xs:element name="CmdOperator" type="xs:string"/>
+                <xs:element name="CmdActor" type="xs:string" minOccurs="0"/>
+                <xs:element name="CmdSecurity" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Not supported by DTI</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="CmdNote" type="xs:string" minOccurs="0"/>
+                <xs:element name="CmdMarket" type="xs:string" minOccurs="0"/>
+                <xs:element name="CmdAttribute" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="AttribName" type="xs:string"/>
+                            <xs:element name="AttribValue" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="UpdateDemographicsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="DemographicInfo" maxOccurs="8">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Item">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="1" />
+                                        <xs:maxInclusive value="8" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:choice>
+                                <xs:element name="UniqueCode" type="xs:integer">
+                                    <xs:annotation>
+                                        <xs:documentation>Zero="Try insert new" 
+                                            NOT VALID FOR
+                                            DemographicType=C DemographicType=D DemographicType=O
+                                            DemographicType=H
+                                            DemographicType=L
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="TicketSearchMode">
+                                    <xs:annotation>
+                                        <xs:documentation>Valid for DemographicType=C
+                                            DemographicType=D
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                    <xs:complexType>
+                                        <xs:choice>
+                                            <xs:element name="TDSSN">
+                                                <xs:complexType>
+                                                    <xs:sequence>
+                                                        <xs:element name="Site">
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:maxLength value="3" />
+                                                                    <xs:minLength value="3" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                        <xs:element name="Station">
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:minLength value="6" />
+                                                                    <xs:maxLength value="6" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                        <xs:element name="Date" type="xs:date" />
+                                                        <xs:element name="TicketId" type="xs:integer" />
+                                                    </xs:sequence>
+                                                </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="TCOD">
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="17" />
+                                                        <xs:minLength value="17" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="BarCode">
+                                                <xs:annotation>
+                                                    <xs:documentation>Ticket BarCode</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="30" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="MagCode">
+                                                <xs:annotation>
+                                                    <xs:documentation>Ticket MagTrack 1</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="73" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="ExternalTicketCode">
+                                                <xs:annotation>
+                                                    <xs:documentation>External ticket code
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="20" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="AccountSearchFilter">
+                                    <xs:annotation>
+                                        <xs:documentation>DemographicType=L
+                                            NOT SUPPORTED YET
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                    <xs:complexType>
+                                        <xs:choice>
+                                            <xs:element name="ExistingMediaId">
+                                                <xs:annotation>
+                                                    <xs:documentation>Could be xBandID, RFID, etc.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="32" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="AccountId">
+                                                <xs:annotation>
+                                                    <xs:documentation>Overview Internal Account Id
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:maxLength value="17" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="TicketSearchMode">
+                                                <xs:annotation>
+                                                    <xs:documentation>Overview Ticket already included into
+                                                        a Multi-Entitlement Account
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                                <xs:complexType>
+                                                    <xs:choice>
+                                                        <xs:element name="TDSSN">
+                                                            <xs:complexType>
+                                                                <xs:sequence>
+                                                                    <xs:element name="Site">
+                                                                        <xs:simpleType>
+                                                                            <xs:restriction base="xs:string">
+                                                                                <xs:maxLength value="3" />
+                                                                                <xs:minLength value="3" />
+                                                                            </xs:restriction>
+                                                                        </xs:simpleType>
+                                                                    </xs:element>
+                                                                    <xs:element name="Station">
+                                                                        <xs:simpleType>
+                                                                            <xs:restriction base="xs:string">
+                                                                                <xs:minLength value="6" />
+                                                                                <xs:maxLength value="6" />
+                                                                            </xs:restriction>
+                                                                        </xs:simpleType>
+                                                                    </xs:element>
+                                                                    <xs:element name="Date" type="xs:date" />
+                                                                    <xs:element name="TicketId" type="xs:integer" />
+                                                                </xs:sequence>
+                                                            </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="TCOD">
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:maxLength value="17" />
+                                                                    <xs:minLength value="17" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                        <xs:element name="BarCode">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Ticket BarCode</xs:documentation>
+                                                            </xs:annotation>
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:maxLength value="30" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                        <xs:element name="MagCode">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Ticket MagTrack 1
+                                                                </xs:documentation>
+                                                            </xs:annotation>
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:maxLength value="73" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                        <xs:element name="ExternalTicketCode">
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:maxLength value="20" />
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:element>
+                                                    </xs:choice>
+                                                </xs:complexType>
+                                            </xs:element>
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:choice>
+                            <xs:element name="MatchDemographicData" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence maxOccurs="30">
+                                        <xs:element name="Field">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:choice>
+                                                        <xs:element name="FieldId" type="xs:integer" />
+                                                        <xs:element name="FieldType" type="xs:integer" />
+                                                    </xs:choice>
+                                                    <xs:element name="FieldValue" type="xs:string" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="DemographicData">
+                                <xs:complexType>
+                                    <xs:sequence maxOccurs="30">
+                                        <xs:element name="Field">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:choice>
+                                                        <xs:element name="FieldId" type="xs:integer" />
+                                                        <xs:element name="FieldType" type="xs:integer" />
+                                                    </xs:choice>
+                                                    <xs:element name="FieldValue" type="xs:string" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:choice minOccurs="0">
+                                <xs:sequence minOccurs="0">
+                                    <xs:element name="ClientCategory" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>OPTIONAL IF UniqueCode=0
+                                                DemographicType=M or DemographicType=P
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:maxLength value="3" />
+                                                <xs:minLength value="1" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="ClientLanguage" type="xs:integer"
+                                        minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>OPTIONAL IF UniqueCode=0
+                                                DemographicType=M
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ClientTotalPaid" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>OPTIONAL IF UniqueCode=0
+                                                DemographicType=M
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:element name="AssociationId" minOccurs="0">
+                                    <xs:annotation>
+                                        <xs:documentation>MANDATORY IF UniqueCode=0
+                                            DemographicType=G
+                                        </xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                            <xs:element name="CleanMissingFields" type="xs:boolean"
+                                minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation>Default=FALSE</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="DemographicType" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>C=Season passes (default) M=Major clients
+                            P=Private clients G=Associations S=Sellers D=Employees U=Users
+                            R=Registrant
+                            I=IB Payor O=Coupons H=Vouchers
+                            L=Guest Account (NOT SUPPORTED YET)
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="C" />
+                            <xs:enumeration value="M" />
+                            <xs:enumeration value="P" />
+                            <xs:enumeration value="G" />
+                            <xs:enumeration value="S" />
+                            <xs:enumeration value="D" />
+                            <xs:enumeration value="U" />
+                            <xs:enumeration value="R" />
+                            <xs:enumeration value="I" />
+                            <xs:enumeration value="O" />
+                            <xs:enumeration value="H" />
+                            <xs:enumeration value="L" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+
+        </xs:complexType>
+
+    </xs:element>
+    
+    
+    </xs:schema>

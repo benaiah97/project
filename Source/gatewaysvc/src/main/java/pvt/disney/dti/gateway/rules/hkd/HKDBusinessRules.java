@@ -633,7 +633,7 @@ public class HKDBusinessRules {
       otDemoData.addOTField(aField);      
 
       // Gender
-      if (aDtiTicket.getGenderType() == DemographicsTO.GenderType.UNSPECIFIED) {
+      if (aDtiTicket.getGenderType() == DemographicsTO.GenderType.UNSPECIFIED || aDtiTicket.getGenderType() == DemographicsTO.GenderType.NOTPRESENT  ) {
         otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_GENDER, UNSPECIFIED_GENDER_DEFAULT));
       } else {
         otDemoData.addOTField(new HkdOTFieldTO(HkdOTFieldTO.HKD_TKTDEMO_GENDER, DTIFormatter.websafe(aDtiTicket.getGender()
