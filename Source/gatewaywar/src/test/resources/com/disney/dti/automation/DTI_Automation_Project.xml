@@ -16194,7 +16194,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590650</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700019</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170921150597326</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-21</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700019</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -16373,7 +16373,7 @@ else if(failedMap.size() > 0)
 	assert false ////To mark the assertion failed
 }
 
-</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="351b87be-5439-4d83-8087-3b54823b89fa" name="XPath Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="351b87be-5439-4d83-8087-3b54823b89fa" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
  * Xpath assertion to validate the Tag existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16469,7 +16469,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These headers are not returned in the response : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="72d37f8c-e8ee-4019-90b6-49e2f9d44378" name="String Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="72d37f8c-e8ee-4019-90b6-49e2f9d44378" name="String Validation - Script Assertion"><con:configuration><scriptText>/*
  * String assertion to validate the string existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16571,7 +16571,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These XPath are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="482a6895-499f-43cd-a0f3-fe52bf28bfe2" name="Numeric Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="482a6895-499f-43cd-a0f3-fe52bf28bfe2" name="Numeric Validation - Script Assertion"><con:configuration><scriptText>/*
  * Numeric assertion to validate the Numeric existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16744,7 +16744,7 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
          </QueryTicketRequest>\r
       </Command>\r
    </Payload>\r
-</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="f3a3bf8b-1436-45b8-bbe0-c715d001f0db" name="Headers Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="f3a3bf8b-1436-45b8-bbe0-c715d001f0db" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
  * Assertion to validate the Header existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16842,7 +16842,7 @@ else if(failedMap.size() > 0)
 	assert false ////To mark the assertion failed
 }
 
-</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="55abd261-2cad-4655-a579-09bfb89233af" name="XPath Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="55abd261-2cad-4655-a579-09bfb89233af" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
  * Xpath assertion to validate the Tag existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16938,7 +16938,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These headers are not returned in the response : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="064ebf49-55c4-4a5f-a3c3-947edb45dd69" name="String Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="064ebf49-55c4-4a5f-a3c3-947edb45dd69" name="String Validation - Script Assertion"><con:configuration><scriptText>/*
  * String assertion to validate the string existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -17040,7 +17040,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These XPath are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="1be9a042-22af-450f-b4f5-cb76abee4c08" name="Numeric Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="1be9a042-22af-450f-b4f5-cb76abee4c08" name="Numeric Validation - Script Assertion"><con:configuration><scriptText>/*
  * Numeric assertion to validate the Numeric existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -17200,7 +17200,7 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
          </QueryEligibleProductsRequest>
       </Command>
    </Payload>
-</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="b68a0caa-4e25-41ab-a351-bdb9d22c530f" name="Headers Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="b68a0caa-4e25-41ab-a351-bdb9d22c530f" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
  * Assertion to validate the Header existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -18511,7 +18511,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590615</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700008</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>4</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150592039</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700027</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -18532,14 +18532,14 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
-         <Target>TEST-WDW</Target>\r
+         <Target>Test</Target>\r
          <Version>1.0</Version>\r
          <Comm>\r
             <Protocol>IP</Protocol>\r
             <Method>Network</Method>\r
          </Comm>\r
          <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>\r
-         <TransmitTime>23:37:05.16</TransmitTime>\r
+         <TransmitTime>16:53:10.46</TransmitTime>\r
          <TktSeller>\r
             <TSMAC>WDPRONAWDW</TSMAC>\r
             <TSSystem>CC</TSSystem>\r
@@ -18553,16 +18553,21 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
             <CmdItem>1</CmdItem>\r
             <CmdTimeout>45</CmdTimeout>\r
             <CmdDate>${#TestCase#CurrentDate}</CmdDate>\r
-            <CmdTime>23:37:05.16</CmdTime>\r
-            <CmdInvoice>36400000000000087846</CmdInvoice>\r
-            <CmdDevice>172.17.0.3</CmdDevice>\r
+            <CmdTime>16:53:10.49</CmdTime>\r
+            <CmdInvoice>39900000010000016262</CmdInvoice>\r
+            <CmdDevice>10.199.235.178</CmdDevice>\r
             <CmdOperator>WDPRO</CmdOperator>\r
          </CommandHeader>\r
          <QueryEligibleProductsRequest>\r
             <Ticket>\r
                <TktItem>1</TktItem>\r
                <TktID>\r
-                  <TktNID>99300414091700279</TktNID>\r
+                  <TktDSSN>\r
+                     <TktDate>2017-09-18</TktDate>\r
+                     <TktSite>XAK</TktSite>\r
+                     <TktStation>CAS001</TktStation>\r
+                     <TktNbr>1</TktNbr>\r
+                  </TktDSSN>\r
                </TktID>\r
                <SaleType>UPGRADE</SaleType>\r
             </Ticket>\r
@@ -18984,4 +18989,4 @@ Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 
-log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>16</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590585</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>38</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170921150597684</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
