@@ -11840,7 +11840,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These headers are not returned in the response : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>CurrentDate</con:name><con:value>2017-08-16</con:value></con:property><con:property><con:name>Payload_ID_CreatTicket</con:name><con:value>91120170816150300035</con:value></con:property><con:property><con:name>Payload_ID_Product</con:name><con:value>91120170816150311136</con:value></con:property><con:property><con:name>Payload_ID_UpgradeAlpha</con:name><con:value>91120170816150322237</con:value></con:property><con:property><con:name>Payload_ID_QueryTicket</con:name><con:value>91120170816150333338</con:value></con:property><con:property><con:name>Payload_ID_Void</con:name><con:value>91120170816150344439</con:value></con:property><con:property><con:name>Payload_ID_ProductUpgradeEntitlement</con:name><con:value>91120170816150355539</con:value></con:property><con:property><con:name>Payload_ID_UpgradeEntitlement</con:name><con:value>91120170816150366640</con:value></con:property><con:property><con:name>ProductCode_Create</con:name><con:value>1001A</con:value></con:property><con:property><con:name>ProductPrice_Create</con:name><con:value>125.67</con:value></con:property><con:property><con:name>ProductCode_UpgradeAlpha</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeAlpha</con:name><con:value>125.67</con:value></con:property><con:property><con:name>MagicTrack1_Create</con:name><con:value>EFCLIUGFGZIJFIGGZVFKUIFFFQFFRFFFFFFLFRLIUGFGZIJFIGGZVFKUIFFFQFFRFFFFFFL</con:value></con:property><con:property><con:name>ProductCode_UpgradeEntitlement</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeEntitlement</con:name><con:value>125.67</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>8</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="cde49cea-4828-4353-80e4-73c3441a7ae7" failOnError="false" failTestCaseOnErrors="false" keepSession="false" maxResults="0" name="SmokeTest_Reservation LifeCycleTest" searchProperties="false" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="6270099c-65b0-4d01-8ea6-1c9e02650ab1"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://services.dti.wdw.com/DisneyTicketingService/transmission"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>Payload_ID_CreatTicket</con:name><con:value>91120170920150601532</con:value></con:property><con:property><con:name>Payload_ID_Product</con:name><con:value>91120170920150612632</con:value></con:property><con:property><con:name>Payload_ID_UpgradeAlpha</con:name><con:value>91120170919150616059</con:value></con:property><con:property><con:name>Payload_ID_QueryTicket</con:name><con:value>91120170920150623732</con:value></con:property><con:property><con:name>Payload_ID_Void</con:name><con:value>91120170920150634832</con:value></con:property><con:property><con:name>Payload_ID_ProductUpgradeEntitlement</con:name><con:value>91120170920150645932</con:value></con:property><con:property><con:name>Payload_ID_UpgradeEntitlement</con:name><con:value>91120170920150657033</con:value></con:property><con:property><con:name>ProductCode_Create</con:name><con:value>1001A</con:value></con:property><con:property><con:name>ProductPrice_Create</con:name><con:value>125.67</con:value></con:property><con:property><con:name>ProductCode_UpgradeAlpha</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeAlpha</con:name><con:value>125.67</con:value></con:property><con:property><con:name>MagicTrack1_Create</con:name><con:value>KFJGDPBABUDEAEBBVQAFY0AAAGAAIAAAAAAGFUGDPBABUDEAEBBVQAFY0AAAGAAIAAAAAAG</con:value></con:property><con:property><con:name>ProductCode_UpgradeEntitlement</con:name><con:value>10A11</con:value></con:property><con:property><con:name>ProductPrice_UpgradeEntitlement</con:name><con:value>125.67</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>7</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="cde49cea-4828-4353-80e4-73c3441a7ae7" failOnError="false" failTestCaseOnErrors="false" keepSession="false" maxResults="0" name="SmokeTest_Reservation LifeCycleTest" searchProperties="false" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="6270099c-65b0-4d01-8ea6-1c9e02650ab1"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -12868,6 +12868,25 @@ def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
 
+log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="groovy" name="Generate Payload for VoidReservation" id="de5f0236-adfb-4e7b-b9f0-131ae362f96c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
+
+//Set payload ID in transmission - WDW VoidReservation
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueId)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
+
 log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW QueryReservation" id="ce57e115-a023-437e-8612-407f75b5d9a0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW QueryReservation" id="2d50eef8-27a8-4886-928b-5dc458c73ead"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/queryreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
@@ -13306,26 +13325,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Generate Payload for VoidReservation" id="de5f0236-adfb-4e7b-b9f0-131ae362f96c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
-
-//def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
-
-//Set payload ID in transmission - WDW VoidReservation
-//get date in "MM/dd/yyyy" 
-def date = new Date()
-sdf = new SimpleDateFormat("MM/dd/yyyy")
-datemmddyyyy=sdf.format(date)
-
-def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
-testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
-
-//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
-def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis() + uniqueId)
-
-//To set Payload_ID property Value
-testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
-
-log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
@@ -13826,7 +13826,7 @@ if (flag) {
 	// skip the last test step
 	//Disable transmission - WDW Reservation QueryTicket after void
 	testRunner.testCase.testSteps['transmission - WDW Reservation QueryTicket after void'].disabled = true
-}</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW Reservation QueryTicket after void" id="fbd8181f-36ad-43e6-bebf-91857d4b10de" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation QueryTicket after void" id="91ddca26-606b-4afd-ab1a-676c5c488daf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
+}</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW Reservation QueryTicket after void" id="fbd8181f-36ad-43e6-bebf-91857d4b10de"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation QueryTicket after void" id="91ddca26-606b-4afd-ab1a-676c5c488daf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
   <Payload> 
     <PayloadHeader> 
       <PayloadID>${#TestCase#Payload_ID}</PayloadID>  
@@ -14266,7 +14266,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170906150537478</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-06</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>7</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>12000206091700010</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>RGBA80444444</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[12000206091700009, 12000206091700010]</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="a34de2cc-1ab6-4e39-88c7-8822c551448d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_FloodControlTestCase LifeCycle" searchProperties="true" disabled="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="ba4d4c02-bf30-49e6-9831-39498b978d29"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170920150657050</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>7</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>12000719091700013</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>FLJR76181818</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[12000719091700012, 12000719091700013]</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="a34de2cc-1ab6-4e39-88c7-8822c551448d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_FloodControlTestCase LifeCycle" searchProperties="true" disabled="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="ba4d4c02-bf30-49e6-9831-39498b978d29"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -14358,62 +14358,62 @@ testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 testRunner.testCase.setPropertyValue("CurrentDate",CurrentDate )
 
 log.info "Payload_ID value is set to: " + Payload_ID 
-log.info "CurrentDate value is set to: " + CurrentDate</script></con:config></con:testStep><con:testStep type="request" name="transmission - CreateTicket" id="1b33888c-056c-497c-a662-134a86d717e8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - CreateTicket" id="7e01c872-0928-45a5-beb5-2c6b92871791"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/create_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
-   <Payload>\r
-      <PayloadHeader>\r
-         <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
-         <Target>Test-WDW</Target>\r
-         <Version>3.0</Version>\r
-         <Comm>\r
-            <Protocol>IP</Protocol>\r
-            <Method>Network</Method>\r
-         </Comm>\r
-         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>\r
-         <TransmitTime>13:11:00</TransmitTime>\r
-         <TktSeller>\r
-            <TSMAC>MOBILEATS</TSMAC>\r
-            <TSSystem>CC</TSSystem>\r
-            <TSLocation>MOBILEATSMK</TSLocation>\r
-            <TSSecurity>WaltDisney1</TSSecurity>\r
-         </TktSeller>\r
-         <CommandCount>1</CommandCount>\r
-      </PayloadHeader>\r
-      <Command>\r
-         <CommandHeader>\r
-            <CmdItem>1</CmdItem>\r
-            <CmdTimeout>45</CmdTimeout>\r
-            <CmdDate>${#TestCase#CurrentDate}</CmdDate>\r
-            <CmdTime>13:11:00</CmdTime>\r
-            <CmdInvoice>99920170117000088</CmdInvoice>\r
-            <CmdDevice>CreTktReq</CmdDevice>\r
-            <CmdOperator>DTICTR</CmdOperator>\r
-         </CommandHeader>\r
-         <CreateTicketRequest>\r
-            <Ticket>\r
-               <TktItem>1</TktItem>\r
-               <ProdCode>2J001</ProdCode>\r
-               <ProdQty>1</ProdQty>\r
-               <ProdPrice>211.94</ProdPrice>\r
-            </Ticket>\r
-            <Payment>\r
-               <PayItem>1</PayItem>\r
-               <PayType>\r
-                  <CreditCard>\r
-                     <CCManual>\r
-                        <CCNbr>4444855457062688</CCNbr>\r
-                        <CCExpiration>1219</CCExpiration>\r
-                        <CCName>Visa</CCName>\r
-                        <CCStreet>756 PARIS WAY</CCStreet>\r
-                        <CCZipcode>76590</CCZipcode>\r
-                     </CCManual>\r
-                  </CreditCard>\r
-               </PayType>\r
-               <PayAmount>211.94</PayAmount>\r
-            </Payment>\r
-         </CreateTicketRequest>\r
-      </Command>\r
-   </Payload>\r
-</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="4d5fe6ff-afb4-4fdb-b851-c96155b6be24" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
+log.info "CurrentDate value is set to: " + CurrentDate</script></con:config></con:testStep><con:testStep type="request" name="transmission - CreateTicket" id="1b33888c-056c-497c-a662-134a86d717e8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - CreateTicket" id="7e01c872-0928-45a5-beb5-2c6b92871791"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/create_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>3.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
+         <TransmitTime>13:11:00</TransmitTime>
+         <TktSeller>
+            <TSMAC>MOBILEATS</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>MOBILEATSMK</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>
+            <CmdTime>13:11:00</CmdTime>
+            <CmdInvoice>99920170117000088</CmdInvoice>
+            <CmdDevice>CreTktReq</CmdDevice>
+            <CmdOperator>DTICTR</CmdOperator>
+         </CommandHeader>
+         <CreateTicketRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <ProdCode>2J001</ProdCode>
+               <ProdQty>1</ProdQty>
+               <ProdPrice>211.94</ProdPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <CreditCard>
+                     <CCManual>
+                        <CCNbr>4444855457062688</CCNbr>
+                        <CCExpiration>1219</CCExpiration>
+                        <CCName>Visa</CCName>
+                        <CCStreet>756 PARIS WAY</CCStreet>
+                        <CCZipcode>76590</CCZipcode>
+                     </CCManual>
+                  </CreditCard>
+               </PayType>
+               <PayAmount>211.94</PayAmount>
+            </Payment>
+         </CreateTicketRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="4d5fe6ff-afb4-4fdb-b851-c96155b6be24" name="Headers Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
  * Script assertion to validate the Header existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -14512,7 +14512,7 @@ else if(failedMap.size() > 0)
 	assert false ////To mark the assertion failed
 }
 
-</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="351b87be-5439-4d83-8087-3b54823b89fa" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="351b87be-5439-4d83-8087-3b54823b89fa" name="XPath Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
  * Xpath assertion to validate the Tag existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -14608,7 +14608,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These headers are not returned in the response : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="72d37f8c-e8ee-4019-90b6-49e2f9d44378" name="String Validation - Script Assertion"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="72d37f8c-e8ee-4019-90b6-49e2f9d44378" name="String Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
  * String assertion to validate the string existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -14710,7 +14710,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These XPath are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="482a6895-499f-43cd-a0f3-fe52bf28bfe2" name="Numeric Validation - Script Assertion"><con:configuration><scriptText>/*
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="482a6895-499f-43cd-a0f3-fe52bf28bfe2" name="Numeric Validation - Script Assertion" disabled="true"><con:configuration><scriptText>/*
  * Numeric assertion to validate the Numeric existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -16194,7 +16194,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170919150581530</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501615091700014</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590650</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700019</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -16256,7 +16256,6 @@ log.info "CurrentDate value is set to: " + CurrentDate</script></con:config></co
                <ProdQty>1</ProdQty>\r
                <ProdPrice>211.94</ProdPrice>\r
             </Ticket>\r
-            
             <Payment>\r
                <PayItem>1</PayItem>\r
                <PayType>\r
@@ -16275,7 +16274,7 @@ log.info "CurrentDate value is set to: " + CurrentDate</script></con:config></co
          </CreateTicketRequest>\r
       </Command>\r
    </Payload>\r
-</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="4d5fe6ff-afb4-4fdb-b851-c96155b6be24" name="Headers Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="4d5fe6ff-afb4-4fdb-b851-c96155b6be24" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
  * Script assertion to validate the Header existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -18512,7 +18511,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>6</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170919150582756</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700008</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590615</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-20</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501620091700008</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -18532,15 +18531,15 @@ testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryEligibleProduct_Eligible" id="576c91fc-4af6-47e4-9a65-63557c49e8fb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryEligibleProduct_Eligible" id="8261e2a8-0a44-40ae-8121-efae812a641e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/WDPRApps/RT/schemas/query_eligible_products_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
-         <PayloadID>9992017091848180000</PayloadID>\r
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
          <Target>TEST-WDW</Target>\r
          <Version>1.0</Version>\r
          <Comm>\r
             <Protocol>IP</Protocol>\r
             <Method>Network</Method>\r
          </Comm>\r
-         <TransmitDate>20170908</TransmitDate>\r
-         <TransmitTime>20:16:01.81</TransmitTime>\r
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>\r
+         <TransmitTime>23:37:05.16</TransmitTime>\r
          <TktSeller>\r
             <TSMAC>WDPRONAWDW</TSMAC>\r
             <TSSystem>CC</TSSystem>\r
@@ -18553,9 +18552,9 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
          <CommandHeader>\r
             <CmdItem>1</CmdItem>\r
             <CmdTimeout>45</CmdTimeout>\r
-            <CmdDate>20170908</CmdDate>\r
-            <CmdTime>20:16:01.81</CmdTime>\r
-            <CmdInvoice>36400000000000087500</CmdInvoice>\r
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>\r
+            <CmdTime>23:37:05.16</CmdTime>\r
+            <CmdInvoice>36400000000000087846</CmdInvoice>\r
             <CmdDevice>172.17.0.3</CmdDevice>\r
             <CmdOperator>WDPRO</CmdOperator>\r
          </CommandHeader>\r
@@ -18563,7 +18562,7 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
             <Ticket>\r
                <TktItem>1</TktItem>\r
                <TktID>\r
-                  <TktNID>99300207091700425</TktNID>\r
+                  <TktNID>99300414091700279</TktNID>\r
                </TktID>\r
                <SaleType>UPGRADE</SaleType>\r
             </Ticket>\r
@@ -18968,4 +18967,21 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170919150582687</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for UpgradeEntitlement" id="0cf323f4-8020-400e-8186-88fbcbb56498"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
+Payload_ID = workString.substring(0,20)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
+
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://fldcvdsla12585.wdw.disney.com:8081/DTIApp/DTIGatewayServlet</con:value></con:property><con:property><con:name>factor</con:name><con:value>16</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170920150590585</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
