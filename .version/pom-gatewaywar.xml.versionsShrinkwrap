@@ -3,7 +3,7 @@
 		<groupId>pvt.disney.dti</groupId>
 		<artifactId>DTI_Gateway</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0-270.0.0.0</version>
+		<version>1.0.0-271.0.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pvt.disney.dti</groupId>
@@ -90,13 +90,6 @@
 			<artifactId>soapui</artifactId>
 			<version>5.1.2</version>
 		</dependency>
-
-		<dependency>
-			<groupId>eviware</groupId>
-			<artifactId>soapui</artifactId>
-			<version>4.5.1</version>
-		</dependency>
-
 
 		
 		<dependency>
