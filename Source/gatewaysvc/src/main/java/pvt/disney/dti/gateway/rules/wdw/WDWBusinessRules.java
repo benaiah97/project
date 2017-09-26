@@ -395,8 +395,9 @@ public class WDWBusinessRules {
             && (aTicketTO.getBarCode().length() != BARCODE_LENGTH_ALPHANUM18)) // As of 2.17.3 JTL
           throw new DTIException(WDWBusinessRules.class, DTIErrorCode.INVALID_TICKET_ID,
               "In-bound WDW txn with invalid Barcode length: " + aTicketTO.getBarCode().length());
-      }
+      
 
+    }
     }
 
   }

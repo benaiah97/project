@@ -111,7 +111,7 @@ public class ElectronicEntitlementRules {
         if (aRqstTicket.getTktShell()!= null) {
 
           String tktShell = aRqstTicket.getTktShell();
-          
+         //TODO :: Somesh 
           ArrayList<String> rfidShellList = new ArrayList<String>();
           rfidShellList.add(SHELL78);
           rfidShellList.add(SHELL79);
