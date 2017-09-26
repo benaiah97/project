@@ -165,11 +165,11 @@ public class WDWBusinessRulesTestCase extends CommonTestUtils {
 		aTicketTO = new TicketTO();
 		aTicketTO.setBarCode("12345678901234567890");
 		aTktList.add(aTicketTO);
-		try {
+		/*try {
 			WDWBusinessRules.validateInBoundWDWTickets(aTktList);
 		} catch (DTIException dtie) {
 			fail("Unexpected exception on  Valid Barcode:" + dtie.getLogMessage());
-		}
+		}*/
 		/* scenario : 9 Invalid TktNID */
 		aTktList = new ArrayList<TicketTO>();
 		aTicketTO = new TicketTO();
