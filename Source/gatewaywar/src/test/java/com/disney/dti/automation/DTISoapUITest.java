@@ -1,4 +1,4 @@
-/*package com.disney.dti.automation;
+package com.disney.dti.automation;
 
 import java.util.ResourceBundle;
 
@@ -6,17 +6,17 @@ import org.junit.Assert;
 
 import com.eviware.soapui.tools.SoapUITestCaseRunner;
 
-*//**
+/**
  * Test class for DTI-GQE SoapUI Automation
  * 
  * @author GANDV005
  *
- *//*
+ */
 public class DTISoapUITest {
 
-	*//**
+	/**
 	 * Test case for DTI-GQE SoapUI Automation
-	 *//*
+	 */
 	// @Test
 	public void testDTISoapUI() {
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("com.disney.dti.automation.xmlPath");
@@ -36,4 +36,4 @@ public class DTISoapUITest {
 
 	}
 
-}*/
+}
