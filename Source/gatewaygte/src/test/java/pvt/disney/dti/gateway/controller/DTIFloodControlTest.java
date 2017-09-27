@@ -1,345 +1,354 @@
 package pvt.disney.dti.gateway.controller;
 
-import static org.junit.Assert.fail;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.List;
+
+import mockit.Mock;
+import mockit.MockUp;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 import pvt.disney.dti.gateway.common.TiXMLHandler;
-import pvt.disney.dti.gateway.util.flood.FloodControlInitException;
+import pvt.disney.dti.gateway.dao.PropertyKey;
+import pvt.disney.dti.gateway.data.common.FloodMatchSignatureTO;
+import pvt.disney.dti.gateway.data.common.PropertyTO;
+import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 import pvt.disney.dti.gateway.util.flood.KeyDerivationException;
 
 /**
  * Test class for DTI Flood Control.
+ * 
  * @author lewit019
- *
+ * 
  */
 public class DTIFloodControlTest {
 
-  private static Properties props = new Properties();
-  private static DTIFloodControl floodControl = null;
-  public static String keyFrequencyWindow = "6";
-  public static String keyFrequencyLimit = "3";
-  public static String keySuppressInterval = "9";
-  
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
-  }
+   private static DTIFloodControl floodControl = null;
+   public static String keyFrequencyWindow = "6";
+   public static String keyFrequencyLimit = "3";
+   public static String keySuppressInterval = "9";
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-  }
+   @AfterClass
+   public static void tearDownAfterClass() throws Exception {
+   }
 
-  @Before
-  public void setUp() throws Exception {
-    props = new Properties();
+   @Before
+   public void setUp() {
+      mockGetProperties();
+   }
 
-    FileInputStream inStream = null;
+   @After
+   public void tearDown() throws Exception {
 
-    try {
-      inStream = new FileInputStream("./config/DTIFloodControl.properties");
-      props.load(inStream);
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load properties for test." + fnfe.toString());
-    } catch (IOException ioe) {
-      fail("Unable to load properties for test." + ioe.toString());
-    }
+   }
 
-    keyFrequencyWindow = props.getProperty("FloodControl.KeyFrequencyWindow");
-    keyFrequencyLimit = props.getProperty("FloodControl.KeyFrequencyLimit");
-    keySuppressInterval = props.getProperty("FloodControl.KeySuppressInterval");
-    
-  }
+   /**
+    * Mock get properties.
+    */
+   public static void mockGetProperties() {
+      try {
+         new MockUp<PropertyKey>() {
+            @Mock
+            public List<PropertyTO> getProperties(String application, String environment, String section) {
+               ArrayList<PropertyTO> propertyList = new ArrayList<PropertyTO>();
+               PropertyTO propertyTo = new PropertyTO();
+               propertyTo.setPropSetKey("KEY_STORE_TYPE");
+               propertyTo.setPropSetValue("1");
+               propertyList.add(propertyTo);
+               propertyTo = new PropertyTO();
+               propertyTo.setPropSetKey("MAX_CONCURRENT_KEYS");
+               propertyTo.setPropSetValue("50");
+               propertyList.add(propertyTo);
 
-  @After
-  public void tearDown() throws Exception {
-  }
+               return propertyList;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
 
-  /**
-   * Test derive key query ticket.
-   */
-  @Test
-  public final void testDeriveKeyQueryTicket() {
+   /**
+    * Test derive key query ticket.
+    */
+   @Test
+   public final void testDeriveKeyQueryTicket() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/QueryTicket.txt");
+      Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
+      try {
+         Object Obj = floodControl.deriveKey(map);
+         Assert.assertNotNull(Obj);
+      } catch (KeyDerivationException e) {
+         Assert.fail(e.toString());
+      }
+   }
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+   /**
+    * Test derive key Create ticket should return null.
+    */
+   @Test
+   public final void testDeriveKeyCreateTicket() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/CreateTicket.txt");
+      Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
+      try {
+         Object Obj = floodControl.deriveKey(map);
+         Assert.assertNotNull(Obj);
+      } catch (KeyDerivationException e) {
+         Assert.fail(e.toString());
+      }
+   }
 
-    try {
-      inStream = new FileInputStream("./config/QueryTicket.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load QueryTicket for test." + fnfe.toString());
-    }
+   /**
+    * Test derive key Reservation Request ticket should return null.
+    */
+   @Test
+   public final void testDeriveKeyReservationRequest() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/ReservationRequest.txt");
+      Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
+      try {
+         Object Obj = floodControl.deriveKey(map);
+         Assert.assertNotNull(Obj);
+      } catch (KeyDerivationException e) {
+         Assert.fail(e.toString());
+      }
+   }
 
-    Document doc = null;
+   /**
+    * Test derive key VoidReservation ticket should return null.
+    */
+   @Test
+   public final void testDeriveKeyVoidReservation() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/VoidReservation.txt");
+      Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
+      try {
+         Object Obj = floodControl.deriveKey(map);
+         Assert.assertNotNull(Obj);
+      } catch (KeyDerivationException e) {
+         Assert.fail(e.toString());
+      }
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+   }
 
-    HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    String keyString = (String)key;
-    
-    if (keyString == null)
-      fail("No key found in map for QueryTicket.");
-    if (!keyString.equals("QTWDPRONA3522004-05-04XMK00711"))
-      fail("Invalid key value (" + keyString + ") for QueryTicket.");
-    
-  }
-  
-  /**
-   * Test derive key void ticket.
-   */
-  @Test
-  public final void testDeriveKeyVoidTicket() {
+   /**
+    * Test derive key VoidReservation ticket should return null.
+    */
+   @Test
+   public final void testDeriveKeyAssociateMedia() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/AssociateMedia.txt");
+      Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
+      try {
+         Object Obj = floodControl.deriveKey(map);
+         Assert.assertNotNull(Obj);
+      } catch (KeyDerivationException e) {
+         Assert.fail(e.toString());
+      }
+   }
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+   /**
+    * Test derive key void ticket.
+    */
+   @Test
+   public final void testDeriveKeyVoidTicket() {
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
 
-    try {
-      inStream = new FileInputStream("./config/VoidTicket.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load VoidTicket for test." + fnfe.toString());
-    }
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/VoidTicket.txt");
 
-    Document doc = null;
+      Document doc = null;
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
 
-    HashMap<String, Object>  map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    String keyString = (String)key;
-    
-    if (keyString == null)
-      fail("No key found for VoidTicket.");
-    if (!keyString.equals("VTDS6469P44008 AFEPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIPFPPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIP "))
-      fail("Invalid key value (" + keyString + ") found for VoidTicket.");
-    
-  }
-  
-  /**
-   * Test derive key upgrade alpha.
-   */
-  @Test
-  public final void testDeriveKeyUpgradeAlpha() {
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+      Object key = null;
+      try {
+         key = floodControl.deriveKey(map);
+      } catch (KeyDerivationException kde) {
+         Assert.fail("KeyDerivationException: " + kde.toString());
+      }
 
-    try {
-      inStream = new FileInputStream("./config/UpgradeAlpha.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load UpgradeAlpha for test." + fnfe.toString());
-    }
+      FloodMatchSignatureTO keyString = (FloodMatchSignatureTO) key;
 
-    Document doc = null;
+      if (keyString == null)
+         Assert.fail("No key found for VoidTicket.");
+      if (!keyString.getSignature().equals(
+               "VTTest-WDWDS6469P44008 AFEPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIPFPPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIP "))
+         Assert.fail("Invalid key value (" + keyString + ") found for VoidTicket.");
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+   }
 
-    HashMap<String, Object>  map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    String keyString = (String)key;
-    
-    if (keyString == null)
-      fail("No key found for UpgradeAlpha.");
-    if (!keyString.equals("UAAAA08433682062BJA11BJA01BJA01"))
-      fail("Invalid key value (" + keyString + ") for UpgradeAlpha.");
-    
-  }
-  
-  /**
-   * Test derive key reservation.
-   */
-  @Test
-  public final void testDeriveKeyReservation() {
+   /**
+    * Test derive key upgrade alpha.
+    */
+   @Test
+   public final void testDeriveKeyUpgradeAlpha() {
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      mockGetProperties();
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      floodControl = DTIFloodControl.getInstance(application, environment);
 
-    try {
-      inStream = new FileInputStream("./config/ReservationRequest.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load ReservationRequest for test." + fnfe.toString());
-    }
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/UpgradeAlpha.txt");
+      Document doc = null;
 
-    Document doc = null;
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
 
-    HashMap<String, Object>  map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    String keyString = (String)key;
-    
-    if (keyString == null)
-      fail("No key found for ReservationRequest.");
-    if (!keyString.equals("RRWDPRONADLR35120876PAH20025"))
-      fail("Invalid key value (" + keyString + ") for ReservationRequest.");
-    
-  }
-  
-  /**
-   * Test derive key create ticket.
-   */
-  @Test
-  public final void testDeriveKeyCreateTicket() {
+      Object key = null;
+      try {
+         key = floodControl.deriveKey(map);
+      } catch (KeyDerivationException kde) {
+         Assert.fail("KeyDerivationException: " + kde.toString());
+      }
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+      FloodMatchSignatureTO keyString = (FloodMatchSignatureTO) key;
 
-    try {
-      inStream = new FileInputStream("./config/CreateTicket.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load CreateTicket for test." + fnfe.toString());
-    }
+      if (keyString == null)
+         Assert.fail("No key found for UpgradeAlpha.");
+      if (!keyString.getSignature().equals("UAProd-WDWAAA08433682062BJA11BJA01BJA01"))
+         Assert.fail("Invalid key value (" + keyString + ") for UpgradeAlpha.");
 
-    Document doc = null;
+   }
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+   /**
+    * Test derive key exception.
+    */
+   @Test
+   public final void testDeriveKeyException() {
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      String application = "DTIGateWay";
+      String environment = "WDW";
+      mockGetProperties();
+      floodControl = DTIFloodControl.getInstance(application, environment);
+      InputStream inStream = null;
+      inStream = this.getClass().getResourceAsStream("/config/ExpVoidTicket.txt");
+      Document doc = null;
 
-    HashMap<String, Object>  map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    if (key != null)
-      fail("Key dervied on excluded transaction.");
-    
-  }
-  
-  /**
-   * Test derive key exception.
-   */
-  @Test
-  public final void testDeriveKeyException() {
+      try {
+         doc = TiXMLHandler.parseXML(inStream);
+         inStream.close();
+      } catch (Exception e) {
+         Assert.fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
+      }
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (FloodControlInitException fcie) {
-      fail("Exception creating KeyMatchFloodControl: " + fcie);
-    }
-    
-    FileInputStream inStream = null;
+      HashMap<String, Object> map = TiXMLHandler.parseDoc(doc);
 
-    try {
-      inStream = new FileInputStream("./config/ExpVoidTicket.txt");
-    } catch (FileNotFoundException fnfe) {
-      fail("Unable to load ExpVoidTicket for test." + fnfe.toString());
-    }
+      Object key = null;
+      try {
+         key = floodControl.deriveKey(map);
+      } catch (KeyDerivationException kde) {
+         Assert.fail("KeyDerivationException: " + kde.toString());
+      }
 
-    Document doc = null;
+      FloodMatchSignatureTO keyString = (FloodMatchSignatureTO) key;
 
-    try {
-      doc = TiXMLHandler.parseXML(inStream);
-      inStream.close();
-    } catch (Exception e) {
-      fail("Unable to parse document from inStream to doc.  Exception: " + e.toString());
-    }
+      if (keyString == null)
+         Assert.fail("No key found for UpgradeAlpha.");
+      if (!keyString.getSignature().equals(
+               "VTTest-WDWDS6469Pmkl2 AFEPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIPFPPK5JIJ2LMIKID5II1SCIQH5IS6IIIIIIP "))
+         Assert.fail("Invalid key value (" + keyString + ") for KeyException.");
+   }
 
-    HashMap<String, Object>  map = TiXMLHandler.parseDoc(doc);
-    
-    Object key = null;
-    try {
-      key = floodControl.deriveKey(map);
-    } catch (KeyDerivationException kde) {
-      fail("KeyDerivationException: " + kde.toString());
-    }
-    
-    String keyString = (String)key;
-    
-    if (keyString != null)
-      fail("Key was created when it should not have been.");
-    
-  }
-  
+   /**
+    * Test get instance.
+    */
+   @Test
+   public void testGetInstance() {
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      DTIFloodControl floodControlInstanceOne = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      DTIFloodControl floodControlInstanceTwo = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      DTIFloodControl floodControlInstanceThree = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      try {
+         Thread.sleep(60);
+      } catch (InterruptedException e) {
+      }
+      DTIFloodControl floodControlInstanceFour = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      Assert.assertEquals(floodControlInstanceOne, floodControlInstanceTwo);
+      Assert.assertEquals(floodControlInstanceTwo, floodControlInstanceThree);
+      Assert.assertEquals(floodControlInstanceThree, floodControlInstanceFour);
+
+   }
 
 }
