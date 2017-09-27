@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -35,6 +36,7 @@ import pvt.disney.dti.gateway.util.DTITracker;
 import pvt.disney.dti.gateway.util.DateTime;
 import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
+import pvt.disney.dti.gateway.util.flood.FloodControlInitException;
 import pvt.disney.dti.gateway.util.flood.KeyBlockException;
 import pvt.disney.dti.gateway.util.flood.KeySuppressException;
 
@@ -54,65 +56,69 @@ import com.disney.util.PropertyHelper;
  */
 public class DTIController {
 
-  // CONSTANTS
-  /** The standard core logging mechanism. */
-  private EventLogger eventLogger = EventLogger.getLogger(this.getClass());
+   // CONSTANTS
+   /** The standard core logging mechanism. */
+   private EventLogger eventLogger = EventLogger.getLogger(this.getClass());
 
-  // Rework text Added for 2.16.3, JTL
-  private final static String REWORK_TEXT = "Rework of ";
-  
-  private DTIFloodControl floodControl = null;
+   // Rework text Added for 2.16.3, JTL
+   private final static String REWORK_TEXT = "Rework of ";
 
-  /** Properties variable to store properties from AbstractInitializer. */
-  private Properties props = null;
+   private DTIFloodControl floodControl = null;
 
-  private DateTime dt = null;
+   /** Properties variable to store properties from AbstractInitializer. */
+   private Properties props = null;
 
-  /**
-   * The ticket broker currently in use. Defaults to DTIUK if properties can't
-   * be read.
-   */
-  private static String tktBroker = "DTIUK";
+   private DateTime dt = null;
 
-  // Boolean controlling flood blocking being active
-  private static final boolean FLOODCONTROLACTIVE = true;
+   /**
+    * The ticket broker currently in use. Defaults to DTIUK if properties can't
+    * be read.
+    */
+   private static String tktBroker = "DTIUK";
 
-  // Boolean controlling flood blocking denying those who flood
-  private static final boolean FLOODCONTROLDENY = true;
+   // Boolean controlling flood blocking being active
+   private static final boolean FLOODCONTROLACTIVE = true;
 
-  /**
-   * A string of comma separated values indicating TSMAC's that are not
-   * permitted on this end-point.
-   */
-  private static String tsMacExcludeList = "";
+   // Boolean controlling flood blocking denying those who flood
+   private static final boolean FLOODCONTROLDENY = true;
 
-  /**
-   * Constructor for DTIApp
-   */
-  public DTIController() {
-    super();
+   /**
+    * Constructor for DTIApp.
+    *
+    * @throws FloodControlInitException the flood control init exception
+    */
+   public DTIController() throws FloodControlInitException {
+      super();
 
-    // Get properties manager.
-    try {
-      ResourceBundle rb = ResourceLoader.getResourceBundle("dtiApp");
-      props = ResourceLoader.convertResourceBundleToProperties(rb);
-    } catch (Throwable e) {
-      eventLogger.sendEvent("THROWABLE initing props: " + e.toString(), EventType.FATAL, this);
-    }
+      // Get properties manager.
+      try {
+      
+         ResourceBundle rb = ResourceLoader.getResourceBundle("dtiApp");
+         props = ResourceLoader.convertResourceBundleToProperties(rb);
+   
+      } catch (Throwable e) {
+         eventLogger.sendEvent("THROWABLE initing props: " + e.toString(), EventType.FATAL, this);
+      }
+      
+      // tktBroker
+      tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
+      
+      // Application
+      String application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
+      
+      // Environment
+      String environment = PropertyHelper.readPropsValue(PropertyName.DTI_ENVIRONMENT, props, null);
 
-    try {
-      floodControl = DTIFloodControl.getInstance(props);
-    } catch (Exception e) {
-      eventLogger.sendEvent("Unable to init flood control:  " + e.toString(), EventType.WARN, this);
-    }
+      if (StringUtils.isBlank(application) || StringUtils.isBlank(environment)) {
+         throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
+                  + ", Environment: " + environment);
+      }
 
-    tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
+      // Creating the DTIFloodControl by passing application and environment
+      floodControl = DTIFloodControl.getInstance(application, environment);
 
-    /** Forbid certain sellers from reaching this end-point. */
-    tsMacExcludeList = PropertyHelper.readPropsValue(PropertyName.TSMAC_EXCLUSION, props, null);
-
-    return;
-  }
+      return;
+   }
 
   /**
    * It gets the XML from the in-bound message, performs some basic validation, logs the request, and determines if an answer from this XML request is already on file (rework). Then, it determines the correct path for the request, returns

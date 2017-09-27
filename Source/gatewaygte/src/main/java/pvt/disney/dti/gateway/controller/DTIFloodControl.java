@@ -1,14 +1,18 @@
 package pvt.disney.dti.gateway.controller;
 
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
 
 import pvt.disney.dti.gateway.common.TiXMLHandler;
-import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
-import pvt.disney.dti.gateway.util.flood.FloodControlInitException;
+import pvt.disney.dti.gateway.data.common.FloodMatchSignatureTO;
 import pvt.disney.dti.gateway.util.flood.KeyDerivationException;
 import pvt.disney.dti.gateway.util.flood.KeyMatchFloodControl;
+
+import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 /**
  * Singleton class whose primary responsibility is to implement the abstract
@@ -19,6 +23,8 @@ import pvt.disney.dti.gateway.util.flood.KeyMatchFloodControl;
  */
 public class DTIFloodControl extends KeyMatchFloodControl {
 
+   /** The standard core logging mechanism. */
+  private static EventLogger eventLogger = EventLogger.getLogger(DTIFloodControl.class);
   private final static String CREATETICKETSTRING       = "CT"; // CMD 1
   private final static String UPGRADEALPHASTRING       = "UA"; // CMD 2
   private final static String UPDATETICKETSTRING       = "UT"; // CMD 3
@@ -35,46 +41,108 @@ public class DTIFloodControl extends KeyMatchFloodControl {
   private final static String TICKERATEENTTLSTRING     = "TE"; // CMD 14
   private final static String VOIDRESERVATIONSTRING    = "VR"; // CMD 15
   private final static String QUERYELIGPRODUCTSSTRING    = "QP"; // CMD 16
+
+   // When were the flood properties read.
+   private static long propertiesNextRead = new Date().getTime();
+
+   private static int propertyRefreshInterval = 0;
+
   
+   /** Object holder for the singleton pattern. */
+   static DTIFloodControl floodControlInstance = null;
 
-  /** Object holder for the singleton pattern. */
-  static DTIFloodControl obj = null;
+   /**
+    * Private constructor for the singleton pattern. Instantiates a new DTI
+    * flood control.
+    */
+   private DTIFloodControl() {
+      super();
+   }
 
-  /**
-   * Private constructor for the singleton pattern.
-   * 
-   * @param props
-   *          Flood control parameters. Property
-   *          "DtiApp.FloodControlExceptionTsLoc" is required in addition to the
-   *          properties values defined in KeyMatchFloodControl.
-   * @see pvt.disney.dti.gateway.util.flood.KeyMatchFloodControl
-   * @throws FloodControlInitException
-   */
-  private DTIFloodControl(Properties props) throws FloodControlInitException {
-    super(props);
-  }
+   /**
+    * Used to get the singleton instance of the DTIFloodControl. If instance doesn't
+    * exist, creates one, if instance already exists, check whether the instance
+    * needs to be refreshed
+    * 
+    * @param application - value read from dtiApp.properties required to read DB
+    *           properties for the correct application
+    * @param environment- value read from dtiApp.properties required to read DB
+    *           properties for the correct environment
+    *           
+    * @return an instance of DTIFloodControl
+    */
+   public static DTIFloodControl getInstance(String application, String environment) {
 
-  /**
-   * Used to get the singleton instance of the DTIFloodControl. If one doesn't
-   * exist, creates one.
-   * 
-   * @param props
-   *          Flood control parameters. Property
-   *          "DtiApp.FloodControlExceptionTsLoc" is required in addition to the
-   *          properties values defined in KeyMatchFloodControl.
-   * @return an instance of DTIFloodControl
-   * @throws FloodControlInitException
-   */
-  public static DTIFloodControl getInstance(Properties props) throws FloodControlInitException {
+      eventLogger.sendEvent("Execution of DTIFloodControl.getInstance(application, environment) by "
+               + Thread.currentThread().getId() + ": " + Thread.currentThread().getName(), EventType.DEBUG, DTIFloodControl.class);
 
-    if (obj == null) {
-      obj = new DTIFloodControl(props);
-    }
+      // Synchronize object creation - if check and object creation both need to be part of the same block
+      synchronized (DTIFloodControl.class) {
+            if (floodControlInstance == null) {
 
-    return obj;
-  }
+               // Create singleton instance
+               floodControlInstance = new DTIFloodControl();
 
-  // @Override
+               // To refresh/overlap the flood block properties from DB.
+               floodControlInstance.getRefreshPropertyFromDB(application, environment);
+
+               // Set time for next DB refresh
+               setNextRefreshTime();
+
+               eventLogger.sendEvent("DTIFloodControl instance created by thread: " + Thread.currentThread().getId()
+                     + ": " + Thread.currentThread().getName(), EventType.DEBUG, DTIFloodControl.class);
+
+               return floodControlInstance;
+            }
+      } // End of synchronized block
+
+      // Synchronize check for whether refresh is required and updating the variable to the next refresh time.
+      synchronized (DTIFloodControl.class) {
+         
+         // Check whether current time is greater than next read time stamp,
+         // if it is - update refresh time stamp and exit synchronization block in order to avoid other threads from waiting on the actual DB
+         // Property file refresh
+         if (new Date().getTime() >= propertiesNextRead) {
+
+              // set time for next DB refresh
+              setNextRefreshTime();
+
+              eventLogger.sendEvent("DTIFloodControl determined that refresh is required by thread: "
+                     + Thread.currentThread().getId() + ": " + Thread.currentThread().getName(), EventType.DEBUG,
+                     DTIFloodControl.class);
+         } else {
+            return floodControlInstance;
+         }
+      } // End of synchronized block
+
+      // We can now refresh the DB properties by this thread and not having to worry about other threads waiting
+      floodControlInstance.getRefreshPropertyFromDB(application, environment);
+
+      eventLogger.sendEvent("DTIFloodControl DB Property refresh completed by thread: "
+               + Thread.currentThread().getId() + ": " + Thread.currentThread().getName(), EventType.DEBUG, DTIFloodControl.class);
+
+      return floodControlInstance;
+   }
+
+ 
+  
+   /**
+    * This method compares the current time to last read value. If the
+    * difference is more than or equal to the propertyRefreshInterval then it
+    * returns true, indicating the refresh on flood block properties is
+    * required.
+    * 
+    * Sets the next refresh time.
+    */
+   private static void setNextRefreshTime() {
+      
+      // Calculating the interval based on the value from DB.
+      propertyRefreshInterval = floodControlInstance.getFloodBlockPropRefresh() * 1000;
+
+      // Initializing the propertiesNextRead value.
+      propertiesNextRead = new Date().getTime() + propertyRefreshInterval;
+   }
+
   /**
    * Composes a key out of a two character transaction type string + tsMac +
    * tsLocation plus either all product codes on the order (reservation or
@@ -109,78 +177,133 @@ public class DTIFloodControl extends KeyMatchFloodControl {
     // flood control. If so, return null.
     TransactionType txnType = (TransactionType) txnMap.get(TiXMLHandler.TXN_TYPE);
 
-    if ((txnType == TransactionType.CREATETICKET) || (txnType == TransactionType.UPDATETICKET)
-        || (txnType == TransactionType.UPDATETRANSACTION) || txnType == TransactionType.UNDEFINED) {
+      FloodMatchSignatureTO floodMatchSignatureTO = new FloodMatchSignatureTO();
+
+      if ((txnType == TransactionType.UPDATETICKET) || (txnType == TransactionType.UPDATETRANSACTION)
+               || txnType == TransactionType.UNDEFINED) {
       return null; // effectively excludes this transaction from flood control
     }
 
-    // Get the key component values standard to every transaction type
-    String txnTypeString = null;
+      /*
+       * Get the key component values standard to every transaction type &
+       * Setting the TransactionType in the floodMatchSignatureTo
+       */
+      String txnTypeString = null;
 
-    switch (txnType) {
-    case CREATETICKET: 
-      txnTypeString = CREATETICKETSTRING;
-      break;
-    case UPGRADEALPHA:
-      txnTypeString = UPGRADEALPHASTRING;
-      break;
-    case UPDATETICKET:
-      txnTypeString = UPDATETICKETSTRING;
-      break;
-    case UPDATETRANSACTION:
-      txnTypeString = UPDATETXNSTRING;
-      break;
-    case VOIDTICKET:
-      txnTypeString = VOIDTICKETSTRING;
-      break;
-    case QUERYTICKET:
-      txnTypeString = QUERYTICKETSTRING;
-      break;
-    case RESERVATION:
-      txnTypeString = RESERVATIONSTRING;
-      break;
-    case QUERYRESERVATION:
-      txnTypeString = QUERYRESERVATIONSTRING;
-      break;
-    case UPGRADEENTITLEMENT:  // 2.10
-      txnTypeString = UPGRADEENTITLEMENTSTRING;
-      break;
-    case RENEWENTITLEMENT:
-      txnTypeString = RENEWENTTLSTRING;
-      break;
-    case ASSOCIATEMEDIATOACCOUNT:
-      txnTypeString = ASSOCMEDIA2ACCTSTRING;
-      break;
-    case TICKERATEENTITLEMENT:
-      txnTypeString = TICKERATEENTTLSTRING;
-      break;
-    case VOIDRESERVATION:
-      txnTypeString = VOIDRESERVATIONSTRING;
-      break;
-    case QUERYELIGIBLEPRODUCTS: 
-   	txnTypeString = QUERYELIGPRODUCTSSTRING;
-   	break;
+      switch (txnType) {
+
+      // CREATETICKET
+      case CREATETICKET:
+         floodMatchSignatureTO.setTransactionType(TransactionType.CREATETICKET);
+         txnTypeString = CREATETICKETSTRING;
+         break;
+
+      // UPGRADEALPHA
+      case UPGRADEALPHA:
+         floodMatchSignatureTO.setTransactionType(TransactionType.UPGRADEALPHA);
+         txnTypeString = UPGRADEALPHASTRING;
+         break;
+
+      // UPDATETICKET
+      case UPDATETICKET:
+         floodMatchSignatureTO.setTransactionType(TransactionType.UPDATETICKET);
+         txnTypeString = UPDATETICKETSTRING;
+         break;
+
+      // UPDATETRANSACTION
+      case UPDATETRANSACTION:
+         floodMatchSignatureTO.setTransactionType(TransactionType.UPDATETRANSACTION);
+         txnTypeString = UPDATETXNSTRING;
+         break;
+
+      // VOIDTICKET
+      case VOIDTICKET:
+         floodMatchSignatureTO.setTransactionType(TransactionType.VOIDTICKET);
+         txnTypeString = VOIDTICKETSTRING;
+         break;
+
+      // QUERYTICKET
+      case QUERYTICKET:
+         floodMatchSignatureTO.setTransactionType(TransactionType.QUERYTICKET);
+         txnTypeString = QUERYTICKETSTRING;
+         break;
+
+      // RESERVATION
+      case RESERVATION:
+         floodMatchSignatureTO.setTransactionType(TransactionType.RESERVATION);
+         txnTypeString = RESERVATIONSTRING;
+         break;
+
+      // QUERYRESERVATION
+      case QUERYRESERVATION:
+         floodMatchSignatureTO.setTransactionType(TransactionType.QUERYRESERVATION);
+         txnTypeString = QUERYRESERVATIONSTRING;
+         break;
+
+      // UPGRADEENTITLEMENT
+      case UPGRADEENTITLEMENT: // 2.10
+         floodMatchSignatureTO.setTransactionType(TransactionType.UPGRADEENTITLEMENT);
+         txnTypeString = UPGRADEENTITLEMENTSTRING;
+         break;
+
+      // RENEWENTITLEMENT
+      case RENEWENTITLEMENT:
+         floodMatchSignatureTO.setTransactionType(TransactionType.RENEWENTITLEMENT);
+         txnTypeString = RENEWENTTLSTRING;
+         break;
+
+      // ASSOCIATEMEDIATOACCOUNT
+      case ASSOCIATEMEDIATOACCOUNT:
+         floodMatchSignatureTO.setTransactionType(TransactionType.ASSOCIATEMEDIATOACCOUNT);
+         txnTypeString = ASSOCMEDIA2ACCTSTRING;
+         break;
+
+      // TICKERATEENTITLEMENT
+      case TICKERATEENTITLEMENT:
+         floodMatchSignatureTO.setTransactionType(TransactionType.TICKERATEENTITLEMENT);
+         txnTypeString = TICKERATEENTTLSTRING;
+         break;
+
+      // VOIDRESERVATION
+      case VOIDRESERVATION:
+         floodMatchSignatureTO.setTransactionType(TransactionType.VOIDRESERVATION);
+         txnTypeString = VOIDRESERVATIONSTRING;
+         break;
+
+      // QUERYELIGIBLEPRODUCTS
+      case QUERYELIGIBLEPRODUCTS:
+         floodMatchSignatureTO.setTransactionType(TransactionType.QUERYELIGIBLEPRODUCTS);
+         txnTypeString = QUERYELIGPRODUCTSSTRING;
+         break;
+   	
     default:
       return null; // Shouldn't be able to get here, but still fail gracefully.
     }
 
-    // Get tsMac and tsLocation
-    String tsMac = (String) txnMap.get(TiXMLHandler.TS_MAC);
-    String tsLocation = (String) txnMap.get(TiXMLHandler.TS_LOCATION);
-    if ((tsMac == null) || (tsLocation == null)) {
-      return null;
-    }
+      // tsMac
+      String tsMac = (String) txnMap.get(TiXMLHandler.TS_MAC);
+      
+      // tsLocation
+      String tsLocation = (String) txnMap.get(TiXMLHandler.TS_LOCATION);
+      
+      // target
+      String target = (String) txnMap.get(TiXMLHandler.TS_ENVIRONMENT);
 
-    // Determine if the tsLocation is on the exception list. If so, return null.
-    String exceptionTsLocs = (String) props.get(PropertyName.FLOOD_CONTROL_EXCEPTION_TSLOC);
+      // if any of the entity Null , exit
+      if ((tsMac == null) || (tsLocation == null) || (target == null)) {
+         return null;
+      }
+
+      // Determine if the tsLocation is on the exception list. If so, return null.
+      String exceptionTsLocs = this.getFloodControlExceptionTsLoc();
     String[] exceptions = exceptionTsLocs.split(",");
     for (int i = 0; i < exceptions.length; i++) {
       if (tsLocation.equals(exceptions[i].trim()))
         return null;
     }
 
-    // Assemble the common portion of the key.
-    key.append(txnTypeString + tsMac + tsLocation);
+      // Appending the common portion of txn in the key.
+      key.append(txnTypeString + target + tsMac + tsLocation);
 
     // If upgrade or reservation, gets all the products listed on the order
     if ((txnType == TransactionType.UPGRADEALPHA) || 
@@ -195,6 +318,23 @@ public class DTIFloodControl extends KeyMatchFloodControl {
       }
       key.append(value);
     }
+
+      if ((txnType == TransactionType.RESERVATION) || (txnType == TransactionType.UPGRADEENTITLEMENT)
+               || (txnType == TransactionType.RENEWENTITLEMENT)) {
+         
+         // FirstName
+         String billFirstName = (String) txnMap.get(TiXMLHandler.FIRSTNAME);
+         
+         // LastName
+         String billLastName = (String) txnMap.get(TiXMLHandler.LASTNAME);
+         
+         // if the Guest Demo is not Null, Appending the firstName and lastName in the key.
+         if ((StringUtils.isNotBlank(billFirstName)) && (StringUtils.isNotBlank(billLastName))) {
+            
+            key.append(billFirstName);
+            key.append(billLastName);
+         }
+      }
 
     // If void or query, get all tickets listed.
     if ((txnType == TransactionType.VOIDTICKET) || 
@@ -227,7 +367,13 @@ public class DTIFloodControl extends KeyMatchFloodControl {
       key.append(value);
     }
 
-    return key.toString();
-  }
+      // Setting the ProviderType of the txn in the FloodSignatureTO
+      floodMatchSignatureTO.setProviderType(target);
+      
+      // Setting the Signature of the txn in the FloodSignatureTO
+      floodMatchSignatureTO.setSignature(key.toString());
+
+      return floodMatchSignatureTO;
+   }
 
 }
