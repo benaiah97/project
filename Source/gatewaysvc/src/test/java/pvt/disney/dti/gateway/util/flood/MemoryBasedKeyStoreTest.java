@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * This class tests the memory based keystore.
+ * This class tests the memory based keyStore.
  * 
  * @author lewit019
  */
@@ -47,8 +47,9 @@ public class MemoryBasedKeyStoreTest {
     /*Test non-numeric property*/
     props.setProperty("FloodControl.MaxConcurrentKeys", "Bob");
     MemoryBasedKeyStore keyStore = null;
+    Integer maxConKeys = 0;
     try {
-      keyStore = MemoryBasedKeyStore.getInstance(props);
+      keyStore = MemoryBasedKeyStore.getInstance(maxConKeys);
     } catch (FloodControlInitException fcie) {
     	 Assert.assertEquals("FloodControl.MaxConcurrentKeys property value non-integer.",fcie.getMessage());
     }
@@ -56,14 +57,14 @@ public class MemoryBasedKeyStoreTest {
     props.setProperty("FloodControl.MaxConcurrentKeys", "5");
     keyStore = null;
     try {
-      keyStore = MemoryBasedKeyStore.getInstance(props);
+      keyStore = MemoryBasedKeyStore.getInstance(maxConKeys);
     } catch (FloodControlInitException fcie) {
     	 Assert.assertEquals("FloodControl.MaxConcurrentKeys property value below minimum of 50.",fcie.getMessage());
     }
     props.setProperty("FloodControl.MaxConcurrentKeys", "200");
     keyStore = null;
     try {
-      keyStore = MemoryBasedKeyStore.getInstance(props);
+      keyStore = MemoryBasedKeyStore.getInstance(maxConKeys);
     } catch (FloodControlInitException fcie) {
     	Assert.fail("Exception on getInstance: " + fcie.toString());
     }
@@ -73,9 +74,9 @@ public class MemoryBasedKeyStoreTest {
 
   }
 
+
   /**
-   * Tests get instance.
-   * 
+   * Test get instance.
    */
   @Test
   public final void testGetInstance() {
@@ -94,7 +95,7 @@ public class MemoryBasedKeyStoreTest {
   }
 
   /**
-   * Tests keystore reset.
+   * Tests keyStore reset.
    */
   @Test
   public final void testResetKeyStore() {

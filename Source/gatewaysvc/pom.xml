@@ -451,6 +451,12 @@
 			<version>2.0.4</version>
 		</dependency>
 
+        <dependency>
+			<groupId>junitperf</groupId>
+			<artifactId>junitperf</artifactId>
+			<version>1.9.1</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- other DTI projects -->
 		<!-- VERSIONS HERE MAY NEED UPDATED FOR NEW VERSIONS -->

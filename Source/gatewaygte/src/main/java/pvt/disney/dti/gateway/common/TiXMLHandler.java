@@ -80,13 +80,18 @@ public class TiXMLHandler extends DefaultHandler {
   public static final String VOID_RESERVATION_REQUEST = "VoidReservationRequest"; // CMD 15
   public static final String QUERY_ELIGIBILITYPRODUCTS_REQUEST   = "QueryEligibleProductsRequest"; // CMD 16
   
-  public static final String PAYLOAD_ID = "PayloadID";
-  public static final String TS_MAC = "TSMAC";
-  public static final String TS_LOCATION = "TSLocation";
-  public static final String TS_VERSION = "Version";
-  public static final String TS_ENVIRONMENT = "Target";
-  public static final String PAYLOAD_NOTE = "PayloadNote";
-  public static final String PAYLOAD_HEADER = "PayloadHeader";
+   public static final String PAYLOAD_ID = "PayloadID";
+   public static final String TS_MAC = "TSMAC";
+   public static final String TS_LOCATION = "TSLocation";
+   public static final String TS_VERSION = "Version";
+   public static final String TS_ENVIRONMENT = "Target";
+   public static final String PAYLOAD_NOTE = "PayloadNote";
+   public static final String PAYLOAD_HEADER = "PayloadHeader";
+   public static final String CLIENT_DATA = "ClientData";
+   public static final String DEMO_DATA = "DemoData";
+   public static final String BILL = "Bill";
+   public static final String FIRSTNAME = "FirstName";// Adding the
+   public static final String LASTNAME = "LastName";
   public static final String ACTION = "Action";
   public static final String TXN_TYPE = "TransactionType";
   public static final String TICKETS = "Tickets";
@@ -362,9 +367,26 @@ public class TiXMLHandler extends DefaultHandler {
       }
 
       returnData.put(PRODUCTS, products.toString());
+         StringBuffer billFirstName = new StringBuffer();
+         // Get the billFirstName
+         valueList = getValueByTagAttributeName(doc, BILL, FIRSTNAME);
+         if (valueList.size() != 0) {
+            for (int h = 0; h < valueList.size(); h++) {
+               billFirstName.append(valueList.get(h));
+            }
+            returnData.put(FIRSTNAME, billFirstName.toString());
 
-    }
-
+            StringBuffer billLastName = new StringBuffer();
+            // Get the billLastName
+            valueList = getValueByTagAttributeName(doc, BILL, LASTNAME);
+            if (valueList.size() != 0) {
+               for (int h = 0; h < valueList.size(); h++) {
+                  billLastName.append(valueList.get(h));
+               }
+               returnData.put(LASTNAME, billLastName.toString());
+            }
+         }
+      }
     // Get the reservations listed
     if ((txnType == TransactionType.QUERYRESERVATION) || 
         (txnType == TransactionType.VOIDRESERVATION)) {
@@ -481,6 +503,38 @@ public class TiXMLHandler extends DefaultHandler {
     return list;
 
   }
+
+   /**
+    * Gets the value by tag attribute name.
+    * 
+    * @param doc
+    *           the doc
+    * @param tagName
+    *           the tag name
+    * @param childName
+    *           the child name
+    * @return the value by tag attribute name
+    */
+   private static ArrayList<String> getValueByTagAttributeName(Document doc, String tagName, String childName) {
+      NodeList nl;
+      Node attribute = null;
+      ArrayList<String> list = new ArrayList<String>();
+
+      nl = doc.getElementsByTagName(tagName);
+      for (int h = 0; h < nl.getLength(); h++) {
+         Node n = nl.item(0);
+
+         if (n != null) {
+            attribute = n.getAttributes().getNamedItem(childName);
+         }
+         if (attribute != null) {
+            list.add(attribute.getNodeValue());
+         }
+      }
+
+      return list;
+
+   }
 
 }
 
