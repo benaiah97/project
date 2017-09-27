@@ -152,18 +152,13 @@
 				<configuration>
 					<instrumentation>
 						<excludes>
-							<exclude>pvt/disney/dti/gateway/dao/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/client/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/provider/*.class</exclude>
+							<exclude>pvt/disney/dti/gateway/rules/CalmRules.class</exclude>
 							<exclude>pvt/disney/dti/gateway/service/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/rules/dlr/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/rules/hkd/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/rules/race/*.class</exclude>
-							<exclude>pvt/disney/dti/gateway/rules//*.class</exclude>
 						</excludes>
 					</instrumentation>
 					<formats>
 						<format>xml</format>
+						<format>html</format>
 					</formats>
 				</configuration>
 				<executions>
