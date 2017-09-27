@@ -50,4 +50,11 @@ public interface PropertyName {
 	
 	/** The Constant ATS_MAX_ENCODE_ALL_COUNT. */
 	public static final String ATS_MAX_ENCODE_ALL_COUNT = "ATS.MaxEncodeAllCount"; // As of 2.11
+	
+	/** The Constant DTI_APPLICATION. */
+   public static final String DTI_APPLICATION = "DtiApp.Application";
+   
+   /** The Constant DTI_ENVIRONMENT. */
+   public static final String DTI_ENVIRONMENT = "DtiApp.Environment";
+   
 }
