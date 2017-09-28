@@ -12326,7 +12326,7 @@ testRunner.testCase.setPropertyValue("ProductCode",ProductCode)
 testRunner.testCase.setPropertyValue("ProductPrice",ProductPrice)
 
 log.info "ProductPrice property is set to value: " +  ProductCode
-log.info "ProductPrice property is set to value: " +  ProductPrice</script></con:config></con:testStep><con:testStep type="request" id="bfaf10a9-dd7f-4924-a8a9-55a2f5709d7c" name="transmission - WDW Reservation 2.10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation 2.10" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="46fee0f6-7cff-434c-b262-5c96f052ba26"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/reservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+log.info "ProductPrice property is set to value: " +  ProductPrice</script></con:config></con:testStep><con:testStep type="request" id="bfaf10a9-dd7f-4924-a8a9-55a2f5709d7c" name="transmission - WDW Reservation 2.10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation 2.10" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="46fee0f6-7cff-434c-b262-5c96f052ba26"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/reservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Payload>
       <PayloadHeader>
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>
@@ -12868,7 +12868,7 @@ def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
 
-log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW QueryReservation" id="ce57e115-a023-437e-8612-407f75b5d9a0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW QueryReservation" id="2d50eef8-27a8-4886-928b-5dc458c73ead"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/queryreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW QueryReservation" id="ce57e115-a023-437e-8612-407f75b5d9a0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW QueryReservation" id="2d50eef8-27a8-4886-928b-5dc458c73ead"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/queryreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
@@ -13325,7 +13325,7 @@ def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",workString.substring(0,20))
 
-log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+log.info "Payload_ID value is set to: " + workString.substring(0,20)</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW VoidReservation" id="95e451f0-88e0-45db-beea-cca15956de41"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW VoidReservation" id="3994ba1d-6696-45a8-9476-d9ed12662e37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/voidreservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
    <Payload>\r
       <PayloadHeader>\r
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>\r
@@ -13826,7 +13826,7 @@ if (flag) {
 	// skip the last test step
 	//Disable transmission - WDW Reservation QueryTicket after void
 	testRunner.testCase.testSteps['transmission - WDW Reservation QueryTicket after void'].disabled = true
-}</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW Reservation QueryTicket after void" id="fbd8181f-36ad-43e6-bebf-91857d4b10de" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation QueryTicket after void" id="91ddca26-606b-4afd-ab1a-676c5c488daf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
+}</script></con:config></con:testStep><con:testStep type="request" name="transmission - WDW Reservation QueryTicket after void" id="fbd8181f-36ad-43e6-bebf-91857d4b10de"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - WDW Reservation QueryTicket after void" id="91ddca26-606b-4afd-ab1a-676c5c488daf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppURL}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="/var/opt/apps/RT/schemas/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
   <Payload> 
     <PayloadHeader> 
       <PayloadID>${#TestCase#Payload_ID}</PayloadID>  
@@ -14266,7 +14266,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170926150653898</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-26</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://fldcvdsla1018.wdw.disney.com/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>12000126091700004</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>CTGU87363636</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[12000126091700003, 12000126091700004]</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="a34de2cc-1ab6-4e39-88c7-8822c551448d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_FloodControlTestCase LifeCycle" searchProperties="true" disabled="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="ba4d4c02-bf30-49e6-9831-39498b978d29"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>Payload_ID</con:name><con:value>91120170927150706487</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10011</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>125.67</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-27</con:value></con:property><con:property><con:name>DTIAppURL</con:name><con:value>http://localhost:8081/DTIWeb/DTIApp</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://fldcvdsla1018.wdw.disney.com/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>counter</con:name><con:value>111000000</con:value></con:property><con:property><con:name>factor</con:name><con:value>6</con:value></con:property><con:property><con:name>TktNID</con:name><con:value>][</con:value></con:property><con:property><con:name>ResCode</con:name><con:value>JVCV80636363</con:value></con:property><con:property><con:name>tickets</con:name><con:value>[]</con:value></con:property><con:property><con:name>BasePath</con:name><con:value>D:/DisneyWorkStation/Projects/DTIGateway/upgradeEntitlement/DTIGateway/Source/config/schemas</con:value></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="a34de2cc-1ab6-4e39-88c7-8822c551448d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_FloodControlTestCase LifeCycle" searchProperties="true" disabled="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="ba4d4c02-bf30-49e6-9831-39498b978d29"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -16194,7 +16194,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170926150643446</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-26</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501626091700020</con:value></con:property><con:property><con:name>BasePath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170927150651175</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-27</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501627091700008</con:value></con:property><con:property><con:name>BasePath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="922d67f0-c007-4533-97fb-44c8fb992fca" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_InEligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload" id="8b1c4fc5-b3b1-4221-84af-847230c9ad0c"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -18113,7 +18113,7 @@ log.info "Payload_ID value is set to: " + Payload_ID</script></con:config></con:
          </QueryTicketRequest>\r
       </Command>\r
    </Payload>\r
-</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="e4df8828-5d99-4a7f-9a97-4229ea1d9b77" name="Headers Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="e4df8828-5d99-4a7f-9a97-4229ea1d9b77" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
  * Assertion to validate the Header existence
  * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
  */
@@ -18511,7 +18511,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170927150650626</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-27</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501626091700021</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>6</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170927150650758</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-27</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501627091700003</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="0081d932-6861-4b61-8bb8-3f9aac6ede57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_QEP_WDW_Eligible" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProduct" id="28d031e8-642b-497b-8e69-afa5fcdcc254"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -19734,4 +19734,1611 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
          </UpgradeEntitlementRequest>\r
       </Command>\r
    </Payload>\r
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://localhost:8081/DTIWeb/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>86</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170926150643653</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>D:/DisneyWorkStation/Projects/DTIGateway/upgradeEntitlement/DTIGateway/Source/config/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="ec93a44a-dbcf-4cc4-b164-5d6edf7c1c70" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Barcode_of_WDW_validation" searchProperties="true" disabled="true"><con:settings/><con:testStep type="groovy" name="Generate payload ID for QueryTicket" id="94b1f705-6fa7-4a7a-b70e-bc1fb3c717d6"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
+Payload_ID = workString.substring(0,20)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
+
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="QueryTicket_For_Invalid_BarCode" id="d3d88156-f16c-4299-a365-5cc886289e82"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="QueryTicket_For_Invalid_BarCode" id="54cb54e6-8dbc-422b-a0bc-67140f053e6a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
+         <TransmitTime>13:25:00</TransmitTime>
+         <TktSeller>
+            <TSMAC>XGREETER</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>XGREETERAPP</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>120</CmdTimeout>
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>
+            <CmdTime>13:25:00</CmdTime>
+            <CmdInvoice>199</CmdInvoice>
+            <CmdDevice>HPWDW</CmdDevice>
+            <CmdOperator>BIEST001</CmdOperator>
+            <CmdActor>SYS</CmdActor>
+         </CommandHeader>
+         <QueryTicketRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <Barcode>EGGSD114Y00F15D5MKL</Barcode>
+               </TktID>
+            </Ticket>
+            <IncludeEntitlementAccount>true</IncludeEntitlementAccount>
+         </QueryTicketRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="eed01b77-6560-4516-831b-c57b0649e737" name="XPath Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+ * Xpath assertion to validate the Tag existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Tag Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  Product Catalog
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 5th colum of the data sheet
+			String header = sheet.getCell(4, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode(elements[j])
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Generate payload ID for Queryticket valid" id="e093e3cb-ed5b-4f3f-91a2-2afb58a6ecbf"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
+Payload_ID = workString.substring(0,20)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
+
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="QueryTicket_For_Valid_BarCode" id="35b1a513-8c5b-4b7c-951f-b06d7dbd58b1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="QueryTicket_For_Valid_BarCode" id="54cb54e6-8dbc-422b-a0bc-67140f053e6a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
+         <TransmitTime>13:25:00</TransmitTime>
+         <TktSeller>
+            <TSMAC>XGREETER</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>XGREETERAPP</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>120</CmdTimeout>
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>
+            <CmdTime>13:25:00</CmdTime>
+            <CmdInvoice>199</CmdInvoice>
+            <CmdDevice>HPWDW</CmdDevice>
+            <CmdOperator>BIEST001</CmdOperator>
+            <CmdActor>SYS</CmdActor>
+         </CommandHeader>
+         <QueryTicketRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <Barcode>EGGSD114Y00F15D5M</Barcode>
+               </TktID>
+            </Ticket>
+            <IncludeEntitlementAccount>true</IncludeEntitlementAccount>
+         </QueryTicketRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="eed01b77-6560-4516-831b-c57b0649e737" name="XPath Existence - Script Assertion" disabled="true"><con:configuration><scriptText>/*
+ * Xpath assertion to validate the Tag existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Tag Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  Product Catalog
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 5th colum of the data sheet
+			String header = sheet.getCell(4, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode(elements[j])
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>8</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170927150651917</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-27</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property><con:property><con:name>BasePath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property></con:properties></con:testCase><con:testCase id="ffcff73f-3a63-4fe2-b0db-f94038b3b0a9" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_WDW_UpgradeEntitlement_Invalid" searchProperties="true" disabled="true"><con:settings/><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTarget" id="ce6dbacf-8749-498c-a9e3-6905a19f812b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTarget" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#DTIAppUrl}/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+   <Payload>\r
+      <PayloadHeader>\r
+         <PayloadID>9112017078115544109</PayloadID>\r
+         <Target>WDWs</Target>\r
+         <Version>1.0</Version>\r
+         <Comm>\r
+            <Protocol>IP</Protocol>\r
+            <Method>Network</Method>\r
+         </Comm>\r
+         <TransmitDate>2017-09-21</TransmitDate>\r
+         <TransmitTime>12:40:20.70</TransmitTime>\r
+         <TktSeller>\r
+            <TSMAC>WDPRONAWDW</TSMAC>\r
+            <TSSystem>CC</TSSystem>\r
+            <TSLocation>PRO_MOBILE</TSLocation>\r
+            <TSSecurity>WaltDisney1</TSSecurity>\r
+         </TktSeller>\r
+         <CommandCount>1</CommandCount>\r
+      </PayloadHeader>\r
+      <Command>\r
+         <CommandHeader>\r
+            <CmdItem>1</CmdItem>\r
+            <CmdTimeout>45</CmdTimeout>\r
+            <CmdDate>2016-07-29</CmdDate>\r
+            <CmdTime>08:40:20.70</CmdTime>\r
+            <CmdInvoice>3992016072900001</CmdInvoice>\r
+            <CmdDevice>127.0.0.1</CmdDevice>\r
+            <CmdOperator>WDPRO</CmdOperator>\r
+         </CommandHeader>\r
+         <UpgradeEntitlementRequest>\r
+            <Ticket>\r
+               <TktItem>1</TktItem>\r
+               <TktID>\r
+                  <TktDSSN>\r
+                     <TktDate>2017-09-19</TktDate>\r
+                     <TktSite>XAK</TktSite>\r
+                     <TktStation>CAS001</TktStation>\r
+                     <TktNbr>16</TktNbr>\r
+                  </TktDSSN>\r
+               </TktID>\r
+               <ProdCode>5K002</ProdCode>\r
+               <ProdPrice>473.93</ProdPrice>\r
+               <UpgrdPrice>203.95</UpgrdPrice>\r
+               <FromProdCode>4KF03</FromProdCode>\r
+               <FromPrice>269.98</FromPrice>\r
+            </Ticket>\r
+            <Payment>\r
+               <PayItem>1</PayItem>\r
+               <PayType>\r
+                  <Installment>\r
+                     <InstallmentCreditCard>\r
+                        <CCManual>\r
+                           <CCNbr>4444855457062688</CCNbr>\r
+                           <CCExpiration>1219</CCExpiration>\r
+                           <CCName>Visa</CCName>\r
+                        </CCManual>\r
+                     </InstallmentCreditCard>\r
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>\r
+                  </Installment>\r
+               </PayType>\r
+               <PayAmount>203.95</PayAmount>\r
+            </Payment>\r
+            <Reservation>\r
+               <ResCreateDate>2017-08-09</ResCreateDate>\r
+               <ResPickupDate>2017-08-09</ResPickupDate>\r
+               <ResPickupArea>WillCall</ResPickupArea>\r
+               <ResSalesType>Presale</ResSalesType>\r
+            </Reservation>\r
+            <ClientData>\r
+               <ClientType>Private</ClientType>\r
+               <ClientCategory>WW</ClientCategory>\r
+               <DemoLanguage>en</DemoLanguage>\r
+               <DemoData>\r
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>\r
+               </DemoData>\r
+            </ClientData>\r
+         </UpgradeEntitlementRequest>\r
+      </Command>\r
+   </Payload>\r
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="26ca7710-07f2-4268-8d82-0af98c13f69b" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
+ * Xpath assertion to validate the Tag existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Tag Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  Product Catalog
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 5th colum of the data sheet
+			String header = sheet.getCell(4, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode(elements[j])
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidDateFormat" id="695a0d68-230b-4b27-8dfa-6ac1b0ab9b0f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidDateFormat" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081156029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017/09/21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>4444855457062688</CCNbr>
+                           <CCExpiration>1219</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTimeFormat" id="156d7b91-e378-4f69-92e6-c90e7bcbd0ad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTimeFormat" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>1240:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                         <CCManual>
+                           <CCNbr>4444855457062688</CCNbr>
+                           <CCExpiration>1219</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTSMAC" id="fa6eff2d-2d83-46b4-9b01-8cfc32c14268"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTSMAC" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\r
+   <Payload>\r
+      <PayloadHeader>\r
+         <PayloadID>9112017081115029109</PayloadID>\r
+         <Target>Test-WDW</Target>\r
+         <Version>1.0</Version>\r
+         <Comm>\r
+            <Protocol>IP</Protocol>\r
+            <Method>Network</Method>\r
+         </Comm>\r
+         <TransmitDate>2017-09-21</TransmitDate>\r
+         <TransmitTime>12:40:20.70</TransmitTime>\r
+         <TktSeller>\r
+            <TSMAC>WDWDW</TSMAC>\r
+            <TSSystem>CC</TSSystem>\r
+            <TSLocation>PRO_MOBILE</TSLocation>\r
+            <TSSecurity>WaltDisney1</TSSecurity>\r
+         </TktSeller>\r
+         <CommandCount>1</CommandCount>\r
+      </PayloadHeader>\r
+      <Command>\r
+         <CommandHeader>\r
+            <CmdItem>1</CmdItem>\r
+            <CmdTimeout>45</CmdTimeout>\r
+            <CmdDate>2016-07-29</CmdDate>\r
+            <CmdTime>08:40:20.70</CmdTime>\r
+            <CmdInvoice>3992016072900001</CmdInvoice>\r
+            <CmdDevice>127.0.0.1</CmdDevice>\r
+            <CmdOperator>WDPRO</CmdOperator>\r
+         </CommandHeader>\r
+         <UpgradeEntitlementRequest>\r
+            <Ticket>\r
+               <TktItem>1</TktItem>\r
+               <TktID>\r
+                  <TktDSSN>\r
+                     <TktDate>2017-09-19</TktDate>\r
+                     <TktSite>XAK</TktSite>\r
+                     <TktStation>CAS001</TktStation>\r
+                     <TktNbr>16</TktNbr>\r
+                  </TktDSSN>\r
+               </TktID>\r
+               <ProdCode>5K002</ProdCode>\r
+               <ProdPrice>473.93</ProdPrice>\r
+               <UpgrdPrice>203.95</UpgrdPrice>\r
+               <FromProdCode>4KF03</FromProdCode>\r
+               <FromPrice>269.98</FromPrice>\r
+            </Ticket>\r
+            <Payment>\r
+               <PayItem>1</PayItem>\r
+               <PayType>\r
+                  <Installment>\r
+                     <InstallmentCreditCard>\r
+                        <CCManual>\r
+                           <CCNbr>4444855457062688</CCNbr>\r
+                           <CCExpiration>1219</CCExpiration>\r
+                           <CCName>Visa</CCName>\r
+                        </CCManual>\r
+                     </InstallmentCreditCard>\r
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>\r
+                  </Installment>\r
+               </PayType>\r
+               <PayAmount>203.95</PayAmount>\r
+            </Payment>\r
+            <Reservation>\r
+               <ResCreateDate>2017-08-09</ResCreateDate>\r
+               <ResPickupDate>2017-08-09</ResPickupDate>\r
+               <ResPickupArea>WillCall</ResPickupArea>\r
+               <ResSalesType>Presale</ResSalesType>\r
+            </Reservation>\r
+            <ClientData>\r
+               <ClientType>Private</ClientType>\r
+               <ClientCategory>WW</ClientCategory>\r
+               <DemoLanguage>en</DemoLanguage>\r
+               <DemoData>\r
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>\r
+               </DemoData>\r
+            </ClientData>\r
+         </UpgradeEntitlementRequest>\r
+      </Command>\r
+   </Payload>\r
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTSLocation" id="219f9b61-65a7-41db-b57d-11d4feafee13"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTSLocation" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILEss</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTicketSite" id="c637b5e8-81a8-4a31-8468-a083d7662286"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTicketSite" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:9091/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>WAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTicketStation" id="92006d93-292f-4ff0-8bec-6286d96e4722"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTicketStation" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS1</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTicketNumber" id="16c9cdf8-eb52-4c29-a5fc-9a17361f72ec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTicketNumber" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>76</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidUpgradeToProductCode" id="701c56f1-78ba-4ae9-b7ae-dbd8eccf8913"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidUpgradeToProductCode" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5KSD002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidUpgradeToProductAmount" id="5b75ef5a-0ca3-4f18-a8d2-62793a367ece"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidUpgradeToProductAmount" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>41.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidUpgradeFromProductCode" id="17e4544a-80fa-4704-8d59-5bc644c18934"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidUpgradeFromProductCode" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF3203</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidUpgradeFromProductAmount" id="6ede8fc8-15bd-4ee6-b467-35a2eecc70ea"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidUpgradeFromProductAmount" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>654.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidUpgradePrice" id="4d11f8d6-f46f-49f2-821b-df4ffbc64911"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidUpgradePrice" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>56.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidPaymentAmount" id="f23f4b69-43bc-4bb5-afbd-01427fbfd5d9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidPaymentAmount" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-09-19</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>2053.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - UpgradeEntitlement_InvalidTicketDate" id="aa2acf7a-2452-404c-963e-14cbf6387e03"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - UpgradeEntitlement_InvalidTicketDate" id="436a8554-2a0c-436e-9620-4530174278b8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/DTIWeb/DTIApp</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="D:/WorkStation/SOAP_UI/QEP FLOW/DTIGateway/Source/config/schemas/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>9112017081115029109</PayloadID>
+         <Target>Test-WDW</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>2017-09-21</TransmitDate>
+         <TransmitTime>12:40:20.70</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONAWDW</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>PRO_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>2016-07-29</CmdDate>
+            <CmdTime>08:40:20.70</CmdTime>
+            <CmdInvoice>3992016072900001</CmdInvoice>
+            <CmdDevice>127.0.0.1</CmdDevice>
+            <CmdOperator>WDPRO</CmdOperator>
+         </CommandHeader>
+         <UpgradeEntitlementRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <TktDSSN>
+                     <TktDate>2017-08-9</TktDate>
+                     <TktSite>XAK</TktSite>
+                     <TktStation>CAS001</TktStation>
+                     <TktNbr>16</TktNbr>
+                  </TktDSSN>
+               </TktID>
+               <ProdCode>5K002</ProdCode>
+               <ProdPrice>473.93</ProdPrice>
+               <UpgrdPrice>203.95</UpgrdPrice>
+               <FromProdCode>4KF03</FromProdCode>
+               <FromPrice>269.98</FromPrice>
+            </Ticket>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <Installment>
+                     <InstallmentCreditCard>
+                        <CCManual>
+                           <CCNbr>ZZZZZZZZZZZZ2688</CCNbr>
+                           <CCExpiration>1218</CCExpiration>
+                           <CCName>Visa</CCName>
+                        </CCManual>
+                     </InstallmentCreditCard>
+                     <InstallmentDemoData Addr1="1194 6th Ave" City="San Diego" Country="US" Email="dlrca29@test.com" FirstName="David" LastName="Ferguson" State="CA" Telephone="2034464647" Zip="92101"/>
+                  </Installment>
+               </PayType>
+               <PayAmount>203.95</PayAmount>
+            </Payment>
+            <Reservation>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
+      </Command>
+   </Payload>
 </Transmission>]]></con:request><con:assertion type="SOAP Response" id="28a1be68-65e0-4efa-8842-0cbc069ebf52" disabled="true"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>http://localhost:8081/DTIWeb/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>86</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120170926150643653</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-09-19</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501619091700005</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>D:/DisneyWorkStation/Projects/DTIGateway/upgradeEntitlement/DTIGateway/Source/config/schemas</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>Project_Path</con:name><con:value>C:\Users\vganda\git\WDPR-SoapUI\</con:value></con:property></con:properties><con:reportParameters/></con:testSuite><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:reporting><con:reportTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
