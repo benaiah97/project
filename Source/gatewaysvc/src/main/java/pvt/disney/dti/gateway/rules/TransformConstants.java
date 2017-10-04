@@ -88,6 +88,9 @@ public interface TransformConstants {
 
   /** GW_ORDERS_CONTRACT_RENEW_CONTRACT = "False" (as of 2.16.1, JTL) */
   Boolean GW_ORDERS_CONTRACT_RENEW_CONTRACT = new Boolean("False");
+  
+  /** GW_ORDERS_CONTRACT_UPGRADE_CONTRACT = "False" (as of 2.16.1, JTL) */
+  Boolean GW_ORDERS_CONTRACT_UPGRADE_CONTRACT = new Boolean("True");
 
   /** GW_ORDERS_CONTRACT_STATUS_ID = "1" (as of 2.16.1, JTL) */
   String GW_ORDERS_CONTRACT_STATUS_ID = "1";
@@ -153,8 +156,8 @@ public interface TransformConstants {
   String GW_PASS = "PASS";
   
   // need to verify TO DO 
-  /** gateway galaxy UPGRADE (as configured in DTI's Day_Subclass) */
-  String GW_UPGRADE = "UPGRADE";
+  /** gateway galaxy UPGRADE (ANNUAL PASS) */
+  String GW_UPGRADE = "AP";
 
   /** gateway galaxy PASS (as configured in DTI's Day_Subclass) */
   String GW_RENEW = "RENEW";

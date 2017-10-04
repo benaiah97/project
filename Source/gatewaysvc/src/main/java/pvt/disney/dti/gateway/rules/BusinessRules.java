@@ -909,103 +909,110 @@ public abstract class BusinessRules {
    */
   private static void applyUpgradeEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
-    // RULE: Is this a UpgradeEntitlementRequestTO?
-    CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
-    if (commandBody.getClass() != UpgradeEntitlementRequestTO.class) {
-      throw new DTIException(
-          BusinessRules.class,
-          DTIErrorCode.DTI_PROCESS_ERROR,
-          "Internal Error:  Non-upgrade entitlement class passed to applyUpgradeEntitlementRules.");
-    }
+     // RULE: Is this a UpgradeEntitlementRequestTO?
+     CommandBodyTO commandBody = dtiTxn.getRequest().getCommandBody();
+     if (commandBody.getClass() != UpgradeEntitlementRequestTO.class) {
+       throw new DTIException(
+           BusinessRules.class,
+           DTIErrorCode.DTI_PROCESS_ERROR,
+           "Internal Error:  Non-upgrade entitlement class passed to applyUpgradeEntitlementRules.");
+     }
 
-    // RULE: Is the RequestType is "UpgradeEntitlement", as expected?
-    UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn
-        .getRequest().getCommandBody();
+     // RULE: Is the RequestType is "UpgradeEntitlement", as expected?
+     UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn
+         .getRequest().getCommandBody();
 
-    // Get database information for all products and tickets on the order
-    ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
-    ArrayList<PaymentTO> payListTO = upgrdEntReqTO.getPaymentList();
-    ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
+     // Get database information for all products and tickets on the order
+     ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
+     ArrayList<PaymentTO> payListTO = upgrdEntReqTO.getPaymentList();
+     ArrayList<BigInteger> allowedPdtIdList = new ArrayList<BigInteger>();
 
-    String tpiCode = dtiTxn.getTpiCode();
-    EntityTO entityTO = dtiTxn.getEntityTO();
+     String tpiCode = dtiTxn.getTpiCode();
+     EntityTO entityTO = dtiTxn.getEntityTO();
 
-    // ////////
-    // Deals with the "TO" product
-    // ////////
+     // ////////
+     // Deals with the "TO" product
+     // ////////
 
-    ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(
-        tktListTO, ValueConstants.TYPE_CODE_SELL);
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
-        dbProdList, ValueConstants.TYPE_CODE_SELL));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
-        dbProdList, ValueConstants.TYPE_CODE_SELL));
+     ArrayList<DBProductTO> dbProdList = ProductKey.getOrderProducts(
+         tktListTO, ValueConstants.TYPE_CODE_SELL);
+     allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+         dbProdList, ValueConstants.TYPE_CODE_SELL));
+     allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+         dbProdList, ValueConstants.TYPE_CODE_SELL));
 
-    // RULE: Is the entity allowed to sell all products on the order?
-    ProductRules.validateProductsAreSellable(tktListTO, dbProdList,
-        ValueConstants.TYPE_CODE_SELL);
-    ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
-        allowedPdtIdList);
+     // RULE: Is the entity allowed to sell all products on the order?
+     ProductRules.validateProductsAreSellable(tktListTO, dbProdList,
+         ValueConstants.TYPE_CODE_SELL);
+     ProductRules.validateEntityCanSellProducts(entityTO, dbProdList,
+         allowedPdtIdList);
 
-    // RULE: Are the products required to have demographics? (As of 2.15, JTL)
-    ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
+     // RULE: Are the products required to have demographics? (As of 2.15, JTL)
+     ProductRules.validateProductsHaveDemographics(tktListTO, dbProdList);
 
-    // Save the dbProduct list to the request for use in later translation.
-    dtiTxn.setDbProdList(dbProdList);
+     // Save the dbProduct list to the request for use in later translation.
+     dtiTxn.setDbProdList(dbProdList);
 
-    // ////////
-    // Deals with the "FROM" product
-    // ////////
+     // ////////
+     // Deals with the "FROM" product
+     // ////////
 
-    // Clear out the ArrayLists
-    allowedPdtIdList.clear();
+     // Clear out the ArrayLists
+     allowedPdtIdList.clear();
 
-    ArrayList<DBProductTO> dbUpgrdProdList = ProductKey.getOrderProducts(
-        tktListTO, ValueConstants.TYPE_CODE_UPGRADE);
-    ProductRules.validateUpgradeProducts(dbUpgrdProdList); // This is essentially an "is null" check.
-    allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
-        dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
-    allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
-        dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
+     ArrayList<DBProductTO> dbUpgrdProdList = ProductKey.getOrderProducts(
+         tktListTO, ValueConstants.TYPE_CODE_UPGRADE);
+     ProductRules.validateUpgradeProducts(dbUpgrdProdList); // This is essentially an "is null" check.
+     allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
+         dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
+     allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
+         dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
 
-    // RULE: Is the entity allowed to upgrade all products on the order?
-    ProductRules.validateEntityCanUpgradeProducts(entityTO,
-        dbUpgrdProdList, allowedPdtIdList);
+     // RULE: Is the entity allowed to upgrade all products on the order?
+     ProductRules.validateEntityCanUpgradeProducts(entityTO,
+         dbUpgrdProdList, allowedPdtIdList);
 
-    // RULE: Are the number of products/tickets on the order within tolerance?
-    TicketRules.validateMaxEightTicketsOnRequest(tktListTO);
+     // RULE: Are the number of products/tickets on the order within tolerance?
+     TicketRules.validateMaxEightTicketsOnRequest(tktListTO);
 
-    // RULE: Are the products being sold at an acceptable price?
-    // NOTE: This rule can modify the tktListTO members to indicate price
-    // mismatch.
-    ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList);
+     // RULE: Are the products being sold at an acceptable price?
+     // NOTE: This rule can modify the tktListTO members to indicate price
+     // mismatch.
+     ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList);
 
-    // RULE: Are the "FROM" prices either the Unit or Standard Retail Price (as of 2.12)
-    ProductRules.validateUpgradeProductPrice(entityTO, tktListTO,
-        dbUpgrdProdList);
+     // RULE: Are the "FROM" prices either the Unit or Standard Retail Price (as of 2.12)
+     ProductRules.validateUpgradeProductPrice(entityTO, tktListTO,
+         dbUpgrdProdList);
 
-    // RULE: Are the mapped ticket types valid and active?
-    // NOTE: This rule modifies the dbProdList members to include ticket
-    // mappings.
-    dbProdList = ProductKey.getProductTicketTypes(dbProdList);
-    ProductRules.validateMappedProviderTicketTypes(dbProdList);
+     // RULE: Are the mapped ticket types valid and active?
+     // NOTE: This rule modifies the dbProdList members to include ticket
+     // mappings.
+     dbProdList = ProductKey.getProductTicketTypes(dbProdList);
+     ProductRules.validateMappedProviderTicketTypes(dbProdList);
 
-    // RULE: Do the various payments, cover the products on upgrade?
-    PaymentRules.validatePaymentsOnUpgrade(tktListTO, payListTO, entityTO);
+     // RULE: Do the various payments, cover the products on upgrade?
+     PaymentRules.validatePaymentsOnUpgrade(tktListTO, payListTO, entityTO);
 
-    // RULE: Are payments and payment types acceptable?
-    PaymentRules.validatePaymentComposition(payListTO, tpiCode);
+     // RULE: Are payments and payment types acceptable?
+     PaymentRules.validatePaymentComposition(payListTO, tpiCode);
 
-    // Apply any rules unique to one provider.
-    if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
-      WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
-    } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-    	DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
-    }
+     // Apply any rules unique to one provider.
+     if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_WDW) == 0) {
+       WDWUpgradeEntitlementRules.applyWDWUpgradeEntitlementRules(dtiTxn);
+     } else if (tpiCode.compareTo(DTITransactionTO.TPI_CODE_DLR) == 0) {
+       DLRUpgradeEntitlementRules.applyDLRUpgradeEntitlementRules(dtiTxn);
+     }
 
-    return;
-  }
+     return;
+   }
 
+ 
+  /**
+   * Apply associate media to account rules.
+   *
+   * @param dtiTxn the dti txn
+   * @throws DTIException the DTI exception
+   */
   private static void applyAssociateMediaToAccountRules(
       DTITransactionTO dtiTxn) throws DTIException {
 

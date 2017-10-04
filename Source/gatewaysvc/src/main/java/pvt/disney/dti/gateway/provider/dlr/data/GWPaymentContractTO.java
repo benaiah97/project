@@ -36,6 +36,8 @@ public class GWPaymentContractTO implements Serializable {
 
 	// Output fields
 	private String paymentContractID;
+	
+	private Boolean upgradeContract;
 
 	/**
 	 * @return the recurrenceType
@@ -202,4 +204,21 @@ public class GWPaymentContractTO implements Serializable {
 		this.paymentContractID = paymentContractID;
 	}
 
+	/**
+	 * @return the paymentContractID
+	 */
+	public Boolean getUpgradeContract() {
+		return upgradeContract;
+	}
+
+	/**
+	 * @param upgradeContract
+	 *            the upgradeContract to set
+	 */
+	public void setUpgradeContract(Boolean upgradeContract) {
+		this.upgradeContract = upgradeContract;
+	}
+
+	
+	
 }

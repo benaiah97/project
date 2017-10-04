@@ -38,38 +38,41 @@ public class DLRErrorRules {
 		// like the request type itself?
 		String errorCode = null;
 
-		switch (requestType) {
+      switch (requestType) {
 
-		case QUERYTICKET:
-			errorCode = processQueryTicketErrorStatus(xmlResponse, statusCode);
-			break;
+      case QUERYTICKET:
+         errorCode = processQueryTicketErrorStatus(xmlResponse, statusCode);
+         break;
 
-		case UPGRADEALPHA:
-			errorCode = processUpgradeAlphaErrorStatus(xmlResponse, statusCode);
-			break;
+      case UPGRADEALPHA:
+         errorCode = processUpgradeAlphaErrorStatus(xmlResponse, statusCode);
+         break;
 
-		case VOIDTICKET:
-			errorCode = processVoidTicketErrorStatus(xmlResponse, statusCode);
-			break;
+      case VOIDTICKET:
+         errorCode = processVoidTicketErrorStatus(xmlResponse, statusCode);
+         break;
 
-		case RESERVATION:
-			errorCode = processReservationErrorStatus(xmlResponse, statusCode);
-			break;
+      case RESERVATION:
+         errorCode = processReservationErrorStatus(xmlResponse, statusCode);
+         break;
 
-		case QUERYRESERVATION:
-			errorCode = processQueryReservationErrorStatus(xmlResponse,
-					statusCode);
-			break;
-			
-		case RENEWENTITLEMENT:
-      errorCode = processRenewEntitlementErrorStatus(xmlResponse,
-          statusCode);
-      
-		case QUERYELIGIBLEPRODUCTS:
-	      errorCode = processQueryEligibleProductErrorStatus(xmlResponse,
-	          statusCode);
-      break;			
-		}
+      case QUERYRESERVATION:
+         errorCode = processQueryReservationErrorStatus(xmlResponse, statusCode);
+         break;
+
+      case RENEWENTITLEMENT:
+         errorCode = processRenewEntitlementErrorStatus(xmlResponse, statusCode);
+         break;
+
+      case QUERYELIGIBLEPRODUCTS:
+         errorCode = processQueryEligibleProductErrorStatus(xmlResponse, statusCode);
+         break;
+
+      case UPGRADEENTITLEMENT:
+         errorCode = processUpgradeEntitlementErrorStatus(xmlResponse, statusCode);
+         break;
+
+      }
 		return errorCode;
 	}
 
@@ -207,6 +210,20 @@ public class DLRErrorRules {
 		errorCode=statusCode;
 		return errorCode;
 	}
+	
+	/**
+	 * Process upgrade entitlement error status.
+	 *
+	 * @param xmlResponse the xml response
+	 * @param statusCode the status code
+	 * @return the string
+	 */
+	protected static String processUpgradeEntitlementErrorStatus(String xmlResponse,
+	         String statusCode){
+	      String errorCode = null;
+	      errorCode=statusCode;
+	      return errorCode;
+	   }
 
 	/**
 	 * Internal Helper method to parse orders response for detailed errors Protected to allow calls from test cases
