@@ -30,12 +30,16 @@ public class ElectronicEntitlementRules {
 	public static final BigInteger PRICE_MISMATCH_WARN = new BigInteger(
 			DTIErrorCode.PRICE_MISMATCH_WARNING.getErrorCode());
 
-	/**
-	 * Constructor for ElectronicEntitlementRules
-	 */
-	private ElectronicEntitlementRules() {
-		super();
-	}
+  public static final String SHELL78 = "78";
+  public static final String SHELL79 = "79";
+  public static final String SHELL11 = "11";  
+
+  /**
+   * Constructor for ElectronicEntitlementRules
+   */
+  private ElectronicEntitlementRules() {
+    super();
+  }
 
 	/**
 	 * Records sales for auto-promotion to electronic entitlements. 1. Don't save any products which are consumable. 2. Only save voids and upgrades, all other transaction types are excluded. 3. Insert only non-errant transactions
@@ -95,24 +99,35 @@ public class ElectronicEntitlementRules {
 			// DSSN in the response.
 			for (/* each */TicketTO aRqstTicket : /* in */rqstTktList) {
 
-				String prodCode = aRqstTicket.getProdCode();
-				DBProductTO aProduct = dbProdMap.get(prodCode);
-				if (aProduct.isConsumable()) {
-					continue;
-				}
-				else {
+        String prodCode = aRqstTicket.getProdCode();
+        DBProductTO aProduct = dbProdMap.get(prodCode);
+        
+        // If a product is consumable, don't save it.
+        if (aProduct.isConsumable()) {
+          continue;
+        }
+        
+        // If a product isn't an RFID shell, don't save it.
+        if (aRqstTicket.getTktShell()!= null) {
 
-					int tktItem = aRqstTicket.getTktItem().intValue();
-					TicketTO aRespTicket = respTktList.get(tktItem - 1);
+          String tktShell = aRqstTicket.getTktShell();
+          
+          ArrayList<String> rfidShellList = new ArrayList<String>();
+          rfidShellList.add(SHELL78);
+          rfidShellList.add(SHELL79);
+          rfidShellList.add(SHELL11);
+          
+          if (rfidShellList.contains(tktShell)) {
+            int tktItem = aRqstTicket.getTktItem().intValue();
+            TicketTO aRespTicket = respTktList.get(tktItem - 1);
 
-					ElectronicEntitlementKey.insertUpgradedEntitlement(itsNbr,
-							aRespTicket, payloadID, entityId);
-
-				}
-			}
-
-		}
-		else if (dtiTxn.getTransactionType() == TransactionType.VOIDTICKET) {
+            ElectronicEntitlementKey.insertUpgradedEntitlement(itsNbr,aRespTicket, payloadID, entityId);
+          } else {
+            continue;
+          }
+        } 
+      }
+    } else if (dtiTxn.getTransactionType() == TransactionType.VOIDTICKET) {
 
 			DTIResponseTO dtiRespTO = dtiTxn.getResponse();
 			CommandBodyTO cmdRespBodyTO = dtiRespTO.getCommandBody();

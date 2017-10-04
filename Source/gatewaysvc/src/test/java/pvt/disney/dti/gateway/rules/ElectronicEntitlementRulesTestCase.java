@@ -39,6 +39,7 @@ public class ElectronicEntitlementRulesTestCase extends CommonBusinessTest {
 		/* Scenario :: 1 if transaction type is UPGRADEALPHA */
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.UPGRADEALPHA);
+		
 		getDTITransactionTO(dtiTxn, false);
 		/* mocking insertUpgradedEntitlement method of ElectronicEntitlementKey */
 		DTIMockUtil.mockInsertUpgradedEntitlement();
@@ -126,6 +127,7 @@ public class ElectronicEntitlementRulesTestCase extends CommonBusinessTest {
 		ticketTO.setProdCode("1");
 		ticketTO.setDssn(new GregorianCalendar(), "site", "station", "2");
 		ticketTO.setTktItem(new BigInteger("1"));
+		ticketTO.setTktShell("78");
 		ArrayList<DBProductTO> dBProductTOList = new ArrayList<DBProductTO>();
 		DBProductTO dBProductTO = new DBProductTO();
 		dBProductTO.setPdtCode("1");

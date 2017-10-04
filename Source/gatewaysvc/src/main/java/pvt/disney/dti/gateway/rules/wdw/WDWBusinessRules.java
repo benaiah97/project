@@ -136,6 +136,9 @@ public class WDWBusinessRules {
   /** Constant value for attribute setting of Not Editable. */
   private final static String NOTEDITABLE = "NotEditable";
 
+  /** The alternative length for an alphanumeric OT bar code. (18) As of 2.17.3 (JTL) */
+  public static final int BARCODE_LENGTH_ALPHANUM18 = 18;
+  
   /** Constant value for DSSN Station min length */
   private final static int DSSN_STATION_MIN_LENGTH = 3;
 
@@ -388,11 +391,13 @@ public class WDWBusinessRules {
       // BARCODE
       if (aTicketTO.getTicketTypes().get(0) == TicketTO.TicketIdType.BARCODE_ID) {
         if ((aTicketTO.getBarCode().length() != BARCODE_LENGTH_NUMERIC)
-            && (aTicketTO.getBarCode().length() != BARCODE_LENGTH_ALPHANUM))
+            && (aTicketTO.getBarCode().length() != BARCODE_LENGTH_ALPHANUM)
+            && (aTicketTO.getBarCode().length() != BARCODE_LENGTH_ALPHANUM18)) // As of 2.17.3 JTL
           throw new DTIException(WDWBusinessRules.class, DTIErrorCode.INVALID_TICKET_ID,
               "In-bound WDW txn with invalid Barcode length: " + aTicketTO.getBarCode().length());
-      }
+      
 
+    }
     }
 
   }
@@ -453,8 +458,12 @@ public class WDWBusinessRules {
 
       String productCode = aTicketTO.getProdCode();
       String shellString = getShellStringFromTicket(aTicketTO);
-      if (shellString == null)
-        continue;
+      
+      if (shellString == null){
+    	  continue;
+      }else { 
+    	  aTicketTO.setTktShell(shellString);
+      }
       Integer shellNbr = new Integer(shellString);
 
       ArrayList<Integer> validShells = prodShellsXRef.get(productCode);

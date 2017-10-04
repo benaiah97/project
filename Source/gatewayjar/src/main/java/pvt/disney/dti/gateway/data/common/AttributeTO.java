@@ -115,4 +115,12 @@ public class AttributeTO implements Serializable {
     this.cmdCode = cmdCode;
   }
 
+	 /**
+   * Override of the nominal class "toString()" method to provide detail output about this object's contents.
+   */
+  public String toString() {
+    String output = "AttributeTO: cmdCode =[" + cmdCode + "] attrValue=[" + attrValue + "] cmdAttrCode=[" + cmdAttrCode + "] activeInd=[" + activeInd + "]";
+    return output;
+  }
+	
 }
