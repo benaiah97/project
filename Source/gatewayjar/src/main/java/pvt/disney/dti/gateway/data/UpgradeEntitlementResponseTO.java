@@ -3,6 +3,7 @@ package pvt.disney.dti.gateway.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
@@ -23,6 +24,12 @@ public class UpgradeEntitlementResponseTO extends CommandBodyTO implements Seria
 	/** An array list of payments. */
 	protected ArrayList<PaymentTO> paymentList = new ArrayList<PaymentTO>();
 
+	/** Renewal:ContactId */
+	protected String contractId;
+
+	/** ClientData */
+	protected ClientDataTO clientData;
+	
 	/* -------------------------------------------------------------------------------- */
 
 	/**
@@ -62,6 +69,36 @@ public class UpgradeEntitlementResponseTO extends CommandBodyTO implements Seria
 	public void addTicket(TicketTO dtiTkt) {
 		ticketList.add(dtiTkt);
 
+	}
+
+	/**
+	 * @return the contractId
+	 */
+	public String getContractId() {
+		return contractId;
+	}
+	
+	/**
+	 * @param contractId
+	 *            the contractId to add
+	 */
+	public void setContractId(String contractId) {
+		this.contractId = contractId;
+	}
+
+	/**
+	 * @return the clientData
+	 */
+	public ClientDataTO getClientData() {
+		return clientData;
+	}
+
+	/**
+	 * @param clientData
+	 *            the clientData to add
+	 */
+	public void setClientData(ClientDataTO clientData) {
+		this.clientData = clientData;
 	}
 
 }

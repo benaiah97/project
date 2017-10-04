@@ -318,41 +318,41 @@ public class WDWUpgradeEntitlementRules {
    * @param dtiTxn
    * @throws DTIException
    */
-  public static void applyWDWUpgradeEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
+   public static void applyWDWUpgradeEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
-    UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn
-        .getRequest().getCommandBody();
+      UpgradeEntitlementRequestTO upgrdEntReqTO = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
 
-    ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
+      ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
 
-    for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
+      for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
 
-      // validate the TO price is greater than or equal to the FROM price
-      if (aTicketTO.getProdPrice() != null) {
+         // validate the TO price is greater than or equal to the FROM price
+         if (aTicketTO.getProdPrice() != null) {
 
-        BigDecimal fromProdPrice = aTicketTO.getFromPrice();
-        BigDecimal toProdPrice = aTicketTO.getProdPrice();
-        BigDecimal upgrdPrice = aTicketTO.getUpgrdPrice();
+            BigDecimal fromProdPrice = aTicketTO.getFromPrice();
+            BigDecimal toProdPrice = aTicketTO.getProdPrice();
+            BigDecimal upgrdPrice = aTicketTO.getUpgrdPrice();
 
-        String toProdCode = aTicketTO.getProdCode();
-        String fromProdCode = aTicketTO.getFromProdCode();
+            String toProdCode = aTicketTO.getProdCode();
+            String fromProdCode = aTicketTO.getFromProdCode();
 
-        // RULE: Apply upgrade entitlement business rule, according to price
-        ProductRules.validateUpgradePricing(fromProdCode,
-            fromProdPrice, toProdCode, toProdPrice, upgrdPrice);
+            // RULE: Apply upgrade entitlement business rule, according to price
+            ProductRules.validateUpgradePricing(fromProdCode, fromProdPrice, toProdCode, toProdPrice, upgrdPrice);
 
+         }
       }
-    }
 
-    // Validate that if other ticket demographics have been provided, phone has been provided, as well.
-    // As of 2.16.1 APMP JTL
-    ProductRules.validateWdwTicketDemo(tktListTO);
-    
-    // RULE: Validate that if the "installment" type of payment is present,
-    // Commenting out these lines to temporarily resolve INC4506020 - ClassCastException on Upgrade from HERA 
-    /*ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
-    PaymentRules.validateResInstallDownpayment(dtiTxn, tpLookups);*/
+      // Validate that if other ticket demographics have been provided, phone
+      // has been provided, as well.
+      // As of 2.16.1 APMP JTL
+      ProductRules.validateWdwTicketDemo(tktListTO);
 
-  }
+      // RULE: Validate that if the "installment" type of payment is present,
+      // Commenting out these lines to temporarily resolve INC4506020 -
+      // ClassCastException on Upgrade from HERA
+      ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
+      PaymentRules.validateUpgrdEntInstallDownpayment(dtiTxn, tpLookups);
+
+   }
 
 }

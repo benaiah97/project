@@ -14,8 +14,10 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 
+/**
+ * The Class GWEnvelopeUpgradeEntitlementXML.
+ */
 public class GWEnvelopeUpgradeEntitlementXML implements TransformConstants{
-
 
 	/**
 	 * Process the request from DTI to the provider

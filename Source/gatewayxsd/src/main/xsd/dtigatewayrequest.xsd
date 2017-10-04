@@ -2599,6 +2599,14 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
+                  <xs:element name="Eligibility" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Group" type="xs:string" />
+                            <xs:element name="Member" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="Payment" minOccurs="0" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
@@ -2743,6 +2751,14 @@
                                                                                 </xs:simpleType>
                                                                             </xs:element>
                                                                             <xs:element name="CCName" type="xs:string" />
+                                                                            <xs:element name="CCVV" type="xs:string"
+                                                                                minOccurs="0" />
+                                                                            <xs:element name="CCStreet" type="xs:string"
+                                                                                minOccurs="0" />
+                                                                            <xs:element name="CCZipcode" type="xs:string"
+                                                                                minOccurs="0" />
+                                                                            <xs:element name="CCType" type="xs:string"
+                                                                                minOccurs="0" />
                                                                         </xs:sequence>
                                                                     </xs:complexType>
                                                                 </xs:element>

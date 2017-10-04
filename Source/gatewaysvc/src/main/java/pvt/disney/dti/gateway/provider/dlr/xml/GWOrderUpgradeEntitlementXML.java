@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -21,13 +22,15 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWPaymentContractTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRespTO.TicketRecord;
 import pvt.disney.dti.gateway.rules.TransformConstants;
 import pvt.disney.dti.gateway.util.PCIControl;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
 
+/**
+ * The Class GWOrderUpgradeEntitlementXML.
+ */
 public class GWOrderUpgradeEntitlementXML {
 
 	  public static final String PAYMENT_STATUS_APPROVED = "2";
@@ -38,7 +41,7 @@ public class GWOrderUpgradeEntitlementXML {
 
 	  /** The standard core logging mechanism. */
 	  private static EventLogger eventLogger = EventLogger
-	      .getLogger(GWOrderXML.class);
+	      .getLogger(GWOrderUpgradeEntitlementXML.class);
 
 	  /**
 	   * Adds the order element.
@@ -179,502 +182,334 @@ public class GWOrderUpgradeEntitlementXML {
 	   * @param orderElement
 	   * @throws DTIException
 	   */
-	  private static void addOrderLines(GWOrderTO orderTO, Element orderElement) throws DTIException {
+   private static void addOrderLines(GWOrderTO orderTO, Element orderElement) throws DTIException {
 
-	    // BEGIN adding OrderLine elements to the Order element
-	    Element orderLines = orderElement.addElement("OrderLines");
+      // BEGIN adding OrderLine elements to the Order element
+      Element orderLines = orderElement.addElement("OrderLines");
 
-	    Iterator<GWOrderLineTO> lineIter = orderTO.getOrderLineList()
-	        .iterator();
-	    while (lineIter.hasNext()) {
+      Iterator<GWOrderLineTO> lineIter = orderTO.getOrderLineList().iterator();
+      while (lineIter.hasNext()) {
 
-	      GWOrderLineTO lineTO = lineIter.next();
+         GWOrderLineTO lineTO = lineIter.next();
 
-	      // OrderLine
-	      Element orderLineElement = orderLines.addElement("OrderLine");
+         // OrderLine
+         Element orderLineElement = orderLines.addElement("OrderLine");
 
-	      // DetailType
-	      String detailType = lineTO.getDetailType();
-	      orderLineElement.addElement("DetailType").addText(detailType);
+         // DetailType
+         String detailType = lineTO.getDetailType();
+         orderLineElement.addElement("DetailType").addText(detailType);
 
-	      // Standard Ticket Product (Type 1 Detail)
-	      if (detailType
-	          .equals(TransformConstants.GW_ORDERS_TICKET_ORDER_LINE_ITEM)) {
+         // Standard Ticket Product (Type 1 Detail)
+         if (detailType.equals(TransformConstants.GW_ORDERS_TICKET_ORDER_LINE_ITEM)) {
 
-	        orderLineElement.addElement("PLU").addText(lineTO.getPlu());
-	        orderLineElement.addElement("Description").addText(
-	            lineTO.getDescription());
+            orderLineElement.addElement("PLU").addText(lineTO.getPlu());
+            orderLineElement.addElement("Description").addText(lineTO.getDescription());
 
-	        // PaymentPlanID (optional for straight pay) (as of 2.16.1, JTL)
-	        if (lineTO.getPaymentPlanID() != null) {
-	          orderLineElement.addElement("PaymentPlanID").addText(
-	              lineTO.getPaymentPlanID());
-	        }
+            // PaymentPlanID (optional for straight pay) (as of 2.16.1, JTL)
+            if (lineTO.getPaymentPlanID() != null) {
+               orderLineElement.addElement("PaymentPlanID").addText(lineTO.getPaymentPlanID());
+            }
 
-	        if (lineTO.getTaxCode() != null && lineTO.getTaxCode().length() > 0) {
-	          orderLineElement.addElement("TaxCode").addText(
-	              lineTO.getTaxCode());
-	        }
-	        orderLineElement.addElement("Qty").addText(lineTO.getQty());
-	        orderLineElement.addElement("Amount").addText(
-	            lineTO.getAmount());
-	        orderLineElement.addElement("Total").addText(lineTO.getTotal());
+            if (lineTO.getTaxCode() != null && lineTO.getTaxCode().length() > 0) {
+               orderLineElement.addElement("TaxCode").addText(lineTO.getTaxCode());
+            }
+            orderLineElement.addElement("Qty").addText(lineTO.getQty());
+            orderLineElement.addElement("Amount").addText(lineTO.getAmount());
+            orderLineElement.addElement("Total").addText(lineTO.getTotal());
 
-	        String ticketDate = lineTO.getTicketDate();
-	        if (ticketDate != null && ticketDate.length() > 0) {
-	          orderLineElement.addElement("TicketDate").addText(
-	              ticketDate);
-	        }
-	       
+            String ticketDate = lineTO.getTicketDate();
+            if (ticketDate != null && ticketDate.length() > 0) {
+               orderLineElement.addElement("TicketDate").addText(ticketDate);
+            }
 
-	        // Payment (Type 2 Detail)
-	      }
-	      else if (detailType
-	          .equals(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM)) {
-	        orderLineElement.addElement("PaymentCode").addText(
-	            lineTO.getPaymentCode());
-	        orderLineElement.addElement("PaymentDate").addText(
-	            lineTO.getPaymentDate());
-	        orderLineElement.addElement("Description").addText(
-	            lineTO.getDescription());
-	        orderLineElement.addElement("Endorsement").addText(
-	            lineTO.getEndorsement());
+            // Payment (Type 2 Detail)
+         } else if (detailType.equals(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM)) {
+         
+            if (lineTO.getPaymentCode() != null) {
+               orderLineElement.addElement("PaymentCode").addText(lineTO.getPaymentCode());
 
-	        // Check for billing street (as of 2.16.2, JTL)
-	        String billingStreet = lineTO.getBillingStreet();
-	        if ( (billingStreet != null) && (billingStreet.length() > 0) ) {
-	             orderLineElement.addElement("BillingStreet").addText(lineTO.getBillingStreet());         
-	        }
-	        
-	        // null check for billing ZIP, cause gift cards and other payments
-	        // don't have it
-	        String billingZip = lineTO.getBillingZip();
-	        if (billingZip != null && billingZip.length() > 0) {
-	          orderLineElement.addElement("BillingZIP").addText(
-	              lineTO.getBillingZip());
-	        }
-	        
-	        orderLineElement.addElement("Amount").addText(
-	            lineTO.getAmount());
-	        orderLineElement.addElement("Total").addText(lineTO.getTotal());
+            }
+            if (lineTO.getPaymentDate() != null) {
+               orderLineElement.addElement("PaymentDate").addText(lineTO.getPaymentDate());
 
-	        // null check for expirationDate, cause gift cards and other payments
-	        // don't have it
-	        String expDate = lineTO.getExpDate();
-	        if (expDate != null && expDate.length() > 0) {
-	          orderLineElement.addElement("ExpDate").addText(
-	              lineTO.getExpDate());
-	        }
+            }
+            if (lineTO.getDescription() != null) {
+               orderLineElement.addElement("Description").addText(lineTO.getDescription());
+            }
+            if (lineTO.getEndorsement() != null) {
+               orderLineElement.addElement("Endorsement").addText(lineTO.getEndorsement());
+            }
 
-	        // null check for CVN, cause gift cards and other payments don't have
-	        // it
-	        String cvn = lineTO.getCvn();
-	        if (cvn != null && cvn.length() > 0) {
-	          orderLineElement.addElement("CVN").addText(lineTO.getCvn());
-	        }
-	      }
-	      else if (detailType
-	          .equals(TransformConstants.GW_ORDERS_PASS_ORDER_LINE_ITEM)) {
+            // Check for billing street (as of 2.16.2, JTL)
+            String billingStreet = lineTO.getBillingStreet();
+            if (StringUtils.isNotBlank(billingStreet)) {
+               orderLineElement.addElement("BillingStreet").addText(lineTO.getBillingStreet());
+            }
 
-	        // Amount
-	        orderLineElement.addElement("Amount").addText(
-	            lineTO.getAmount());
+            // null check for billing ZIP, cause gift cards and other payments don't have it
+            String billingZip = lineTO.getBillingZip();
+            if (StringUtils.isNotBlank(billingZip)) {
+               orderLineElement.addElement("BillingZIP").addText(lineTO.getBillingZip());
+            }
 
-	        // Description
-	        orderLineElement.addElement("Description").addText(
-	            lineTO.getDescription());
+            orderLineElement.addElement("Amount").addText(lineTO.getAmount());
+            orderLineElement.addElement("Total").addText(lineTO.getTotal());
 
-	        // PaymentPlanID (optional for straight pay) (as of 2.16.1, JTL)
-	        if (lineTO.getPaymentPlanID() != null) {
-	          orderLineElement.addElement("PaymentPlanID").addText(
-	              lineTO.getPaymentPlanID());
-	        }
+            // null check for expirationDate, cause gift cards and other payments don't have it
+            String expDate = lineTO.getExpDate();
+            if (StringUtils.isNotBlank(expDate)) {
+               orderLineElement.addElement("ExpDate").addText(lineTO.getExpDate());
+            }
 
-	        // PLU
-	        orderLineElement.addElement("PLU").addText(lineTO.getPlu());
+            // null check for CVN,
+            String cvn = lineTO.getCvn();
+            if (StringUtils.isNotBlank(cvn)) {
+               orderLineElement.addElement("CVN").addText(lineTO.getCvn());
+            }
+         } else if (detailType.equals(TransformConstants.GW_ORDERS_PASS_ORDER_LINE_ITEM)) {
 
-	        // Qty
-	        orderLineElement.addElement("Qty").addText(lineTO.getQty());
+            // Amount
+            orderLineElement.addElement("Amount").addText(lineTO.getAmount());
 
-	        // Total
-	        orderLineElement.addElement("Total").addText(lineTO.getTotal());
+            // Description
+            orderLineElement.addElement("Description").addText(lineTO.getDescription());
 
-	        // Are there demographics (there should be only one per line item,
-	        // thanks to flattening done prior during GW object creation.
-	        ArrayList<GWMemberDemographicsTO> memberList = lineTO
-	            .getMemberList();
-	        if ((memberList != null) && (memberList.size() > 0)) {
+            // PaymentPlanID (optional for straight pay) (as of 2.16.1, JTL) TODO RASTA006
+            /*if (lineTO.getPaymentPlanID() != null) {
+               orderLineElement.addElement("PaymentPlanID").addText(lineTO.getPaymentPlanID());
+            }*/
+          
+            // PLU
+            orderLineElement.addElement("PLU").addText(lineTO.getPlu());
 
-	          GWMemberDemographicsTO gwDemoTO = memberList.get(0);
+            // Qty
+            orderLineElement.addElement("Qty").addText(lineTO.getQty());
 
-	          // Pass (Section)
-	          Element passElement = orderLineElement.addElement("Pass");
+            // Total
+            orderLineElement.addElement("Total").addText(lineTO.getTotal());
 
-	          // FirstName
-	          if (gwDemoTO.getFirstName() != null) {
-	            passElement.addElement("FirstName").addText(
-	                gwDemoTO.getFirstName());
-	          }
+            // Upgrade From Visual ID
+            String upgradedVisualId = lineTO.getMemberList().get(0).getVisualID();
+            orderLineElement.addElement("UpgradeFromVisualID").addText(upgradedVisualId);
 
-	          // LastName
-	          if (gwDemoTO.getLastName() != null) {
-	            passElement.addElement("LastName").addText(
-	                gwDemoTO.getLastName());
-	          }
+            // Are there demographics (there should be only one per line item,
+            // thanks to flattening done prior during GW object creation.
+            ArrayList<GWMemberDemographicsTO> memberList = lineTO.getMemberList();
+            if ((memberList != null) && (memberList.size() > 0)) {
 
-	          // Street1
-	          if (gwDemoTO.getStreet1() != null) {
-	            passElement.addElement("Street1").addText(
-	                gwDemoTO.getStreet1());
-	          }
+               GWMemberDemographicsTO gwDemoTO = memberList.get(0);
 
-	          // Street2
-	          if (gwDemoTO.getStreet2() != null) {
-	            passElement.addElement("Street2").addText(
-	                gwDemoTO.getStreet2());
-	          }
+               // Pass (Section)
+               Element passElement = orderLineElement.addElement("Pass");
 
-	          // City
-	          if (gwDemoTO.getCity() != null) {
-	            passElement.addElement("City").addText(
-	                gwDemoTO.getCity());
-	          }
+               // FirstName
+               if (gwDemoTO.getFirstName() != null) {
+                  passElement.addElement("FirstName").addText(gwDemoTO.getFirstName());
+               }
 
-	          // State
-	          if (gwDemoTO.getState() != null) {
-	            passElement.addElement("State").addText(
-	                gwDemoTO.getState());
-	          }
+               // LastName
+               if (gwDemoTO.getLastName() != null) {
+                  passElement.addElement("LastName").addText(gwDemoTO.getLastName());
+               }
 
-	          // ZIP
-	          if (gwDemoTO.getZip() != null) {
-	            passElement.addElement("ZIP")
-	                .addText(gwDemoTO.getZip());
-	          }
+               // Street1
+               if (gwDemoTO.getStreet1() != null) {
+                  passElement.addElement("Street1").addText(gwDemoTO.getStreet1());
+               }
 
-	          // CountryCode
-	          if (gwDemoTO.getCountryCode() != null) {
-	            passElement.addElement("CountryCode").addText(
-	                gwDemoTO.getCountryCode());
-	          }
+               // Street2
+               if (gwDemoTO.getStreet2() != null) {
+                  passElement.addElement("Street2").addText(gwDemoTO.getStreet2());
+               }
 
-	          // Phone
-	          if (gwDemoTO.getPhone() != null) {
-	            passElement.addElement("Phone").addText(
-	                gwDemoTO.getPhone());
+               // City
+               if (gwDemoTO.getCity() != null) {
+                  passElement.addElement("City").addText(gwDemoTO.getCity());
+               }
 
-	          }
+               // State
+               if (gwDemoTO.getState() != null) {
+                  passElement.addElement("State").addText(gwDemoTO.getState());
+               }
 
-	          // Email (NOT INCLUDED ACCORDING TO JENNIFER OVERTURF)
+               // ZIP
+               if (gwDemoTO.getZip() != null) {
+                  passElement.addElement("ZIP").addText(gwDemoTO.getZip());
+               }
 
-	          // DOB
-	          if (gwDemoTO.getDateOfBirth() != null) {
-	            passElement.addElement("DOB").addText(
-	                gwDemoTO.getDateOfBirth());
-	          }
+               // CountryCode
+               if (gwDemoTO.getCountryCode() != null) {
+                  passElement.addElement("CountryCode").addText(gwDemoTO.getCountryCode());
+               }
 
-	          // Gender
-	          if (gwDemoTO.getGender() != null) {
-	            passElement.addElement("Gender").addText(
-	                gwDemoTO.getGender());
-	          }
+               // Phone
+               if (gwDemoTO.getPhone() != null) {
+                  passElement.addElement("Phone").addText(gwDemoTO.getPhone());
 
-	          // VisualID
-	          if (gwDemoTO.getVisualID() != null) {
-	            passElement.addElement("VisualID").addText(
-	                gwDemoTO.getVisualID());
-	          }
+               }
 
-	        }
+               // Email (NOT INCLUDED ACCORDING TO JENNIFER OVERTURF)
 
-	      }
-	      //for upgrade TO Do 
-	      else if (detailType
-		          .equals(TransformConstants.GW_ORDERS_UPGRADE_ORDER_LINE_ITEM)) {
+               // DOB
+               if (gwDemoTO.getDateOfBirth() != null) {
+                  passElement.addElement("DOB").addText(gwDemoTO.getDateOfBirth());
+               }
 
-		        // Description
-		        orderLineElement.addElement("Description").addText(
-		            lineTO.getDescription());
-		        
-		        // PLU
-		        orderLineElement.addElement("PLU").addText(
-		            lineTO.getPlu());
-		        
-		        // QTY
-		        orderLineElement.addElement("QTY").addText(
-		            lineTO.getQty());
-		        
-		        // Amount
-		        orderLineElement.addElement("Amount").addText(
-		            lineTO.getAmount());
-		        
-		        // Amount
-		        orderLineElement.addElement("Total").addText(
-		            lineTO.getTotal());
-		        
-		        // TaxAmount need to get the details for tax , need to verify this TO DO 
-		        Double taxAmount=Double.parseDouble(lineTO.getTotal())-Double.parseDouble(lineTO.getAmount());
-		       orderLineElement.addElement("TaxAmount").addText(
-		    		   taxAmount.toString());
-		       
-		       // Need to verify this TO DO 
-		       orderLineElement.addElement("DiscountAmount").addText(
-		    		   "0.0");
+               // Gender
+               if (gwDemoTO.getGender() != null) {
+                  passElement.addElement("Gender").addText(gwDemoTO.getGender());
+               }
 
-		        // UpgradeFromVisualID need to verify this TO DO 
-		       String upgradedVisualId=lineTO.getMemberList().get(0).getVisualID();
-		       orderLineElement.addElement("UpgradeFromVisualID").addText(upgradedVisualId);
-		       
-		       // Taxes Section  TO DO 
-		       Element taxesElement = orderLineElement.addElement("Taxes");
-		       
-		       Element taxElement=taxesElement.addElement("Tax");
-		       // TO DO 
-		       
-		       // Tax Id
-		       taxElement.addElement("TaxId").addText("1");
-		       
-		       // UnitAmount
-		       taxElement.addElement("UnitAmount").addText(taxAmount.toString());
-		       
-		       // Method
-		       taxElement.addElement("Method").addText("1");
-		       
-		        ArrayList<GWMemberDemographicsTO> memberList = lineTO
-		            .getMemberList();
-		        if ((memberList != null) && (memberList.size() > 0)) {
+            }
 
-		          GWMemberDemographicsTO gwDemoTO = memberList.get(0);
-
-		          // Pass (Section)
-		          Element passElement = orderLineElement.addElement("Pass");
-
-		          // FirstName
-		          if (gwDemoTO.getFirstName() != null) {
-		            passElement.addElement("FirstName").addText(
-		                gwDemoTO.getFirstName());
-		          }
-
-		          // LastName
-		          if (gwDemoTO.getLastName() != null) {
-		            passElement.addElement("LastName").addText(
-		                gwDemoTO.getLastName());
-		          }
-
-		          // Street1
-		          if (gwDemoTO.getStreet1() != null) {
-		            passElement.addElement("Street1").addText(
-		                gwDemoTO.getStreet1());
-		          }
-
-		          // Street2
-		          if (gwDemoTO.getStreet2() != null) {
-		            passElement.addElement("Street2").addText(
-		                gwDemoTO.getStreet2());
-		          }
-
-		          // City
-		          if (gwDemoTO.getCity() != null) {
-		            passElement.addElement("City").addText(
-		                gwDemoTO.getCity());
-		          }
-
-		          // State
-		          if (gwDemoTO.getState() != null) {
-		            passElement.addElement("State").addText(
-		                gwDemoTO.getState());
-		          }
-
-		          // ZIP
-		          if (gwDemoTO.getZip() != null) {
-		            passElement.addElement("ZIP")
-		                .addText(gwDemoTO.getZip());
-		          }
-
-		          // CountryCode
-		          if (gwDemoTO.getCountryCode() != null) {
-		            passElement.addElement("CountryCode").addText(
-		                gwDemoTO.getCountryCode());
-		          }
-
-		          // Phone
-		          if (gwDemoTO.getPhone() != null) {
-		            passElement.addElement("Phone").addText(
-		                gwDemoTO.getPhone());
-
-		          }
-
-		          // Email (NOT INCLUDED ACCORDING TO JENNIFER OVERTURF)
-
-		          // DOB
-		          if (gwDemoTO.getDateOfBirth() != null) {
-		            passElement.addElement("DOB").addText(
-		                gwDemoTO.getDateOfBirth());
-		          }
-
-		          // Gender
-		          if (gwDemoTO.getGender() != null) {
-		            passElement.addElement("Gender").addText(
-		                gwDemoTO.getGender());
-		          }
-
-		        }
-
-		      }
-	      else {
-	        throw new DTIException(GWOrderXML.class,
-	            DTIErrorCode.INVALID_MSG_CONTENT,
-	            "Invalid OrderLine DetailType");
-	      }
-	    }
-	  }
+         } else {
+            throw new DTIException(GWOrderXML.class, DTIErrorCode.INVALID_MSG_CONTENT, "Invalid OrderLine DetailType");
+         }
+      }
+   }
 
 	  /**
-	   * @param orderTO
-	   * @param orderElement
-	   */
-	  private static void addShipping(GWOrderTO orderTO, Element orderElement) {
-	    Element shippingElement = orderElement.addElement("Shipping");
-	    shippingElement.addElement("DeliveryMethod").addText(
-	        orderTO.getShipDeliveryMethod());
-	    shippingElement.addElement("DeliveryDetails").addText(
-	        orderTO.getShipDeliveryDetails());
+  	 * Adds the shipping.
+  	 *
+  	 * @param orderTO the order TO
+  	 * @param orderElement the order element
+  	 */
+   private static void addShipping(GWOrderTO orderTO, Element orderElement) {
 
-	    // BEGIN add the GroupVisit Element to Order
+      Element shippingElement = orderElement.addElement("Shipping");
+      shippingElement.addElement("DeliveryMethod").addText(orderTO.getShipDeliveryMethod());
+      shippingElement.addElement("DeliveryDetails").addText(orderTO.getShipDeliveryDetails());
 
-	    // add VisitDate to GroupVisit
-	    if (orderTO.getGroupVisitDate() != null && orderTO.getGroupVisitDate()
-	        .length() > 0 && !orderTO.getGroupVisitDate().equals("null")) {
-	      Element groupVisit = orderElement.addElement("GroupVisit");
-	      groupVisit.addElement("VisitDate").addText(
-	          orderTO.getGroupVisitDate());
+      // BEGIN add the GroupVisit Element to Order
 
-	      if (orderTO.getGroupVisitDescription() != null) {
-	        groupVisit.addElement("Description").addText(
-	            orderTO.getGroupVisitDescription());
-	      }
+      // add VisitDate to GroupVisit
+      /*if (orderTO.getGroupVisitDate() != null && orderTO.getGroupVisitDate().length() > 0
+               && !orderTO.getGroupVisitDate().equals("null")) {
+         Element groupVisit = orderElement.addElement("GroupVisit");
+         groupVisit.addElement("VisitDate").addText(orderTO.getGroupVisitDate());
 
-	      // Code 2.11 to add Group Visit Reference
-	      if (orderTO.getGroupVisitReference() != null) {
-	        groupVisit.addElement("Reference").addText(
-	            orderTO.getGroupVisitReference());
-	      }
+         if (orderTO.getGroupVisitDescription() != null) {
+            groupVisit.addElement("Description").addText(orderTO.getGroupVisitDescription());
+         }
 
-	    }
-	  }
+         // Code 2.11 to add Group Visit Reference
+         if (orderTO.getGroupVisitReference() != null) {
+            groupVisit.addElement("Reference").addText(orderTO.getGroupVisitReference());
+         }
+
+      }*/
+   }
 
 	  /**
-	   * @param orderTO
-	   * @param orderElement
-	   */
-	  private static void addShipToContact(GWOrderTO orderTO, Element orderElement) {
-	    // BEGIN the ShipToContact element, add it to the Order element
-	    if (orderTO.getShipToContact() != null) {
-	      Element shipToElement = orderElement.addElement("ShipToContact");
-	      Element shipContact = shipToElement.addElement("Contact");
-	      GWOrderContactTO shipContactTo = orderTO.getShipToContact();
+  	 * Adds the ship to contact.
+  	 *
+  	 * @param orderTO the order TO
+  	 * @param orderElement the order element
+  	 */
+   private static void addShipToContact(GWOrderTO orderTO, Element orderElement) {
+      // BEGIN the ShipToContact element, add it to the Order element
+      if (orderTO.getShipToContact() != null) {
+         Element shipToElement = orderElement.addElement("ShipToContact");
+         Element shipContact = shipToElement.addElement("Contact");
+         GWOrderContactTO shipContactTo = orderTO.getShipToContact();
 
-	      String firstName = shipContactTo.getFirstName();
-	      String lastName = shipContactTo.getLastName();
-	      String street1 = shipContactTo.getStreet1();
-	      String street2 = shipContactTo.getStreet2();
-	      String street3 = shipContactTo.getStreet3();
-	      String city = shipContactTo.getCity();
-	      String state = shipContactTo.getState();
-	      String zip = shipContactTo.getZip();
-	      String country = shipContactTo.getCountry();
-	      String phone = shipContactTo.getPhone();
-	      String email = shipContactTo.getEmail();
+         String firstName = shipContactTo.getFirstName();
+         String lastName = shipContactTo.getLastName();
+         String street1 = shipContactTo.getStreet1();
+         String street2 = shipContactTo.getStreet2();
+         String street3 = shipContactTo.getStreet3();
+         String city = shipContactTo.getCity();
+         String state = shipContactTo.getState();
+         String zip = shipContactTo.getZip();
+         String country = shipContactTo.getCountry();
+         String phone = shipContactTo.getPhone();
+         String email = shipContactTo.getEmail();
 
-	      if (firstName != null && firstName.length() > 0 && !(firstName
-	          .equals("null"))) {
-	        shipContact.addElement("FirstName").addText(firstName);
-	      }
-	      if (lastName != null && lastName.length() > 0 && !(lastName
-	          .equals("null"))) {
-	        shipContact.addElement("LastName").addText(lastName);
-	      }
+         if (StringUtils.isNotBlank(firstName)) {
+            shipContact.addElement("FirstName").addText(firstName);
+         }
+         if (StringUtils.isNotBlank(lastName)) {
+            shipContact.addElement("LastName").addText(lastName);
+         }
 
-	      if (street1 != null && street1.length() > 0 && !(street1
-	          .equals("null"))) {
-	        shipContact.addElement("Street1").addText(street1);
-	      }
+         if (StringUtils.isNotBlank(street1)) {
+            shipContact.addElement("Street1").addText(street1);
+         }
 
-	      if (street2 != null && street2.length() > 0 && !(street2
-	          .equals("null"))) {
-	        shipContact.addElement("Street2").addText(street2);
-	      }
+         if (StringUtils.isNotBlank(street2)) {
+            shipContact.addElement("Street2").addText(street2);
+         }
 
-	      if (street3 != null && street3.length() > 0 && !(street3
-	          .equals("null"))) {
-	        shipContact.addElement("Street3").addText(street3);
-	      }
+         if (StringUtils.isNotBlank(street3)) {
+            shipContact.addElement("Street3").addText(street3);
+         }
 
-	      if (city != null && city.length() > 0 && !(city.equals("null"))) {
-	        shipContact.addElement("City").addText(city);
-	      }
+         if (StringUtils.isNotBlank(city)) {
+            shipContact.addElement("City").addText(city);
+         }
 
-	      if (state != null && state.length() > 0 && !(state.equals("null"))) {
-	        shipContact.addElement("State").addText(state);
-	      }
+         if (StringUtils.isNotBlank(state)) {
+            shipContact.addElement("State").addText(state);
+         }
 
-	      if (zip != null && zip.length() > 0 && !(zip.equals("null"))) {
-	        shipContact.addElement("Zip").addText(zip);
-	      }
-	      if (country != null && country.length() > 0 && !(country
-	          .equals("null"))) {
-	        shipContact.addElement("Country").addText(country);
-	      }
-	      if (phone != null && phone.length() > 0 && !(phone.equals("null"))) {
-	        shipContact.addElement("Phone").addText(phone);
-	      }
-	      if (email != null && email.length() > 0 && !(email.equals("null"))) {
-	        shipContact.addElement("Email").addText(email);
-	      }
+         if (StringUtils.isNotBlank(zip)) {
+            shipContact.addElement("Zip").addText(zip);
+         }
+         if (StringUtils.isNotBlank(country)) {
+            shipContact.addElement("Country").addText(country);
+         }
+         if (StringUtils.isNotBlank(phone)) {
+            shipContact.addElement("Phone").addText(phone);
+         }
+         if (StringUtils.isNotBlank(email)) {
+            shipContact.addElement("Email").addText(email);
+         }
 
-	    }
-	    // END the ShipToContact element, add it to the Order element
-	  }
+      }
+      // END the ShipToContact element, add it to the Order element
+   }
 
 	  /**
-	   * @param orderTO
-	   * @param orderElement
-	   */
-	  private static void addOrderContact(GWOrderTO orderTO, Element orderElement) {
-	    // BEGIN the OrderContact element, add it to the Order element
-	    Element orderContact = orderElement.addElement("OrderContact");
+  	 * Adds the order contact.
+  	 *
+  	 * @param orderTO the order TO
+  	 * @param orderElement the order element
+  	 */
+   private static void addOrderContact(GWOrderTO orderTO, Element orderElement) {
+      // BEGIN the OrderContact element, add it to the Order element
+      Element orderContact = orderElement.addElement("OrderContact");
 
-	    // add the Contact element to the OrderContact element
-	    Element contact = orderContact.addElement("Contact");
-	    GWOrderContactTO contactTo = orderTO.getOrderContact();
-	    contact.addElement("FirstName").addText(contactTo.getFirstName());
-	    contact.addElement("LastName").addText(contactTo.getLastName());
-	    contact.addElement("Street1").addText(contactTo.getStreet1());
-	    if (contactTo.getStreet2() != null && contactTo.getStreet2().length() > 0) {
-	      contact.addElement("Street2").addText(contactTo.getStreet2());
-	    }
-	    if (contactTo.getStreet3() != null && contactTo.getStreet3().length() > 0) {
-	      contact.addElement("Street3").addText(contactTo.getStreet3());
-	    }
-	    contact.addElement("City").addText(contactTo.getCity());
-	    // WDPROFIX
-	    if (contactTo.getState() != null && contactTo.getState().length() > 0 && !contactTo
-	        .getState().equals("null")) {
-	      contact.addElement("State").addText(contactTo.getState());
-	    }
-	    contact.addElement("Zip").addText(contactTo.getZip());
-	    contact.addElement("Country").addText(contactTo.getCountry());
-	    contact.addElement("Phone").addText(contactTo.getPhone());
-	    contact.addElement("Email").addText(contactTo.getEmail());
-	    // END the OrderContact element
-	  }
+      // add the Contact element to the OrderContact element
+      Element contact = orderContact.addElement("Contact");
+      GWOrderContactTO contactTo = orderTO.getOrderContact();
+      contact.addElement("FirstName").addText(contactTo.getFirstName());
+      contact.addElement("LastName").addText(contactTo.getLastName());
+      contact.addElement("Street1").addText(contactTo.getStreet1());
+      if (contactTo.getStreet2() != null && contactTo.getStreet2().length() > 0) {
+         contact.addElement("Street2").addText(contactTo.getStreet2());
+      }
+      if (contactTo.getStreet3() != null && contactTo.getStreet3().length() > 0) {
+         contact.addElement("Street3").addText(contactTo.getStreet3());
+      }
+      contact.addElement("City").addText(contactTo.getCity());
+      // WDPROFIX
+      if (contactTo.getState() != null && contactTo.getState().length() > 0 && !contactTo.getState().equals("null")) {
+         contact.addElement("State").addText(contactTo.getState());
+      }
+      contact.addElement("Zip").addText(contactTo.getZip());
+      contact.addElement("Country").addText(contactTo.getCountry());
+      contact.addElement("Phone").addText(contactTo.getPhone());
+      contact.addElement("Email").addText(contactTo.getEmail());
+      // END the OrderContact element
+   }
 
 	  /**
-	   * 
-	   * @param gwBodyTO
-	   * @param bodyElement
-	   * @throws DTIException
-	   */
+  	 * Sets the resp body TO.
+  	 *
+  	 * @param gwBodyTO the gw body TO
+  	 * @param bodyElement the body element
+  	 * @throws DTIException the DTI exception
+  	 */
 	  @SuppressWarnings("unchecked")
 	  public static void setRespBodyTO(GWBodyTO gwBodyTO, Element bodyElement) throws DTIException {
 

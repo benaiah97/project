@@ -7,10 +7,10 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRqstTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWQueryOrderRqstTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWTicketActivationRqstTO;
 
+/**
+ * The Class GWBodyUpgradeEntitlementXML.
+ */
 public class GWBodyUpgradeEntitlementXML {
 
 
@@ -39,7 +39,6 @@ public class GWBodyUpgradeEntitlementXML {
 						DTIErrorCode.INVALID_MSG_CONTENT,
 						"Order request did not have a fully formed value object.");
 			}
-
 			GWOrderUpgradeEntitlementXML.addOrderElement(ordReqTO, bodyElement);
 
 		}else{
