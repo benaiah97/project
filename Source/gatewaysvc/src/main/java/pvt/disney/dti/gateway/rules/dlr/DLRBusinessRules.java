@@ -84,7 +84,8 @@ public class DLRBusinessRules {
       
     case UPGRADEENTITLEMENT:
       xmlRequest=DLRUpgradeEntitlementRules.transformRequest(dtiTxn);
-
+      break;
+      
     default:
       throw new DTIException(TransformRules.class,
           DTIErrorCode.COMMAND_NOT_AUTHORIZED,

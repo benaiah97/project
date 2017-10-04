@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.UpgradeEntitlementResponseTO;
+import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
@@ -22,13 +23,16 @@ import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentDemographicsTO;
 import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
+import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.data.common.VoucherTO;
+import pvt.disney.dti.gateway.request.xsd.RenewEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket.ProdDemoData;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket.ProdDemoData.TktDemoData;
+import pvt.disney.dti.gateway.response.xsd.RenewEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse.Payment;
 
@@ -39,44 +43,212 @@ import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse.Payment;
  */
 
 public class UpgradeEntitlementXML {
-
+	
 	/**
 	 * Gets the DTI transfer object from the JAXB version of the Upgrade Entitlement Request.
 	 * 
-	 * @param uEntReq
+	 * @param upgradeEntitlementReq
 	 * @return
 	 * @throws JAXBException
 	 */
 	public static UpgradeEntitlementRequestTO getTO(
-			UpgradeEntitlementRequest uEntReq) throws JAXBException {
+			UpgradeEntitlementRequest upgradeEntitlementReq) throws JAXBException {
 
-		UpgradeEntitlementRequestTO uEntReqTO = new UpgradeEntitlementRequestTO();
+		UpgradeEntitlementRequestTO upgradeEntitlementReqTO = new UpgradeEntitlementRequestTO();
 
 		// A Ticket
-		List<UpgradeEntitlementRequest.Ticket> ticketList = uEntReq.getTicket();
+		List<UpgradeEntitlementRequest.Ticket> ticketList = upgradeEntitlementReq.getTicket();
 		ArrayList<TicketTO> ticketListTO = new ArrayList<TicketTO>();
 		for /* each */(UpgradeEntitlementRequest.Ticket aTicket : /* in */ticketList) {
 			setTOTicketList(ticketListTO, aTicket);
 		}
-		uEntReqTO.setTicketList(ticketListTO);
+		upgradeEntitlementReqTO.setTicketList(ticketListTO);
 
 		// Payment List
-		List<UpgradeEntitlementRequest.Payment> paymentList = uEntReq
+		List<UpgradeEntitlementRequest.Payment> paymentList = upgradeEntitlementReq
 				.getPayment();
 		ArrayList<PaymentTO> paymentListTO = new ArrayList<PaymentTO>();
 		for /* each */(UpgradeEntitlementRequest.Payment aPayment : /* in */paymentList) {
 			setTOPaymentList(paymentListTO, aPayment);
 		}
-		uEntReqTO.setPaymentList(paymentListTO);
+		upgradeEntitlementReqTO.setPaymentList(paymentListTO);
 
 		// AuditNotation (as of 2.12)
-		if (uEntReq.getAuditNotation() != null) {
-			uEntReqTO.setAuditNotation(uEntReq.getAuditNotation());
+		if (upgradeEntitlementReq.getAuditNotation() != null) {
+			upgradeEntitlementReqTO.setAuditNotation(upgradeEntitlementReq.getAuditNotation());
 		}
 
-		return uEntReqTO;
+		// Reservation
+	    if (upgradeEntitlementReq.getReservation() != null) {
+	    	UpgradeEntitlementRequest.Reservation renewEnt = upgradeEntitlementReq
+	          .getReservation();
+	      ReservationTO resvTO = new ReservationTO();
+	      List<JAXBElement<?>> aReservationList = renewEnt
+	          .getResCodeOrResCreateDateOrResPickupDate();
+	      for /* each */(JAXBElement<?> aReservationEntry : /* in */aReservationList) {
+	        setTOReservation(resvTO, aReservationEntry);
+	      }
+	      upgradeEntitlementReqTO.setReservation(resvTO);
+	    }
 
+	    // ClientData
+	    if (upgradeEntitlementReq.getClientData() != null) {
+	    	UpgradeEntitlementRequest.ClientData clientData = upgradeEntitlementReq
+	          .getClientData();
+	      ClientDataTO clientDataTO = new ClientDataTO();
+	      setTOClientData(clientData, clientDataTO);
+	      upgradeEntitlementReqTO.setClientData(clientDataTO);
+	    }
+	    
+	    // Eligibility
+	    if (upgradeEntitlementReq.getEligibility() != null) {
+	       UpgradeEntitlementRequest.Eligibility elig = upgradeEntitlementReq
+	          .getEligibility();
+	       upgradeEntitlementReqTO.setEligibilityGroup(elig.getGroup());
+	       upgradeEntitlementReqTO.setEligibilityMember(elig.getMember());
+	    }
+	   	   	    
+		return upgradeEntitlementReqTO;
 	}
+	
+	/**
+	   * Sets the to reservation.
+	   * 
+	   * @param resvTO
+	   *            the resv transfer object
+	   * @param aReservationEntry
+	   *            a JAXB reservation entry
+	   */
+	  private static void setTOReservation(ReservationTO resvTO,
+	      JAXBElement<?> aReservationEntry) {
+
+	    QName fieldName = aReservationEntry.getName();
+
+	    if (fieldName.getLocalPart().equalsIgnoreCase("ResCode")) {
+	      resvTO.setResCode((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResNumber")) {
+	      resvTO.setResNumber((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResCreateDate")) {
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
+	          .getValue();
+	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+	      resvTO.setResCreateDate(tempCalendar);
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResPickupDate")) {
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
+	          .getValue();
+	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+	      resvTO.setResPickupDate(tempCalendar);
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResPickupArea")) {
+	      resvTO.setResPickupArea((String) aReservationEntry.getValue());
+	    }
+	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResSalesType")) {
+	      resvTO.setResSalesType((String) aReservationEntry.getValue());
+	    }
+
+	    return;
+	  }
+	  
+	  /**
+	   * Sets the to client data.
+	   * 
+	   * @param clientData
+	   *            the client data parsed from JAXB
+	   * @param clientDataTO
+	   *            the client data transfer object
+	   */
+	  private static void setTOClientData(
+			  UpgradeEntitlementRequest.ClientData clientData,
+	      ClientDataTO clientDataTO) {
+
+	    // Optional fields
+	    if (clientData.getClientType() != null) clientDataTO
+	        .setClientType(clientData.getClientType());
+	    if (clientData.getClientCategory() != null) clientDataTO
+	        .setClientCategory(clientData.getClientCategory());
+	    if (clientData.getDemoLanguage() != null) clientDataTO
+	        .setDemoLanguage(clientData.getDemoLanguage());
+
+	    // Optional Demographics
+	    if (clientData.getDemoData() != null) {
+
+	    	UpgradeEntitlementRequest.ClientData.DemoData demoData = clientData
+	          .getDemoData();
+
+	      if (demoData.getBill() != null) {
+	        DemographicsTO demoTO = new DemographicsTO();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Bill billData = demoData
+	            .getBill();
+
+	        // Optional Attributes
+	        if (billData.getName() != null) demoTO.setName(billData
+	            .getName());
+	        if (billData.getLastName() != null) demoTO.setLastName(billData
+	            .getLastName());
+	        if (billData.getFirstName() != null) demoTO
+	            .setFirstName(billData.getFirstName());
+	        if (billData.getAddr1() != null) demoTO.setAddr1(billData
+	            .getAddr1());
+	        if (billData.getAddr2() != null) demoTO.setAddr2(billData
+	            .getAddr2());
+	        if (billData.getCity() != null) demoTO.setCity(billData
+	            .getCity());
+	        if (billData.getState() != null) demoTO.setState(billData
+	            .getState());
+	        if (billData.getZip() != null) demoTO.setZip(billData.getZip());
+	        if (billData.getCountry() != null) demoTO.setCountry(billData
+	            .getCountry());
+	        if (billData.getTelephone() != null) demoTO
+	            .setTelephone(billData.getTelephone());
+	        if (billData.getEmail() != null) demoTO.setEmail(billData
+	            .getEmail());
+	        if (billData.getSellerResNbr() != null) demoTO
+	            .setSellerResNbr(billData.getSellerResNbr());
+
+	        clientDataTO.setBillingInfo(demoTO);
+
+	      }
+
+	      if (demoData.getShip() != null) {
+
+	        DemographicsTO demoTO = new DemographicsTO();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Ship shipData = demoData
+	            .getShip();
+
+	        // Optional Attributes
+	        if (shipData.getName() != null) demoTO.setName(shipData
+	            .getName());
+	        if (shipData.getLastName() != null) demoTO.setLastName(shipData
+	            .getLastName());
+	        if (shipData.getFirstName() != null) demoTO
+	            .setFirstName(shipData.getFirstName());
+	        if (shipData.getAddr1() != null) demoTO.setAddr1(shipData
+	            .getAddr1());
+	        if (shipData.getAddr2() != null) demoTO.setAddr2(shipData
+	            .getAddr2());
+	        if (shipData.getCity() != null) demoTO.setCity(shipData
+	            .getCity());
+	        if (shipData.getState() != null) demoTO.setState(shipData
+	            .getState());
+	        if (shipData.getZip() != null) demoTO.setZip(shipData.getZip());
+	        if (shipData.getCountry() != null) demoTO.setCountry(shipData
+	            .getCountry());
+	        if (shipData.getTelephone() != null) demoTO
+	            .setTelephone(shipData.getTelephone());
+	        if (shipData.getEmail() != null) demoTO.setEmail(shipData
+	            .getEmail());
+
+	        clientDataTO.setShippingInfo(demoTO);
+
+	      }
+
+	    }
+
+	    return;
+	  }
 
 	/**
 	 * 
@@ -418,81 +590,91 @@ public class UpgradeEntitlementXML {
 
 				aPaymentTO.setGiftCard(giftCardTO);
 			}
-		} else if (payType.getInstallment() != null) { // (As of 2.17.3, JTL)
+      } else if (payType.getInstallment() != null) { // (As of 2.17.3, JTL)
 
-      InstallmentTO instTO = new InstallmentTO();
-      UpgradeEntitlementRequest.Payment.PayType.Installment installment = payType.getInstallment();
-      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentCreditCard installCard = installment
-          .getInstallmentCreditCard();
+         InstallmentTO installmentTO = new InstallmentTO();
+         UpgradeEntitlementRequest.Payment.PayType.Installment installment = payType.getInstallment();
+         UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentCreditCard installCard = installment
+                  .getInstallmentCreditCard();
 
-      InstallmentCreditCardTO installCCTO = instTO.getCreditCard();
+         InstallmentCreditCardTO installCCTO = installmentTO.getCreditCard();
 
-      if (installCard.getCCManual() != null) {
-        installCCTO.setCcNbr(installCard.getCCManual().getCCNbr());
-        installCCTO.setCcExpiration(installCard.getCCManual().getCCExpiration());
-        installCCTO.setCcName(installCard.getCCManual().getCCName());
-      } else {
-        installCCTO.setCcTrack1(installCard.getCCSwipe().getCCTrack1());
-        installCCTO.setCcTrack2(installCard.getCCSwipe().getCCTrack2());
+         if (installCard.getCCManual() != null) {
+            installCCTO.setCcNbr(installCard.getCCManual().getCCNbr());
+            installCCTO.setCcExpiration(installCard.getCCManual().getCCExpiration());
+            installCCTO.setCcName(installCard.getCCManual().getCCName());
+
+            if (installCard.getCCManual().getCCVV() != null)
+               installCCTO.setCcVV(installCard.getCCManual().getCCVV());
+            if (installCard.getCCManual().getCCStreet() != null)
+               installCCTO.setCcStreet(installCard.getCCManual().getCCStreet());
+            if (installCard.getCCManual().getCCZipcode() != null)
+               installCCTO.setCcZipCode(installCard.getCCManual().getCCZipcode());
+            if (installCard.getCCManual().getCCType() != null)
+               installCCTO.setCcType(installCard.getCCManual().getCCType());
+
+         } else {
+            installCCTO.setCcTrack1(installCard.getCCSwipe().getCCTrack1());
+            installCCTO.setCcTrack2(installCard.getCCSwipe().getCCTrack2());
+         }
+
+         UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentDemoData installDemo = installment
+                  .getInstallmentDemoData();
+         InstallmentDemographicsTO installDemoTO = installmentTO.getInstllDemo();
+
+         // First Name
+         installDemoTO.setFirstName(installDemo.getFirstName());
+
+         // Middle Name (opt)
+         if (installDemo.getMiddleName() != null) {
+            installDemoTO.setMiddleName(installDemo.getMiddleName());
+         }
+
+         // Last Name
+         installDemoTO.setLastName(installDemo.getLastName());
+
+         // DOB (opt)
+         if (installDemo.getDateOfBirth() != null) {
+            XMLGregorianCalendar tXCal = (XMLGregorianCalendar) installDemo.getDateOfBirth();
+            GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
+            installDemoTO.setDateOfBirth(tempCalendar);
+         }
+
+         // Addr1
+         installDemoTO.setAddr1(installDemo.getAddr1());
+
+         // Addr2 (opt)
+         if (installDemo.getAddr2() != null) {
+            installDemoTO.setAddr2(installDemo.getAddr2());
+         }
+
+         // City
+         installDemoTO.setCity(installDemo.getCity());
+
+         // State
+         installDemoTO.setState(installDemo.getState());
+
+         // ZIP
+         installDemoTO.setZip(installDemo.getZip());
+
+         // Country
+         installDemoTO.setCountry(installDemo.getCountry());
+
+         // Telephone
+         installDemoTO.setTelephone(installDemo.getTelephone());
+
+         // AltTelephone (opt)
+         if (installDemo.getAltTelephone() != null) {
+            installDemoTO.setAltTelephone(installDemo.getAltTelephone());
+         }
+
+         // Email
+         installDemoTO.setEmail(installDemo.getEmail());
+
+         // Set the installment
+         aPaymentTO.setInstallment(installmentTO);
+
       }
-
-      UpgradeEntitlementRequest.Payment.PayType.Installment.InstallmentDemoData installDemo = installment
-          .getInstallmentDemoData();
-      InstallmentDemographicsTO installDemoTO = instTO.getInstllDemo();
-
-      // First Name
-      installDemoTO.setFirstName(installDemo.getFirstName());
-
-      // Middle Name (opt)
-      if (installDemo.getMiddleName() != null) {
-        installDemoTO.setMiddleName(installDemo.getMiddleName());
-      }
-
-      // Last Name
-      installDemoTO.setLastName(installDemo.getLastName());
-
-      // DOB (opt)
-      if (installDemo.getDateOfBirth() != null) {
-        XMLGregorianCalendar tXCal = (XMLGregorianCalendar) installDemo.getDateOfBirth();
-        GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
-        installDemoTO.setDateOfBirth(tempCalendar);
-      }
-
-      // Addr1
-      installDemoTO.setAddr1(installDemo.getAddr1());
-
-      // Addr2 (opt)
-      if (installDemo.getAddr2() != null) {
-        installDemoTO.setAddr2(installDemo.getAddr2());
-      }
-
-      // City
-      installDemoTO.setCity(installDemo.getCity());
-
-      // State
-      installDemoTO.setState(installDemo.getState());
-
-      // ZIP
-      installDemoTO.setZip(installDemo.getZip());
-
-      // Country
-      installDemoTO.setCountry(installDemo.getCountry());
-
-      // Telephone
-      installDemoTO.setTelephone(installDemo.getTelephone());
-
-      // AltTelephone (opt)
-      if (installDemo.getAltTelephone() != null) {
-        installDemoTO.setAltTelephone(installDemo.getAltTelephone());
-      }
-
-      // Email
-      installDemoTO.setEmail(installDemo.getEmail());
-
-      // Set the installment
-      aPaymentTO.setInstallment(instTO);
-
-    }
 
 		// PayAmount
 		if (aPayment.getPayAmount() != null) aPaymentTO
@@ -531,7 +713,7 @@ public class UpgradeEntitlementXML {
 			ArrayList<PaymentTO> paymentListTO = uEntRespTO.getPaymentList();
 			setJaxbPaymentList(paymentList, paymentListTO);
 		}
-
+		
 		return uEntResp;
 	}
 
