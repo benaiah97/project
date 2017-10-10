@@ -1,0 +1,81 @@
+################################################################################################################
+USING DOCKER-COMPOSE DURING DEVELOPMENT : AUTHOR: DR. SHAN MOON (MOONS012, SHAN.M.MOON@DISNEY.COM)
+################################################################################################################
+
+Docker-Compose allows you to orchestrate an entire set of applications at once.
+
+This document details how to use the docker-compose from a docker command line to bring up the
+entire dti application suite at once (gateway, monitor, product-admin).
+
+This does not necesarilly use all recommended best practices for CI/CD pipelines.
+It is intended as a quick n dirty local docker solution to eliminate the need
+for local dev environment setup.
+
+It does not provide an in-depth explanation of docker-compise synax, and uses simple examples for the purpose of
+getting started. In depth and high quality documentation can be found on docker.com. It would be pointless
+to reproduce it here. 
+
+See https://docs.docker.com/compose/ for complete Docker documentation.
+
+################################################################################################################
+PRE-REQUISITES
+################################################################################################################
+Pre-requisite requirements for running Docker are listed below. It is assumed that anyone competent enough to
+be working on this app has the basic core competency required to install/configure the pre-requisites below.
+
+BIOS
+You must turn on support for virutalization in your BIOS settings. Most BIOS have this off by default.
+
+DOCKER
+Windows 7: Install Docker Toolbox with VirtualBox (download from Docker.com)
+Window 10/OSX/Linux: Install native docker (download from Docker.com)
+
+PROJECTS:
+This assumes you have already built the appliation war files and that they are
+present in their respective ${project.dir}/target folders.
+
+It also assumes that the root folders for all applications are present in the same parent directory.
+For example:
+D:/EXAMPLE_FOLDER/DTIMonitor
+D:/EXAMPLE_FOLDER/DTIGateway
+D:/EXAMPLE_FOLDER/ProductAdmin
+
+################################################################################################################
+PORT MAPPINGS
+################################################################################################################
+The docker compose conigurations maps the following ports for DTI Services (as listed under ports for each service
+in the compose configs.
+
+dtiproductadmin:
+	http port:  8080
+	debug port: 8000
+
+dtigateway:
+	http port:  8081
+	debug port: 8001
+
+dtimonitor
+	http port:  8083
+	debug port: 8003
+	
+
+################################################################################################################
+BUILDING AND STARTING THE ENTIRE DTI APPLICATION SUITE
+################################################################################################################
+
+To build and start a local suite with LOCAL HK CONFIGS:
+
+	docker-compose -f docker-compose-LCL_HK.yml up 
+
+By default docker-compose will assum the filename is docker-compose.yml.
+The -f argument allows you to pass in an alternate filename, in this case
+a compose file that uses HK conigurations.	
+
+################################################################################################################
+STARTING ONE SERVICE THAT IS PART OF THE DTI APPLICATION SUITE
+################################################################################################################
+To build and start one service, pass the service name as defines in the compose configuration
+to docker-compose. The example below starts up the monitor:
+
+	docker-compose -f docker-compose-LCL_HK.yml up dtimonitor
+################################################################################################################	 

@@ -1,0 +1,41 @@
+version: '3'
+services:
+  dtigateway:
+    build: 
+      context: .
+    expose:
+      - 8080
+      - 8000
+    image: "dtigateway:LOCAL"
+    container_name: "gateway"
+    ports:
+      - "8081:8080"
+      - "8001:8000" 
+  dtiproductadmin:
+    build: 
+      context: "../../DTI-ProductAdmin/Source/."
+      args:
+        CONFIG: "DEV"
+        TIMEZONE: "Americas_New_York"
+    expose:
+      - 8080
+      - 8000
+    image: "dtiproductadmin:LCL"
+    container_name: "productadmin"
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+  dtimonitor:
+    build: 
+      context: "../../DTIMonitor/."
+      args:
+        CONFIG: "DEV"
+        TIMEZONE: "Americas_New_York"
+    expose:
+      - 8080
+      - 8000
+    image: "dtimonitor:LOCAL"
+    container_name: "monitor"
+    ports:
+      - "8083:8080"
+      - "8003:8000"
