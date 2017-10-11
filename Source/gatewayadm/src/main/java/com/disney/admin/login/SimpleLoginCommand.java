@@ -21,6 +21,7 @@ public class SimpleLoginCommand extends AdminCommand
     public SimpleLoginCommand()
     {
         super ();
+        System.out.println("Executing SimpleLoginCommand");
     }
 
 
@@ -32,9 +33,11 @@ public class SimpleLoginCommand extends AdminCommand
      */
     public String performTask(HttpServletRequest request, HttpServletResponse response)
     {
+    		System.out.println("requst:"+request.toString());
         String user = request.getParameter ("USERNAME");
         String password = request.getParameter ("PASSWORD");
-
+        System.out.println("user: '" +user +"'");
+        System.out.println("password: '" +password +"'");
         if ((user != null) && (password != null))
         {
             // Try to log in.

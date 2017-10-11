@@ -61,6 +61,7 @@ public class MenuUtility
 	    ResourceBundle rb = ResourceLoader.getResourceBundle("admin");
 	    Properties props = ResourceLoader.convertResourceBundleToProperties(rb);
 		String loginServlet = props.getProperty(node+"_login_servlet", "AdminController?CMD=SIMPLE_LOGIN");
+		System.out.println("login servlet: '"+loginServlet + "'");
 		return loginServlet;
 	}
 

@@ -49,10 +49,53 @@
 			<version>3.8.2</version>
 		</dependency>
 
+		
+		<dependency>
+    <groupId>javax.faces</groupId>
+    <artifactId>jsf-api</artifactId>
+    <version>1.2</version>
+
+</dependency>
+		
+		<dependency>
+    <groupId>javax.faces</groupId>
+    <artifactId>jsf-impl</artifactId>
+    <version>1.2</version>
+
+</dependency>
+<dependency>
+<groupId>javax.servlet</groupId>
+<artifactId>jstl</artifactId>
+<version>1.2</version>
+  </dependency>
+		<!-- 
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>2.1.13</version>
+		</dependency>
+-->
+		<!-- NOTE: must use glassfish faces impl in tomcat.
+		   com.sun version is not tomcat friendly
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.1.6</version>
+		</dependency>
+		 -->
+		<dependency>
+      		<groupId>javax</groupId>
+      		<artifactId>javaee-web-api</artifactId>
+      		<version>6.0</version>
+      		<scope>provided</scope>
+    		</dependency>
+
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

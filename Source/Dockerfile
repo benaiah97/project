@@ -113,5 +113,8 @@ ADD docker/tomcat/$CONFIG/context.xml /usr/local/tomcat/conf/context.xml
 # Assumes you have already built the war and it is present in the 
 # gatewaywar/target directory
 ###############################################################################
-RUN echo "PUTTING GATEWAY WAR INTO WEBAPPS."
+RUN echo "PUTTING GATEWAY WAR and ADM WAR INTO WEBAPPS."
 COPY gatewaywar/target/DTIWeb.war /usr/local/tomcat/webapps/DTIApp.war
+
+#DISABLING THE GATEWAYADM JAR
+#COPY gatewayadm/target/SharedWeb.war /usr/local/tomcat/webapps/SharedWeb.war

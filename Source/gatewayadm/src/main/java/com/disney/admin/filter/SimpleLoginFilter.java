@@ -22,6 +22,7 @@ public class SimpleLoginFilter implements ServletFilterIF
     public SimpleLoginFilter()
     {
         super ();
+        System.out.println("SimpleLoginFilter");
     }
 
     //~ Methods ------------------------------------------------------------------------------------
@@ -39,14 +40,14 @@ public class SimpleLoginFilter implements ServletFilterIF
                          ServletFilterChain chain)
         throws IOException, ServletException
     {
+    		System.out.println("Executing SimpleLoginFilter");
         Boolean loggedIn = (Boolean)request.getSession (true).getAttribute ("LOGGED_IN");
 
         if ((loggedIn == null) || (!(loggedIn.booleanValue ())))
         {
+        		System.out.println ("Not Logged in.. attempting forwarding to welcome.jsp");
             try
             {
-                System.out.println ("Not Logged in.. forwarding to welcome.jsp");
-
                 RequestDispatcher rd = request.getRequestDispatcher ("welcome.jsp");
                 rd.forward (request, response);
             }
@@ -57,6 +58,7 @@ public class SimpleLoginFilter implements ServletFilterIF
         }
         else
         {
+        		System.out.println("chaining SimpleLoginFilter");
             chain.doFilter (request, response);
         }
     }

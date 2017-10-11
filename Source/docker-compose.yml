@@ -39,3 +39,17 @@ services:
     ports:
       - "8083:8080"
       - "8003:8000"
+  dtiinfosys:
+    build: 
+      context: "../../ee-dti-infosys/Source/."
+      args:
+        CONFIG: "DEV"
+        TIMEZONE: "Americas_New_York"
+    expose:
+      - 8080
+      - 8000
+    image: "dtiinfosys:LOCAL"
+    container_name: "infosys"
+    ports:
+      - "8084:8080"
+      - "8004:8000"
