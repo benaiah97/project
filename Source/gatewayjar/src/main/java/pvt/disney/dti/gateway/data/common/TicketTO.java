@@ -18,8 +18,7 @@ import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
  * @author lewit019
  */
 /**
- * @author amrastog
- *
+ 
  */
 public class TicketTO implements Serializable, Cloneable {
 
