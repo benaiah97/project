@@ -260,4 +260,73 @@ public class DLRQueryEligibilityProductRulesTestCase {
 	 * Assert.assertNotNull(dtiTktTO.getResultType()); } catch (DTIException e)
 	 * { Assert.fail("UnExpected Exception Occured" + e.getMessage()); } }
 	 */
+	
+	@Test
+   public void testGetPLUDetailsFromGalaxy() {
+      
+      String xmlresponse="<?xml version=\"1.0\"?>" + " <Envelope>" + " <Header>" + "<SourceID>1</SourceID>"
+            + "<MessageID>1</MessageID>" + "<MessageType>QueryTicketResponse</MessageType>"
+            + "<TimeStamp>2017-05-11 08:00:00</TimeStamp>" + " </Header> " + "<Body> " + "<Status> "
+            + "<StatusCode>0</StatusCode> " + "<StatusText>OK</StatusText> " + "</Status> "
+            + "<QueryTicketResponse>" + "<DataRequestResponse> " + "itemKind2" + "<Status>0</Status>"
+            + "<Exchangeable>NO</Exchangeable>" + "<Returnable>YES</Returnable>" + "<PLU>TICKET0010101</PLU>"
+            + "<Price>8.00</Price>" + "<RemainingPrice>0.00</RemainingPrice>" + "<Tax>0</Tax>"
+            + "<RemainingTax>0</RemainingTax>" + "<TaxMethods>NNNNNNNN</TaxMethods>" + "<AccessCode>10</AccessCode>"
+            + "<AccessCodeName>ADULT</AccessCodeName>" + "<TicketDate>2004-02-01 00:00:00</TicketDate>"
+            + "<ValidUntil>2017-08-01 00:00:00</ValidUntil>" + "<LockedOut>No</LockedOut>"
+            + "<UseCount>0</UseCount>" + "<RemainingUse>1</RemainingUse>" + "<UpdateStatus>0</UpdateStatus>"
+            + "<NodeNo>82</NodeNo>" + "<TransNo>1234</TransNo>" + "<DateSold>2004-02-01 00:00:00</DateSold>"
+            + "<DateOpened>2004-02-01 00:00:00</DateOpened>" + "<OrderID>1234</OrderID>"
+            + "<CustomerID>19</CustomerID>" + "<UpgradePLUList>" + "<Item>" + "<PLU>1</PLU>"
+            + "<Price>80.00</Price>" + "<UpgradePrice>67.20</UpgradePrice>" + "<PaymentPlans><PaymentPlan><PaymentPlanID>3</PaymentPlanID>"
+            + "<Description>Down payment of $97 and 12 monthly payments as low as $20.17 per month for a Southern California Select Annual Passport; prices for other passports may vary." 
+            + "Contract Purchaser/Annual Passholder must reside in Southern California zip code area.</Description><Name>Monthly Payment Option - Southern California</Name></PaymentPlan></PaymentPlans>"
+            + "</Item>" + "</UpgradePLUList>"
+            + "<UseCount>1</UseCount><VisualID>468480050500000563</VisualID><UsageRequestResponse><UsageRecords><UsageRecord><UseNo>1</UseNo><UseTime>2017-09-19 10:53:22</UseTime></UsageRecord></UsageRecords></UsageRequestResponse>"
+            +  "</DataRequestResponse>" + "</QueryTicketResponse>" + "</Body>"
+            + "</Envelope>";
+      DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+      DLRQueryEligibilityProductsRules rules = new DLRQueryEligibilityProductsRules();
+      DTIRequestTO request = new DTIRequestTO();
+      PayloadHeaderTO payloadHeader = new PayloadHeaderTO();
+      CommandHeaderTO commandHeader = new CommandHeaderTO();
+      CommandBodyTO bodyTO = new QueryEligibleProductsRequestTO();
+      payloadHeader.setPayloadID("68688989686786767");
+      payloadHeader.setTarget("target");
+      payloadHeader.setCommProtocol("protocol");
+      payloadHeader.setCommMethod("method");
+      payloadHeader.setVersion("version");
+      commandHeader.setCmdActor("Actor");
+      commandHeader.setCmdDevice("cmdDevice");
+      commandHeader.setCmdInvoice("cmdInvoice");
+      commandHeader.setCmdItem(new BigInteger("4"));
+      commandHeader.setCmdMarket("cmdMarket");
+      request.setPayloadHeader(payloadHeader);
+      request.setCommandHeader(commandHeader);
+      request.setCommandBody(bodyTO);
+      dtiTxn.setRequest(request);
+      dtiTxn.setEntityTO(new EntityTO());
+      dtiTxn.setTpRefNum(45244552);
+      dtiTxn.setTktBroker(DTITestUtil.TKTBROKER);
+      DTIMockUtil.mockGetProductsByTktName();
+      DTIMockUtil.mockGetAPUpgradeCatalog();
+      try {
+         DTITransactionTO dtiTxnTest = null;
+         dtiTxnTest = rules.transformResponse(dtiTxn, xmlresponse);
+         if(dtiTxnTest==null){
+            Assert.fail("Resonse can not be null"); 
+         }
+         
+         QueryEligibilityProductsResponseTO res=(QueryEligibilityProductsResponseTO)dtiTxnTest.getResponse().getCommandBody();
+         if(res.getTicketList().get(0).getDlrPLU()==null && res.getTicketList().get(0).getDlrPLU().compareTo("TICKET0010101")!=0){
+            Assert.fail("PLU does not match with TICKET0010101"); 
+         }
+         System.out.print("Checking "+res.getTicketList().get(0).getDlrPLU());
+      }catch(DTIException dtie){
+         Assert.fail("UnExpected Exception Occured" + dtie.getMessage());
+      }
+      
+      
+
+   }
 }

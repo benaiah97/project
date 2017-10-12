@@ -14,9 +14,9 @@ import javax.xml.namespace.QName;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
+import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
-import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
 import pvt.disney.dti.gateway.data.common.EligibleProductsTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
@@ -167,63 +167,63 @@ public class QueryEligibleProductsXML {
 			BigInteger tktItemTO = aTicketTO.getTktItem();
 			qName = new QName("TktItem");
 			JAXBElement<BigInteger> tktItem = new JAXBElement(qName, tktItemTO.getClass(), tktItemTO);
-			aTicket.getTktItemOrTktIDOrProdCode().add(tktItem);
+			aTicket.getTktItemOrTktIDOrProdIDType().add(tktItem);
 
 			// TktID ??
 			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
 
-			if (typeList.size() > 0) {
+         if (typeList.size() > 0) {
 
-				QueryEligibleProductsResponse.Ticket.TktID tktIdObj = new QueryEligibleProductsResponse.Ticket.TktID();
+            QueryEligibleProductsResponse.Ticket.TktID tktIdObj = new QueryEligibleProductsResponse.Ticket.TktID();
 
-				// MagCode and Barcode are intentionally omitted
+            // MagCode and Barcode are intentionally omitted
 
-				// Tkt DSSN?
-				if (typeList.contains(TicketTO.TicketIdType.DSSN_ID)) {
+            // Tkt DSSN?
+            if (typeList.contains(TicketTO.TicketIdType.DSSN_ID)) {
 
-					QueryEligibleProductsResponse.Ticket.TktID.TktDSSN tktDssn = new QueryEligibleProductsResponse.Ticket.TktID.TktDSSN();
-					tktDssn.setTktDate(aTicketTO.getDssnDateString());
-					tktDssn.setTktNbr(aTicketTO.getDssnNumber());
-					tktDssn.setTktSite(aTicketTO.getDssnSite());
-					tktDssn.setTktStation(aTicketTO.getDssnStation());
+               QueryEligibleProductsResponse.Ticket.TktID.TktDSSN tktDssn = new QueryEligibleProductsResponse.Ticket.TktID.TktDSSN();
+               tktDssn.setTktDate(aTicketTO.getDssnDateString());
+               tktDssn.setTktNbr(aTicketTO.getDssnNumber());
+               tktDssn.setTktSite(aTicketTO.getDssnSite());
+               tktDssn.setTktStation(aTicketTO.getDssnStation());
 
-					qName = new QName("TktDSSN");
+               qName = new QName("TktDSSN");
 
-					JAXBElement<String> tktDssnElement = new JAXBElement(qName, tktDssn.getClass(), tktDssn);
+               JAXBElement<String> tktDssnElement = new JAXBElement(qName, tktDssn.getClass(), tktDssn);
 
-					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktDssnElement);
-				}
-				// Tkt NID ?
-				if (typeList.contains(TicketTO.TicketIdType.TKTNID_ID)) {
+               tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktDssnElement);
+            }
+            // Tkt NID ?
+            if (typeList.contains(TicketTO.TicketIdType.TKTNID_ID)) {
 
-					String tktNidTO = aTicketTO.getTktNID();
+               String tktNidTO = aTicketTO.getTktNID();
 
-					qName = new QName("TktNID");
+               qName = new QName("TktNID");
 
-					JAXBElement<String> tktNid = new JAXBElement(qName, tktNidTO.getClass(), tktNidTO);
-					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktNid);
+               JAXBElement<String> tktNid = new JAXBElement(qName, tktNidTO.getClass(), tktNidTO);
+               tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktNid);
 
-				}
+            }
 
-				// External?
-				if (typeList.contains(TicketTO.TicketIdType.EXTERNAL_ID)) {
+            // External?
+            if (typeList.contains(TicketTO.TicketIdType.EXTERNAL_ID)) {
 
-					String tktExtTO = aTicketTO.getExternal();
+               String tktExtTO = aTicketTO.getExternal();
 
-					qName = new QName("External");
+               qName = new QName("External");
 
-					JAXBElement<String> tktExt = new JAXBElement(qName, tktExtTO.getClass(), tktExtTO);
-					tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktExt);
-				}
+               JAXBElement<String> tktExt = new JAXBElement(qName, tktExtTO.getClass(), tktExtTO);
+               tktIdObj.getTktDSSNOrTktNIDOrExternal().add(tktExt);
+            }
 
-				// Add whatever ticket versions were found to the response.
-				qName = new QName("TktID");
+            // Add whatever ticket versions were found to the response.
+            qName = new QName("TktID");
 
-				JAXBElement<String> tktId = new JAXBElement(qName, tktIdObj.getClass(), tktIdObj);
+            JAXBElement<String> tktId = new JAXBElement(qName, tktIdObj.getClass(), tktIdObj);
 
-				aTicket.getTktItemOrTktIDOrProdCode().add(tktId);
+            aTicket.getTktItemOrTktIDOrProdIDType().add(tktId);
 
-			}
+         }
 
 			// prod code
 			if (aTicketTO.getProdCode() != null) {
@@ -231,9 +231,18 @@ public class QueryEligibleProductsXML {
 				qName = new QName("ProdCode");
 
 				JAXBElement<String> pdtCode = new JAXBElement(qName, prodCode.getClass(), prodCode);
-				aTicket.getTktItemOrTktIDOrProdCode().add(pdtCode);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(pdtCode);
 			}
+			
+			// DLR PLU , added for offline codes from galaxy 
+         if (aTicketTO.getDlrPLU() != null) {
+            String pluCode = aTicketTO.getDlrPLU();
+            qName = new QName("DLRPLU");
 
+            JAXBElement<String> dlrPLU = new JAXBElement(qName, pluCode.getClass(), pluCode);
+            aTicket.getTktItemOrTktIDOrProdIDType().add(dlrPLU);
+         }
+         
 			// Prod Guest type
 			if (aTicketTO.getGuestType() != null) {
 				String prodGuestType = null;
@@ -246,34 +255,26 @@ public class QueryEligibleProductsXML {
 				}
 				qName = new QName("ProdGuestType");
 				JAXBElement<String> pdtGuest = new JAXBElement(qName, prodGuestType.getClass(), prodGuestType);
-				aTicket.getTktItemOrTktIDOrProdCode().add(pdtGuest);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(pdtGuest);
 			}
 
 			// TktStatus?
 			ArrayList<TktStatusTO> statusListTO = aTicketTO.getTktStatusList();
-			if (statusListTO != null) {
+         if ((statusListTO != null) && (statusListTO.size() > 0)) {
+            for /* each */(TktStatusTO aStatusTO : /* in */statusListTO) {
+               QueryEligibleProductsResponse.Ticket.TktStatus tktStatus = new QueryEligibleProductsResponse.Ticket.TktStatus();
 
-				if (statusListTO.size() > 0) {
+               // Setting up the status item
+               tktStatus.setStatusItem(aStatusTO.getStatusItem());
+               tktStatus.setStatusValue(aStatusTO.getStatusValue());
+               qName = new QName("TktStatus");
 
-					for /* each */(TktStatusTO aStatusTO : /* in */statusListTO) {
-
-						QueryEligibleProductsResponse.Ticket.TktStatus tktStatus = new QueryEligibleProductsResponse.Ticket.TktStatus();
-
-						// Setting up the status item
-						tktStatus.setStatusItem(aStatusTO.getStatusItem());
-						tktStatus.setStatusValue(aStatusTO.getStatusValue());
-						qName = new QName("TktStatus");
-
-						JAXBElement<String> tktStatusElement = new JAXBElement(qName, tktStatus.getClass(), tktStatus);
-						aTicket.getTktItemOrTktIDOrProdCode().add(tktStatusElement);
-
-					}
-				}
-			}
+               JAXBElement<String> tktStatusElement = new JAXBElement(qName, tktStatus.getClass(), tktStatus);
+               aTicket.getTktItemOrTktIDOrProdIDType().add(tktStatusElement);
+            }
+         }
 			// Ticket Demographics
-			// TODO 06-23-2017 JTL all demographic including optin/out
 			if ((aTicketTO.getTicketDemoList() != null) && (aTicketTO.getTicketDemoList().size() == 1)) {
-
 				if (aTicketTO.getTicketDemoList().get(0) != null) {
 
 					DemographicsTO aDemoTO = aTicketTO.getTicketDemoList().get(0);
@@ -287,43 +288,34 @@ public class QueryEligibleProductsXML {
 					if (aDemoTO.getFirstName() != null) {
 						demoData.setFirstName(aDemoTO.getFirstName());
 					}
-
 					if (aDemoTO.getLastName() != null) {
 						demoData.setLastName(aDemoTO.getLastName());
 					}
-
 					if (aDemoTO.getAddr1() != null) {
 						demoData.setAddr1(aDemoTO.getAddr1());
 					}
-
 					if (aDemoTO.getAddr2() != null) {
 						demoData.setAddr2(aDemoTO.getAddr2());
 					}
-
 					if (aDemoTO.getCity() != null) {
 						demoData.setCity(aDemoTO.getCity());
 					}
-
 					if (aDemoTO.getState() != null) {
 						demoData.setState(aDemoTO.getState());
 					}
-
 					if (aDemoTO.getZip() != null) {
 						demoData.setZip(aDemoTO.getZip());
 					}
-
 					if (aDemoTO.getCountry() != null) {
 						demoData.setCountry(aDemoTO.getCountry());
 					}
-
 					if (aDemoTO.getTelephone() != null) {
 						demoData.setTelephone(aDemoTO.getTelephone());
 					}
-
 					if (aDemoTO.getEmail() != null) {
 						demoData.setEmail(aDemoTO.getEmail());
 					}
-
+					
 					// As of 2.16.1, JTL 052316
 					if (aDemoTO.getDateOfBirth() != null) {
 						XMLGregorianCalendar xCalDate = UtilXML.convertToXML(aDemoTO.getDateOfBirth());
@@ -339,56 +331,46 @@ public class QueryEligibleProductsXML {
 
 					tktDemo.setDemoData(demoData);
 					JAXBElement<String> tktDemographicsElement = new JAXBElement(qName, tktDemo.getClass(), tktDemo);
-					aTicket.getTktItemOrTktIDOrProdCode().add(tktDemographicsElement);
+					aTicket.getTktItemOrTktIDOrProdIDType().add(tktDemographicsElement);
 
 				}
 			}
 			// TktValidity?
 			if ((aTicketTO.getTktValidityValidStart() != null) && (aTicketTO.getTktValidityValidEnd() != null)) {
 
-				QueryEligibleProductsResponse.Ticket.TktValidity tktValidity = new QueryEligibleProductsResponse.Ticket.TktValidity();
-
+			   QueryEligibleProductsResponse.Ticket.TktValidity tktValidity = new QueryEligibleProductsResponse.Ticket.TktValidity();
 				XMLGregorianCalendar xCalDate = UtilXML.convertToXML(aTicketTO.getTktValidityValidStart());
-
 				tktValidity.setValidStart(xCalDate);
-
 				xCalDate = UtilXML.convertToXML(aTicketTO.getTktValidityValidEnd());
 				tktValidity.setValidEnd(xCalDate);
-
 				qName = new QName("TktValidity");
 
 				JAXBElement<String> tktValidityElement = new JAXBElement(qName, tktValidity.getClass(), tktValidity);
-
-				aTicket.getTktItemOrTktIDOrProdCode().add(tktValidityElement);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(tktValidityElement);
 
 			}
 
 			// SRPPrice
 			if (aTicketTO.getTktPrice() != null) {
-
 				BigDecimal tktPriceTO = aTicketTO.getTktPrice();
-
 				qName = new QName("SRPPrice");
 
 				JAXBElement<String> sRPPrice = new JAXBElement(qName, tktPriceTO.getClass(), tktPriceTO);
-				aTicket.getTktItemOrTktIDOrProdCode().add(sRPPrice);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(sRPPrice);
 
 			}
 
 			// SRTax
 			if (aTicketTO.getTktTax() != null) {
-
 				BigDecimal tktTax = aTicketTO.getTktTax();
-
 				qName = new QName("SRPTax");
 
 				JAXBElement<String> sRTax = new JAXBElement(qName, tktTax.getClass(), tktTax);
-				aTicket.getTktItemOrTktIDOrProdCode().add(sRTax);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(sRTax);
 
 			}
 
 			// ResultStatus
-
 			String result = null;
 			if ((aTicketTO.getUpgradeEligibilityStatus() != null) && (errorTO == null)) {
 				if (aTicketTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.NOPRODUCTS) == 0) {
@@ -401,7 +383,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("ResultStatus");
 
 				JAXBElement<String> resultStatus = new JAXBElement(qName, result.getClass(), result);
-				aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
+				aTicket.getTktItemOrTktIDOrProdIDType().add(resultStatus);
 
 			}
 
@@ -409,26 +391,32 @@ public class QueryEligibleProductsXML {
 
 			// EligibleProducts
 			if ((aTicketTO.getEligibleProducts() != null) && (aTicketTO.getEligibleProducts().size() > 0)) {
-
 				for (EligibleProductsTO eligibleProduct : aTicketTO.getEligibleProducts()) {
-
 					QueryEligibleProductsResponse.Ticket.EligibleProducts eligibleproduct = new QueryEligibleProductsResponse.Ticket.EligibleProducts();
-
+					
+					// Prod Code
 					eligibleproduct.setProdCode(eligibleProduct.getProdCode());
+					
+					// Prod Price
 					eligibleproduct.setProdPrice(eligibleProduct.getProdPrice());
+					
+					// Prod Tax
 					eligibleproduct.setProdTax(eligibleProduct.getProdTax());
+					
+					// Upgrade price
 					eligibleproduct.setUpgrdPrice(eligibleProduct.getUpgrdPrice());
+					
+					// Upgrade Tax
 					eligibleproduct.setUpgrdTax(eligibleProduct.getUpgrdTax());
 					
+					// Valid End
 					XMLGregorianCalendar xCalDate = UtilXML.convertToXML(eligibleProduct.getValidEnd());
 					eligibleproduct.setValidEnd(xCalDate);
 					
 					qName = new QName("EligibleProducts");
 
 					JAXBElement<String> eligible = new JAXBElement(qName, eligibleproduct.getClass(), eligibleproduct);
-
-					aTicket.getTktItemOrTktIDOrProdCode().add(eligible);
-
+					aTicket.getTktItemOrTktIDOrProdIDType().add(eligible);
 				}
 			}
 			
@@ -444,11 +432,11 @@ public class QueryEligibleProductsXML {
 	        qName = new QName("TktError");
 	        JAXBElement<String> tktErrorElement = new JAXBElement(qName,
 	            tktError.getClass(), tktError);
-	        aTicket.getTktItemOrTktIDOrProdCode().add(tktErrorElement);
+	        aTicket.getTktItemOrTktIDOrProdIDType().add(tktErrorElement);
 	      }
-	        
-			
-			queryEligPrdResp.getTicket().add(aTicket);
+	      
+	      // Adding the ticket details in Query Eligible Product Response
+	   	queryEligPrdResp.getTicket().add(aTicket);
 		}
 
 		return queryEligPrdResp;

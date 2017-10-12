@@ -21,6 +21,8 @@ public class GuestProductTO {
 
 	/** The gw data resp TO. */
 	private GWDataRequestRespTO gwDataRespTO;
+	
+	private boolean sourcedFromDB = true;
 
 	/**
 	 * @return the dbproductTO
@@ -79,8 +81,23 @@ public class GuestProductTO {
 	public void setGwDataRespTO(GWDataRequestRespTO gwDataRespTO) {
 		this.gwDataRespTO = gwDataRespTO;
 	}
+	
 
-	/* (non-Javadoc)
+	/**
+    * @return the sourcedFromDB
+    */
+   public boolean isSourcedFromDB() {
+      return sourcedFromDB;
+   }
+
+   /**
+    * @param sourcedFromDB the sourcedFromDB to set
+    */
+   public void setSourcedFromDB(boolean sourcedFromDB) {
+      this.sourcedFromDB = sourcedFromDB;
+   }
+
+   /* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

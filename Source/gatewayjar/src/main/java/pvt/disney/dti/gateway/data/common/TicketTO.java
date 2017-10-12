@@ -18,6 +18,10 @@ import pvt.disney.dti.gateway.data.common.DBProductTO.GuestType;
  * 
  * @author lewit019
  */
+/**
+ * @author amrastog
+ *
+ */
 public class TicketTO implements Serializable, Cloneable {
 
 	/** Serial Version UID */
@@ -354,6 +358,9 @@ public class TicketTO implements Serializable, Cloneable {
 	
 	/** The pay plan eligibility status. */
 	private PayPlanEligibilityStatusType payPlanEligibilityStatus = PayPlanEligibilityStatusType.YES;
+	
+	/** The dlr PLU. */
+	private String dlrPLU;
 
 	/**
 	 * @return the showGroup
@@ -1353,6 +1360,23 @@ public class TicketTO implements Serializable, Cloneable {
 	public void setPayPlanEligibilityStatus(PayPlanEligibilityStatusType payPlanEligibilityStatus) {
 		this.payPlanEligibilityStatus = payPlanEligibilityStatus;
 	}
+
+   /**
+    * @return the dlrPLU
+    */
+   public String getDlrPLU() {
+      return dlrPLU;
+   }
+
+   /**
+    * @param dlrPLU the dlrPLU to set
+    */
+   public void setDlrPLU(String dlrPLU) {
+      this.dlrPLU = dlrPLU;
+   }
+	
+	
+	
 	
 
 }
