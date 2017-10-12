@@ -220,7 +220,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
             // If the UpgradeEligibilityStatusType is INELIGIBLE populate the
             // ticket information , with salable products as null
-            if (dtiTktTO.getUpgradeEligibilityStatus() == UpgradeEligibilityStatusType.INELIGIBLE) {
+            if (dtiTktTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.INELIGIBLE) == 0) {
 
                setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
@@ -232,20 +232,17 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
          UpgradeCatalogTO globalUpgradeProduct = ProductKey.getAPUpgradeCatalog(dtiTxn.getEntityTO(), DLR_TPS_CODE);
 
          // Check usage if no usage is there put the result type as INELIGIBLE
-         if ((guestProduct.getGwDataRespTO().getUsageRecords() != null)
-                  && (guestProduct.getGwDataRespTO().getUsageRecords().size() > 0)) {
+         if ((guestProduct.getGwDataRespTO().getUsageRecords() == null)
+                  || (guestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0)) {
 
-            if (guestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0) {
+            logger.sendEvent("Usage Information for guest is not provided. ", EventType.DEBUG, THISINSTANCE);
+            dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-               logger.sendEvent("Usage Information for guest is not provided. ", EventType.DEBUG, THISINSTANCE);
-               dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
+            // Populating the ticket information , with salable products as
+            // null
+            setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
-               // Populating the ticket information , with salable products as
-               // null
-               setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
-
-               return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
-            }
+            return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
          }
 
          // Upgraded PLU List from Galaxy
@@ -259,7 +256,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
             dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
 
-            // Populating the ticket information , with sellable products as
+            // Populating the ticket information , with Salable products as
             // null
             setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
@@ -267,11 +264,11 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
          } else if (globalUpgradeProduct.getProductListCount() == 0) {
 
-            // If no Sellable product found , result is INELIGIBLE
-            logger.sendEvent("No Sellable Product found. ", EventType.DEBUG, THISINSTANCE);
+            // If no Salable product found , result is INELIGIBLE
+            logger.sendEvent("No Salable Product found. ", EventType.DEBUG, THISINSTANCE);
             dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
-            // Populating the ticket information , with sellable products as
+            // Populating the ticket information , with Salable products as
             // null
             setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
@@ -280,7 +277,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
          } else {
 
             // Check the UpgradePLUList from DLR response and compare with each
-            // Sellable Product List
+            // Salable Product List
             ArrayList<String> PLUList = new ArrayList<String>();
 
             for (/* each */UpgradePLU upgradePLU : /* in */upGradedPLuList) {
@@ -299,13 +296,13 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
                }
             }
 
-            logger.sendEvent("Orignal List of Sellable Product. " + globalUpgradeProduct.toString(), EventType.DEBUG,
+            logger.sendEvent("Orignal List of Salable Product. " + globalUpgradeProduct.toString(), EventType.DEBUG,
                      THISINSTANCE);
 
-            // Comparing each PLU's from response with each Sellable Product
+            // Comparing each PLU's from response with each Salable Product
             globalUpgradeProduct.retainDLRPLUs(PLUList);
 
-            logger.sendEvent("Final List of Sellable Product after comaprison with each UpgradedPLU'S from Galaxy. "
+            logger.sendEvent("Final List of Salable Product after comaprison with each UpgradedPLU'S from Galaxy. "
                      + globalUpgradeProduct.toString(), EventType.DEBUG, THISINSTANCE);
 
             // if the product list obtained after comparison is empty put the
@@ -313,7 +310,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
             if (globalUpgradeProduct.getProductListCount() == 0) {
                dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.NOPRODUCTS);
 
-               // Populating the ticket information , with sellable products as
+               // Populating the ticket information , with Salable products as
                // null.
                setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
