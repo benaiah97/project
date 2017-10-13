@@ -43,6 +43,7 @@ import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.TransidRescodeKey;
 import pvt.disney.dti.gateway.dao.data.DBTicketAttributes;
+import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.dao.result.AttributeResult;
 import pvt.disney.dti.gateway.dao.result.MultipleSeqNumResult;
 import pvt.disney.dti.gateway.dao.result.ProductDetailResult;
@@ -983,6 +984,46 @@ public class DTIMockUtil extends CommonTestUtils {
 		} catch (Exception e) {
 		}
 	}
+	
+	
+   /**
+    * Mock get products by tkt name.
+    */
+   public static void mockGetProductsByTktName() {
+      try {
+         new MockUp<ProductKey>() {
+            @Mock
+            public DBProductTO getProductsByTktName(ArrayList<String> tktName)
+                  throws Exception {
+    
+               return null;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
+   
+ 
+   /**
+    * Mock get AP upgrade catalog.
+    */
+   public static void mockGetAPUpgradeCatalog() {
+      try {
+         new MockUp<ProductKey>() {
+            @Mock
+            public UpgradeCatalogTO getAPUpgradeCatalog(EntityTO entityTO, String tpsCode)
+                  throws Exception {
+             
+               UpgradeCatalogTO upgradeProdTO=new UpgradeCatalogTO();
+               DBProductTO dbProdTO=new DBProductTO();
+               dbProdTO.setPdtCode("1");
+               upgradeProdTO.getProductList().add(dbProdTO);
+               return upgradeProdTO;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
 	/**
 	 * Mock for method getScopeFromCode of DTIErrorCode
 	 */

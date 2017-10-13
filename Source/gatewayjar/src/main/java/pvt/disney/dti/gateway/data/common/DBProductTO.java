@@ -137,6 +137,9 @@ public class DBProductTO implements Serializable {
 	/** The dayCount. */
 	private int dayCount;
 	
+	/** The dlr PLU. */
+	private String dlrPLU;
+	
 	/**
 	 * Gets the quantity.
 	 *
@@ -723,8 +726,24 @@ public class DBProductTO implements Serializable {
 	public void setGuestType(GuestType guestType) {
 		this.guestType = guestType;
 	}
+	
+	
 
-	/* (non-Javadoc)
+	/**
+    * @return the dlrPLU
+    */
+   public String getDlrPLU() {
+      return dlrPLU;
+   }
+
+   /**
+    * @param dlrPLU the dlrPLU to set
+    */
+   public void setDlrPLU(String dlrPLU) {
+      this.dlrPLU = dlrPLU;
+   }
+
+   /* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
