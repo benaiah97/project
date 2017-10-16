@@ -12,6 +12,18 @@
 	<artifactId>gatewaywar</artifactId>
 	<packaging>war</packaging>
 	<name>gatewaywar</name>
+	
+	<repositories>
+		<repository>
+			<id>WDPRT-master</id>
+			<name>WDPRT-master/</name>
+			<layout>default</layout>
+			<url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<reporting>
 		<plugins>
