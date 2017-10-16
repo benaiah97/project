@@ -466,6 +466,8 @@ public class DTIService {
   private String getBrokerName()  {
       Map<String, String> env = System.getenv();
       
+      logger.sendEvent("Contents of the Environment Variable Map: " + env, EventType.DEBUG, this);
+      
       String computerName = "DTIUNK";
       
       if (env.containsKey("COMPUTERNAME")) {
@@ -473,6 +475,7 @@ public class DTIService {
       } else if (env.containsKey("HOSTNAME")) {
         computerName = env.get("HOSTNAME");
       } else {
+    	logger.sendEvent("COMPUTERNAME or HOSTNAME variable not found in getBrokerName() method!", EventType.WARN, this);
         return computerName;
       }
       
