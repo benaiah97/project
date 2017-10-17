@@ -2,7 +2,6 @@ package pvt.disney.dti.gateway.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -464,7 +463,7 @@ public class DTIService {
 
   /**
    * Get the broker name from the network interface. 
-   * @return
+   * @return constructed TktBroker field to be used in the reponse
    */
   private String getBrokerName()  {      
       
@@ -512,44 +511,5 @@ public class DTIService {
 
       return computerName;
   }
-
-  /*private String getBrokerName()  {
-      Map<String, String> env = System.getenv();
-      
-      logger.sendEvent("Contents of the Environment Variable Map: " + env, EventType.DEBUG, this);
-      
-      String computerName = "DTIUNK";
-      
-      if (env.containsKey("COMPUTERNAME")) {
-        computerName = env.get("COMPUTERNAME");
-      } else if (env.containsKey("HOSTNAME")) {
-        computerName = env.get("HOSTNAME");
-      } else {
-    	logger.sendEvent("COMPUTERNAME or HOSTNAME variable not found in getBrokerName() method!", EventType.WARN, this);
-        return computerName;
-      }
-      
-      char[] nameArray = computerName.toCharArray();
-      StringBuffer suffixArray = new StringBuffer();
-      boolean foundDigit = false;
-        
-      // Get only the numeric portion of the value...
-      for (char aChar: nameArray) {
-          
-          if (Character.isDigit(aChar)) {
-            foundDigit = true;  
-          }
-          
-          if (foundDigit == true) {
-            suffixArray.append(Character.toUpperCase(aChar));
-          }
-        
-      }
-
-      computerName = "DTI" + suffixArray.toString();
-
-      return computerName;
-  } */
-
   
 }
