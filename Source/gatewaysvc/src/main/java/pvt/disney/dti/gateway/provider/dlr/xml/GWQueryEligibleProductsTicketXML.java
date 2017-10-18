@@ -660,39 +660,45 @@ public class GWQueryEligibleProductsTicketXML {
 			Node linRecord = (Node) linRecordList.get(index);
 
 			// Create the inner class
-			GWDataRequestRespTO.UpgradePLU upgratePLU = dataRespTO.new UpgradePLU();
+			GWDataRequestRespTO.UpgradePLU upgradePLU = dataRespTO.new UpgradePLU();
 
 			// PLU
 			Node pluNode = linRecord.selectSingleNode("PLU");
 			if (pluNode != null) {
 
-				upgratePLU.setPLU(pluNode.getText());
+				upgradePLU.setPLU(pluNode.getText());
 			}
 
 			// Price
 			Node priceNode = linRecord.selectSingleNode("Price");
 			if (priceNode != null) {
-				String inText = priceNode.getText();
-				if (inText != null) {
-					inText = inText.replace(COMMA_STRING, EMPTY_STRING);
-					upgratePLU.setPrice(new BigDecimal(inText));
+				String priceText = priceNode.getText();
+				if (priceText != null) {
+					priceText = priceText.replace(COMMA_STRING, EMPTY_STRING);
+					upgradePLU.setPrice(new BigDecimal(priceText));
 				}
 			}
 
-			// Upgraded Price
+			// Upgrade Price
 			Node upgdPriceNode = linRecord.selectSingleNode("UpgradePrice");
 			if (upgdPriceNode != null) {
-				String inText = upgdPriceNode.getText();
-				upgratePLU.setUpgradePrice(new BigDecimal(inText));
-
+				String upgdPriceText = upgdPriceNode.getText();
+				
+				// if comma is present in the string (for values over 1000), remove the comma
+				if (upgdPriceText != null) {
+					upgdPriceText = upgdPriceText.replace(COMMA_STRING, EMPTY_STRING);
+					upgradePLU.setUpgradePrice(new BigDecimal(upgdPriceText));
+				}
 			}
+			
 			// Adding Pay Plan information
 			if (upGradeLineResp.getName().compareTo("PaymentPlans") == 0) {
 				dataRespTO.setPayPlan("YES");
-				extractPayplanInfo(upgratePLU, upGradeLineResp);
+				extractPayplanInfo(upgradePLU, upGradeLineResp);
 			}
+			
 			// Save it to the array
-			dataRespTO.addUpgradePLUList(upgratePLU);
+			dataRespTO.addUpgradePLUList(upgradePLU);
 		}
 	}
 

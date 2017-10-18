@@ -463,7 +463,7 @@ public class DTIService {
 
   /**
    * Get the broker name from the network interface. 
-   * @return constructed TktBroker field to be used in the reponse
+   * @return constructed TktBroker field to be used in the response
    */
   private String getBrokerName()  {      
       
