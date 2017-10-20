@@ -39,11 +39,11 @@ public class KeyMatchFloodControlActiveTest {
 	public void setUp() throws Exception {
 
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		DTIMockUtil dtiMockUtil = new DTIMockUtil();
 		floodControl = new TestImplementor();
 		String application ="DtiGateWay";
 		String environment ="Latest";
-		floodControl.getRefreshPropertyFromDB(application,environment);
+		Integer tpoId =0;
+		floodControl.getRefreshPropertyFromDB(application,tpoId,environment);
 	}
 
 	@After

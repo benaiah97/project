@@ -1,6 +1,6 @@
 /**
  * 
- */
+ *//*
 package pvt.disney.dti.gateway.rules;
 
 import static org.junit.Assert.assertThat;
@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -16,6 +17,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -33,47 +35,47 @@ import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 
-/**
+*//**
  * The Class TestCalmRules.
  *
  * @author moons012
- */
+ *//*
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ TestCalmRules.class })
 public class TestCalmRules {
 
 	// SETUP ALL OUR PRE-REQUISITE OBJECTS FOR TESTING
 
-	/** The campus down wdw file. */
+	*//** The campus down wdw file. *//*
 	private static String CAMPUS_DOWN_WDW_FILE;
 
-	/** The campus down dlr file. */
+	*//** The campus down dlr file. *//*
 	private static String CAMPUS_DOWN_DLR_FILE;
 
-	/** The campus down hkd file. */
+	*//** The campus down hkd file. *//*
 	private static String CAMPUS_DOWN_HKD_FILE;
 
-	/** The test props. */
+	*//** The test props. *//*
 	private static Properties testProps;
 
-	/** The down filelist. */
+	*//** The down filelist. *//*
 	private static ArrayList<File> DOWN_FILELIST;
 
-	/** The wdw txn. */
+	*//** The wdw txn. *//*
 	private static DTITransactionTO WDW_TXN;
 
-	/** The dlr txn. */
+	*//** The dlr txn. *//*
 	private static DTITransactionTO DLR_TXN;
 
-	/** The hkd txn. */
+	*//** The hkd txn. *//*
 	private static DTITransactionTO HKD_TXN;
 
-	/**
+	*//**
 	 * Sets the up before class.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
+	 *//*
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		// get our app properties for testing
@@ -86,47 +88,47 @@ public class TestCalmRules {
 		TestCalmRules.helpCreateDtiTransactions();
 	}
 
-	/**
+	*//**
 	 * Tear down after class.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
+	 *//*
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		// clean up after ourselves
 		TestCalmRules.helpCleanupCampusDownfiles();
 	}
 
-	/**
+	*//**
 	 * Sets the up.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
+	 *//*
 	@Before
 	public void setUp() throws Exception {
 
 	}
 
-	/**
+	*//**
 	 * Tear down.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
+	 *//*
 	@After
 	public void tearDown() throws Exception {
 	}
 
-	/**
+	*//**
 	 * Test method for
 	 * {@link pvt.disney.dti.gateway.rules.CalmRules#checkContingencyActionsLogicModule(pvt.disney.dti.gateway.data.DTITransactionTO)}.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
-	// @Test
+	 *//*
+	 @Test
 	public void testCheckContingencyActionsLogicModuleForHkd() throws Exception {
 		System.out.println("Testing HKD Calm Rules");
 		CalmRules rules = CalmRules.getInstance(testProps);
@@ -140,14 +142,14 @@ public class TestCalmRules {
 		}
 	}
 
-	/**
+	*//**
 	 * Test method for
 	 * {@link pvt.disney.dti.gateway.rules.CalmRules#checkContingencyActionsLogicModule(pvt.disney.dti.gateway.data.DTITransactionTO)}.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
-	// @Test
+	 *//*
+	 @Test
 	public void testCheckContingencyActionsLogicModuleForWdw() throws Exception {
 		System.out.println("Testing WDW Calm Rules");
 
@@ -162,14 +164,14 @@ public class TestCalmRules {
 		}
 	}
 
-	/**
+	*//**
 	 * Test method for
 	 * {@link pvt.disney.dti.gateway.rules.CalmRules#checkContingencyActionsLogicModule(pvt.disney.dti.gateway.data.DTITransactionTO)}.
 	 *
 	 * @throws Exception
 	 *             the exception
-	 */
-	// @Test
+	 *//*
+	 @Test
 	public void testCheckContingencyActionsLogicModuleForDlr() throws Exception {
 		System.out.println("Testing DLR Calm Rules");
 
@@ -183,23 +185,23 @@ public class TestCalmRules {
 		}
 	}
 
-	/**
+	*//**
 	 * Help setup campus down file names.
-	 */
+	 *//*
 	private static void helpSetupCampusDownFileNames() {
 		// setup our filenames
-		CAMPUS_DOWN_WDW_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_WDW_DOWN_FILENAME, testProps, null);
-		CAMPUS_DOWN_DLR_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_DLR_DOWN_FILENAME, testProps, null);
+		//CAMPUS_DOWN_WDW_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_WDW_DOWN_FILENAME, testProps, null);
+		//CAMPUS_DOWN_DLR_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_DLR_DOWN_FILENAME, testProps, null);
 		CAMPUS_DOWN_HKD_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_HKD_DOWN_FILENAME, testProps, null);
 
 	}
 
-	/**
+	*//**
 	 * Help write campus down files.
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 */
+	 *//*
 	private static void helpWriteCampusDownFiles() throws IOException {
 		TestCalmRules.helpSetupCampusDownFileNames();
 		// setup the list of files
@@ -219,9 +221,9 @@ public class TestCalmRules {
 		}
 	}
 
-	/**
+	*//**
 	 * Help cleanup campus downfiles.
-	 */
+	 *//*
 	private static void helpCleanupCampusDownfiles() {
 		// iterate through the file classes and delete the files on disk
 		for (File file : DOWN_FILELIST) {
@@ -229,22 +231,24 @@ public class TestCalmRules {
 		}
 	}
 
-	/**
+	*//**
 	 * Help get properties.
 	 *
 	 * @return the properties
 	 * @throws Exception
 	 *             the exception
-	 */
-	private static final Properties helpGetPropeties() {
+	 *//*
+	private  final Properties helpGetPropeties() {
+	   InputStream in= this.getClass().getResourceAsStream("dtiApp_calm");
+	   
 		ResourceBundle rb = ResourceBundle.getBundle("dtiApp_calm");
-		Properties props = ResourceLoader.convertResourceBundleToProperties(rb);
+		Properties props = ResourceLoader.convertResourceBundleToProperties(in);
 		return props;
 	}
 
-	/**
+	*//**
 	 * Help create dti transactions.
-	 */
+	 *//*
 	private static void helpCreateDtiTransactions() {
 		WDW_TXN = helpCreateWDWTransaction();
 		DLR_TXN = helpCreateDLRTransaction();
@@ -304,3 +308,4 @@ public class TestCalmRules {
 	}
 
 }
+*/

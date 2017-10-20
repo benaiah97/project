@@ -15,7 +15,8 @@ import pvt.disney.dti.gateway.data.common.PropertyTO;
  * 
  * This DAO class is responsible for database lookups such as for application,
  * environment and section.
- * 
+ * Flood Block will need to pass in the value of “0” for tpoId. 
+ * That value will be used for property values that are not campus specific.
  * @author GANDV005
  *
  */
@@ -31,15 +32,15 @@ public class PropertyKey {
    private static final String GET_PROPERTY = "GET_PROPERTY";
 
    @SuppressWarnings("unchecked")
-   public static List<PropertyTO> getProperties(String application, String environment, String section)
+   public static List<PropertyTO> getProperties(String application, Integer tpoId , String environment, String section)
             throws DTIException {
 
-      logger.sendEvent("Entering PropertyKey.getProperties() with parameters: " + application + ", " + environment + ", " + section, EventType.DEBUG, THISINSTANCE);
+      logger.sendEvent("Entering PropertyKey.getProperties() with parameters: " + application + ", " + tpoId + ", " + environment + ", " + section, EventType.DEBUG, THISINSTANCE);
 
       List<PropertyTO> result = new ArrayList<PropertyTO>();
 
       // Replaces "?"
-      Object[] values = { application, section, environment };
+      Object[] values = { application, tpoId, section, environment };
 
       try {
 

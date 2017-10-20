@@ -59,19 +59,20 @@ public class DTIFloodControl extends KeyMatchFloodControl {
       super();
    }
 
+
    /**
-    * Used to get the singleton instance of the DTIFloodControl. If instance doesn't
-    * exist, creates one, if instance already exists, check whether the instance
-    * needs to be refreshed
+    * Used to get the singleton instance of the DTIFloodControl. If instance
+    * doesn't exist, creates one, if instance already exists, check whether the
+    * instance needs to be refreshed
+    * Flood Block will need to pass in the value of “0” for tpoId. 
+    * That value will be used for property values that are not campus specific.
     * 
-    * @param application - value read from dtiApp.properties required to read DB
-    *           properties for the correct application
-    * @param environment- value read from dtiApp.properties required to read DB
-    *           properties for the correct environment
-    *           
-    * @return an instance of DTIFloodControl
+    * @param application the application
+    * @param tpoId the tpo id
+    * @param environment the environment
+    * @return single instance of DTIFloodControl
     */
-   public static DTIFloodControl getInstance(String application, String environment) {
+   public static DTIFloodControl getInstance(String application, Integer tpoId, String environment) {
 
       eventLogger.sendEvent("Execution of DTIFloodControl.getInstance(application, environment) by "
                + Thread.currentThread().getId() + ": " + Thread.currentThread().getName(), EventType.DEBUG, DTIFloodControl.class);
@@ -84,7 +85,7 @@ public class DTIFloodControl extends KeyMatchFloodControl {
                floodControlInstance = new DTIFloodControl();
 
                // To refresh/overlap the flood block properties from DB.
-               floodControlInstance.getRefreshPropertyFromDB(application, environment);
+               floodControlInstance.getRefreshPropertyFromDB(application, tpoId, environment);
 
                // Set time for next DB refresh
                setNextRefreshTime();
@@ -116,7 +117,7 @@ public class DTIFloodControl extends KeyMatchFloodControl {
       } // End of synchronized block
 
       // We can now refresh the DB properties by this thread and not having to worry about other threads waiting
-      floodControlInstance.getRefreshPropertyFromDB(application, environment);
+      floodControlInstance.getRefreshPropertyFromDB(application, tpoId, environment);
 
       eventLogger.sendEvent("DTIFloodControl DB Property refresh completed by thread: "
                + Thread.currentThread().getId() + ": " + Thread.currentThread().getName(), EventType.DEBUG, DTIFloodControl.class);

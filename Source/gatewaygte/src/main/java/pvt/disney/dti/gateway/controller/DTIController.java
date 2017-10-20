@@ -113,9 +113,10 @@ public class DTIController {
          throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
                   + ", Environment: " + environment);
       }
-
-      // Creating the DTIFloodControl by passing application and environment
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      //  Flood Block will need to pass in the value of “0” for tpoId.
+      //That value will be used for property values that are not campus specific.
+      // Creating the DTIFloodControl by passing application ,tpoId and environment
+      floodControl = DTIFloodControl.getInstance(application, 0, environment);
 
       return;
    }
@@ -137,19 +138,19 @@ public class DTIController {
 	  eventLogger.sendEvent("Entering processRequest(InputStream) ",
         EventType.DEBUG, this);
 
-    String strInputFile = null;
-    Document docIn = null;
-    Document docOut = null;
-    String payloadId = null;
-    String tsMac = null;
-    String tsLocation = null;
-    boolean blockedTransaction = false;
-    XMLSerializer strser = null;
-    //DBTransaction dbTran = null;
-    String target = null;
-    Integer transIdITS = null;
-    Integer tpRefNumber = null;
-    String maskedXMLRequest = null;
+      String strInputFile = null;
+      Document docIn = null;
+      Document docOut = null;
+      String payloadId = null;
+      String tsMac = null;
+      String tsLocation = null;
+      boolean blockedTransaction = false;
+      XMLSerializer strser = null;
+      // DBTransaction dbTran = null;
+      String target = null;
+      Integer transIdITS = null;
+      Integer tpRefNumber = null;
+      String maskedXMLRequest = null;
 
     try {
       // get the XML from the in-bound message

@@ -48,7 +48,8 @@ public class KeyMatchFloodControlTest {
 		floodControl = new TestImplementor();
 		String application = "DtiGateWay";
 		String environment = "Latest";
-		floodControl.getRefreshPropertyFromDB(application, environment);
+		Integer tpoId = 0;
+		floodControl.getRefreshPropertyFromDB(application,tpoId, environment);
 		keyStore = MemoryBasedKeyStore.getInstance();
 		keyStore.resetKeyStore();
 	}

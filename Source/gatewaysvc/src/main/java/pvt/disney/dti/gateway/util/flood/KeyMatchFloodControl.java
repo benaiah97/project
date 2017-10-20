@@ -289,21 +289,22 @@ public abstract class KeyMatchFloodControl {
 
    }
 
+  
    /**
-    * Gets the refreshed property key, value from DB.
-    * 
-    * @param application
-    *           the application
-    * @param environment
-    *           the environment
+    * Gets the refresh property from DB.
+    * Flood Block will need to pass in the value of “0” for tpoId. 
+    * That value will be used for property values that are not campus specific.
+    * @param application the application
+    * @param tpoId the tpo id
+    * @param environment the environment
     * @return the refresh property from DB
     */
-   public void getRefreshPropertyFromDB(String application, String environment) {
+   public void getRefreshPropertyFromDB(String application,Integer tpoId, String environment) {
 
       try {
 
          // To get the propertyKey , propertyValue pair from database based on the application,environment and FLOOD_BLOCK
-         List<PropertyTO> propertyList = PropertyKey.getProperties(application, environment, FLOODBLOCK);
+         List<PropertyTO> propertyList = PropertyKey.getProperties(application, tpoId, environment, FLOODBLOCK);
 
          if ((propertyList != null) && propertyList.size() > 0) {
 

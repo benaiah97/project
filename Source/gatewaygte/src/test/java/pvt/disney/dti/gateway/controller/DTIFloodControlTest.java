@@ -56,7 +56,7 @@ public class DTIFloodControlTest {
       try {
          new MockUp<PropertyKey>() {
             @Mock
-            public List<PropertyTO> getProperties(String application, String environment, String section) {
+            public List<PropertyTO> getProperties(String application, Integer tpoId, String environment, String section) {
                ArrayList<PropertyTO> propertyList = new ArrayList<PropertyTO>();
                PropertyTO propertyTo = new PropertyTO();
                propertyTo.setPropSetKey("KEY_STORE_TYPE");
@@ -81,8 +81,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyQueryTicket() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/QueryTicket.txt");
       Document doc = null;
@@ -108,8 +109,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyCreateTicket() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/CreateTicket.txt");
       Document doc = null;
@@ -135,8 +137,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyReservationRequest() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/ReservationRequest.txt");
       Document doc = null;
@@ -162,8 +165,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyVoidReservation() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/VoidReservation.txt");
       Document doc = null;
@@ -190,8 +194,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyAssociateMedia() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/AssociateMedia.txt");
       Document doc = null;
@@ -217,8 +222,9 @@ public class DTIFloodControlTest {
    public final void testDeriveKeyVoidTicket() {
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
 
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/VoidTicket.txt");
@@ -259,9 +265,10 @@ public class DTIFloodControlTest {
 
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       mockGetProperties();
       DTIMockUtil.processMockprepareAndExecuteSql();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
 
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/UpgradeAlpha.txt");
@@ -300,8 +307,9 @@ public class DTIFloodControlTest {
       DTIMockUtil.processMockprepareAndExecuteSql();
       String application = "DTIGateWay";
       String environment = "WDW";
+      Integer tpoId = 0;
       mockGetProperties();
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
       InputStream inStream = null;
       inStream = this.getClass().getResourceAsStream("/config/ExpVoidTicket.txt");
       Document doc = null;
@@ -337,14 +345,14 @@ public class DTIFloodControlTest {
    @Test
    public void testGetInstance() {
       DTIMockUtil.processMockprepareAndExecuteSql();
-      DTIFloodControl floodControlInstanceOne = DTIFloodControl.getInstance("DTIGateWay", "Latest");
-      DTIFloodControl floodControlInstanceTwo = DTIFloodControl.getInstance("DTIGateWay", "Latest");
-      DTIFloodControl floodControlInstanceThree = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      DTIFloodControl floodControlInstanceOne = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
+      DTIFloodControl floodControlInstanceTwo = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
+      DTIFloodControl floodControlInstanceThree = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
       try {
          Thread.sleep(60);
       } catch (InterruptedException e) {
       }
-      DTIFloodControl floodControlInstanceFour = DTIFloodControl.getInstance("DTIGateWay", "Latest");
+      DTIFloodControl floodControlInstanceFour = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
       Assert.assertEquals(floodControlInstanceOne, floodControlInstanceTwo);
       Assert.assertEquals(floodControlInstanceTwo, floodControlInstanceThree);
       Assert.assertEquals(floodControlInstanceThree, floodControlInstanceFour);
