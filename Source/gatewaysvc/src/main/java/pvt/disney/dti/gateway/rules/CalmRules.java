@@ -45,12 +45,6 @@ public class CalmRules {
 
 	/** The this obj. */
 	private static CalmRules thisObj = null;
-
-	/** The dlr calm active. */
-	private static boolean dlrCalmActive = false;
-
-	/** The wdw calm active. */
-	private static boolean wdwCalmActive = false;
 	
 	/** The hkd calm active. */
 	private static boolean hkdCalmActive = false;
@@ -94,9 +88,6 @@ public class CalmRules {
       application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
 
       environment = System.getProperty("APP_ENV");
-
-      wdwCalmActive = true;
-      dlrCalmActive = true;
 
       logger.sendEvent("Contingency Actions Logic Module (CALM) rules initialized.", EventType.DEBUG, this);
 
@@ -192,10 +183,9 @@ public class CalmRules {
 				throw new DTICalmException(dtiTxn);
 			}
 		}
-
 		throw new DTIException(BusinessRules.class,
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
-				"WDW Request attempted when WDWDown outage wall file is present (CALM).");
+				"WDW Request attempted when WDWDown outage wall property is present in the database (CALM).");
 	}
 
 	/**
@@ -229,10 +219,9 @@ public class CalmRules {
 				throw new DTICalmException(dtiTxn);
 			}
 		}
-
 		throw new DTIException(BusinessRules.class,
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
-				"DLR Request attempted when DLRDown outage wall file is present (CALM).");
+				"DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
 	}
 
 	/**
@@ -409,23 +398,25 @@ public class CalmRules {
 				"HKD Request attempted when HKDDown outage wall file is present (CALM).");
   }
 
+   /**
+    * Checks if is wall raised.
+    *
+    * @return the boolean
+    */
    private Boolean isWallRaised() {
 
       Boolean wallRaised = false;
       List<PropertyTO> propertyList;
+      
       try {
          propertyList = PropertyKey.getProperties(application, tpoId, environment, PropertyName.DTI_CALM_SECTION);
-         
          if ((propertyList != null) && propertyList.size() > 0) {
-
             logger.sendEvent("The WALLRAISED property has been found in the database.", EventType.DEBUG, this);
 
-            // this should be a list of size 1. There is only a single value
-            // (boolean) for
+            // this should be a list of size 1. There is only a single value (boolean) for
             // each campus that indicates if the wall is raised or not
             PropertyTO wallRaisedProperty = propertyList.get(0);
             wallRaised = Boolean.parseBoolean(wallRaisedProperty.getPropSetValue());
-
          } else {
             logger.sendEvent("Wall Properties are not defined in database.", EventType.WARN, this);
          }

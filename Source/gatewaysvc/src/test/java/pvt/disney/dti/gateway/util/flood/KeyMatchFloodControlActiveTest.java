@@ -154,7 +154,6 @@ public class KeyMatchFloodControlActiveTest {
 		/* Run three occurrences back-to-back (should be legal) */
 		/* Relies on the KeyFrequencyLimit property above being set to 3. */
 		try {
-			int maximumNumberOfKeys = Integer.parseInt(MAXCONCURRENTKEYS);
 			int numberOfAllowableOccurences = Integer
 					.parseInt(KEYFREQUENCYLIMIT);
 

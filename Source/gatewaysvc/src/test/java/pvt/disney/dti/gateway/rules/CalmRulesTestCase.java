@@ -62,14 +62,14 @@ public class CalmRulesTestCase extends CommonBusinessTest {
       try {
          calmRules.checkContingencyActionsLogicModule(dtitxn);
       } catch (DTIException dtie) {
-         assertEquals("WDW Request attempted when WDWDown outage wall file is present (CALM).", dtie.getLogMessage());
+         assertEquals("WDW Request attempted when WDWDown outage wall property is present in the database (CALM).", dtie.getLogMessage());
       }
 
       /*
        * JUnit for createAPQueryWDWTicketResp
        * 
        * Expected Exception is WDW Request attempted when WDWDown outage wall
-       * file is present (CALM).
+       * property is present (CALM).
        */
 
       dtitxn.getRequest().getPayloadHeader().getTktSeller().setTsMac(tsMacWdp);
@@ -78,7 +78,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
          calmRules.checkContingencyActionsLogicModule(dtitxn);
       } catch (DTIException dtie) {
 
-         assertEquals("WDW Request attempted when WDWDown outage wall file is present (CALM).", dtie.getLogMessage());
+         assertEquals("WDW Request attempted when WDWDown outage wall property is present in the database (CALM).", dtie.getLogMessage());
       } catch (DTICalmException dtic) {
          assertEquals(DTICalmException.class, dtic.getClass());
       }
@@ -86,15 +86,16 @@ public class CalmRulesTestCase extends CommonBusinessTest {
       /* JUnit for executeDLRDownRules */
       /*
        * Expected Exception is DLR Request attempted when DLRDown outage wall
-       * file is present (CALM).
+       * property is present (CALM).
        */
+      
       dtitxn.getRequest().getPayloadHeader().getTktSeller().setTsMac(tsMacWadm);
 
       dtitxn.setProvider(ProviderType.DLRGATEWAY);
       try {
          calmRules.checkContingencyActionsLogicModule(dtitxn);
       } catch (DTIException dtie) {
-         assertEquals("DLR Request attempted when DLRDown outage wall file is present (CALM).", dtie.getLogMessage());
+         assertEquals("DLR Request attempted when DLRDown outage wall property is present in the database (CALM).", dtie.getLogMessage());
       }
       /* JUnit for createAPQueryDLRTicketResp */
       dtitxn.getRequest().getPayloadHeader().getTktSeller().setTsMac(tsMacWdp);

@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -43,12 +44,6 @@ import pvt.disney.dti.gateway.util.ResourceLoader;
 public class TestCalmRules {
 
 	// SETUP ALL OUR PRE-REQUISITE OBJECTS FOR TESTING
-
-	/** The campus down wdw file. */
-	private static String CAMPUS_DOWN_WDW_FILE;
-
-	/** The campus down dlr file. */
-	private static String CAMPUS_DOWN_DLR_FILE;
 
 	/** The campus down hkd file. */
 	private static String CAMPUS_DOWN_HKD_FILE;
@@ -188,8 +183,8 @@ public class TestCalmRules {
 	 */
 	private static void helpSetupCampusDownFileNames() {
 		// setup our filenames
-		CAMPUS_DOWN_WDW_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_WDW_DOWN_FILENAME, testProps, null);
-		CAMPUS_DOWN_DLR_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_DLR_DOWN_FILENAME, testProps, null);
+		//CAMPUS_DOWN_WDW_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_WDW_DOWN_FILENAME, testProps, null);
+	   //CAMPUS_DOWN_DLR_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_DLR_DOWN_FILENAME, testProps, null);
 		CAMPUS_DOWN_HKD_FILE = PropertyHelper.readPropsValue(PropertyName.CALM_HKD_DOWN_FILENAME, testProps, null);
 
 	}
@@ -206,10 +201,10 @@ public class TestCalmRules {
 		DOWN_FILELIST = new ArrayList<File>();
 
 		// create the file class and add it to the list
-		File wdwFile = new File(CAMPUS_DOWN_WDW_FILE);
+		/*File wdwFile = new File(CAMPUS_DOWN_WDW_FILE);
 		DOWN_FILELIST.add(wdwFile);
 		File dlrFile = new File(CAMPUS_DOWN_DLR_FILE);
-		DOWN_FILELIST.add(dlrFile);
+		DOWN_FILELIST.add(dlrFile);*/
 		File hkdFile = new File(CAMPUS_DOWN_HKD_FILE);
 		DOWN_FILELIST.add(hkdFile);
 

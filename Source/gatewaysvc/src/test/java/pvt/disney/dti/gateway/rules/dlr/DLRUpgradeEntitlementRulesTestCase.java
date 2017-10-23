@@ -154,7 +154,7 @@ public class DLRUpgradeEntitlementRulesTestCase extends DTIMockUtil {
 	 * Test case for transforming the eGalaxy XML response string into response
 	 * objects within the DTI transfer object
 	 */
-	//@Test
+	@Test
 	public void testTransformResponse() {
 		String xmlResponse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Envelope>"
 				+"<Header>"
@@ -198,7 +198,7 @@ public class DLRUpgradeEntitlementRulesTestCase extends DTIMockUtil {
 	/**
 	 * Test case for Transforms a DLR Orders error
 	 */
-	//@Test
+	@Test
 	public void testTransformError() {
 		String xmlResponse = null;
 		TPLookupTO aTPLookupSalesTypeTO = new TPLookupTO();

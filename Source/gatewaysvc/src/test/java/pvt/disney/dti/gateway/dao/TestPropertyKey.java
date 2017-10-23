@@ -17,7 +17,7 @@ public class TestPropertyKey extends CommonTestDao {
    private String application;
    private String environment;
    private String section;
-   Integer tpoId =0;
+   Integer tpoId = 0;
    @Test
    public void testGetProperties() {
       try {
