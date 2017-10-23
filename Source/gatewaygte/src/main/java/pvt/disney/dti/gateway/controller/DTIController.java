@@ -138,19 +138,19 @@ public class DTIController {
 	  eventLogger.sendEvent("Entering processRequest(InputStream) ",
         EventType.DEBUG, this);
 
-      String strInputFile = null;
-      Document docIn = null;
-      Document docOut = null;
-      String payloadId = null;
-      String tsMac = null;
-      String tsLocation = null;
-      boolean blockedTransaction = false;
-      XMLSerializer strser = null;
-      // DBTransaction dbTran = null;
-      String target = null;
-      Integer transIdITS = null;
-      Integer tpRefNumber = null;
-      String maskedXMLRequest = null;
+    String strInputFile = null;
+    Document docIn = null;
+    Document docOut = null;
+    String payloadId = null;
+    String tsMac = null;
+    String tsLocation = null;
+    boolean blockedTransaction = false;
+    XMLSerializer strser = null;
+    //DBTransaction dbTran = null;
+    String target = null;
+    Integer transIdITS = null;
+    Integer tpRefNumber = null;
+    String maskedXMLRequest = null;
 
     try {
       // get the XML from the in-bound message
