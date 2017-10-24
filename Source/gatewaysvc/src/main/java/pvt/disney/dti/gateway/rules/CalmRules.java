@@ -40,26 +40,26 @@ public class CalmRules {
 	/** The standard core logging mechanism. */
 	private EventLogger logger = EventLogger.getLogger(this.getClass());
 
-   /** The hkd down file name. */
-   private static String hkdDownFileName = null;
+	/** The hkd down file name. */
+	private static String hkdDownFileName = null;
 
 	/** The this obj. */
 	private static CalmRules thisObj = null;
-	
+
 	/** The hkd calm active. */
 	private static boolean hkdCalmActive = false;
 
 	/** The query ticket reply macs. */
 	private static ArrayList<String> queryTicketReplyMacs = new ArrayList<String>();
 
-   /** The application. */
-   private static String application = null;
+	/** The application. */
+	private static String application = null;
 
-   /** The environment. */
-   private static String environment = null;
+	/** The environment. */
+	private static String environment = null;
 
-   /** The tpo id. */
-   private static Integer tpoId = 0;
+	/** The tpo id. */
+	private static Integer tpoId = 0;
 
 	/**
 	 * Instantiates a new calm rules.
@@ -85,8 +85,8 @@ public class CalmRules {
             queryTicketReplyMacs.add(result[x]);
          }
       }
+      
       application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
-
       environment = System.getProperty("APP_ENV");
 
       logger.sendEvent("Contingency Actions Logic Module (CALM) rules initialized.", EventType.DEBUG, this);
@@ -125,13 +125,11 @@ public class CalmRules {
 		File downFile = null;
 
       if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
-
          tpoId = 2;
          if (isWallRaised()) {
             executeWDWDownRules(dtiTxn);
          }
       } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
-
          tpoId = 1;
          if (isWallRaised()) {
             executeDLRDownRules(dtiTxn);

@@ -38,7 +38,7 @@ public class FloodControlVolumeTestCase extends TestCase {
 			floodControl = new TestImplementor();
 			String application = "DtiGateWay";
 			String environment = "Latest";
-			Integer tpoId =0;
+			Integer tpoId = 0;
 			floodControl.getRefreshPropertyFromDB(application,tpoId, environment);
 		} catch (FloodControlInitException e) {
 			Assert.fail("Unexpected Exception");

@@ -34,7 +34,7 @@ public interface PropertyName {
 	public static final String POS_TKT_BROKER = "POS.tktBroker";
 
    /** The Constant CALM_HKD_DOWN_FILENAME. */
-   public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3,
+   public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3, JTL
    
    /** The Constant CALM_QUERYTICKET_REPLYMACS. */
    public static final String CALM_QUERYTICKET_REPLYMACS = "CALM.QueryTicket.ReplyMACs";

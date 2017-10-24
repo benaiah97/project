@@ -42,7 +42,7 @@ public class KeyMatchFloodControlActiveTest {
 		floodControl = new TestImplementor();
 		String application ="DtiGateWay";
 		String environment ="Latest";
-		Integer tpoId =0;
+		Integer tpoId = 0;
 		floodControl.getRefreshPropertyFromDB(application,tpoId,environment);
 	}
 
