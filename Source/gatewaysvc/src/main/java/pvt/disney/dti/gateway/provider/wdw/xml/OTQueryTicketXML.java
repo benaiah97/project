@@ -221,7 +221,12 @@ public class OTQueryTicketXML {
       if (ticketNode != null) otTktInfoTO.setTicket(OTCommandXML
           .setOTTicketTO(ticketNode));
 
-      // RemainingValue (ignored)
+      // RemainingValue
+      Node remianingValueNode = aNode.selectSingleNode("RemainingValue");
+      if (remianingValueNode != null) {
+        String remianingValText = remianingValueNode.getText();
+        otTktInfoTO.setRemainingValue(new BigDecimal(remianingValText));
+      }
 
       // VoidCode
       Node voidCodeNode = aNode.selectSingleNode("VoidCode");

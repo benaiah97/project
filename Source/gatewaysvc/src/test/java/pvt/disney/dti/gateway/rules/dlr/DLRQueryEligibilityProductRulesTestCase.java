@@ -321,7 +321,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
          if(res.getTicketList().get(0).getDlrPLU()==null && res.getTicketList().get(0).getDlrPLU().compareTo("TICKET0010101")!=0){
             Assert.fail("PLU does not match with TICKET0010101"); 
          }
-         System.out.print("Checking "+res.getTicketList().get(0).getDlrPLU());
+        
       }catch(DTIException dtie){
          Assert.fail("UnExpected Exception Occured" + dtie.getMessage());
       }
