@@ -344,15 +344,17 @@ public class DTIFloodControlTest {
     */
    @Test
    public void testGetInstance() {
+      
+      Integer tpoId = 0;
       DTIMockUtil.processMockprepareAndExecuteSql();
-      DTIFloodControl floodControlInstanceOne = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
-      DTIFloodControl floodControlInstanceTwo = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
-      DTIFloodControl floodControlInstanceThree = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
+      DTIFloodControl floodControlInstanceOne = DTIFloodControl.getInstance("DTIGateWay", tpoId, "Latest");
+      DTIFloodControl floodControlInstanceTwo = DTIFloodControl.getInstance("DTIGateWay", tpoId, "Latest");
+      DTIFloodControl floodControlInstanceThree = DTIFloodControl.getInstance("DTIGateWay", tpoId, "Latest");
       try {
          Thread.sleep(60);
       } catch (InterruptedException e) {
       }
-      DTIFloodControl floodControlInstanceFour = DTIFloodControl.getInstance("DTIGateWay", 0, "Latest");
+      DTIFloodControl floodControlInstanceFour = DTIFloodControl.getInstance("DTIGateWay", tpoId, "Latest");
       Assert.assertEquals(floodControlInstanceOne, floodControlInstanceTwo);
       Assert.assertEquals(floodControlInstanceTwo, floodControlInstanceThree);
       Assert.assertEquals(floodControlInstanceThree, floodControlInstanceFour);
