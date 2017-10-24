@@ -214,18 +214,18 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
             // In case when no data is found for given PLU is found in DB,
             // populate the PLU detail from Galaxy response.
             guestDbProduct = getPLUDetailsFromGalaxy(guestProduct, dtiTktTO);
+         }
 
-            // Putting the dbProduct to guestDbProduct
-            guestProduct.setDbproductTO(guestDbProduct);
+         // Putting the dbProduct to guestDbProduct
+         guestProduct.setDbproductTO(guestDbProduct);
 
-            // If the UpgradeEligibilityStatusType is INELIGIBLE populate the
-            // ticket information , with salable products as null
-            if (dtiTktTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.INELIGIBLE) == 0) {
+         // If the UpgradeEligibilityStatusType is INELIGIBLE populate the
+         // ticket information , with salable products as null
+         if (dtiTktTO.getUpgradeEligibilityStatus().compareTo(UpgradeEligibilityStatusType.INELIGIBLE) == 0) {
 
-               setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
+            setQueryEligibleResponseCommand(guestProduct, dtiTktTO, null);
 
-               return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
-            }
+            return setQueryEligibleToDTITransaction(dtiTktTO, dtiRespTO, dtiTxn);
          }
 
          // Fetch the details List of Salable product
