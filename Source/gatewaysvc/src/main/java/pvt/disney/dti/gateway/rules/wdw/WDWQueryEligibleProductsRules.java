@@ -563,7 +563,7 @@ public class WDWQueryEligibleProductsRules {
          }
 
          // Rule 5 : resident flag is 'N' and all entitlements are used.
-         if ((isResident == false) && (remainingEntitlement != BigDecimal.ZERO)) {
+         if ((isResident == false) && (remainingEntitlement == BigDecimal.ZERO)) {
 
             logger.sendEvent("ResidentInd is :" + isResident + "remainingEntitlement is : " + remainingEntitlement
                      + " :Validation Failed.", EventType.DEBUG, THISINSTANCE);
