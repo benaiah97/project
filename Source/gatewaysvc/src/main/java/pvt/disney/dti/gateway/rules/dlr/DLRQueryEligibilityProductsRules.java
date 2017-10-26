@@ -233,7 +233,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
          // Check usage if no usage is there put the result type as INELIGIBLE
          if ((guestProduct.getGwDataRespTO().getUsageRecords() == null)
-                  || (guestProduct.getGwDataRespTO().getUsageRecords().get(0).getUseNo() == 0)) {
+                  || (guestProduct.getGwDataRespTO().getUsageRecords().size() == 0)) {
 
             logger.sendEvent("Usage Information for guest is not provided. ", EventType.DEBUG, THISINSTANCE);
             dtiTktTO.setUpgradeEligibilityStatus(UpgradeEligibilityStatusType.INELIGIBLE);
