@@ -1,51 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "./log4j.dtd">
 <log4j:configuration debug="false" threshold="null" xmlns:log4j="http://jakarta.apache.org/log4j/">
-    <renderer renderedClass="com.disney.logging.audit.Event" renderingClass="pvt.disney.dti.gateway.util.FileRenderer"/>
-    <!-- renderer renderedClass="com.disney.logging.audit.Event" renderingClass="com.disney.log4j.renderer.EventXmlRenderer"/>  -->
-    <!-- <renderer renderedClass="com.disney.logging.audit.Event" renderingClass="com.disney.log4j.renderer.EventTextRenderer"/> -->
-    <!-- <renderer renderedClass="any class you want" renderingClass="com.disney.log4j.renderer.ReflectionObjectXmlRenderer"/> -->
-    <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
-    <appender class="com.disney.logging.Configurator" name="CONFIG">
-        <!--<param name="logLevel" value="40"/>-->
-        <param name="logObjects" value="30000"/>
-        <param name="loggingInfoMapperClassName" value="pvt.disney.dti.gateway.util.DTILoggingInfoMapper"/>
-        <param name="retrieveTrackers" value="true"/>
-    </appender>
-    <appender class="org.apache.log4j.AsyncAppender" name="GATEASYNC">
-        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
-        <appender-ref ref="GATE_FILE"/>
-    </appender>
-    <appender class="org.apache.log4j.FileAppender" name="GATE_FILE">
-        <param name="File" value="${Gateway_Logs}/DTIGATEWAY.log"/>
-        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
-    </appender>
-    <appender class="org.apache.log4j.FileAppender" name="DEVNULL">
-        <param name="File" value="/dev/null"/>
-        <layout class="com.disney.log4j.EventTextLayout"/>
-    </appender>
-    <appender class="org.apache.log4j.ConsoleAppender" name="STDOUT">
-        <layout class="com.disney.log4j.EventTextLayout"/>
-    </appender>
-    <logger additivity="false" name="com.disney.jdbc.dao">
-        <level value="INFO"/>
-        <appender-ref ref="GATEASYNC"/>
-    </logger>
-    <logger additivity="false" name="com.dti.app">
-        <level value="DEBUG"/>
-        <appender-ref ref="GATEASYNC"/>
-    </logger>
-    <logger additivity="false" name="pvt.disney.dti">
-        <level value="DEBUG"/>
-        <appender-ref ref="GATEASYNC"/>
-    </logger>
-    <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
-    <logger additivity="false" name="CONFIG_ONLY">
-        <level value="INFO"/>
-        <appender-ref ref="CONFIG"/>
-    </logger>
-    <root>
-        <level value="INFO"/>
-        <appender-ref ref="DEVNULL"/>
-    </root>
+            <renderer renderedClass="com.disney.logging.audit.Event" renderingClass="pvt.disney.dti.gateway.util.FileRenderer"/>
+            <!-- renderer renderedClass="com.disney.logging.audit.Event" renderingClass="com.disney.log4j.renderer.EventXmlRenderer"/>  -->
+            <!-- <renderer renderedClass="com.disney.logging.audit.Event" renderingClass="com.disney.log4j.renderer.EventTextRenderer"/> -->
+            <!-- <renderer renderedClass="any class you want" renderingClass="com.disney.log4j.renderer.ReflectionObjectXmlRenderer"/> -->
+            <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
+            <appender class="com.disney.logging.Configurator" name="CONFIG">
+                        <!--<param name="logLevel" value="40"/>-->
+                        <param name="logObjects" value="30000"/>
+                        <param name="loggingInfoMapperClassName" value="pvt.disney.dti.gateway.util.DTILoggingInfoMapper"/>
+                        <param name="retrieveTrackers" value="true"/>
+            </appender>
+            <appender class="org.apache.log4j.AsyncAppender" name="GATEASYNC">
+                        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+                        <appender-ref ref="GATE_FILE"/>
+            </appender>
+            <appender class="org.apache.log4j.FileAppender" name="GATE_FILE">
+                        <param name="File" value="${Gateway_Logs}/DTIGATEWAY.log"/>
+                        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+            </appender>
+            <!--BEGIN appenders and logger added for RACE logging and debugging -->
+            <appender class="org.apache.log4j.AsyncAppender" name="RACEASYNC">
+                        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+                        <appender-ref ref="RACE_FILE"/>
+            </appender>
+            <appender class="org.apache.log4j.FileAppender" name="RACE_FILE">
+                        <param name="File" value="${Gateway_Logs}/DTIRACE.log"/>
+                        <layout class="pvt.disney.dti.gateway.util.FileLayout"/>
+            </appender>
+            <logger additivity="false" name="pvt.disney.dti.gateway.rules.race">
+                        <level value="DEBUG"/>
+                        <appender-ref ref="RACEASYNC"/>
+            </logger>
+            <!--  END appenders added for RACE logging and debugging -->
+            <appender class="org.apache.log4j.FileAppender" name="DEVNULL">
+                        <param name="File" value="/dev/null"/>
+                        <layout class="com.disney.log4j.EventTextLayout"/>
+            </appender>
+            <appender class="org.apache.log4j.ConsoleAppender" name="STDOUT">
+                        <layout class="com.disney.log4j.EventTextLayout"/>
+            </appender>
+            <logger additivity="false" name="com.disney.jdbc.dao">
+                        <level value="DEBUG"/>
+                        <appender-ref ref="GATEASYNC"/>
+            </logger>
+            <logger additivity="false" name="com.dti.app">
+                        <level value="DEBUG"/>
+                        <appender-ref ref="GATEASYNC"/>
+            </logger>
+            <logger additivity="false" name="pvt.disney.dti">
+                        <level value="DEBUG"/>
+                        <appender-ref ref="GATEASYNC"/>
+            </logger>
+            <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
+            <logger additivity="false" name="CONFIG_ONLY">
+                        <level value="INFO"/>
+                        <appender-ref ref="CONFIG"/>
+            </logger>
+            <root>
+                        <level value="INFO"/>
+                        <appender-ref ref="DEVNULL"/>
+            </root>
 </log4j:configuration>
