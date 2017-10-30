@@ -39,11 +39,11 @@ public class KeyMatchFloodControlActiveTest {
 	public void setUp() throws Exception {
 
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		DTIMockUtil dtiMockUtil = new DTIMockUtil();
 		floodControl = new TestImplementor();
 		String application ="DtiGateWay";
 		String environment ="Latest";
-		floodControl.getRefreshPropertyFromDB(application,environment);
+		Integer tpoId = 0;
+		floodControl.getRefreshPropertyFromDB(application,tpoId,environment);
 	}
 
 	@After
@@ -154,7 +154,6 @@ public class KeyMatchFloodControlActiveTest {
 		/* Run three occurrences back-to-back (should be legal) */
 		/* Relies on the KeyFrequencyLimit property above being set to 3. */
 		try {
-			int maximumNumberOfKeys = Integer.parseInt(MAXCONCURRENTKEYS);
 			int numberOfAllowableOccurences = Integer
 					.parseInt(KEYFREQUENCYLIMIT);
 

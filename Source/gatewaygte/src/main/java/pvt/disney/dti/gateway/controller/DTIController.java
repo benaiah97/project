@@ -81,6 +81,9 @@ public class DTIController {
 
    // Boolean controlling flood blocking denying those who flood
    private static final boolean FLOODCONTROLDENY = true;
+   
+   // The tpo id. 
+   private static Integer tpoId = 0;
 
    /**
     * Constructor for DTIApp.
@@ -113,9 +116,10 @@ public class DTIController {
          throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
                   + ", Environment: " + environment);
       }
-
-      // Creating the DTIFloodControl by passing application and environment
-      floodControl = DTIFloodControl.getInstance(application, environment);
+      //  Flood Block will need to pass in the value of “0” for tpoId.
+      //That value will be used for property values that are not campus specific.
+      // Creating the DTIFloodControl by passing application ,tpoId and environment
+      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
 
       return;
    }

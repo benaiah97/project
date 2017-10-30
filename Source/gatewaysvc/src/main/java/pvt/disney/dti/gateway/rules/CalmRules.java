@@ -5,18 +5,21 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 
 import pvt.disney.dti.gateway.constants.DTICalmException;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
+import pvt.disney.dti.gateway.dao.PropertyKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
+import pvt.disney.dti.gateway.data.common.PropertyTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
@@ -28,7 +31,7 @@ import com.disney.util.PropertyHelper;
 
 /**
  * The Class CalmRules.
- *
+ * 
  * @author lewit019, moons012
  * @since 2.16.3
  */
@@ -37,29 +40,26 @@ public class CalmRules {
 	/** The standard core logging mechanism. */
 	private EventLogger logger = EventLogger.getLogger(this.getClass());
 
-	/** The wdw down file name. */
-	private static String wdwDownFileName = null;
-
-	/** The dlr down file name. */
-	private static String dlrDownFileName = null;
-	
 	/** The hkd down file name. */
 	private static String hkdDownFileName = null;
 
 	/** The this obj. */
 	private static CalmRules thisObj = null;
 
-	/** The dlr calm active. */
-	private static boolean dlrCalmActive = false;
-
-	/** The wdw calm active. */
-	private static boolean wdwCalmActive = false;
-	
 	/** The hkd calm active. */
 	private static boolean hkdCalmActive = false;
 
 	/** The query ticket reply macs. */
 	private static ArrayList<String> queryTicketReplyMacs = new ArrayList<String>();
+
+	/** The application. */
+	private static String application = null;
+
+	/** The environment. */
+	private static String environment = null;
+
+	/** The tpo id. */
+	private static Integer tpoId = 0;
 
 	/**
 	 * Instantiates a new calm rules.
@@ -67,48 +67,29 @@ public class CalmRules {
 	 * @param props the props
 	 * @throws DTIException the DTI exception
 	 */
-	private CalmRules(Properties props) throws DTIException {
 
-		wdwDownFileName = PropertyHelper.readPropsValue(
-				PropertyName.CALM_WDW_DOWN_FILENAME, props, null);
-		if (wdwDownFileName == null) {
-			wdwCalmActive = false;
-		}
-		else {
-			wdwCalmActive = true;
-		}
+   private CalmRules(Properties props) throws DTIException {
+      
+      // Added HDK as of 2.16.3, JTL
+      hkdDownFileName = PropertyHelper.readPropsValue(PropertyName.CALM_HKD_DOWN_FILENAME, props, null);
+      if (hkdDownFileName == null) {
+         hkdCalmActive = false;
+      } else {
+         hkdCalmActive = true;
+      }
 
-		dlrDownFileName = PropertyHelper.readPropsValue(
-				PropertyName.CALM_DLR_DOWN_FILENAME, props, null);
-		if (dlrDownFileName == null) {
-			dlrCalmActive = false;
-		}
-		else {
-			dlrCalmActive = true;
-		}
-		
-		// Added HDK as of 2.16.3, JTL
-    hkdDownFileName = PropertyHelper.readPropsValue(
-        PropertyName.CALM_HKD_DOWN_FILENAME, props, null);
-    if (hkdDownFileName == null) {
-      hkdCalmActive = false;
-    }
-    else {
-      hkdCalmActive = true;
-    }
+      String qtMacs = PropertyHelper.readPropsValue(PropertyName.CALM_QUERYTICKET_REPLYMACS, props, null);
+      if (qtMacs != null) {
+         String[] result = qtMacs.split(",");
+         for (int x = 0; x < result.length; x++) {
+            queryTicketReplyMacs.add(result[x]);
+         }
+      }
+      
+      application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
+      environment = System.getProperty("APP_ENV");
 
-		String qtMacs = PropertyHelper.readPropsValue(
-				PropertyName.CALM_QUERYTICKET_REPLYMACS, props, null);
-		if (qtMacs != null) {
-			String[] result = qtMacs.split(",");
-			for (int x = 0; x < result.length; x++) {
-				queryTicketReplyMacs.add(result[x]);
-			}
-		}
-
-		logger.sendEvent(
-				"Contingency Actions Logic Module (CALM) rules initialized.",
-				EventType.DEBUG, this);
+      logger.sendEvent("Contingency Actions Logic Module (CALM) rules initialized.", EventType.DEBUG, this);
 
 		return;
 
@@ -143,30 +124,21 @@ public class CalmRules {
 		String tpiCode = dtiTxn.getTpiCode();
 		File downFile = null;
 
-		if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW) && wdwCalmActive) {
+      if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
+         tpoId = 2;
+         if (isWallRaised()) {
+            executeWDWDownRules(dtiTxn);
+         }
+      } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
+         tpoId = 1;
+         if (isWallRaised()) {
+            executeDLRDownRules(dtiTxn);
+         }
+      } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
+         downFile = new File(hkdDownFileName);
 
-			downFile = new File(wdwDownFileName);
-			
-			if (downFile.exists()) {
-				executeWDWDownRules(dtiTxn);
-			}
-
-		}
-		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR) && dlrCalmActive) {
-
-			downFile = new File(dlrDownFileName);
-			  
-			if (downFile.exists()) {
-				executeDLRDownRules(dtiTxn);
-			}
-
-		}
-		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
-		  downFile = new File(hkdDownFileName);
-
-		  if (downFile.exists()) {
-			  System.out.println("executing HKD calm");
-		    executeHKDDownRules(dtiTxn);
+         if (downFile.exists()) {
+            executeHKDDownRules(dtiTxn);
 		  }
 		}
 
@@ -209,10 +181,9 @@ public class CalmRules {
 				throw new DTICalmException(dtiTxn);
 			}
 		}
-
 		throw new DTIException(BusinessRules.class,
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
-				"WDW Request attempted when WDWDown outage wall file is present (CALM).");
+				"WDW Request attempted when WDWDown outage wall property is present in the database (CALM).");
 	}
 
 	/**
@@ -246,10 +217,9 @@ public class CalmRules {
 				throw new DTICalmException(dtiTxn);
 			}
 		}
-
 		throw new DTIException(BusinessRules.class,
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
-				"DLR Request attempted when DLRDown outage wall file is present (CALM).");
+				"DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
 	}
 
 	/**
@@ -425,5 +395,34 @@ public class CalmRules {
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
 				"HKD Request attempted when HKDDown outage wall file is present (CALM).");
   }
-	
+
+   /**
+    * Checks if is wall raised.
+    *
+    * @return the boolean
+    */
+   private Boolean isWallRaised() {
+
+      Boolean wallRaised = false;
+      List<PropertyTO> propertyList;
+      
+      try {
+         propertyList = PropertyKey.getProperties(application, tpoId, environment, PropertyName.DTI_CALM_SECTION);
+         if ((propertyList != null) && propertyList.size() > 0) {
+            logger.sendEvent("The WALLRAISED property has been found in the database.", EventType.DEBUG, this);
+
+            // this should be a list of size 1. There is only a single value (boolean) for
+            // each campus that indicates if the wall is raised or not
+            PropertyTO wallRaisedProperty = propertyList.get(0);
+            wallRaised = Boolean.parseBoolean(wallRaisedProperty.getPropSetValue());
+         } else {
+            logger.sendEvent("Wall Properties are not defined in database.", EventType.WARN, this);
+         }
+      } catch (Exception ex) {
+         logger.sendEvent("Wall Properties are not defined in database.", EventType.WARN, this);
+      }
+      return wallRaised;
+
+   }
+
 }

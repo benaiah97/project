@@ -34,12 +34,12 @@ public class FloodControlVolumeTestCase extends TestCase {
 	public FloodControlVolumeTestCase(String name) {
 		super(name);
 		DTIMockUtil.processMockprepareAndExecuteSql();
-		DTIMockUtil dtiMockUtil = new DTIMockUtil();
 		try {
 			floodControl = new TestImplementor();
 			String application = "DtiGateWay";
 			String environment = "Latest";
-			floodControl.getRefreshPropertyFromDB(application, environment);
+			Integer tpoId = 0;
+			floodControl.getRefreshPropertyFromDB(application,tpoId, environment);
 		} catch (FloodControlInitException e) {
 			Assert.fail("Unexpected Exception");
 		}

@@ -33,17 +33,11 @@ public interface PropertyName {
 	/** The Constant POS_TKT_BROKER. */
 	public static final String POS_TKT_BROKER = "POS.tktBroker";
 
-	/** The Constant CALM_DLR_DOWN_FILENAME. */
-	public static final String CALM_DLR_DOWN_FILENAME = "CALM.DLRDownFileName";
-	
-	/** The Constant CALM_WDW_DOWN_FILENAME. */
-	public static final String CALM_WDW_DOWN_FILENAME = "CALM.WDWDownFileName";
-    
-    /** The Constant CALM_HKD_DOWN_FILENAME. */
-    public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3, JTL	
-	
-	/** The Constant CALM_QUERYTICKET_REPLYMACS. */
-	public static final String CALM_QUERYTICKET_REPLYMACS = "CALM.QueryTicket.ReplyMACs";
+   /** The Constant CALM_HKD_DOWN_FILENAME. */
+   public static final String CALM_HKD_DOWN_FILENAME = "CALM.HKDDownFileName"; // As of 2.16.3, JTL
+   
+   /** The Constant CALM_QUERYTICKET_REPLYMACS. */
+   public static final String CALM_QUERYTICKET_REPLYMACS = "CALM.QueryTicket.ReplyMACs";
 
 	/** The Constant ATS_SITE_NUMBER. */
 	public static final String ATS_SITE_NUMBER = "ATS.SiteNumber";
@@ -53,8 +47,14 @@ public interface PropertyName {
 	
 	/** The Constant DTI_APPLICATION. */
    public static final String DTI_APPLICATION = "DtiApp.Application";
-   
+
    /** The Constant DTI_ENVIRONMENT. */
    public static final String DTI_ENVIRONMENT = "DtiApp.Environment";
    
+   /** The Constant for the CALM section. */
+   public static final String DTI_CALM_SECTION = "WALL";
+   
+   /** The Constant for the CALM key. */
+   public static final String DTI_CALM_KEY = "WALLRAISED";
+
 }
