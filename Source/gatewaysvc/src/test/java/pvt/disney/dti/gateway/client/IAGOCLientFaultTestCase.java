@@ -38,7 +38,7 @@ public class IAGOCLientFaultTestCase extends CommonTestUtils {
 	ResourceBundle resourceBundle;
 	@Mocked
 	URLConnection con;
-	IagoClient client = null;
+	WdwIagoClient client = null;
 	Properties props = null;
 	String url = "";
 
@@ -69,7 +69,7 @@ public class IAGOCLientFaultTestCase extends CommonTestUtils {
 			}
 		};
 
-		client = new IagoClient();
+		client = new WdwIagoClient();
 	}
 
 	//@Test
@@ -107,7 +107,7 @@ public class IAGOCLientFaultTestCase extends CommonTestUtils {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.RENEWENTITLEMENT);
 
-		IagoClient client = new IagoClient();
+		WdwIagoClient client = new WdwIagoClient();
 		try {
 
 			client.sendRequest(dtiTxn, reqXml);

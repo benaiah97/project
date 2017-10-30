@@ -233,7 +233,7 @@ public static DTITransactionTO getDtiTransactionTo(
       commandBodyTO = VoidReservationXML.getTO(vResReq);
       break;  
       
-    case QUERYELIGIBLEPRODUCTS: // as of part of AP Upgrade Service
+    case QUERYELIGPRODUCTS: // as of part of AP Upgrade Service
 	  QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand()
 		   .getQueryEligibleProductsRequest();
 	   commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);

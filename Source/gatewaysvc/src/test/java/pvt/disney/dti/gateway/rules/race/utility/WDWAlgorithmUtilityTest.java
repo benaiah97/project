@@ -19,6 +19,8 @@ public class WDWAlgorithmUtilityTest {
 
 	
 	public static WDWAlgorithmUtility wdwUtility;
+	
+	public static String payloadId = "99920170913073547426";
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -53,14 +55,14 @@ public class WDWAlgorithmUtilityTest {
 	 */
 	@Test
 	public void testGenerateResCode() {
-		String resCode = wdwUtility.generateResCode();
+		String resCode = wdwUtility.generateResCode(payloadId);
 		System.out.println("wdw resCode='" + resCode +"");
 	}
 	
 	@Test
 	public void testIsValidFormat () {
 		
-		String testValidsCode = wdwUtility.generateResCode();
+		String testValidsCode = wdwUtility.generateResCode(payloadId);
 		System.out.println("Test RESCODE" + testValidsCode);
 		boolean isValidFormat = true;
 		

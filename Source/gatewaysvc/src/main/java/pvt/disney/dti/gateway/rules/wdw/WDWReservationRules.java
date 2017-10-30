@@ -1085,7 +1085,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     // If this isn't rework, then it is likely you need to create a res code.
     // Attempt to do so.
     if (!isRework) {     
-       candidateResCode = WDWAlgorithmUtility.generateResCode(); 
+       candidateResCode = WDWAlgorithmUtility.generateResCode(payloadId); 
        resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
     } 
     
@@ -1098,7 +1098,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     
       int counter = 0;
       while ((resCode == null) && (counter < 10)) {
-        candidateResCode = WDWAlgorithmUtility.generateResCode(); 
+        candidateResCode = WDWAlgorithmUtility.generateResCode(payloadId); 
         resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
         counter++;
       }
@@ -1129,7 +1129,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
      
      while (inserted == false) {
        
-       resCode = WDWAlgorithmUtility.generateResCode();
+       resCode = WDWAlgorithmUtility.generateResCode(payloadId);
        try {
          TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
          inserted = true;

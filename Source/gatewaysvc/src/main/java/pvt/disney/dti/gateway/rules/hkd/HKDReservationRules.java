@@ -298,7 +298,7 @@ public class HKDReservationRules {
     // If this isn't rework, then it is likely you need to create a res code.
     // Attempt to do so.
     if (!isRework) {     
-       candidateResCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+       candidateResCode = AlgorithmUtility.generateResCode(payloadId, sellerResPrefix);
        resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
     } 
     
@@ -311,7 +311,7 @@ public class HKDReservationRules {
     
       int counter = 0;
       while ((resCode == null) && (counter < 10)) {
-        candidateResCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+        candidateResCode = AlgorithmUtility.generateResCode(payloadId, sellerResPrefix);
         resCode = TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, candidateResCode);
         counter++;
       }
@@ -343,7 +343,7 @@ public class HKDReservationRules {
     
     while (inserted == false) {
       
-      resCode = AlgorithmUtility.generateResCode(sellerResPrefix);
+      resCode = AlgorithmUtility.generateResCode(payloadId, sellerResPrefix);
       try {
         TransidRescodeKey.insertTransIdRescode(dtiTxn.getTransIdITS(), payloadId, resCode);
         inserted = true;

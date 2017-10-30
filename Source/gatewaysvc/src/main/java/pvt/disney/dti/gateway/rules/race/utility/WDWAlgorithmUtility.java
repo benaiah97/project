@@ -30,10 +30,10 @@ public class WDWAlgorithmUtility extends AlgorithmUtility {
 	 * @param tktSellerPrefix the ticket seller prefix
 	 * @return the string
 	 */
-	public static String generateResCode() {		
+	public static String generateResCode(String payloadId) {		
 		// setup to get the date we will use for step one
 		Calendar theDate = new GregorianCalendar();
-		logger.debug("Begin generateRescode:{}", theDate.getTime());
+		logger.debug("Begin generateRescode for " + payloadId +":{}", theDate.getTime());
 		
 		// Algorithm Step 1 - uses parent class method 
 		Step1VO stepOneVO = AlgorithmUtility.stepOne(theDate);
@@ -74,24 +74,24 @@ public class WDWAlgorithmUtility extends AlgorithmUtility {
 		//resCode.append(stepNineVO.getStep9ResCode());
 				
 		//log each step
-		logger.debug("StepOne: {}", stepOneVO);
-		logger.debug("StepTwo: {}", stepTwoVO);
-		logger.debug("StepThree: {}", stepThreeVO);
-		logger.debug("StepFour: {}", stepFourVO);
-		logger.debug("StepFiveWdw: {}", stepFiveVO);
-		logger.debug("StepSix: {}", stepSixVO);
-		logger.debug("StepSevenWdw: {}", stepSevenVO);
-		logger.debug("StepEight: {}", stepEightVO);
-		logger.debug("StepNineWdw: {}", stepNineVO);
-		logger.debug("Step10Wdw: {}", step10WdwVO);
-		logger.debug("End generateRescode:{}", theDate.getTime());
+		logger.debug("StepOneWDW: " + payloadId + " {}", stepOneVO);
+		logger.debug("StepTwoWDW: " + payloadId + " {}", stepTwoVO);
+		logger.debug("StepThreeWDW: " + payloadId + "{}", stepThreeVO);
+		logger.debug("StepFourWDW: " + payloadId + " {}", stepFourVO);
+		logger.debug("StepFiveWDW: " + payloadId + " {}", stepFiveVO);
+		logger.debug("StepSixWDW: " + payloadId + " {}", stepSixVO);
+		logger.debug("StepSevenWdw: " + payloadId + " {}", stepSevenVO);
+		logger.debug("StepEightWDW: " + payloadId + "{}", stepEightVO);
+		logger.debug("StepNineWDW: " + payloadId + " {}", stepNineVO);
+		logger.debug("Step10WDW: " + payloadId + " {}", step10WdwVO);
+		logger.debug("End generateRescode: " + payloadId + " {}", theDate.getTime());
 				
 		String draftResCode = new String ( step10WdwVO.getDraftCode() );
 		
 		//check for prohibited word and start over if one is found
 		if(prohibitedWordCheck(draftResCode)) {
 			logger.warn("Probibited word found: regenerating reservation code");
-			draftResCode = WDWAlgorithmUtility.generateResCode();
+			draftResCode = WDWAlgorithmUtility.generateResCode(payloadId);
 		}
 		
 		return draftResCode;

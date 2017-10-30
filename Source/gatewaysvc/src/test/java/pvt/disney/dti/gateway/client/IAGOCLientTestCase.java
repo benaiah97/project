@@ -39,7 +39,7 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 	ResourceBundle resourceBundle;
 	@Mocked
 	URLConnection con;
-	IagoClient client = null;
+	WdwIagoClient client = null;
 	Properties props = null;
 	String url = "";
 
@@ -48,7 +48,7 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 
 		setMockProperty();
 
-		client = new IagoClient();
+		client = new WdwIagoClient();
 	}
 
 	//@Test
@@ -86,7 +86,7 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.RENEWENTITLEMENT);
 
-		IagoClient client = new IagoClient();
+		WdwIagoClient client = new WdwIagoClient();
 		try {
 			DTIMockUtil.mockParseProcess(true);
 			String xmlResponse = client.sendRequest(dtiTxn, reqXml);

@@ -78,7 +78,7 @@ public class DLRBusinessRules {
       xmlRequest = DLRRenewEntitlementRules.transformRequest(dtiTxn);
       break;
       
-    case QUERYELIGIBLEPRODUCTS:
+    case QUERYELIGPRODUCTS:
       xmlRequest=DLRQueryEligibilityProductsRules.transformRequest(dtiTxn);
       break;
       
@@ -140,7 +140,7 @@ public class DLRBusinessRules {
           xmlResponse);
       break;
     
-    case QUERYELIGIBLEPRODUCTS:
+    case QUERYELIGPRODUCTS:
       dtiTxn=DLRQueryEligibilityProductsRules.transformResponse(dtiTxn,
     	  xmlResponse);
       break;

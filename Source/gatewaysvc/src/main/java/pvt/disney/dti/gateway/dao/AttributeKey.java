@@ -288,7 +288,7 @@ public class AttributeKey {
       commandCode = VR_DBSTRING;
       break; 
       
-    case QUERYELIGIBLEPRODUCTS: // as of 2.17.3 RASTA006
+    case QUERYELIGPRODUCTS: // as of 2.17.3 RASTA006
       commandCode = QP_DBSTRING; 
      break;
 

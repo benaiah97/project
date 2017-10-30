@@ -65,6 +65,14 @@ RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/app
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-2.cer -alias wm-flor-dv078.wdw.disney.com-2 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-3.cer -alias wm-flor-dv078.wdw.disney.com-3 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 
+
+###############################################################################
+# LINUX ADDITIONS FOR DEVELOPER CONVENIENCE
+###############################################################################
+RUN echo "Adding vim for developer convenience"
+RUN apt-get update
+RUN apt-get install -y  vim
+
 ###############################################################################
 # COPY DTI SCHEMAS
 # NOTE: we could pull this from a repo and unzip

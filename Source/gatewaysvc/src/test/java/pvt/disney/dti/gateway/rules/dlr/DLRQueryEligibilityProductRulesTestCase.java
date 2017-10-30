@@ -31,7 +31,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 
 	@Test
 	public void transformRequest() {
-		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGPRODUCTS);
 		DTIRequestTO request = new DTIRequestTO();
 		PayloadHeaderTO payloadHeader = new PayloadHeaderTO();
 		CommandHeaderTO commandHeader = new CommandHeaderTO();
@@ -71,7 +71,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 	@Test
 	public void testTransformResponse() {
 	   /*
-		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGPRODUCTS);
 		String itemKind1 = "<ItemKind>1</ItemKind>", itemKind2 = "<ItemKind>2</ItemKind>";
 		String xmlResponse1 = "<?xml version=\"1.0\"?>" + " <Envelope>" + " <Header>" + "<SourceID>1</SourceID>"
 				+ "<MessageID>1</MessageID>" + "<MessageType>QueryTicketResponse</MessageType>"
@@ -195,7 +195,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
 		ArrayList<String> listofUpgradedPLUs = new ArrayList<String>();
 
 		TicketTO dtiTktTO = new TicketTO();
-		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+		DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGPRODUCTS);
 		EntityTO entity = new EntityTO();
 		entity.setEntityId(1);
 		dtiTxn.setEntityTO(entity);
@@ -285,7 +285,7 @@ public class DLRQueryEligibilityProductRulesTestCase {
             + "<UseCount>1</UseCount><VisualID>468480050500000563</VisualID><UsageRequestResponse><UsageRecords><UsageRecord><UseNo>1</UseNo><UseTime>2017-09-19 10:53:22</UseTime></UsageRecord></UsageRecords></UsageRequestResponse>"
             +  "</DataRequestResponse>" + "</QueryTicketResponse>" + "</Body>"
             + "</Envelope>";
-      DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGIBLEPRODUCTS);
+      DTITransactionTO dtiTxn = new DTITransactionTO(TransactionType.QUERYELIGPRODUCTS);
       DLRQueryEligibilityProductsRules rules = new DLRQueryEligibilityProductsRules();
       DTIRequestTO request = new DTIRequestTO();
       PayloadHeaderTO payloadHeader = new PayloadHeaderTO();

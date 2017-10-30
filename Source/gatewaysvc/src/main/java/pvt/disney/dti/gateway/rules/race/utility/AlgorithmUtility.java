@@ -76,7 +76,7 @@ public class AlgorithmUtility {
 	 * @param tktSellerPrefix the ticket seller prefix
 	 * @return the string
 	 */
-	public static String generateResCode(String tktSellerPrefix) {
+	public static String generateResCode(String payloadId, String tktSellerPrefix) {
 		//It may seem like this method is passing around a lot of heavy VO when running through each algorithm step.
 		//This is intentional. Each critical calculation that is part of the over all algorithm is set on the
 		//VO for that step. This was done so that comprehensive unit tests could be written that would be
@@ -86,7 +86,7 @@ public class AlgorithmUtility {
 		// setup to get the date we will use for step one
 		Calendar theDate = new GregorianCalendar();
 	
-		eventLogger.sendEvent("Begin HKDL generateRescode:{} at " + theDate.getTime(), EventType.DEBUG, AlgorithmUtility.class);
+		eventLogger.sendEvent("Begin HKDL generateRescode:{} for  " + payloadId + " at " + theDate.getTime(), EventType.DEBUG, AlgorithmUtility.class);
 	
 		// Algorithm Step 1. Perform   matrix multiplication (mm/dd/yy * hh:mm:ss) to derive a 2x2 matrix. 
 		Step1VO stepOneVO = AlgorithmUtility.stepOne(theDate);
@@ -128,16 +128,16 @@ public class AlgorithmUtility {
 		resCode.append(stepNineVO.getStep9ResCode());
 		
 		//log each step at the info level
-		eventLogger.sendEvent("StepOne: {} :" + stepOneVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepTwo: {} :" + stepTwoVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepThree: {} :" + stepThreeVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepFour: {} :" + stepFourVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepFive: {} :" + stepFiveVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepSix: {} :" + stepSixVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepSeven: {} :" + stepSevenVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("StepEight: {} :" + stepEightVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepOne (" + payloadId + "): {} :" + stepOneVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepTwo (" + payloadId + "): {} :" + stepTwoVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepThree (" + payloadId + ") {} :" + stepThreeVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepFour (" + payloadId + "): {} :" + stepFourVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepFive (" + payloadId + "): {} :" + stepFiveVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepSix (" + payloadId + "): {} :" + stepSixVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepSeven (" + payloadId + "): {} :" + stepSevenVO, EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("StepEight (" + payloadId + "): {} :" + stepEightVO, EventType.INFO, AlgorithmUtility.class);
 		eventLogger.sendEvent("StepNine: {} :" + stepNineVO, EventType.INFO, AlgorithmUtility.class);
-		eventLogger.sendEvent("EnD HKDL generateRescode:{} at " + theDate.getTime(), EventType.INFO, AlgorithmUtility.class);
+		eventLogger.sendEvent("End HKDL generateRescode for " + payloadId +":{} at " + theDate.getTime(), EventType.INFO, AlgorithmUtility.class);
 		
 		
 		return resCode.toString();

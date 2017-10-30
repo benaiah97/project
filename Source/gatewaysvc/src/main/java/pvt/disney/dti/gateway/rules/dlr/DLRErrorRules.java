@@ -64,7 +64,7 @@ public class DLRErrorRules {
          errorCode = processRenewEntitlementErrorStatus(xmlResponse, statusCode);
          break;
 
-      case QUERYELIGIBLEPRODUCTS:
+      case QUERYELIGPRODUCTS:
          errorCode = processQueryEligibleProductErrorStatus(xmlResponse, statusCode);
          break;
 

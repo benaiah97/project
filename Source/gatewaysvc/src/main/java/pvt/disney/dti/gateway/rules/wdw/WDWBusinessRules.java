@@ -285,7 +285,7 @@ public class WDWBusinessRules {
 			xmlRequest = WDWVoidReservationRules.transformRequest(dtiTxn);
 			break;
 
-		case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade Service AR
+		case QUERYELIGPRODUCTS: // As a part of AP Upgrade Service AR
 			xmlRequest = WDWQueryEligibleProductsRules.transformRequest(dtiTxn);
 			break;
 
@@ -1215,14 +1215,14 @@ public class WDWBusinessRules {
 
       case QUERYTICKET:
     	 
-      	// Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
+      	// Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGPRODUCTS
 			if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
 				WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
 			}
 
 			// if the transaction type is of Query Eligible Products
-			else if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS) {
+			else if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYELIGPRODUCTS) {
 
 				WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
 			}
@@ -1256,14 +1256,14 @@ public class WDWBusinessRules {
 
 			case QUERYTICKET:
 
-				// Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGIBLEPRODUCTS
+				// Adding if else to check if the transaction type is QUERYTICKET/QUERYELIGPRODUCTS
 				if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
 					WDWQueryTicketRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
 				}
 
 				// if the transaction type is of Query Eligible Products
-				else if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYELIGIBLEPRODUCTS) {
+				else if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYELIGPRODUCTS) {
 
 					WDWQueryEligibleProductsRules.transformResponseBody(dtiTxn, otCmdTO, dtiRespTO);
 				}

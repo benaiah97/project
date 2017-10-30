@@ -7,7 +7,7 @@ import pvt.disney.dti.gateway.constants.DTIException;
 /**
  * Provider client is an abstract wrapper around the provider-centric communication classes. It cannot be instantiated directly, because it can't do any do anything without the provider classes.
  * 
- * @author lewit019
+ * @author lewit019, moons012
  * @since 2.16.3
  * 
  */
@@ -26,21 +26,22 @@ public abstract class ProviderClient {
 	 */
 	public static String sendRequestToProvider(DTITransactionTO dtiTxn,
 			String xmlRequest) throws DTIException {
-
 		String tpiCode = dtiTxn.getTpiCode();
+		String response = null;
+		
 		if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
 
-			return sendRequestToWDWProvider(dtiTxn, xmlRequest);
+			response= sendRequestToWDWProvider(dtiTxn, xmlRequest);
 
 		}
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
 
-			return sendRequestToDLRProvider(dtiTxn, xmlRequest);
+			response = sendRequestToDLRProvider(dtiTxn, xmlRequest);
 
 		}
 		else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD)) {
 		  
-		  return sendRequestToHKDProvider(dtiTxn, xmlRequest);
+			response = sendRequestToHKDProvider(dtiTxn, xmlRequest);
 		  
 		}
 		else {
@@ -50,6 +51,8 @@ public abstract class ProviderClient {
 					"Invalid ticket provider sent to queryTicket() in Java version of DTI Gateway.");
 
 		}
+		
+		return response;
 
 	}
 
@@ -87,7 +90,7 @@ public abstract class ProviderClient {
 
 		String xmlResponse = null;
 
-		IagoClient wdwIagoClient = new IagoClient();
+		WdwIagoClient wdwIagoClient = new WdwIagoClient();
 
 		xmlResponse = wdwIagoClient.sendRequest(dtiTxn, xmlRequest);
 
@@ -96,10 +99,10 @@ public abstract class ProviderClient {
 	}
 	
 	 /**
-   * Sends the request to the WDW provider.
+   * Sends the request to the HKD provider.
    * 
    * @param xmlRequest
-   *            The XML request formatted for consumption by the WDW provider.
+   *            The XML request formatted for consumption by the HKD provider.
    * @return the XML Response
    * @throws DTIException
    *             if there are any communications level errors.
@@ -110,7 +113,7 @@ public abstract class ProviderClient {
 
     String xmlResponse = null;
 
-    IagoClient hkdIagoClient = new IagoClient();
+    HkdIagoClient hkdIagoClient = new HkdIagoClient();
 
     xmlResponse = hkdIagoClient.sendRequest(dtiTxn, xmlRequest);
 

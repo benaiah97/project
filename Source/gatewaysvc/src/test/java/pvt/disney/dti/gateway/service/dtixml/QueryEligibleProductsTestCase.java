@@ -44,18 +44,18 @@ import pvt.disney.dti.gateway.response.xsd.QueryEligibleProductsResponse;
 
 /**
  * @author AGARS017
- *JUnit TestCases For TransmissionRqstXML with respect to TransactionType-QUERYELIGIBLEPRODUCTS
+ *JUnit TestCases For TransmissionRqstXML with respect to TransactionType-QUERYELIGPRODUCTS
  */
 public class QueryEligibleProductsTestCase {
 	
 	/**
-	 * JUnit TestCase for getDtiTransactionTo with respect to TransactionType-QUERYELIGIBLEPRODUCTS
+	 * JUnit TestCase for getDtiTransactionTo with respect to TransactionType-QUERYELIGPRODUCTS
 	 * @throws DatatypeConfigurationException
 	 */
 	@Test
 	public void testQueryEligibleProductsGetDtiTransactionTo() throws DatatypeConfigurationException
 	{
-		TransactionType requestType=TransactionType.QUERYELIGIBLEPRODUCTS;
+		TransactionType requestType=TransactionType.QUERYELIGPRODUCTS;
 		String tktBroker= new String(DTITestUtil.TKTBROKER);
 		Transmission jaxbReq=new Transmission();
 		Comm comm=new Comm();
