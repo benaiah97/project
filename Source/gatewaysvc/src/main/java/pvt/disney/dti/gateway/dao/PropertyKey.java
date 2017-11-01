@@ -40,7 +40,7 @@ public class PropertyKey {
       List<PropertyTO> result = new ArrayList<PropertyTO>();
 
       // Replaces "?"
-      Object[] values = { application, tpoId, section, environment };
+      Object[] values = { application, tpoId, environment, section };
 
       try {
 
