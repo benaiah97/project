@@ -15,6 +15,10 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
+import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.dao.CosGrpKey;
+import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
@@ -233,7 +237,7 @@ public static DTITransactionTO getDtiTransactionTo(
       commandBodyTO = VoidReservationXML.getTO(vResReq);
       break;  
       
-    case QUERYELIGIBLEPRODUCTS: // as of part of AP Upgrade Service
+    case QUERYELIGPRODUCTS: // as of part of AP Upgrade Service
 	  QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand()
 		   .getQueryEligibleProductsRequest();
 	   commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
@@ -250,7 +254,6 @@ public static DTITransactionTO getDtiTransactionTo(
 
     return dtiTransTO;
 }
-  
   
   /**
    * Update required for CICD

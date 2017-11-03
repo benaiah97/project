@@ -343,7 +343,7 @@ public class TiXMLHandler extends DefaultHandler {
     if (doc.getElementsByTagName(QUERY_ELIGIBILITYPRODUCTS_REQUEST) != null) { // CMD 16
        if (doc.getElementsByTagName(QUERY_ELIGIBILITYPRODUCTS_REQUEST).getLength() > 0) {
          returnData.put(ACTION, QUERY_ELIGIBILITYPRODUCTS);
-         txnType = TransactionType.QUERYELIGIBLEPRODUCTS;
+         txnType = TransactionType.QUERYELIGPRODUCTS;
        }
      }
 

@@ -822,7 +822,7 @@ public class LogKey {
     case VOIDRESERVATION: // 2.16.3, JTL
       commandCode = CMD_VOID_RESERVATION;
       break;
-    case QUERYELIGIBLEPRODUCTS: // 2.17.3, JTL
+    case QUERYELIGPRODUCTS: // 2.17.3, JTL
        commandCode = CMD_QUERY_ELIGPRODUCTS;
        break;
     default:

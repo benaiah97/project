@@ -1189,8 +1189,8 @@ public abstract class KeyMatchFloodControl {
             keyFrequencyLimit = floodControlPropertyTO.getKeyFrequencyLimitWDWVR();
             break;
 
-         // QUERYELIGIBLEPRODUCTS
-         case QUERYELIGIBLEPRODUCTS:
+         // QUERYELIGPRODUCTS
+         case QUERYELIGPRODUCTS:
             keyFrequencyLimit = floodControlPropertyTO.getKeyFrequencyLimitWDWQP();
             break;
 
@@ -1271,8 +1271,8 @@ public abstract class KeyMatchFloodControl {
             keyFrequencyLimit = floodControlPropertyTO.getKeyFrequencyLimitDLRVR();
             break;
 
-         // QUERYELIGIBLEPRODUCTS
-         case QUERYELIGIBLEPRODUCTS:
+         // QUERYELIGPRODUCTS
+         case QUERYELIGPRODUCTS:
             keyFrequencyLimit = floodControlPropertyTO.getKeyFrequencyLimitDLRQP();
             break;
 

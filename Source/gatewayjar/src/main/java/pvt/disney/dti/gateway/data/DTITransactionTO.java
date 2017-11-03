@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 
 import pvt.disney.dti.gateway.data.common.AttributeTO;
+import pvt.disney.dti.gateway.data.common.CosGrpTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.data.common.PaymentLookupTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.dlr.GWTPLookupTO;
 
+// TODO: Auto-generated Javadoc
 /**
  * Class that represents all of the data associated with a DTI transaction as it passes through the system.
  * 
@@ -25,35 +27,79 @@ public class DTITransactionTO implements Serializable {
 
   /** The enumeration of possible transaction types in DTI. */
   public enum TransactionType {
+    
+    /** The queryticket. */
     QUERYTICKET,
+    
+    /** The upgradealpha. */
     UPGRADEALPHA,
+    
+    /** The voidticket. */
     VOIDTICKET,
+    
+    /** The reservation. */
     RESERVATION,
+    
+    /** The createticket. */
     CREATETICKET,
+    
+    /** The updateticket. */
     UPDATETICKET,
+    
+    /** The updatetransaction. */
     UPDATETRANSACTION,
+    
+    /** The queryreservation. */
     QUERYRESERVATION,
-    UPGRADEENTITLEMENT, // 2.10
-    RENEWENTITLEMENT, // As of 2.16.1, JTL
-    ASSOCIATEMEDIATOACCOUNT, // 2.16.1 BIEST001
-    TICKERATEENTITLEMENT, // 2.16.1 BIEST001
-    VOIDRESERVATION, // 2.16.3, JTL
-    QUERYELIGIBLEPRODUCTS, // 2.17.3 RASTA006
+    
+    /** The upgradeentitlement. */
+    UPGRADEENTITLEMENT, 
+ /** The renewentitlement. */
+ // 2.10
+    RENEWENTITLEMENT, 
+ /** The associatemediatoaccount. */
+ // As of 2.16.1, JTL
+    ASSOCIATEMEDIATOACCOUNT, 
+ /** The tickerateentitlement. */
+ // 2.16.1 BIEST001
+    TICKERATEENTITLEMENT, 
+ /** The voidreservation. */
+ // 2.16.1 BIEST001
+    VOIDRESERVATION, 
+ /** The queryeligproducts. */
+ // 2.16.3, JTL
+    QUERYELIGPRODUCTS, 
+ /** The undefined. */
+ // 2.17.3 RASTA006, refactored moons012 to match ENTITY_COMMAND.COMMAND_CODE in database
     UNDEFINED
   };
 
   /** The enumeration of ticket providers. */
   public enum ProviderType {
+    
+    /** The wdwnexus. */
     WDWNEXUS,
+    
+    /** The dlrgateway. */
     DLRGATEWAY,
-    HKDNEXUS,  // As of 2.16.2 (JTL)
+    
+    /** The hkdnexus. */
+    HKDNEXUS,  
+  /** The undefined. */
+  // As of 2.16.2 (JTL)
     UNDEFINED
   };
 
   /** The enumeration of possible deployment environments. */
   public enum EnvironmentType {
+    
+    /** The production. */
     PRODUCTION,
+    
+    /** The test. */
     TEST,
+    
+    /** The undefined. */
     UNDEFINED
   }
 
@@ -146,17 +192,27 @@ public class DTITransactionTO implements Serializable {
   /** List of products on the DB request. */
   private ArrayList<DBProductTO> dbProdList;
 
-  /** Map of products on the DB request, by DB Code */
+  /**  Map of products on the DB request, by DB Code. */
   private HashMap<String, DBProductTO> dbProdMap;
   
-  /** Is this transaction a "rework"? */
+  /**  Is this transaction a "rework"?. */
   private boolean isRework = false;
+  
+  /** The class of service TO. */
+  private CosGrpTO cosGrpTO;
 
+  /**
+   * Gets the payment card map.
+   *
+   * @return the payment card map
+   */
   public HashMap<String, String> getPaymentCardMap() {
     return paymentCardMap;
   }
 
   /**
+   * Gets the db prod list.
+   *
    * @return the dbProdList
    */
   public ArrayList<DBProductTO> getDbProdList() {
@@ -164,10 +220,9 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * Sets the dbProdList and the dbProdMap
-   * 
-   * @param dbProdList
-   *            the dbProdList to set
+   * Sets the dbProdList and the dbProdMap.
+   *
+   * @param dbProdListIn the new db prod list
    */
   public void setDbProdList(ArrayList<DBProductTO> dbProdListIn) {
     dbProdList = dbProdListIn;
@@ -183,6 +238,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the creates the time.
+   *
    * @return the createTime
    */
   public Date getCreateTime() {
@@ -190,6 +247,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the tkt broker.
+   *
    * @return the tktBroker
    */
   public String getTktBroker() {
@@ -197,16 +256,18 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param tktBroker
-   *            the tktBroker to set
+   * Sets the tkt broker.
+   *
+   * @param tktBroker            the tktBroker to set
    */
   public void setTktBroker(String tktBroker) {
     this.tktBroker = tktBroker;
   }
 
   /**
-   * 
-   * @param typeIn
+   * Instantiates a new DTI transaction TO.
+   *
+   * @param typeIn the type in
    */
   public DTITransactionTO(TransactionType typeIn) {
     txnType = typeIn;
@@ -214,6 +275,8 @@ public class DTITransactionTO implements Serializable {
 
   /**
    * Renders this object as a string for easy logging.
+   *
+   * @return the string
    */
   public String toString() {
     StringBuffer output = new StringBuffer();
@@ -231,6 +294,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the request.
+   *
    * @return the request
    */
   public DTIRequestTO getRequest() {
@@ -238,14 +303,17 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param request
-   *            the request to set
+   * Sets the request.
+   *
+   * @param request            the request to set
    */
   public void setRequest(DTIRequestTO request) {
     this.request = request;
   }
 
   /**
+   * Gets the response.
+   *
    * @return the response
    */
   public DTIResponseTO getResponse() {
@@ -253,14 +321,17 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param response
-   *            the response to set
+   * Sets the response.
+   *
+   * @param response            the response to set
    */
   public void setResponse(DTIResponseTO response) {
     this.response = response;
   }
 
   /**
+   * Gets the transaction type.
+   *
    * @return the commandType
    */
   public TransactionType getTransactionType() {
@@ -268,6 +339,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the tp ref num.
+   *
    * @return the tpRefNum
    */
   public Integer getTpRefNum() {
@@ -275,6 +348,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the trans id ITP.
+   *
    * @return the transIdITP
    */
   public Integer getTransIdITP() {
@@ -282,6 +357,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the trans id ITS.
+   *
    * @return the transIdITS
    */
   public Integer getTransIdITS() {
@@ -289,6 +366,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the trans id OTP.
+   *
    * @return the transIdOTP
    */
   public Integer getTransIdOTP() {
@@ -296,38 +375,44 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param tpRefNum
-   *            the tpRefNum to set
+   * Sets the tp ref num.
+   *
+   * @param tpRefNum            the tpRefNum to set
    */
   public void setTpRefNum(Integer tpRefNum) {
     this.tpRefNum = tpRefNum;
   }
 
   /**
-   * @param transIdITP
-   *            the transIdITP to set
+   * Sets the trans id ITP.
+   *
+   * @param transIdITP            the transIdITP to set
    */
   public void setTransIdITP(Integer transIdITP) {
     this.transIdITP = transIdITP;
   }
 
   /**
-   * @param transIdITS
-   *            the transIdITS to set
+   * Sets the trans id ITS.
+   *
+   * @param transIdITS            the transIdITS to set
    */
   public void setTransIdITS(Integer transIdITS) {
     this.transIdITS = transIdITS;
   }
 
   /**
-   * @param transIdOTP
-   *            the transIdOTP to set
+   * Sets the trans id OTP.
+   *
+   * @param transIdOTP            the transIdOTP to set
    */
   public void setTransIdOTP(Integer transIdOTP) {
     this.transIdOTP = transIdOTP;
   }
 
   /**
+   * Gets the provider.
+   *
    * @return the provider
    */
   public ProviderType getProvider() {
@@ -352,6 +437,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the environment.
+   *
    * @return the environment
    */
   public EnvironmentType getEnvironment() {
@@ -359,14 +446,17 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param environment
-   *            the environment to set
+   * Sets the environment.
+   *
+   * @param environment            the environment to set
    */
   public void setEnvironment(EnvironmentType environment) {
     this.environment = environment;
   }
 
   /**
+   * Gets the entity TO.
+   *
    * @return the entityTO
    */
   public EntityTO getEntityTO() {
@@ -374,23 +464,36 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param entityTO
-   *            the entityTO to set
+   * Sets the entity TO.
+   *
+   * @param entityTO            the entityTO to set
    */
   public void setEntityTO(EntityTO entityTO) {
     this.entityTO = entityTO;
   }
 
+  /**
+   * Gets the attribute TO map.
+   *
+   * @return the attribute TO map
+   */
   public HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> getAttributeTOMap() {
     return attributeTOMap;
   }
 
+  /**
+   * Sets the attribute TO map.
+   *
+   * @param attributeTOMap the attribute TO map
+   */
   public void setAttributeTOMap(
       HashMap<AttributeTO.CmdAttrCodeType, AttributeTO> attributeTOMap) {
     this.attributeTOMap = attributeTOMap;
   }
 
   /**
+   * Gets the payment lookup TO list.
+   *
    * @return the paymentLookupTOList
    */
   public ArrayList<PaymentLookupTO> getPaymentLookupTOList() {
@@ -398,8 +501,9 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param paymentLookupTOList
-   *            the paymentLookupTOList to set
+   * Sets the payment lookup TO list.
+   *
+   * @param paymentLookupTOList            the paymentLookupTOList to set
    */
   public void setPaymentLookupTOList(
       ArrayList<PaymentLookupTO> paymentLookupTOList) {
@@ -407,6 +511,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the tpi code.
+   *
    * @return the tpiCode
    */
   public String getTpiCode() {
@@ -414,6 +520,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the tp lookup TO list.
+   *
    * @return the tpLookupTOList
    */
   public ArrayList<TPLookupTO> getTpLookupTOList() {
@@ -421,6 +529,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Gets the gw tp lookup TO list.
+   *
    * @return the gwTpLookupTOList
    */
   public ArrayList<GWTPLookupTO> getGwTpLookupTOList() {
@@ -428,8 +538,9 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * @param tpLookupTOList
-   *            the tpLookupTOList to set
+   * Sets the tp lookup TO list.
+   *
+   * @param tpLookupTOListIn the new tp lookup TO list
    */
   public void setTpLookupTOList(ArrayList<TPLookupTO> tpLookupTOListIn) {
     this.tpLookupTOList = tpLookupTOListIn;
@@ -453,7 +564,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * 
+   * Gets the db prod map.
+   *
    * @return the HashMap of DBProductTO's.
    */
   public HashMap<String, DBProductTO> getDbProdMap() {
@@ -461,7 +573,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * 
+   * Gets the tp lookup TO map.
+   *
    * @return the HashMap of TPLookupTO's.
    */
   public HashMap<TPLookupTO.TPLookupType, TPLookupTO> getTpLookupTOMap() {
@@ -469,7 +582,8 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
-   * 
+   * Checks if is price mismatch.
+   *
    * @return if the transaction is a price mismatch transaction
    */
   public boolean isPriceMismatch() {
@@ -486,23 +600,45 @@ public class DTITransactionTO implements Serializable {
     this.priceMismatch = priceMismatch;
   }
 
+  /**
+   * Gets the trans id OTS.
+   *
+   * @return the trans id OTS
+   */
   public Integer getTransIdOTS() {
     return transIdOTS;
   }
 
+  /**
+   * Sets the trans id OTS.
+   *
+   * @param transIdOTS the new trans id OTS
+   */
   public void setTransIdOTS(Integer transIdOTS) {
     this.transIdOTS = transIdOTS;
   }
 
+  /**
+   * Checks if is logged OTP.
+   *
+   * @return true, if is logged OTP
+   */
   public boolean isLoggedOTP() {
     return loggedOTP;
   }
 
+  /**
+   * Sets the logged OTP.
+   *
+   * @param loggedOTP the new logged OTP
+   */
   public void setLoggedOTP(boolean loggedOTP) {
     this.loggedOTP = loggedOTP;
   }
 
   /**
+   * Checks if is rework.
+   *
    * @return the isRework
    */
   public boolean isRework() {
@@ -510,10 +646,30 @@ public class DTITransactionTO implements Serializable {
   }
 
   /**
+   * Sets the rework.
+   *
    * @param isRework the isRework to set
    */
   public void setRework(boolean isRework) {
     this.isRework = isRework;
   }
+
+	/**
+	 * Gets the cos grp TO.
+	 *
+	 * @return the cos grp TO
+	 */
+	public CosGrpTO getCosGrpTO() {
+		return cosGrpTO;
+	}
+
+	/**
+	 * Sets the cos grp TO.
+	 *
+	 * @param cosGrpTO the new cos grp TO
+	 */
+	public void setCosGrpTO(CosGrpTO cosGrpTO) {
+		this.cosGrpTO = cosGrpTO;
+	}
 
 }

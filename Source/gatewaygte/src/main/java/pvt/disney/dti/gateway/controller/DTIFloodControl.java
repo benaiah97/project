@@ -271,9 +271,9 @@ public class DTIFloodControl extends KeyMatchFloodControl {
          txnTypeString = VOIDRESERVATIONSTRING;
          break;
 
-      // QUERYELIGIBLEPRODUCTS
-      case QUERYELIGIBLEPRODUCTS:
-         floodMatchSignatureTO.setTransactionType(TransactionType.QUERYELIGIBLEPRODUCTS);
+      // QUERYELIGPRODUCTS
+      case QUERYELIGPRODUCTS:
+         floodMatchSignatureTO.setTransactionType(TransactionType.QUERYELIGPRODUCTS);
          txnTypeString = QUERYELIGPRODUCTSSTRING;
          break;
    	
@@ -340,7 +340,7 @@ public class DTIFloodControl extends KeyMatchFloodControl {
     // If void or query, get all tickets listed.
     if ((txnType == TransactionType.VOIDTICKET) || 
         (txnType == TransactionType.QUERYTICKET) ||
-        (txnType == TransactionType.QUERYELIGIBLEPRODUCTS) ||
+        (txnType == TransactionType.QUERYELIGPRODUCTS) ||
         (txnType == TransactionType.TICKERATEENTITLEMENT)) {
       String value = (String) txnMap.get(TiXMLHandler.TICKETS);
       if (value == null) {

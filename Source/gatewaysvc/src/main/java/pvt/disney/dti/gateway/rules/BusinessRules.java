@@ -177,7 +177,7 @@ public abstract class BusinessRules {
       applyVoidReservationRules(dtiTxn);
       break;
       
-    case QUERYELIGIBLEPRODUCTS: // As a part of AP Upgrade
+    case QUERYELIGPRODUCTS: // As a part of AP Upgrade
     	applyEligibleProductRules(dtiTxn); // Adding the 
       break;   
 

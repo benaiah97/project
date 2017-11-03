@@ -43,7 +43,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	@Test
 	public void testTransformRequest() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.QUERYELIGIBLEPRODUCTS);
+				TransactionType.QUERYELIGPRODUCTS);
 		DTIRequestTO request = new DTIRequestTO();
 		PayloadHeaderTO header = new PayloadHeaderTO();
 		request.setPayloadHeader(header);
@@ -120,7 +120,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 
 	public void testTransformResponseBody() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.QUERYELIGIBLEPRODUCTS);
+				TransactionType.QUERYELIGPRODUCTS);
 		OTCommandTO otCmdTO = new OTCommandTO(
 				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
 		CommonTestUtils common=new CommonTestUtils();
@@ -189,7 +189,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	//@Test
 	public void testTransformResponseBodyTicketTypeNull() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.QUERYELIGIBLEPRODUCTS);
+				TransactionType.QUERYELIGPRODUCTS);
 		OTCommandTO otCmdTO = new OTCommandTO(
 				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
 		OTQueryTicketTO queryTicketTO=new OTQueryTicketTO();
@@ -218,7 +218,7 @@ public class WDWQueryEligibleProductsRulesTestCase {
 	//@Test
 	public void testTransformResponseBodydbProductsTktNbNull() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
-				TransactionType.QUERYELIGIBLEPRODUCTS);
+				TransactionType.QUERYELIGPRODUCTS);
 		OTCommandTO otCmdTO = new OTCommandTO(
 				OTCommandTO.OTTransactionType.ELIGIBLEPRODUCTS);
 		OTQueryTicketTO queryTicketTO=new OTQueryTicketTO();

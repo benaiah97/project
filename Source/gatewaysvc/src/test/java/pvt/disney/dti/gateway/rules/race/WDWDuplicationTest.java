@@ -52,6 +52,8 @@ public class WDWDuplicationTest {
 	/** The duplicatefound. */
 	private static boolean duplicatefound = false;
 	
+	private static String payloadId = "1234567890";
+	
 	private static final int iterationsToRun = Integer.valueOf(  ResourceBundle.getBundle("testData").getString("test.run.wdw.duplication.iterations") ) ;;
 	
 	/** The nbr duplicates. */
@@ -140,7 +142,7 @@ public class WDWDuplicationTest {
 			
 			for(int i=0; i < iterationsToRun ;i++) {
 				Thread.sleep(600);
-				String rescode =  WDWAlgorithmUtility.generateResCode();
+				String rescode =  WDWAlgorithmUtility.generateResCode(payloadId);
 				int numericStart =  Integer.parseInt(rescode.substring(INDEX_NUMERIC_START, INDEX_NUMERIC_START+1));
 				
 				System.out.println ("TEST RESCODE: " + rescode);

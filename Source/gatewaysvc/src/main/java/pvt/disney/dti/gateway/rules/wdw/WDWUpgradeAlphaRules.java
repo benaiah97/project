@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import pvt.disney.dti.gateway.client.IagoClient;
+import pvt.disney.dti.gateway.client.WdwIagoClient;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ArchiveKey;
@@ -271,7 +271,7 @@ public class WDWUpgradeAlphaRules {
     int outCount = otUpgrdTktResp.getUpgradeTicketInfoList().size();
     if ((inCount != outCount) && (outCount > 0)) {
       throw new DTIException(
-          IagoClient.class,
+          WdwIagoClient.class,
           DTIErrorCode.TP_INTERFACE_FAILURE,
           "Number of tickets returned  (" + outCount + ") don't match number sent (" + inCount + ").");
     }

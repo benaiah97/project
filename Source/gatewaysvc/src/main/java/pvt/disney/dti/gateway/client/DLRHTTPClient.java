@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -28,7 +31,11 @@ import org.xml.sax.SAXParseException;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.dao.CosGrpKey;
+import pvt.disney.dti.gateway.dao.CosTpGrpCmdKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.common.CosGrpTO;
+import pvt.disney.dti.gateway.data.common.CosTpGrpCmdTO;
 import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 import pvt.disney.dti.gateway.util.UtilityXML;
@@ -49,18 +56,33 @@ public class DLRHTTPClient {
 	/**
 	 * shared core event logger.
 	 */
-	private EventLogger logger;
+	private static EventLogger logger;
 
 	/**
 	 * Properties file
 	 */
 	private Properties props;
+	
+	/** The cos endpoints next read time for refreshing from the database. */
+	protected static long cosEndpointsNextRead = new Date().getTime();
 
+	/**
+	 * The cos refresh interval - drives when the cos endpoints are refreshed from
+	 * the dti database.
+	 */
+	private static int cosRefreshIntervalMillis = 60000;
+
+	/**
+	 * URI end-points for DLR web service INITIALIZED during first instantiation
+	 * and refreshed at read intervals
+	 */
+	private static Hashtable<String, String> ENDPOINTS = new Hashtable<String, String>();
 	/**
 	 * initialized once during first instantiation
 	 */
 	private static String ACTIVE_CONNECTION = "";
 
+	//TODO REMOVE WHEN WE SWTICH OVER TO COS ENDPOINTS
 	/**
 	 * initialized once during first instantiation
 	 */
@@ -106,8 +128,13 @@ public class DLRHTTPClient {
 					EventType.DEBUG, this);
 			ACTIVE_CONNECTION = PropertyHelper.readPropsValue("ACTIVECONN",
 					props, null);
+			
+			//TODO: REOMVE WHEN WE SWITCH TO ENDPOINTS
 			URL_STRING = PropertyHelper.readPropsValue(ACTIVE_CONNECTION,
 					props, null);
+			//TODO uncomment when we turn on COS
+			//ENDPOINTS = DLRHTTPClient.loadClassOfServiceEndpoints();
+				
 			CONNECT_TIMEOUT_STRING = PropertyHelper.readPropsValue(
 					"CONNECT_TIMEOUT_MILLIS", props, null);
 
@@ -158,7 +185,7 @@ public class DLRHTTPClient {
 	 */
 	public String sendRequest(DTITransactionTO dtiTxn, String xmlRequest)
 			throws DTIException {
-
+		
 		InputStream in = UtilityXML.getStringToInputStream(xmlRequest);
 		Document docResponse = null;
 		Document docRequest = null;
@@ -167,7 +194,9 @@ public class DLRHTTPClient {
 		String xmlResponse = null;
 
 		try {
-
+			//TODO uncomment when we push COS
+			//checkForCosRefresh();
+			
 			// create the document request
 			logger.sendEvent("About to build docRequest ...", EventType.DEBUG,
 					this);
@@ -187,9 +216,11 @@ public class DLRHTTPClient {
 			messageIdString = valNode.getNodeValue();
 			logger.sendEvent("Message ID STRING is " + messageIdString,
 					EventType.DEBUG, this);
-
+			//TODO uncomment this to switch to cos endpoints
+			//URL url = new URL(ENDPOINTS.get( dtiTxn.getTransactionType() ));
+			//TODO remove url_string when we switch to COS
 			URL url = new URL(URL_STRING);
-
+			
 			logger.sendEvent("About to send message to DLR provider system.",
 					EventType.INFO, this);
 
@@ -328,5 +359,69 @@ public class DLRHTTPClient {
 
 		return xml;
 
+	}
+	
+	/**
+	 * Read class of service endpoints helper.
+	 *
+	 * @return the hashtable
+	 * @throws DTIException 
+	 */
+	/**
+	 * Read class of service endpoints helper.
+	 *
+	 * @return the hashtable
+	 */
+	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
+		Hashtable<String, String> endpoints = new Hashtable<String, String>();
+
+	    // Get the cos grp	    
+		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
+	    try {
+	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("DLR");
+	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
+	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
+	    	        logger.sendEvent("DLRHTTPClient added" + cosTpGrp.getCmdcode().toUpperCase() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
+	    	    }
+		} catch (Exception e) {
+			logger.sendEvent(
+					"Unable to load WDW Class of Service End"
+					+ "points...",
+					EventType.EXCEPTION, DLRHTTPClient.class);
+			e.printStackTrace();
+		}
+	    
+		return endpoints;
+	}
+	
+	/**
+	 * Helper. This method compares the current time to last read value. If the difference
+	 * is more than or equal to the refresh interval then it resets the refresh time.
+	 * 
+	 * Sets the next refresh time.
+	 */
+	private synchronized static void nextRefreshTime() {
+		// Initializing the next read value.
+		cosEndpointsNextRead = new Date().getTime() + cosRefreshIntervalMillis;
+	}
+
+	/**
+	 * Gets the cos refresh interval millis.
+	 *
+	 * @return the cos refresh interval millis
+	 */
+	public static int getCosRefreshIntervalMillis() {
+		return cosRefreshIntervalMillis;
+	}
+	/**
+	 * Check for cos refresh helper.
+	 */
+	private  void checkForCosRefresh() throws DTIException {
+		if (new Date().getTime() >= cosEndpointsNextRead) {
+			//set the time for next database refresh
+			String threadInfo = Thread.currentThread().getId() + ": " + Thread.currentThread().getName();
+			logger.sendEvent("DLRHTTPClient Class of service determined that endpoint refresh is required by thread: " + threadInfo, EventType.DEBUG, this);
+			DLRHTTPClient.loadClassOfServiceEndpoints();
+		}
 	}
 }

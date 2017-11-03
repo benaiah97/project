@@ -49,6 +49,8 @@ public class DuplicationTest {
 	/** The duplicatefound. */
 	private static boolean duplicatefound = false;
 	
+	private static String payloadId = "123456790";
+	
 	private static int iterationsToRun;
 	
 	/** The nbr duplicates. */
@@ -138,7 +140,7 @@ public class DuplicationTest {
 			
 			for(int i=0; i < iterationsToRun ;i++) {
 				Thread.sleep(600);
-				String rescode = AlgorithmUtility.generateResCode(tsprefix);
+				String rescode = AlgorithmUtility.generateResCode(payloadId,tsprefix);
 				if (rescodeMap.containsKey(rescode)) {
 					duplicatefound = true;
 					nbrDuplicates++;

@@ -304,7 +304,7 @@ public class TransmissionRespXML {
       cmd.setVoidReservationResponse(vResResp);
       break;    
     
-    case QUERYELIGIBLEPRODUCTS:// for AP Upgrade
+    case QUERYELIGPRODUCTS:// for AP Upgrade
 	  QueryEligibilityProductsResponseTO queryEligRespTo = (QueryEligibilityProductsResponseTO) responseIn
 		  .getResponse().getCommandBody();
 	  QueryEligibleProductsResponse qEligResp = QueryEligibleProductsXML
@@ -386,7 +386,7 @@ public class TransmissionRespXML {
       cmd.setRenewEntitlementResponse(qRenewResp);
       break;
       
-    case QUERYELIGIBLEPRODUCTS:
+    case QUERYELIGPRODUCTS:
     	QueryEligibleProductsResponse qEligResp=new QueryEligibleProductsResponse();
     	cmd.setQueryEligibleProductsResponse(qEligResp);
     	break;

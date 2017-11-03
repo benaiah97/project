@@ -2,6 +2,7 @@ package pvt.disney.dti.gateway.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -39,16 +41,19 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 	ResourceBundle resourceBundle;
 	@Mocked
 	URLConnection con;
-	IagoClient client = null;
+	WdwIagoClient client = null;
 	Properties props = null;
 	String url = "";
 
+	
+	private static int NBR_OF_ENDPOINTS = 15;
+	
 	@Before
 	public void setUp() {
 
 		setMockProperty();
 
-		client = new IagoClient();
+		client = new WdwIagoClient();
 	}
 
 	//@Test
@@ -86,7 +91,7 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.RENEWENTITLEMENT);
 
-		IagoClient client = new IagoClient();
+		WdwIagoClient client = new WdwIagoClient();
 		try {
 			DTIMockUtil.mockParseProcess(true);
 			String xmlResponse = client.sendRequest(dtiTxn, reqXml);
@@ -96,6 +101,16 @@ public class IAGOCLientTestCase extends CommonTestUtils {
 					dtie.getDtiErrorCode());
 		}
 
+	}
+	
+	//@Test
+	public void testLoadEndpoints() {
+		 Hashtable<String, String> testEndpoints = client.getENDPOINTS();
+		 
+		 System.out.println(testEndpoints);
+		 testEndpoints.size();
+		 
+		 assertTrue(("Did not have expected nbr of endpoints, instead # was " + testEndpoints.size()),testEndpoints.size()==NBR_OF_ENDPOINTS );
 	}
 
 }

@@ -30,10 +30,10 @@ import com.disney.util.PropertyHelper;
 
 /**
  * 
- * @author lewit019
+ * @author moons012
  * 
  */
-public class IagoClient {
+public class HkdIagoClient {
 
 	/**
 	 * shared core event logger.
@@ -64,7 +64,7 @@ public class IagoClient {
   private static Integer READ_TIMEOUT_RENEWAL;
 
 	/**
-	 * socket timeout value for communicating with IAGO service INITIALIZED once during first instantiation
+	 * socket timeout value for communicating with  service INITIALIZED once during first instantiation
 	 */
 	private static int CONNECTION_TIMEOUT = 0;
 
@@ -74,9 +74,9 @@ public class IagoClient {
 	private static boolean INITIALIZED = false;
 
 	/**
-	 * Constructor for IagoSoapClient. Gets the logger for the class and initializes connection properties (if not already INITIALIZED).
+	 * Constructor for HKD Iago Client. Gets the logger for the class and initializes connection properties (if not already INITIALIZED).
 	 */
-	public IagoClient() {
+	public HkdIagoClient() {
 		// create the logger
 		logger = EventLogger.getLogger(this.getClass());
 
@@ -127,7 +127,7 @@ public class IagoClient {
 			
 		}
 		else {
-			logger.sendEvent("IAGO already INITIALIZED ...", EventType.DEBUG,
+			logger.sendEvent("Hkd IAGO already INITIALIZED ...", EventType.DEBUG,
 					this);
 		}
 
@@ -265,17 +265,17 @@ public class IagoClient {
 						"faultstring");
 				if (faultString != null) {
 					logger.sendEvent(
-							"SOAP fault from IAGO: " + faultCode + " " + faultString,
+							"SOAP fault from HKD IAGO: " + faultCode + " " + faultString,
 							EventType.WARN, this);
 					throw new DTIException(
-							IagoClient.class,
+							HkdIagoClient.class,
 							DTIErrorCode.TP_INTERFACE_FAILURE,
 							"SOAP fault from IAGO: " + faultCode + " " + faultString);
 				}
 				else {
-					logger.sendEvent("SOAP fault from IAGO: " + faultCode,
+					logger.sendEvent("SOAP fault from HKD IAGO: " + faultCode,
 							EventType.WARN, this);
-					throw new DTIException(IagoClient.class,
+					throw new DTIException(HkdIagoClient.class,
 							DTIErrorCode.TP_INTERFACE_FAILURE,
 							"SOAP fault from IAGO: " + faultCode);
 				}
@@ -285,10 +285,10 @@ public class IagoClient {
 			xmlResponse = ClientUtility.unwrapFromSOAP(xmlResponse);
 			if (convert) {
 				logger.sendEvent(
-						"IAGOSoapClient entering convertResponse() ...",
+						"HKD IAGOSoapClient entering convertResponse() ...",
 						EventType.DEBUG, this);
 				xmlResponse = ClientUtility.convertResponse(xmlResponse);
-				logger.sendEvent(xmlResponse, EventType.DEBUG, IagoClient.class);
+				logger.sendEvent(xmlResponse, EventType.DEBUG, HkdIagoClient.class);
 			}
 
 		}
@@ -304,7 +304,7 @@ public class IagoClient {
 					"Fell through Caught: " + e + ":" + e.getMessage() + ":" + e
 							.getCause(), EventType.WARN, this);
 			e.printStackTrace();
-			throw new DTIException(IagoClient.class,
+			throw new DTIException(HkdIagoClient.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Unable to complete communication with the provider.");
 		}
