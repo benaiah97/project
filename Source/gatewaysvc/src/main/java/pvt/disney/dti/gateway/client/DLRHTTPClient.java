@@ -32,8 +32,10 @@ import org.xml.sax.SAXParseException;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.CosGrpKey;
+import pvt.disney.dti.gateway.dao.CosTpGrpCmdKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.CosGrpTO;
+import pvt.disney.dti.gateway.data.common.CosTpGrpCmdTO;
 import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 import pvt.disney.dti.gateway.util.UtilityXML;
@@ -54,7 +56,7 @@ public class DLRHTTPClient {
 	/**
 	 * shared core event logger.
 	 */
-	private EventLogger logger;
+	private static EventLogger logger;
 
 	/**
 	 * Properties file
@@ -130,16 +132,9 @@ public class DLRHTTPClient {
 			//TODO: REOMVE WHEN WE SWITCH TO ENDPOINTS
 			URL_STRING = PropertyHelper.readPropsValue(ACTIVE_CONNECTION,
 					props, null);
-			
-			try {
-				ENDPOINTS = DLRHTTPClient.loadClassOfServiceEndpoints();
-			} catch (DTIException e) {
-				logger.sendEvent(
-						"Unable to load DLR Class of Service Endpoints...",
-						EventType.EXCEPTION, this);
-				e.printStackTrace();
-			}
-			
+			//TODO uncomment when we turn on COS
+			//ENDPOINTS = DLRHTTPClient.loadClassOfServiceEndpoints();
+				
 			CONNECT_TIMEOUT_STRING = PropertyHelper.readPropsValue(
 					"CONNECT_TIMEOUT_MILLIS", props, null);
 
@@ -199,7 +194,8 @@ public class DLRHTTPClient {
 		String xmlResponse = null;
 
 		try {
-			checkForCosRefresh();
+			//TODO uncomment when we push COS
+			//checkForCosRefresh();
 			
 			// create the document request
 			logger.sendEvent("About to build docRequest ...", EventType.DEBUG,
@@ -220,8 +216,9 @@ public class DLRHTTPClient {
 			messageIdString = valNode.getNodeValue();
 			logger.sendEvent("Message ID STRING is " + messageIdString,
 					EventType.DEBUG, this);
-			//uncomment this to switch to cos endpoints
+			//TODO uncomment this to switch to cos endpoints
 			//URL url = new URL(ENDPOINTS.get( dtiTxn.getTransactionType() ));
+			//TODO remove url_string when we switch to COS
 			URL url = new URL(URL_STRING);
 			
 			logger.sendEvent("About to send message to DLR provider system.",
@@ -370,17 +367,30 @@ public class DLRHTTPClient {
 	 * @return the hashtable
 	 * @throws DTIException 
 	 */
-	protected static Hashtable<String, String> loadClassOfServiceEndpoints() throws DTIException {
-		
+	/**
+	 * Read class of service endpoints helper.
+	 *
+	 * @return the hashtable
+	 */
+	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
 		Hashtable<String, String> endpoints = new Hashtable<String, String>();
 
-	    // Get the cos grps
-	    ArrayList<CosGrpTO> cosList = new ArrayList<CosGrpTO>();
-	    cosList = CosGrpKey.getTsCosGrps("DLR");
-	    for (CosGrpTO costGrp : cosList) {
-	        endpoints.put(costGrp.getGroupName(),costGrp.getEndpointUrl());
-	    }
-		
+	    // Get the cos grp	    
+		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
+	    try {
+	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("DLR");
+	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
+	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
+	    	        logger.sendEvent("DLRHTTPClient added" + cosTpGrp.getCmdcode().toUpperCase() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
+	    	    }
+		} catch (Exception e) {
+			logger.sendEvent(
+					"Unable to load WDW Class of Service End"
+					+ "points...",
+					EventType.EXCEPTION, DLRHTTPClient.class);
+			e.printStackTrace();
+		}
+	    
 		return endpoints;
 	}
 	

@@ -93,20 +93,14 @@ public class CosGrpKey {
 	 * @return
 	 * @throws DTIException
 	 */
-	public static final ArrayList<CosGrpTO> getTsCmdCosGrp(String provider, String cmd) throws DTIException {
+	public static final CosGrpTO getTsCmdCosGrp(String provider, String cmd) throws DTIException {
 
-		ArrayList<CosGrpTO> result = new ArrayList<CosGrpTO>();
+		CosGrpTO result = new CosGrpTO();
 
 		logger.sendEvent("Entering getTsCmdCosGrp()", EventType.DEBUG, THISINSTANCE);
 
 		// Retrieve and validate the parameters
-		Object[] queryParms = { provider,cmd };
-
-		// Replaces "?"
-		Object[] values = {};
-
-		// Get instance of Query Builder (Replaces "%")
-		DBQueryBuilder qBuilder = new DBQueryBuilder();
+		Object[] values = { provider,cmd.toUpperCase() };
 
 		try {
 			// Prepare query
@@ -115,10 +109,10 @@ public class CosGrpKey {
 
 			// Run the SQL
 			logger.sendEvent("About to processQuery:  GET_PROVIDER_CMD_COS_GRP", EventType.DEBUG, THISINSTANCE);
-			result = (ArrayList<CosGrpTO>) helper.processQuery(values, queryParms, qBuilder);
+			result = (CosGrpTO) helper.processQuery(values);
 
 			// Debug
-			logger.sendEvent("getCosGrps found products.", EventType.DEBUG, THISINSTANCE, result, null);
+			logger.sendEvent("getCosGrps found cos group.", EventType.DEBUG, THISINSTANCE, result, null);
 
 		} catch (Exception e) {
 			logger.sendEvent("Exception executing getCosGrps: " + e.toString(), EventType.WARN, THISINSTANCE);

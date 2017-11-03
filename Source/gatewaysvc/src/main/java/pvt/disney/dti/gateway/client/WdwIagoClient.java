@@ -22,11 +22,9 @@ import org.w3c.dom.ls.LSSerializer;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.CosGrpKey;
-import pvt.disney.dti.gateway.dao.LookupKey;
+import pvt.disney.dti.gateway.dao.CosTpGrpCmdKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
-import pvt.disney.dti.gateway.data.common.CosGrpTO;
-import pvt.disney.dti.gateway.data.common.TPLookupTO;
+import pvt.disney.dti.gateway.data.common.CosTpGrpCmdTO;
 import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 import pvt.disney.dti.gateway.util.UtilityXML;
@@ -110,10 +108,10 @@ public class WdwIagoClient {
 
 			logger.sendEvent("Successfully Initialized IAGO.properties file ...", EventType.DEBUG, this);
 			
-			//TODO remove endpoing when we switch to cos
+			//TODO remove property based endpoint when we switch to cos
 			ENDPOINT = PropertyHelper.readPropsValue("iago.endpoint", props, null);
-			ENDPOINTS = WdwIagoClient.loadClassOfServiceEndpoints();
-			
+			//TODO uncomment this when we are ready to push cos
+			//ENDPOINTS = WdwIagoClient.loadClassOfServiceEndpoints();
 			
 			READ_TIMEOUT_RENEWAL_STRING = PropertyHelper.readPropsValue("iago.socketTimeout.renewal", props, null);
 			if (READ_TIMEOUT_RENEWAL_STRING == null) {
@@ -142,7 +140,8 @@ public class WdwIagoClient {
 
 			CONNECTION_TIMEOUT = Integer.parseInt(PropertyHelper.readPropsValue("iago.connectionTimeout", props, null));
 
-			logger.sendEvent("WdwIago Class of service endpoints are: " + ENDPOINTS, EventType.DEBUG, this);
+			//TODO Uncomment this when COS goes live
+			//logger.sendEvent("WdwIago Class of service endpoints are: " + ENDPOINTS, EventType.DEBUG, this);
 
 			logger.sendEvent("iago.socketTimeout is " + READ_TIMEOUT_STANDARD, EventType.DEBUG, this);
 			logger.sendEvent("iago.socketTimeout.renewal is " + READ_TIMEOUT_RENEWAL, EventType.DEBUG, this);
@@ -188,7 +187,8 @@ public class WdwIagoClient {
 	 *             the DTI exception
 	 */
 	public String sendRequest(DTITransactionTO dtiTxn, String xmlRequest, boolean convert) throws DTIException {
-		checkForCosRefresh();
+		//TOOD uncomment this when COS refresh goes live
+		//checkForCosRefresh();
 		
 		String campus = null;
 		URLConnection conn = null;
@@ -332,24 +332,23 @@ public class WdwIagoClient {
 	 * @return the hashtable
 	 */
 	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
-		
 		Hashtable<String, String> endpoints = new Hashtable<String, String>();
 
-	    // Get the cos grps
-	    ArrayList<CosGrpTO> cosList = new ArrayList<CosGrpTO>();
+	    // Get the cos grp	    
+		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
 	    try {
-			cosList = CosGrpKey.getTsCosGrps("WDW");
-		} catch (DTIException e) {
+	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("WDW");
+	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
+	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
+	    	        logger.sendEvent("WDWIAGOCLIENT added" + cosTpGrp.getCmdcode() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
+	    	    }
+		} catch (Exception e) {
 			logger.sendEvent(
 					"Unable to load WDW Class of Service End"
 					+ "points...",
 					EventType.EXCEPTION, WdwIagoClient.class);
 			e.printStackTrace();
 		}
-	    for (CosGrpTO costGrp : cosList) {
-	        endpoints.put(costGrp.getGroupName(),costGrp.getEndpointUrl());
-	    }
-		
 		return endpoints;
 	}
 
@@ -382,6 +381,14 @@ public class WdwIagoClient {
 			logger.sendEvent("WdwIago Class of service determined that endpoint refresh is required by thread: " + threadInfo, EventType.DEBUG, this);
 			WdwIagoClient.loadClassOfServiceEndpoints();
 		}
+	}
+    
+	/**
+	 * returns the static set of endpoints
+	 * @return
+	 */
+	public static Hashtable<String, String> getENDPOINTS() {
+		return ENDPOINTS;
 	}
 
 }
