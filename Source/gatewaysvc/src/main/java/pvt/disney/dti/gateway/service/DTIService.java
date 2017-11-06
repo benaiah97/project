@@ -495,7 +495,8 @@ public class DTIService {
           }        
       }
 
-      computerName = "DTI" + suffixArray.toString();
+      // First part of the computerName field based on the numeric part of server name
+      computerName = "" + suffixArray.toString();
       
       // Lookup JVM name using System properties (startup argument), if available
       String jvmName = System.getProperty("MW_NAME");
@@ -504,6 +505,7 @@ public class DTIService {
       if ((null != jvmName) && (!"".equals(jvmName)) && (jvmName.length() > 1)) {
     	  // Take the last 2 characters of the jvmName argument
     	  jvmName = jvmName.substring(jvmName.length() - 2, jvmName.length());
+    	  // Second part of the computerName field based on the ending of the jvm name
     	  computerName = computerName + '_' + jvmName;
       }
       
