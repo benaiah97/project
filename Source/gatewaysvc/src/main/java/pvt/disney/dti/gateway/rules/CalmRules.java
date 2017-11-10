@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Properties;
 
 import pvt.disney.dti.gateway.constants.DTICalmException;
@@ -14,7 +13,6 @@ import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
 import pvt.disney.dti.gateway.dao.BarricadeKey;
-import pvt.disney.dti.gateway.dao.CommandKey;
 import pvt.disney.dti.gateway.dao.PropertyKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
@@ -22,12 +20,13 @@ import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
 import pvt.disney.dti.gateway.data.common.BarricadeTO;
-import pvt.disney.dti.gateway.data.common.CommandTO;
+import pvt.disney.dti.gateway.data.common.CosGrpTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PropertyTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
+import pvt.disney.dti.gateway.util.CosUtil;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
 import com.disney.logging.EventLogger;
@@ -447,50 +446,50 @@ public class CalmRules {
     */
    private Boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
 
-      List<String> commandTOs;
-      int cosgrpId =1;
-      String ownerId = dtiTxn.getProvider().toString().substring(0,3);
+      //ownerId
+      String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
       
+      //barricadeTOs
       List<BarricadeTO> barricadeTOs;
       try {
-
-        //  CommandKey.getCommand(dtiTxn.getCosGrpTO().getCosgrpid());
-         // To get the command details for COS group Id
-         commandTOs = CommandKey.getCommand(cosgrpId);
          
+         // To get the Cosgrpid
+         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
+
          // To get the Barricade details for COS group Id and OwnerId
-         barricadeTOs = BarricadeKey.getBarricadeLookup(cosgrpId, ownerId);
+         barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
 
          for (BarricadeTO barricadeTO : barricadeTOs) {
+            
             // tsmac attribute and tsloc attribute of a baricade are null
             if ((barricadeTO.getTsMacID() == null) && (barricadeTO.getTsLocID() == null)) {
+               
                return true;
             }
-            // Barricade tsmac attribute is not nullR
+            // Barricade tsmac attribute is not null and tsloc is null
             if ((barricadeTO.getTsMacID() != null) && (barricadeTO.getTsLocID() == null)) {
 
-               if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getTsMac())
-                        && (commandTOs.contains(dtiTxn.getTransactionType().toString()))) {
+               if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getTsMac())) {
                   return true;
                }
             }
 
             // Barricade tsmac attribute and the barricade tslocation attribute are not null
             if ((barricadeTO.getTsMacID() != null) && (barricadeTO.getTsLocID() != null)) {
-               
+
                // Barricarde tsmac and tslocation matches with tsmac and tslocation in the DTI transaction request
-               if ((Integer.parseInt(barricadeTO.getTsMacID()) == dtiTxn.getEntityTO().getEntityId()) && (Integer.parseInt(barricadeTO.getTsLocID()) == dtiTxn.getEntityTO().getMacEntityId()) && (commandTOs.contains(dtiTxn.getTransactionType().toString()))) {
+               if ((Integer.parseInt(barricadeTO.getTsMacID()) == dtiTxn.getEntityTO().getEntityId())
+                        && (Integer.parseInt(barricadeTO.getTsLocID()) == dtiTxn.getEntityTO().getMacEntityId())) {
                   return true;
                }
             }
          }
 
       } catch (Exception ex) {
-
+         logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
       }
       return false;
    }
-   
 
 }
 

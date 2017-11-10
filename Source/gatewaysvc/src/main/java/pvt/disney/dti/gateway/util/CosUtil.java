@@ -30,7 +30,7 @@ public class CosUtil {
 	private static  CosGrpTO lookupCosGrp(String transProvider, String transType ) throws DTIException {
 		CosGrpTO cosGrp = new CosGrpTO();
 		//uses first three characters of the DTITransactionTO.Provider
-		cosGrp = CosGrpKey.getTsCmdCosGrp(transProvider.substring(0, 2), transType);
+		cosGrp = CosGrpKey.getTsCmdCosGrp(transProvider.substring(0, 3), transType);
 		
 		return cosGrp;
 	}
@@ -42,7 +42,7 @@ public class CosUtil {
 	 * @return the cos grp TO
 	 * @throws DTIException the DTI exception
 	 */
-	private static CosGrpTO lookupCosGrp(DTITransactionTO txnTO) throws DTIException {
+	public static CosGrpTO lookupCosGrp(DTITransactionTO txnTO) throws DTIException {
 		return lookupCosGrp(txnTO.getProvider().toString(), txnTO.getTransactionType().toString());	
 	}
 	
