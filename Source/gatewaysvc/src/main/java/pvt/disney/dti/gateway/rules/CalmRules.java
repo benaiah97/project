@@ -135,7 +135,7 @@ public class CalmRules {
             executeWDWDownRules(dtiTxn);
          } else if (isBarricadeRaised(dtiTxn)) {
             throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
-                     "WDW Request attempted when WDWDown outage wall file is present (CALM).");
+                     "WDW Request attempted when Barricade is raised.");
          }
       } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
 
@@ -144,7 +144,7 @@ public class CalmRules {
             executeDLRDownRules(dtiTxn);
          } else if (isBarricadeRaised(dtiTxn)) {
             throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
-                     "DLR Request attempted when DLRDown outage wall file is present (CALM).");
+                     "DLR Request attempted when Barricade is raised.");
          }
       } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
          downFile = new File(hkdDownFileName);
@@ -196,7 +196,7 @@ public class CalmRules {
 
       throw new DTIException(BusinessRules.class,
             DTIErrorCode.INVALID_SALES_DATE_TIME,
-            "WDW Request attempted when WDWDown outage wall file is present (CALM).");
+            "WDW Request attempted when WDWDown outage wall property is present in the database (CALM).");
    }
 
    /**
@@ -233,7 +233,7 @@ public class CalmRules {
 
       throw new DTIException(BusinessRules.class,
             DTIErrorCode.INVALID_SALES_DATE_TIME,
-            "DLR Request attempted when DLRDown outage wall file is present (CALM).");
+            "DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
    }
 
    /**

@@ -42,7 +42,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
       super.setMockProperty();
       DTITransactionTO dtitxn = new DTITransactionTO(TransactionType.QUERYTICKET);
       getDTITransactionTO(dtitxn);
-      DTIMockUtil.processMockprepareAndExecuteSql();
+     
 
       new MockUp<PropertyTO>() {
          @Mock
@@ -60,6 +60,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
       dtitxn.setProvider(ProviderType.WDWNEXUS);
 
       try {
+         DTIMockUtil.processMockprepareAndExecuteSql();
          calmRules.checkContingencyActionsLogicModule(dtitxn);
       } catch (DTIException dtie) {
          assertEquals("WDW Request attempted when WDWDown outage wall property is present in the database (CALM).", dtie.getLogMessage());
