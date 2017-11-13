@@ -1071,7 +1071,7 @@ public class DTIMockUtil extends CommonTestUtils {
    /**
     * Mock for method getBarricadeLookup of BarricadeKey
     */
-   public static void mockBarricade1() {
+   public static void mockBarricadeTsMacID() {
     
       try {
          new MockUp<BarricadeKey>() {
@@ -1092,7 +1092,7 @@ public class DTIMockUtil extends CommonTestUtils {
    /**
     * Mock for method getBarricadeLookup of BarricadeKey
     */
-   public static void mockBarricade2() {
+   public static void mockBarricadeTsMacLoc() {
       
       try {
          new MockUp<BarricadeKey>() {

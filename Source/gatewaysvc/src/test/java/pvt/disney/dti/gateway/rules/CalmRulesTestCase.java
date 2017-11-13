@@ -75,7 +75,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
        * Barricade tsloc is null expected exception WDW Request attempted when
        * Barricade is raised.
        */
-      DTIMockUtil.mockBarricade1();
+      DTIMockUtil.mockBarricadeTsMacID();
       try {
          calmRules.checkContingencyActionsLogicModule(dtitxn);
       } catch (DTIException dtie) {
@@ -85,7 +85,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
        * Barricade tsmac and tsloc are not null expected exception WDW Request
        * attempted when Barricade is raised.
        */
-      DTIMockUtil.mockBarricade2();
+      DTIMockUtil.mockBarricadeTsMacLoc();
 
       try {
          calmRules.checkContingencyActionsLogicModule(dtitxn);
@@ -101,7 +101,6 @@ public class CalmRulesTestCase extends CommonBusinessTest {
          assertEquals("DLR Request attempted when Barricade is raised.", dtie.getLogMessage());
 
       }
-      
       
      /*mock getPropSetValue returns as true*/
       DTIMockUtil.mockProperty();
