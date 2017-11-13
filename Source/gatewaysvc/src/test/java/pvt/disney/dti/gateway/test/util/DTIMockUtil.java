@@ -1123,7 +1123,6 @@ public class DTIMockUtil extends CommonTestUtils {
                return "true";
             }
          };
-
       } catch (Exception e) {
       }
    }

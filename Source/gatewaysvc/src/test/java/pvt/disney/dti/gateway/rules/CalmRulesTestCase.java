@@ -45,7 +45,6 @@ public class CalmRulesTestCase extends CommonBusinessTest {
       getDTITransactionTO(dtitxn);
       dtitxn.setEntityTO(entityTO);
       
-      
       /*Barricade is not raised*/
       dtitxn.getRequest().getPayloadHeader().getTktSeller().setTsMac(tsMacWadm);
       dtitxn.setProvider(ProviderType.WDWNEXUS);
