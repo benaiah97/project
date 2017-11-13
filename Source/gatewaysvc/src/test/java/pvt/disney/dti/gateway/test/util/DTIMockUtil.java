@@ -1121,7 +1121,7 @@ public class DTIMockUtil extends CommonTestUtils {
             @Mock
             public String getPropSetValue() {
                return "true";
-            }
+            } 
          };
       } catch (Exception e) {
       }

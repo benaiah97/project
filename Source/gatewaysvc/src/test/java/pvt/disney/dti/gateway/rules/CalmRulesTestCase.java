@@ -59,7 +59,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
        * Barricade tsmac and tsloc are null expected exception WDW Request
        * attempted when Barricade is raised.
        */
-      DTIMockUtil.mockBarricade();
+      DTIMockUtil.mockBarricade(); 
 
       dtitxn.getRequest().getPayloadHeader().getTktSeller().setTsMac(tsMacWadm);
       dtitxn.setProvider(ProviderType.WDWNEXUS);
