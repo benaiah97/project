@@ -37,6 +37,7 @@ import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIErrorCode.ErrorScope;
 import pvt.disney.dti.gateway.dao.AttributeKey;
+import pvt.disney.dti.gateway.dao.BarricadeKey;
 import pvt.disney.dti.gateway.dao.EligibilityKey;
 import pvt.disney.dti.gateway.dao.EntityKey;
 import pvt.disney.dti.gateway.dao.LookupKey;
@@ -54,8 +55,10 @@ import pvt.disney.dti.gateway.dao.result.TicketAttributeResult;
 import pvt.disney.dti.gateway.dao.result.TransidRescodeResult;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.common.AttributeTO;
+import pvt.disney.dti.gateway.data.common.BarricadeTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
+import pvt.disney.dti.gateway.data.common.PropertyTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TransidRescodeTO;
@@ -1041,4 +1044,87 @@ public class DTIMockUtil extends CommonTestUtils {
 		}
 	}
 
+	
+	
+	/**
+    * Mock for method getBarricadeLookup of BarricadeKey
+    */
+   public static void mockBarricade() {
+    
+      try {
+         new MockUp<BarricadeKey>() {
+            @Mock
+            public List<BarricadeTO> getBarricadeLookup(Integer cosgrpid, String ownerId) {
+
+               List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
+               BarricadeTO barricadeTO = new BarricadeTO();
+               barricadeTO.setBarricadeID("0");
+               barricadeTOs.add(barricadeTO);
+               return barricadeTOs;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
+   
+   
+   /**
+    * Mock for method getBarricadeLookup of BarricadeKey
+    */
+   public static void mockBarricade1() {
+    
+      try {
+         new MockUp<BarricadeKey>() {
+            @Mock
+            public List<BarricadeTO> getBarricadeLookup(Integer cosgrpid, String ownerId) {
+               List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
+               BarricadeTO barricadeTO = new BarricadeTO();
+               barricadeTO.setBarricadeID("barricadeID");
+               barricadeTO.setTsMacID("0");
+               barricadeTOs.add(barricadeTO);
+               return barricadeTOs;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
+   
+   /**
+    * Mock for method getBarricadeLookup of BarricadeKey
+    */
+   public static void mockBarricade2() {
+      
+      try {
+         new MockUp<BarricadeKey>() {
+            @Mock
+            public List<BarricadeTO> getBarricadeLookup(Integer cosgrpid, String ownerId) {
+
+               List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
+               BarricadeTO barricadeTO = new BarricadeTO();
+               barricadeTO.setBarricadeID("barricadeID");
+               barricadeTO.setTsMacID("0");
+               barricadeTO.setTsLocID("1");
+               barricadeTOs.add(barricadeTO);
+               return barricadeTOs;
+            }
+         };
+      } catch (Exception e) {
+      }
+   }
+   
+   /**
+    * Mock for method getPropSetValue of PropertyTO
+    */
+   public static void mockProperty() {
+      try {
+         new MockUp<PropertyTO>() {
+            @Mock
+            public String getPropSetValue() {
+               return "true";
+            }
+         };
+
+      } catch (Exception e) {
+      }
+   }
 }

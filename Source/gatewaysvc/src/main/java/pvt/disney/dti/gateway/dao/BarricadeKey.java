@@ -20,7 +20,6 @@ public class BarricadeKey {
    /** The class instance used for logging. */
    private static final BarricadeKey THISINSTANCE = new BarricadeKey();
    
-
    /** Event logger. */
    private static final EventLogger logger = EventLogger.getLogger(LogKey.class.getCanonicalName());
    
@@ -34,8 +33,6 @@ public class BarricadeKey {
      super();
    }
    
-   
-  
    /**
     * Gets the barricade lookup.
     *
@@ -49,15 +46,14 @@ public class BarricadeKey {
       ArrayList<BarricadeTO> result = null;
 
       // Retrieve and validate the parameters
-      if ((cosgrpId == null)) {
-         throw new DTIException(BarricadeKey.class, DTIErrorCode.UNDEFINED_FAILURE, "");
+      if ((cosgrpId == null && ownerId == null)) {
+         throw new DTIException(BarricadeKey.class, DTIErrorCode.UNDEFINED_FAILURE, "CosgrpId or OwnerId is null.");
       }
 
       // Retrieve and validate the parameters
       Object[] values = {cosgrpId,ownerId};
 
       try {
-
          // Prepare query
          logger.sendEvent("About to getInstance from DAOHelper", EventType.DEBUG, THISINSTANCE);
          DAOHelper helper = DAOHelper.getInstance(GET_BARRICADE);
@@ -73,9 +69,6 @@ public class BarricadeKey {
          logger.sendEvent("Exception executing getBarricadeLookup: " + e.toString(), EventType.WARN, THISINSTANCE);
          throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "", e);
       }
-
       return result;
-
    }
-
 }

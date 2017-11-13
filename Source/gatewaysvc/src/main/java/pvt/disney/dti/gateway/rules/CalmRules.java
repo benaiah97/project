@@ -410,6 +410,11 @@ public class CalmRules {
             "HKD Request attempted when HKDDown outage wall file is present (CALM).");
   }
 
+   /**
+    * Checks if is wall raised.
+    *
+    * @return the boolean
+    */
    private Boolean isWallRaised() {
 
       Boolean wallRaised = false;
@@ -446,45 +451,43 @@ public class CalmRules {
     */
    private Boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
 
-      //ownerId
-      String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
-      
-      //barricadeTOs
-      List<BarricadeTO> barricadeTOs;
       try {
+         // barricadeTOs
+         List<BarricadeTO> barricadeTOs;
+         // ownerId
+         String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
          
-         // To get the Cosgrpid
+         // To get the CosGrpid
          CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
-
+         
          // To get the Barricade details for COS group Id and OwnerId
          barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
 
          for (BarricadeTO barricadeTO : barricadeTOs) {
-            
-            // tsmac attribute and tsloc attribute of a baricade are null
+
+            // Barricade TsMac attribute and TsLoc attribute of a Barricade are null
             if ((barricadeTO.getTsMacID() == null) && (barricadeTO.getTsLocID() == null)) {
-               
                return true;
             }
-            // Barricade tsmac attribute is not null and tsloc is null
+            
+            // Barricade TsMac attribute is not null and TsLoc is null
             if ((barricadeTO.getTsMacID() != null) && (barricadeTO.getTsLocID() == null)) {
 
-               if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getTsMac())) {
+               if ((Integer.parseInt(barricadeTO.getTsMacID()) == (dtiTxn.getEntityTO().getMacEntityId()))) {
                   return true;
                }
             }
-
-            // Barricade tsmac attribute and the barricade tslocation attribute are not null
+            
+            // Barricade TsMac attribute and the barricade TsLoc attribute are not null
             if ((barricadeTO.getTsMacID() != null) && (barricadeTO.getTsLocID() != null)) {
-
-               // Barricarde tsmac and tslocation matches with tsmac and tslocation in the DTI transaction request
-               if ((Integer.parseInt(barricadeTO.getTsMacID()) == dtiTxn.getEntityTO().getEntityId())
-                        && (Integer.parseInt(barricadeTO.getTsLocID()) == dtiTxn.getEntityTO().getMacEntityId())) {
+               
+               // Barricade TsMac and TsLoc matches with TsMac and TsLoc in the DTI transaction request
+               if ((Integer.parseInt(barricadeTO.getTsMacID()) == (dtiTxn.getEntityTO().getMacEntityId()))
+                        && (Integer.parseInt(barricadeTO.getTsLocID()) == (dtiTxn.getEntityTO().getEntityId()) )) {
                   return true;
                }
             }
          }
-
       } catch (Exception ex) {
          logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
       }
