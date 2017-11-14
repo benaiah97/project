@@ -1058,7 +1058,7 @@ public class DTIMockUtil extends CommonTestUtils {
 
                List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
                BarricadeTO barricadeTO = new BarricadeTO();
-               barricadeTO.setBarricadeID("0");
+               barricadeTO.setBarricadeID(0);
                barricadeTOs.add(barricadeTO);
                return barricadeTOs;
             }
@@ -1079,8 +1079,8 @@ public class DTIMockUtil extends CommonTestUtils {
             public List<BarricadeTO> getBarricadeLookup(Integer cosgrpid, String ownerId) {
                List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
                BarricadeTO barricadeTO = new BarricadeTO();
-               barricadeTO.setBarricadeID("barricadeID");
-               barricadeTO.setTsMacID("0");
+               barricadeTO.setBarricadeID(1);
+               barricadeTO.setTsMacID(0);
                barricadeTOs.add(barricadeTO);
                return barricadeTOs;
             }
@@ -1101,9 +1101,9 @@ public class DTIMockUtil extends CommonTestUtils {
 
                List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
                BarricadeTO barricadeTO = new BarricadeTO();
-               barricadeTO.setBarricadeID("barricadeID");
-               barricadeTO.setTsMacID("0");
-               barricadeTO.setTsLocID("1");
+               barricadeTO.setBarricadeID(1);
+               barricadeTO.setTsMacID(0);
+               barricadeTO.setTsLocID(1);
                barricadeTOs.add(barricadeTO);
                return barricadeTOs;
             }

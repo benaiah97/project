@@ -46,11 +46,10 @@ public class BarricadeKey {
       ArrayList<BarricadeTO> result = null;
 
       // Retrieve and validate the parameters
-      if ((cosgrpId == null && ownerId == null)) {
+      if ((cosgrpId == null || ownerId == null)) {
          throw new DTIException(BarricadeKey.class, DTIErrorCode.UNDEFINED_FAILURE, "CosgrpId or OwnerId is null.");
       }
 
-      // Retrieve and validate the parameters
       Object[] values = {cosgrpId,ownerId};
 
       try {
@@ -67,7 +66,7 @@ public class BarricadeKey {
 
       } catch (Exception e) {
          logger.sendEvent("Exception executing getBarricadeLookup: " + e.toString(), EventType.WARN, THISINSTANCE);
-         throw new DTIException(LogKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "", e);
+         throw new DTIException(BarricadeKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "", e);
       }
       return result;
    }

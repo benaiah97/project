@@ -2,34 +2,34 @@ package pvt.disney.dti.gateway.data.common;
 
 /**
  * The Class BarricadeTO.
- * @author AGARS017
+ * @author MISHP012
  *
  */
 public class BarricadeTO {
 
    /** The barricade ID. */
-   private String barricadeID;
+   private Integer barricadeID;
    
    /** The cos grp ID. */
    private Integer cosGrpID;
    
    /** The ts mac ID. */
-   private String tsMacID;
+   private Integer tsMacID;
    
    /** The ts loc ID. */
-   private String tsLocID;
+   private Integer tsLocID;
    
    /** The owner ID. */
    private String ownerID;
    
    /** The creator ID. */
-   private String creatorID;
+   private Integer creatorID;
    
    /**
     * Gets the barricade ID.
     * @return the barricade ID
     */
-   public String getBarricadeID() {
+   public Integer getBarricadeID() {
       return barricadeID;
    }
 
@@ -38,7 +38,7 @@ public class BarricadeTO {
     *
     * @param barricadeID the new barricade ID
     */
-   public void setBarricadeID(String barricadeID) {
+   public void setBarricadeID(Integer barricadeID) {
       this.barricadeID = barricadeID;
    }
 
@@ -65,7 +65,7 @@ public class BarricadeTO {
     *
     * @return the ts mac ID
     */
-   public String getTsMacID() {
+   public Integer getTsMacID() {
       return tsMacID;
    }
 
@@ -74,7 +74,7 @@ public class BarricadeTO {
     *
     * @param tsMacID the new tsmac ID
     */
-   public void setTsMacID(String tsMacID) {
+   public void setTsMacID(Integer tsMacID) {
       this.tsMacID = tsMacID;
    }
 
@@ -83,7 +83,7 @@ public class BarricadeTO {
     *
     * @return the tsloc ID
     */
-   public String getTsLocID() {
+   public Integer getTsLocID() {
       return tsLocID;
    }
 
@@ -92,7 +92,7 @@ public class BarricadeTO {
     *
     * @param tsLocID the new ts loc ID
     */
-   public void setTsLocID(String tsLocID) {
+   public void setTsLocID(Integer tsLocID) {
       this.tsLocID = tsLocID;
    }
 
@@ -119,7 +119,7 @@ public class BarricadeTO {
     *
     * @return the creator ID
     */
-   public String getCreatorID() {
+   public Integer getCreatorID() {
       return creatorID;
    }
 
@@ -128,7 +128,7 @@ public class BarricadeTO {
     *
     * @param creatorID the new creator ID
     */
-   public void setCreatorID(String creatorID) {
+   public void setCreatorID(Integer creatorID) {
       this.creatorID = creatorID;
    }
    

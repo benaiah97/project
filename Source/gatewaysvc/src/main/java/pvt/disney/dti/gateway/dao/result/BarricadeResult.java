@@ -3,7 +3,6 @@ package pvt.disney.dti.gateway.dao.result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import pvt.disney.dti.gateway.connection.ResultSetProcessor;
 import pvt.disney.dti.gateway.data.common.BarricadeTO;
@@ -12,6 +11,7 @@ import com.disney.exception.WrappedException;
 
 /**
  * The Class BarricadeResult.
+ * @author MISHP012
  */
 public class BarricadeResult implements ResultSetProcessor{
 
@@ -46,15 +46,15 @@ public class BarricadeResult implements ResultSetProcessor{
     * @throws WrappedException the wrapped exception
     */
    public void processNextResultSet(ResultSet rs) throws SQLException, WrappedException {
-      BarricadeTO anBarricade = new BarricadeTO();
+      BarricadeTO barricadeTO = new BarricadeTO();
       
-      anBarricade.setBarricadeID(rs.getString("BARRICADEID"));
-      anBarricade.setCosGrpID(rs.getInt("COSGRP_ID"));
-      anBarricade.setCreatorID(rs.getString("CREATORID"));
-      anBarricade.setOwnerID(rs.getString("OWNERID"));
-      anBarricade.setTsLocID(rs.getString("TSLOCID"));
-      anBarricade.setTsMacID(rs.getString("TSMACID"));
-      barricadeTOs.add(anBarricade);
+      barricadeTO.setBarricadeID(rs.getInt("BARRICADEID"));
+      barricadeTO.setCosGrpID(rs.getInt("COSGRP_ID"));
+      barricadeTO.setCreatorID(rs.getInt("CREATORID"));
+      barricadeTO.setOwnerID(rs.getString("OWNERID"));
+      barricadeTO.setTsLocID(rs.getInt("TSLOCID"));
+      barricadeTO.setTsMacID(rs.getInt("TSMACID"));
+      barricadeTOs.add(barricadeTO);
       this.recordsProcessed++;
 
       return;
