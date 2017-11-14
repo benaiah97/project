@@ -444,11 +444,10 @@ public class CalmRules {
   
    /**
     * Checks if barricade is raised.
-    *
     * @param dtiTxn the dti txn
     * @return the boolean
     */
-   private Boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
+   private boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
 
       try {
          // barricadeTOs
@@ -477,12 +476,12 @@ public class CalmRules {
 
    /**
     * Checks barricadeTO with dtiTxnTO to identify if barricade is active
-    * 
     * @param dtiTxn
     * @param barricadeTO
-    * @return
+     @return the boolean
     */
    private boolean isBarricadeActive(DTITransactionTO dtiTxn, BarricadeTO barricadeTO) {
+      
       // TsMac attribute and TsLoc attribute of a Barricade are null
       if ((null == barricadeTO.getTsMacID()) && (null == barricadeTO.getTsLocID())) {
          return true;

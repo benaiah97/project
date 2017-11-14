@@ -14,6 +14,8 @@ import com.disney.logging.audit.EventType;
 
 /**
  * The Class BarricadeKey.
+ * @author MISHP012
+ *
  */
 public class BarricadeKey {
    
@@ -47,7 +49,8 @@ public class BarricadeKey {
 
       // Retrieve and validate the parameters
       if ((cosgrpId == null || ownerId == null)) {
-         throw new DTIException(BarricadeKey.class, DTIErrorCode.UNDEFINED_FAILURE, "CosgrpId or OwnerId is null.");
+         throw new DTIException(BarricadeKey.class, DTIErrorCode.DTI_DATA_ERROR, "Class of service error; cosgrpId: "
+                  + cosgrpId + ", OwnerId: " + ownerId);
       }
 
       Object[] values = {cosgrpId,ownerId};
@@ -66,7 +69,7 @@ public class BarricadeKey {
 
       } catch (Exception e) {
          logger.sendEvent("Exception executing getBarricadeLookup: " + e.toString(), EventType.WARN, THISINSTANCE);
-         throw new DTIException(BarricadeKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "", e);
+         throw new DTIException(BarricadeKey.class, DTIErrorCode.FAILED_DB_OPERATION_SVC, "Exception executing getBarricadeLookup", e);
       }
       return result;
    }
