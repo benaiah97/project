@@ -41,36 +41,36 @@ import com.disney.util.PropertyHelper;
  */
 public class CalmRules {
 
-   /** The standard core logging mechanism. */
-   private EventLogger logger = EventLogger.getLogger(this.getClass());
+	/** The standard core logging mechanism. */
+	private EventLogger logger = EventLogger.getLogger(this.getClass());
 
-   /** The hkd down file name. */
-   private static String hkdDownFileName = null;
+	/** The hkd down file name. */
+	private static String hkdDownFileName = null;
 
-   /** The this obj. */
-   private static CalmRules thisObj = null;
-   
-   /** The hkd calm active. */
-   private static boolean hkdCalmActive = false;
+	/** The this obj. */
+	private static CalmRules thisObj = null;
 
-   /** The query ticket reply macs. */
-   private static ArrayList<String> queryTicketReplyMacs = new ArrayList<String>();
+	/** The hkd calm active. */
+	private static boolean hkdCalmActive = false;
 
-   /** The application. */
-   private static String application = null;
+	/** The query ticket reply macs. */
+	private static ArrayList<String> queryTicketReplyMacs = new ArrayList<String>();
 
-   /** The environment. */
-   private static String environment = null;
+	/** The application. */
+	private static String application = null;
 
-   /** The tpo id. */
-   private static Integer tpoId = 0;
+	/** The environment. */
+	private static String environment = null;
 
-   /**
-    * Instantiates a new calm rules.
-    *
-    * @param props the props
-    * @throws DTIException the DTI exception
-    */
+	/** The tpo id. */
+	private static Integer tpoId = 0;
+
+	/**
+	 * Instantiates a new calm rules.
+	 *
+	 * @param props the props
+	 * @throws DTIException the DTI exception
+	 */
 
    private CalmRules(Properties props) throws DTIException {
       
@@ -89,40 +89,41 @@ public class CalmRules {
             queryTicketReplyMacs.add(result[x]);
          }
       }
+      
       application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
-
       environment = System.getProperty("APP_ENV");
 
       logger.sendEvent("Contingency Actions Logic Module (CALM) rules initialized.", EventType.DEBUG, this);
 
-      return;
+		return;
 
-   }
+	}
 
-   /**
-    * Gets the single instance of CalmRules.
-    *
-    * @param props the props
-    * @return single instance of CalmRules
-    * @throws DTIException the DTI exception
-    */
-   public static CalmRules getInstance(Properties props) throws DTIException {
+	/**
+	 * Gets the single instance of CalmRules.
+	 *
+	 * @param props the props
+	 * @return single instance of CalmRules
+	 * @throws DTIException the DTI exception
+	 */
+	public static CalmRules getInstance(Properties props) throws DTIException {
 
-      if (thisObj == null) {
-         thisObj = new CalmRules(props);
-      }
+		if (thisObj == null) {
+			thisObj = new CalmRules(props);
+		}
 
-      return thisObj;
-   }
+		return thisObj;
+	}
 
-   /**
-    * Contingency Actions Logic Module (CALM).
-    *
-    * @param dtiTxn the dti txn
-    * @throws DTIException the DTI exception
-    * @throws DTICalmException the DTI calm exception
-    */
-   public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn) throws DTIException, DTICalmException {
+	/**
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
+	 */
+	public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn) throws DTIException,
+			DTICalmException {
 
       String tpiCode = dtiTxn.getTpiCode();
       File downFile = null;
@@ -150,259 +151,258 @@ public class CalmRules {
 
          if (downFile.exists()) {
             executeHKDDownRules(dtiTxn);
-         }
-      }
+		  }
+		}
 
-      return;
-   }
+		return;
+	}
 
-   /**
-    * Contingency Actions Logic Module (CALM).
-    *
-    * @param dtiTxn the dti txn
-    * @throws DTIException the DTI exception
-    * @throws DTICalmException the DTI calm exception
-    */
-   protected void executeWDWDownRules(DTITransactionTO dtiTxn) throws DTIException,
-         DTICalmException {
+	/**
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
+	 */
+	protected void executeWDWDownRules(DTITransactionTO dtiTxn) throws DTIException,
+			DTICalmException {
 
-      DTIRequestTO dtiRequest = dtiTxn.getRequest();
-      PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
-      TktSellerTO tktSeller = payloadHdr.getTktSeller();
-      String tsMac = tktSeller.getTsMac();
+		DTIRequestTO dtiRequest = dtiTxn.getRequest();
+		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
+		TktSellerTO tktSeller = payloadHdr.getTktSeller();
+		String tsMac = tktSeller.getTsMac();
 
-      logger.sendEvent(
-            "Contingency Actions Logic Module (CALM) being checked for " + tsMac,
-            EventType.DEBUG, this);
+		logger.sendEvent(
+				"Contingency Actions Logic Module (CALM) being checked for " + tsMac,
+				EventType.DEBUG, this);
 
-      if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
+		if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
-         boolean containsMac = false;
-         for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
-            String replyMac = queryTicketReplyMacs.get(i);
+			boolean containsMac = false;
+			for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
+				String replyMac = queryTicketReplyMacs.get(i);
 
-            if (replyMac.compareToIgnoreCase(tsMac) == 0) {
-               containsMac = true;
-               break;
-            }
-         }
+				if (replyMac.compareToIgnoreCase(tsMac) == 0) {
+					containsMac = true;
+					break;
+				}
+			}
 
-         if (containsMac) {
-            createAPQueryWDWTicketResp(dtiTxn);
-            throw new DTICalmException(dtiTxn);
-         }
-      }
+			if (containsMac) {
+				createAPQueryWDWTicketResp(dtiTxn);
+				throw new DTICalmException(dtiTxn);
+			}
+		}
+		throw new DTIException(BusinessRules.class,
+				DTIErrorCode.INVALID_SALES_DATE_TIME,
+				"WDW Request attempted when WDWDown outage wall property is present in the database (CALM).");
+	}
 
-      throw new DTIException(BusinessRules.class,
-            DTIErrorCode.INVALID_SALES_DATE_TIME,
-            "WDW Request attempted when WDWDown outage wall property is present in the database (CALM).");
-   }
+	/**
+	 * Contingency Actions Logic Module (CALM).
+	 *
+	 * @param dtiTxn the dti txn
+	 * @throws DTIException the DTI exception
+	 * @throws DTICalmException the DTI calm exception
+	 */
+	protected void executeDLRDownRules(DTITransactionTO dtiTxn) throws DTIException,
+			DTICalmException {
 
-   /**
-    * Contingency Actions Logic Module (CALM).
-    *
-    * @param dtiTxn the dti txn
-    * @throws DTIException the DTI exception
-    * @throws DTICalmException the DTI calm exception
-    */
-   protected void executeDLRDownRules(DTITransactionTO dtiTxn) throws DTIException,
-         DTICalmException {
+		DTIRequestTO dtiRequest = dtiTxn.getRequest();
+		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
+		TktSellerTO tktSeller = payloadHdr.getTktSeller();
+		String tsMac = tktSeller.getTsMac();
 
-      DTIRequestTO dtiRequest = dtiTxn.getRequest();
-      PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
-      TktSellerTO tktSeller = payloadHdr.getTktSeller();
-      String tsMac = tktSeller.getTsMac();
+		if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
-      if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
+			boolean containsMac = false;
+			for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
+				String replyMac = queryTicketReplyMacs.get(i);
+				if (replyMac.compareToIgnoreCase(tsMac) == 0) {
+					containsMac = true;
+					break;
+				}
+			}
 
-         boolean containsMac = false;
-         for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
-            String replyMac = queryTicketReplyMacs.get(i);
-            if (replyMac.compareToIgnoreCase(tsMac) == 0) {
-               containsMac = true;
-               break;
-            }
-         }
-
-         if (containsMac) {
-            createAPQueryDLRTicketResp(dtiTxn);
-            throw new DTICalmException(dtiTxn);
-         }
-      }
+			if (containsMac) {
+				createAPQueryDLRTicketResp(dtiTxn);
+				throw new DTICalmException(dtiTxn);
+			}
+		}
 
       throw new DTIException(CalmRules.class,
-            DTIErrorCode.INVALID_SALES_DATE_TIME,
-            "DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
-   }
+				DTIErrorCode.INVALID_SALES_DATE_TIME,
+				"DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
+	}
 
-   /**
-    * Creates a simulated Annual Pass Query WDW Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
-    *
-    * @param dtiTxn the dti txn
-    */
-   private void createAPQueryWDWTicketResp(DTITransactionTO dtiTxn) {
+	/**
+	 * Creates a simulated Annual Pass Query WDW Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
+	 *
+	 * @param dtiTxn the dti txn
+	 */
+	private void createAPQueryWDWTicketResp(DTITransactionTO dtiTxn) {
 
-      logger.sendEvent(
-            "Contingency Actions Logic Module (CALM) generating AP Query WDW Response.",
-            EventType.DEBUG, this);
+		logger.sendEvent(
+				"Contingency Actions Logic Module (CALM) generating AP Query WDW Response.",
+				EventType.DEBUG, this);
 
-      /** Create the response in the DTI Transaction object. */
-      DTIResponseTO dtiResp = new DTIResponseTO();
-      dtiTxn.setResponse(dtiResp);
+		/** Create the response in the DTI Transaction object. */
+		DTIResponseTO dtiResp = new DTIResponseTO();
+		dtiTxn.setResponse(dtiResp);
 
-      // Create Payload Header and Command Header
-      DTIFormatter.formatDefaultDTIResponseHeaders(dtiTxn, dtiResp);
+		// Create Payload Header and Command Header
+		DTIFormatter.formatDefaultDTIResponseHeaders(dtiTxn, dtiResp);
 
-      // Create Command body
-      QueryTicketRequestTO qryTktRqst = (QueryTicketRequestTO) dtiTxn
-            .getRequest().getCommandBody();
-      QueryTicketResponseTO qryTktResp = new QueryTicketResponseTO();
-      dtiResp.setCommandBody(qryTktResp);
+		// Create Command body
+		QueryTicketRequestTO qryTktRqst = (QueryTicketRequestTO) dtiTxn
+				.getRequest().getCommandBody();
+		QueryTicketResponseTO qryTktResp = new QueryTicketResponseTO();
+		dtiResp.setCommandBody(qryTktResp);
 
-      // Get the first ticket and place it into response.
-      ArrayList<TicketTO> requestTktList = qryTktRqst.getTktList();
-      TicketTO ticket = requestTktList.get(0);
-      qryTktResp.addTicket(ticket);
+		// Get the first ticket and place it into response.
+		ArrayList<TicketTO> requestTktList = qryTktRqst.getTktList();
+		TicketTO ticket = requestTktList.get(0);
+		qryTktResp.addTicket(ticket);
 
-      ticket.setTktPrice(new BigDecimal("0.0"));
-      ticket.setTktTax(new BigDecimal("0.0"));
+		ticket.setTktPrice(new BigDecimal("0.0"));
+		ticket.setTktTax(new BigDecimal("0.0"));
 
-      TktStatusTO tktStatusTO = ticket.new TktStatusTO();
-      tktStatusTO.setStatusItem("Voidable");
-      tktStatusTO.setStatusValue("NO");
-      ticket.addTicketStatus(tktStatusTO);
+		TktStatusTO tktStatusTO = ticket.new TktStatusTO();
+		tktStatusTO.setStatusItem("Voidable");
+		tktStatusTO.setStatusValue("NO");
+		ticket.addTicketStatus(tktStatusTO);
 
-      tktStatusTO = ticket.new TktStatusTO();
-      tktStatusTO.setStatusItem("Active");
-      tktStatusTO.setStatusValue("YES");
-      ticket.addTicketStatus(tktStatusTO);
+		tktStatusTO = ticket.new TktStatusTO();
+		tktStatusTO.setStatusItem("Active");
+		tktStatusTO.setStatusValue("YES");
+		ticket.addTicketStatus(tktStatusTO);
 
-      // Default pass dates to start 5 days prior and end 5 days from now.
-      Date now = new Date();
-      long startTime = now.getTime() - (5 * (86400 * 1000));
-      Date startDate = new Date();
-      startDate.setTime(startTime);
-      GregorianCalendar startValidity = new GregorianCalendar();
-      startValidity.setTime(startDate);
-      ticket.setTktValidityValidStart(startValidity);
+		// Default pass dates to start 5 days prior and end 5 days from now.
+		Date now = new Date();
+		long startTime = now.getTime() - (5 * (86400 * 1000));
+		Date startDate = new Date();
+		startDate.setTime(startTime);
+		GregorianCalendar startValidity = new GregorianCalendar();
+		startValidity.setTime(startDate);
+		ticket.setTktValidityValidStart(startValidity);
 
-      long endTime = now.getTime() + (5 * (86400 * 1000));
-      Date endDate = new Date();
-      endDate.setTime(endTime);
-      GregorianCalendar endValidity = new GregorianCalendar();
-      endValidity.setTime(endDate);
-      ticket.setTktValidityValidEnd(endValidity);
+		long endTime = now.getTime() + (5 * (86400 * 1000));
+		Date endDate = new Date();
+		endDate.setTime(endTime);
+		GregorianCalendar endValidity = new GregorianCalendar();
+		endValidity.setTime(endDate);
+		ticket.setTktValidityValidEnd(endValidity);
 
-      ticket.setResident("MOK");
-      ticket.setPassType("ANNUAL ");
-      ticket.setPassClass("CALM");
-      ticket.setMediaType("A");
-      ticket.setAgeGroup("A");
+		ticket.setResident("MOK");
+		ticket.setPassType("ANNUAL ");
+		ticket.setPassClass("CALM");
+		ticket.setMediaType("A");
+		ticket.setAgeGroup("A");
 
-      return;
-   }
+		return;
+	}
 
-   /**
-    * Creates a simulated Annual Pass Query DLR Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
-    *
-    * @param dtiTxn the dti txn
-    */
-   private void createAPQueryDLRTicketResp(DTITransactionTO dtiTxn) {
+	/**
+	 * Creates a simulated Annual Pass Query DLR Ticket Response based on input. Presumes that basic editing (DTI Rules) has already taken place.
+	 *
+	 * @param dtiTxn the dti txn
+	 */
+	private void createAPQueryDLRTicketResp(DTITransactionTO dtiTxn) {
 
-      logger.sendEvent(
-            "Contingency Actions Logic Module (CALM) generating AP Query DLR Response.",
-            EventType.DEBUG, this);
+		logger.sendEvent(
+				"Contingency Actions Logic Module (CALM) generating AP Query DLR Response.",
+				EventType.DEBUG, this);
 
-      /** Create the response in the DTI Transaction object. */
-      DTIResponseTO dtiResp = new DTIResponseTO();
-      dtiTxn.setResponse(dtiResp);
+		/** Create the response in the DTI Transaction object. */
+		DTIResponseTO dtiResp = new DTIResponseTO();
+		dtiTxn.setResponse(dtiResp);
 
-      QueryTicketRequestTO qryTktRqst = (QueryTicketRequestTO) dtiTxn
-            .getRequest().getCommandBody();
+		QueryTicketRequestTO qryTktRqst = (QueryTicketRequestTO) dtiTxn
+				.getRequest().getCommandBody();
 
-      // Create Payload Header and Command Header
-      DTIFormatter.formatDefaultDTIResponseHeaders(dtiTxn, dtiResp);
+		// Create Payload Header and Command Header
+		DTIFormatter.formatDefaultDTIResponseHeaders(dtiTxn, dtiResp);
 
-      QueryTicketResponseTO qryTktResp = new QueryTicketResponseTO();
-      dtiResp.setCommandBody(qryTktResp);
+		QueryTicketResponseTO qryTktResp = new QueryTicketResponseTO();
+		dtiResp.setCommandBody(qryTktResp);
 
-      // Get the first ticket and place it into response.
-      ArrayList<TicketTO> requestTktList = qryTktRqst.getTktList();
-      TicketTO ticket = requestTktList.get(0);
-      qryTktResp.addTicket(ticket);
+		// Get the first ticket and place it into response.
+		ArrayList<TicketTO> requestTktList = qryTktRqst.getTktList();
+		TicketTO ticket = requestTktList.get(0);
+		qryTktResp.addTicket(ticket);
 
-      ticket.setTktPrice(new BigDecimal("0.0"));
-      ticket.setTktTax(new BigDecimal("0.0"));
+		ticket.setTktPrice(new BigDecimal("0.0"));
+		ticket.setTktTax(new BigDecimal("0.0"));
 
-      TktStatusTO tktStatusTO = ticket.new TktStatusTO();
-      tktStatusTO.setStatusItem("Voidable");
-      tktStatusTO.setStatusValue("NO");
-      ticket.addTicketStatus(tktStatusTO);
+		TktStatusTO tktStatusTO = ticket.new TktStatusTO();
+		tktStatusTO.setStatusItem("Voidable");
+		tktStatusTO.setStatusValue("NO");
+		ticket.addTicketStatus(tktStatusTO);
 
-      tktStatusTO = ticket.new TktStatusTO();
-      tktStatusTO.setStatusItem("Active");
-      tktStatusTO.setStatusValue("YES");
-      ticket.addTicketStatus(tktStatusTO);
+		tktStatusTO = ticket.new TktStatusTO();
+		tktStatusTO.setStatusItem("Active");
+		tktStatusTO.setStatusValue("YES");
+		ticket.addTicketStatus(tktStatusTO);
 
-      // Default pass dates to start 5 days prior and end 5 days from now.
-      Date now = new Date();
-      long startTime = now.getTime() - (5 * (86400 * 1000));
-      Date startDate = new Date();
-      startDate.setTime(startTime);
-      GregorianCalendar startValidity = new GregorianCalendar();
-      startValidity.setTime(startDate);
-      ticket.setTktValidityValidStart(startValidity);
+		// Default pass dates to start 5 days prior and end 5 days from now.
+		Date now = new Date();
+		long startTime = now.getTime() - (5 * (86400 * 1000));
+		Date startDate = new Date();
+		startDate.setTime(startTime);
+		GregorianCalendar startValidity = new GregorianCalendar();
+		startValidity.setTime(startDate);
+		ticket.setTktValidityValidStart(startValidity);
 
-      long endTime = now.getTime() + (5 * (86400 * 1000));
-      Date endDate = new Date();
-      endDate.setTime(endTime);
-      GregorianCalendar endValidity = new GregorianCalendar();
-      endValidity.setTime(endDate);
-      ticket.setTktValidityValidEnd(endValidity);
+		long endTime = now.getTime() + (5 * (86400 * 1000));
+		Date endDate = new Date();
+		endDate.setTime(endTime);
+		GregorianCalendar endValidity = new GregorianCalendar();
+		endValidity.setTime(endDate);
+		ticket.setTktValidityValidEnd(endValidity);
 
-      ticket.setPassType("SIGNTUREPL"); // As of 2.15.3 - JTL
-      // ticket.setPassType("ANNUAL ");
-      ticket.setPassClass("CALM");
+		ticket.setPassType("SIGNTUREPL"); // As of 2.15.3 - JTL
+		// ticket.setPassType("ANNUAL ");
+		ticket.setPassClass("CALM");
 
-      return;
-   }
+		return;
+	}
 
-    /**
-    * Contingency Actions Logic Module (CALM).
-    *
-    * @param dtiTxn the dti txn
-    * @throws DTIException TODO:  Define rules
-    * @throws DTICalmException the DTI calm exception
-    */
+	 /**
+ 	 * Contingency Actions Logic Module (CALM).
+ 	 *
+ 	 * @param dtiTxn the dti txn
+ 	 * @throws DTIException TODO:  Define rules
+ 	 * @throws DTICalmException the DTI calm exception
+ 	 */
   protected void executeHKDDownRules(DTITransactionTO dtiTxn) throws DTIException,
       DTICalmException {
     
-     DTIRequestTO dtiRequest = dtiTxn.getRequest();
-      PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
-      TktSellerTO tktSeller = payloadHdr.getTktSeller();
-      String tsMac = tktSeller.getTsMac();
+	  DTIRequestTO dtiRequest = dtiTxn.getRequest();
+		PayloadHeaderTO payloadHdr = dtiRequest.getPayloadHeader();
+		TktSellerTO tktSeller = payloadHdr.getTktSeller();
+		String tsMac = tktSeller.getTsMac();
 
-      logger.sendEvent(
-            "Contingency Actions Logic Module (CALM) being checked for " + tsMac,
-            EventType.DEBUG, this);
+		logger.sendEvent(
+				"Contingency Actions Logic Module (CALM) being checked for " + tsMac,
+				EventType.DEBUG, this);
 
-      if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
+		if (dtiTxn.getTransactionType() == DTITransactionTO.TransactionType.QUERYTICKET) {
 
-         boolean containsMac = false;
-         for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
-            String replyMac = queryTicketReplyMacs.get(i);
+			boolean containsMac = false;
+			for (int i = 0; i < queryTicketReplyMacs.size(); i++) {
+				String replyMac = queryTicketReplyMacs.get(i);
 
-            if (replyMac.compareToIgnoreCase(tsMac) == 0) {
-               containsMac = true;
-               break;
-            }
-         }
+				if (replyMac.compareToIgnoreCase(tsMac) == 0) {
+					containsMac = true;
+					break;
+				}
+			}
 
-         if (containsMac) {
-            createAPQueryWDWTicketResp(dtiTxn);
-            throw new DTICalmException(dtiTxn);
-         }
-      }
+			if (containsMac) {
+				createAPQueryWDWTicketResp(dtiTxn);
+				throw new DTICalmException(dtiTxn);
+			}
+		}
 
       throw new DTIException(CalmRules.class,
             DTIErrorCode.INVALID_SALES_DATE_TIME,
@@ -418,19 +418,16 @@ public class CalmRules {
 
       Boolean wallRaised = false;
       List<PropertyTO> propertyList;
+      
       try {
          propertyList = PropertyKey.getProperties(application, tpoId, environment, PropertyName.DTI_CALM_SECTION);
-         
          if ((propertyList != null) && propertyList.size() > 0) {
-
             logger.sendEvent("The WALLRAISED property has been found in the database.", EventType.DEBUG, this);
 
-            // this should be a list of size 1. There is only a single value
-            // (boolean) for
+            // this should be a list of size 1. There is only a single value (boolean) for
             // each campus that indicates if the wall is raised or not
             PropertyTO wallRaisedProperty = propertyList.get(0);
             wallRaised = Boolean.parseBoolean(wallRaisedProperty.getPropSetValue());
-
          } else {
             logger.sendEvent("Wall Properties are not defined in database.", EventType.WARN, this);
          }
