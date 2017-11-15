@@ -144,6 +144,14 @@ public class ProductKey {
 				}
 			}
 		}
+		
+		// If the hash set is empty of "products," (there might be DLR PLUs, etc.)
+		// then return an empty list and do not bother running the SQL.
+		// As of 2.17.3, JTL
+		if (productCodeSet.size() == 0) {
+		   result = new ArrayList<DBProductTO>();
+		   return result;
+		}
 
 		Object[] queryParms = { DBUtil.createSQLInList(productCodeSet) };
 

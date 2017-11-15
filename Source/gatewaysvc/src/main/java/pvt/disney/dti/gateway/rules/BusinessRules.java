@@ -123,6 +123,7 @@ public abstract class BusinessRules {
 
     // Apply rules specific to the individual transaction
     TransactionType requestType = dtiTxn.getTransactionType();
+    
     switch (requestType) {
 
     case QUERYTICKET:
@@ -178,7 +179,7 @@ public abstract class BusinessRules {
       break;
       
     case QUERYELIGPRODUCTS: // As a part of AP Upgrade
-    	applyEligibleProductRules(dtiTxn); // Adding the 
+    	applyEligibleProductRules(dtiTxn); 
       break;   
 
     default:
@@ -962,15 +963,21 @@ public abstract class BusinessRules {
 
      ArrayList<DBProductTO> dbUpgrdProdList = ProductKey.getOrderProducts(
          tktListTO, ValueConstants.TYPE_CODE_UPGRADE);
-     ProductRules.validateUpgradeProducts(dbUpgrdProdList); // This is essentially an "is null" check.
-     allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO,
-         dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
-     allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO,
-         dbUpgrdProdList, ValueConstants.TYPE_CODE_UPGRADE));
+     
+     // RULE: Are all of the DTI from products found in the database?
+     int fromProdCount = ProductRules.validateUpgradeProducts(dbUpgrdProdList, tktListTO);
+     
+     if (fromProdCount > 0) {
+        allowedPdtIdList.addAll(EntityKey.getEntityProducts(entityTO, dbUpgrdProdList,
+                 ValueConstants.TYPE_CODE_UPGRADE));
+        allowedPdtIdList.addAll(EntityKey.getEntityProductGroups(entityTO, dbUpgrdProdList,
+                 ValueConstants.TYPE_CODE_UPGRADE));
+     }
 
      // RULE: Is the entity allowed to upgrade all products on the order?
-     ProductRules.validateEntityCanUpgradeProducts(entityTO,
-         dbUpgrdProdList, allowedPdtIdList);
+     if (fromProdCount > 0) {
+        ProductRules.validateEntityCanUpgradeProducts(entityTO,dbUpgrdProdList, allowedPdtIdList);
+     }
 
      // RULE: Are the number of products/tickets on the order within tolerance?
      TicketRules.validateMaxEightTicketsOnRequest(tktListTO);
@@ -981,8 +988,7 @@ public abstract class BusinessRules {
      ProductRules.validateProductPrice(entityTO, tktListTO, dbProdList);
 
      // RULE: Are the "FROM" prices either the Unit or Standard Retail Price (as of 2.12)
-     ProductRules.validateUpgradeProductPrice(entityTO, tktListTO,
-         dbUpgrdProdList);
+     ProductRules.validateUpgradeProductPrice(entityTO, tktListTO, dbUpgrdProdList);
 
      // RULE: Are the mapped ticket types valid and active?
      // NOTE: This rule modifies the dbProdList members to include ticket

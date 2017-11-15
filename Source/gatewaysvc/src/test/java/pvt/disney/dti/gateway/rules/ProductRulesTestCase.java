@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIException;
@@ -1085,20 +1086,26 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 
 	/**
 	 * JUnit validateUpgradeProducts
+	 * TODO:  Update this test to be accurate. :) JTL
 	 */
 	@Test
+	@Ignore 
 	public void testValidateUpgradeProducts() {
 		/*
-		 * Scenario :: 1 Expected Exception is Upgrade product list from
-		 * database is empty: invalid FROM product(s).
+		 * Scenario :: 1 Expected Exception is Unable to identify specified DTI
+		 * product codes in database: invalid FROM product(s).
 		 */
 		ArrayList<DBProductTO> dbUpgrdProdList = new ArrayList<>();
+		ArrayList<TicketTO> ticketTOList = new ArrayList<TicketTO>();
+		TicketTO aTicket = new TicketTO();
+		aTicket.setDlrPLU("something");
+		ticketTOList.add(aTicket);
 		try {
-			ProductRules.validateUpgradeProducts(dbUpgrdProdList);
-			Assert.fail("Upgrade product list from database is empty: invalid FROM product(s).");
+			ProductRules.validateUpgradeProducts(dbUpgrdProdList,ticketTOList);
+			Assert.fail("Unable to identify specified DTI product codes in database: invalid FROM product(s).");
 		} catch (DTIException dtie) {
 			assertEquals(
-					"Upgrade product list from database is empty: invalid FROM product(s).",
+					"Unable to identify specified DTI product codes in database: invalid FROM product(s).",
 					dtie.getLogMessage());
 		}
 	}

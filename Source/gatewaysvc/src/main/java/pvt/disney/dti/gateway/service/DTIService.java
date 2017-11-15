@@ -26,15 +26,13 @@ import pvt.disney.dti.gateway.service.dtixml.TransmissionRqstXML;
 import pvt.disney.dti.gateway.util.DTITracker;
 import pvt.disney.dti.gateway.util.ResourceLoader;
 import pvt.disney.dti.gateway.util.UtilityXML;
+import pvt.disney.dti.gateway.util.BrokerUtil;
 
 import com.disney.context.BaseContext;
 import com.disney.context.ContextManager;
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * This class is the primary driver for transactions in the Java version of the DTI Gateway. Note: Since all class variables are just for configuration, then the class can operate as a singleton.
@@ -77,7 +75,7 @@ public class DTIService {
       throw new DTIException();
     }
 
-    tktBroker = getBrokerName();
+    tktBroker = BrokerUtil.getBrokerName();
 
     /** Initiate Business Rules */
     BusinessRules.initBusinessRules(props);
@@ -461,57 +459,6 @@ public class DTIService {
     return response;
   }
 
-  /**
-   * Get the broker name from the network interface. 
-   * @return constructed TktBroker field to be used in the response
-   */
-  private String getBrokerName()  {      
-      
-      String computerName = "DTIUNK";
-      
-      try {          
-          computerName = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException uhex) {
-          logger.sendEvent("Not able to lookup server name from the network interface! Returning default: " 
-        		  + computerName, 
-        		  EventType.WARN, this);
-          return computerName;
-      }
-      
-      char[] nameArray = computerName.toCharArray();
-      StringBuffer suffixArray = new StringBuffer();
-      boolean foundDigit = false;
-        
-      // Get only the numeric portion of the value...
-      for (char aChar: nameArray) {
-          
-          if (Character.isDigit(aChar)) {
-            foundDigit = true;  
-          }
-          
-          if (foundDigit == true) {
-            suffixArray.append(Character.toUpperCase(aChar));
-            foundDigit = false;
-          }        
-      }
 
-      // First part of the computerName field based on the numeric part of server name
-      computerName = "" + suffixArray.toString();
-      
-      // Lookup JVM name using System properties (startup argument), if available
-      String jvmName = System.getProperty("MW_NAME");
-      
-      // Ensure jvmName parameter is passed and its length is greater than 1
-      if ((null != jvmName) && (!"".equals(jvmName)) && (jvmName.length() > 1)) {
-    	  // Take the last 2 characters of the jvmName argument
-    	  jvmName = jvmName.substring(jvmName.length() - 2, jvmName.length());
-    	  // Second part of the computerName field based on the ending of the jvm name
-    	  computerName = computerName + '_' + jvmName;
-      }
-      
-      logger.sendEvent("Broker Name returned: " + computerName, EventType.INFO, this);
-
-      return computerName;
-  }
   
 }
