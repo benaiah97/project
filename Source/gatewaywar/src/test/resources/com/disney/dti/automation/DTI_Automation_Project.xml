@@ -47500,7 +47500,32 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_InEligible_Renew" id="4a0843a5-526a-4b5d-81d8-8b2cba7552cb"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Transfer UpgrdProd" id="216a3aa5-8b8c-4187-a9aa-f507a0fd4812"><con:settings/><con:config><script>import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import java.text.SimpleDateFormat
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
+
+//Get Product Code and price
+def responseHolderProduct = groovyUtils.getXmlHolder("transmission - QueryEligibleProducts_InEligible_DLR#Response")
+float upgradePrice
+
+External = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/TktID[1]/External[1]"]
+FromProdCode = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/ProdCode[1]"]
+FromProdPrice = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/SRPPrice[1]"]
+ProdCode = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/EligibleProducts[1]/ProdCode[1]"]
+ProdPrice = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/EligibleProducts[1]/ProdPrice[1]"]
+UpgradePrice = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/QueryEligibleProductsResponse[1]/Ticket[1]/EligibleProducts[1]/UpgrdPrice[1]"]
+//To set Product code and price property Value
+
+testRunner.testCase.setPropertyValue("FromProdCode", FromProdCode)
+testRunner.testCase.setPropertyValue("FromProdPrice", FromProdPrice)
+
+
+
+log.info "FromProductCode property is set to value: " +  FromProdCode
+log.info "FromProductPrice property is set to value: " +  FromProdPrice
+</script></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_InEligible_Renew" id="4a0843a5-526a-4b5d-81d8-8b2cba7552cb"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -47954,7 +47979,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_InEligible_Barcode" id="ab390a9c-4e0f-460a-a881-1c33426d355b"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for UpgradeEntitlement" id="84a4a264-ab46-4a76-9406-cc3938083cd3"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -47964,14 +47989,14 @@ datemmddyyyy=sdf.format(date)
 def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
 testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
 
-//Convert Payload_ID in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
 def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
 Payload_ID = workString.substring(0,20)
 
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 
-log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryEligibleProducts_InEligible_DLR_Barcode" id="8378f480-a756-48a9-acbe-b3b58af7994b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryEligibleProducts_InEligible_DLR_Barcode" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_eligible_products_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission -_Upgrade_Entitlement_DLR" id="de861c99-7ca8-4e57-a142-4430c8c9d23f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission -_Upgrade_Entitlement_DLR" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#Basepath}/upgrade_entitlement_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Payload>
       <PayloadHeader>
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>
@@ -47982,7 +48007,7 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
             <Method>Network</Method>
          </Comm>
          <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
-         <TransmitTime>11:56:39.58</TransmitTime>
+         <TransmitTime>02:41:45.955</TransmitTime>
          <TktSeller>
             <TSMAC>WDPRONADLR</TSMAC>
             <TSSystem>CC</TSSystem>
@@ -47996,20 +48021,59 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
             <CmdItem>1</CmdItem>
             <CmdTimeout>45</CmdTimeout>
             <CmdDate>${#TestCase#CurrentDate}</CmdDate>
-            <CmdTime>11:56:39.58</CmdTime>
+            <CmdTime>02:41:45.955</CmdTime>
             <CmdInvoice>2018895220000011272</CmdInvoice>
             <CmdDevice>PAULH</CmdDevice>
             <CmdOperator>PAULH</CmdOperator>
          </CommandHeader>
-         <QueryEligibleProductsRequest>
+         <UpgradeEntitlementRequest>
             <Ticket>
                <TktItem>1</TktItem>
                <TktID>
-                  <Barcode>${#TestCase#TktNId}</Barcode>
+                  <External>${#TestCase#TktNId}</External>
                </TktID>
-               <SaleType>UPGRADE</SaleType>
+               <ProdCode>NNH567</ProdCode>
+               <ProdPrice>112</ProdPrice>
+               <ProdDemoData>
+                  <TktDemoData Zip="34747" Telephone="8185490789" State="FL" OptInSolicit="NO" LastName="Duck" Gender="M" FirstName="Donald" Email="1@disney.com" DateOfBirth="1982-06-01" Country="US" City="Celebration" Addr1="5151 Buena Vista"/>
+               </ProdDemoData>
+               <UpgrdPrice>2</UpgrdPrice>
+               <FromProdCode>${#TestCase#FromProdCode}</FromProdCode>
+               <FromPrice>${#TestCase#FromProdPrice}</FromPrice>
             </Ticket>
-         </QueryEligibleProductsRequest>
+            <Payment>
+               <PayItem>1</PayItem>
+               <PayType>
+                  <CreditCard>
+                     <CCManual>
+                        <CCNbr>4444855457062688</CCNbr>
+                        <CCExpiration>1219</CCExpiration>
+                        <CCVV>529</CCVV>
+                        <CCStreet>756 PARIS WAY</CCStreet>
+                        <CCZipcode>76590</CCZipcode>
+                        <CCType>AX</CCType>
+                     </CCManual>
+                  </CreditCard>
+               </PayType>
+               <PayAmount>2</PayAmount>
+            </Payment>
+           <Reservation>
+               <ResCode>${#TestCase#RESCode}</ResCode>
+               <ResCreateDate>2017-08-09</ResCreateDate>
+               <ResPickupDate>2017-08-09</ResPickupDate>
+               <ResPickupArea>WillCall</ResPickupArea>
+               <ResSalesType>Presale</ResSalesType>
+            </Reservation>
+            <ClientData>
+               <ClientType>Private</ClientType>
+               <ClientCategory>WW</ClientCategory>
+               <DemoLanguage>en</DemoLanguage>
+               <DemoData>
+                  <Bill Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+                  <Ship Addr1="884 Addison Dr NE" City="Saint Petersburg" Country="US" Email="wdw48env2x1@mailinator.com" FirstName="Eric" LastName="Stone" Name="Eric Stone" State="FL" Telephone="4265845654" Zip="33716"/>
+               </DemoData>
+            </ClientData>
+         </UpgradeEntitlementRequest>
       </Command>
    </Payload>
 </Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="8abee21c-141a-4510-9641-e9443c72939b" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
@@ -48408,7 +48472,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-stage.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>4</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120171116151082350</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-11-16</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>4685755637903746438</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>46857PAH</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>110.00</con:value></con:property><con:property><con:name>ProductCode2</con:name><con:value>46858PAH</con:value></con:property><con:property><con:name>ProductPrice2</con:name><con:value>104.00</con:value></con:property><con:property><con:name>ProductCode3</con:name><con:value>33708</con:value></con:property><con:property><con:name>ProductPrice3</con:name><con:value>0.00</con:value></con:property><con:property><con:name>ProductPriceTotal</con:name><con:value>214.0</con:value></con:property><con:property><con:name>RESCode</con:name><con:value>DLRY2000010001776363</con:value></con:property></con:properties></con:testCase><con:testCase id="e67211ac-1051-496a-8425-92a7747f255b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_DLR_QEP_PLU_OfflineCode" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_DLRPLU" id="5eb42edc-2bdb-4213-baa6-cc5d56d5bf84"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-stage.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>5</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120171116151084167</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-11-16</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>4685755504147842376</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>46857PAH</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>110.00</con:value></con:property><con:property><con:name>ProductCode2</con:name><con:value>46858PAH</con:value></con:property><con:property><con:name>ProductPrice2</con:name><con:value>104.00</con:value></con:property><con:property><con:name>ProductCode3</con:name><con:value>33708</con:value></con:property><con:property><con:name>ProductPrice3</con:name><con:value>0.00</con:value></con:property><con:property><con:name>ProductPriceTotal</con:name><con:value>214.0</con:value></con:property><con:property><con:name>RESCode</con:name><con:value>DLRY2000010001744968</con:value></con:property><con:property><con:name>FromProdCode</con:name><con:value>46857PAH</con:value></con:property><con:property><con:name>FromProdPrice</con:name><con:value>110</con:value></con:property></con:properties></con:testCase><con:testCase id="e67211ac-1051-496a-8425-92a7747f255b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_DLR_QEP_PLU_OfflineCode" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_DLRPLU" id="5eb42edc-2bdb-4213-baa6-cc5d56d5bf84"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
