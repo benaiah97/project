@@ -44184,16 +44184,16 @@ else if(failedMap.size() > 0)
    <CommandHeader>
       <CmdTimeout>30</CmdTimeout>
       <CmdRequestor>
-         <TSMAC>WDWEAI</TSMAC>
-         <TSLocation>SBC</TSLocation>
-         <CmdOperator>Bob</CmdOperator>
-         <CmdActor>DVR</CmdActor>
+         <TSMAC>WDPRONADLR</TSMAC>
+         <TSLocation>PROGENSTR</TSLocation>
+         <CmdOperator>WDPRO</CmdOperator>
+         <CmdActor>MGR</CmdActor>
       </CmdRequestor>
    </CommandHeader>
    <CommandBody>
-      <ProviderType>Walt Disney World</ProviderType>
-      <TSMAC>WDWEAI</TSMAC>
-      <TSLocation>SBC</TSLocation>
+      <ProviderType>Disneyland California</ProviderType>
+      <TSMAC>WDPRONADLR</TSMAC>
+      <TSLocation>PROGENSTR</TSLocation>
       <IncludeSoldOut>true</IncludeSoldOut>
       <OnSaleStartDate>2005-01-31</OnSaleStartDate>
       <SkipResponses>1</SkipResponses>
@@ -44603,19 +44603,57 @@ import java.text.SimpleDateFormat
 
 def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
 //Get Product Code and price
 def responseHolderProduct = groovyUtils.getXmlHolder("transmission - InfoSys BRAVO Product Catalog Updated#Response")
 
 
-ProductCode= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[10]/ProdCode[1]"]
-ProductPrice= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[10]/ProdPricing[1]/ProdNetPrice[1]"]
+ProductCode= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[40]/ProdCode[1]"]
+ProductPrice= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[40]/ProdPricing[1]/ProdNetPrice[1]"]
+
+ProductCode2= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[41]/ProdCode[1]"]
+ProductPrice2= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[41]/ProdPricing[1]/ProdNetPrice[1]"]
+
+ProductCode3= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[7]/ProdCode[1]"]
+ProductPrice3= responseHolderProduct["//ProductCatalogRS[1]/CommandBody[1]/Product[7]/ProdPricing[1]/ProdNetPrice[1]"]
+
+ProductPriceTotal= Double.valueOf(ProductPrice) + Double.valueOf(ProductPrice2) + Double.valueOf(ProductPrice3)
 
 //To set Product code and price property Value
 testRunner.testCase.setPropertyValue("ProductCode",ProductCode)
 testRunner.testCase.setPropertyValue("ProductPrice",ProductPrice)
 
-log.info "ProductCode property is set to value: " +  ProductCode
-log.info "ProductPrice property is set to value: " +  ProductPrice</script></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload" id="ce71f02e-309f-42d5-ac09-a2ff2e162d48"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+testRunner.testCase.setPropertyValue("ProductCode2",ProductCode2.toString())
+testRunner.testCase.setPropertyValue("ProductPrice2",ProductPrice2.toString())
+
+testRunner.testCase.setPropertyValue("ProductCode3",ProductCode3.toString())
+testRunner.testCase.setPropertyValue("ProductPrice3",ProductPrice3.toString())
+
+testRunner.testCase.setPropertyValue("ProductPriceTotal",ProductPriceTotal.toString())
+log.info "ProductCode property is set to value: " +  ProductCode2
+log.info "ProductPrice property is set to value: " +  ProductPrice2
+
+log.info "ProductPrice Total is set to value: " +  ProductPriceTotal
+
+//Convert RESCODE in to character in "DLRY2000010000" + "YY" + XXXXX format
+
+def workString = "" + (System.currentTimeMillis())
+
+//Extract First 20 character
+
+RESCode = "DLRY200001000" + datemmddyyyy.substring(8,10) + workString.substring(workString.length()-5)
+
+log.info "RESCode " +  workString
+
+
+testRunner.testCase.setPropertyValue("RESCode",RESCode)
+
+log.info "RESCode " + RESCode
+</script></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload" id="ce71f02e-309f-42d5-ac09-a2ff2e162d48"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -45131,7 +45169,7 @@ else if(failedMap.size() > 0)
 }</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="transmission - CreateReservation" id="920f7ed7-49d0-42b6-8101-15d4abd3e22b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - CreateReservation" id="7e01c872-0928-45a5-beb5-2c6b92871791"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/reservationrq.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <Payload>
    <PayloadHeader>
-      <PayloadID>${#TestCase#Payload_Id}</PayloadID>
+      <PayloadID>${#TestCase#Payload_ID}</PayloadID>
       <Target>Test-DLR</Target>
       <Version>1.0</Version>
       <Comm>
@@ -45143,7 +45181,7 @@ else if(failedMap.size() > 0)
       <TktSeller>
          <TSMAC>WDPRONADLR</TSMAC>
          <TSSystem>CC</TSSystem>
-         <TSLocation>DLR_MOBILE</TSLocation>
+         <TSLocation>PROGENSTR</TSLocation>
          <TSSecurity>WaltDisney1</TSSecurity>
       </TktSeller>
       <CommandCount>1</CommandCount>
@@ -45162,10 +45200,22 @@ else if(failedMap.size() > 0)
          <RequestType>Create</RequestType>
          <Ticket>
             <TktItem>1</TktItem>
-            <ProdCode>33708</ProdCode>
+            <ProdCode>${#TestCase#ProductCode}</ProdCode>
             <ProdQty>1</ProdQty>
-            <ProdPrice>0</ProdPrice>
+            <ProdPrice>${#TestCase#ProductPrice}</ProdPrice>
          </Ticket>  
+         <Ticket>
+            <TktItem>2</TktItem>
+            <ProdCode>${#TestCase#ProductCode2}</ProdCode>
+            <ProdQty>1</ProdQty>
+            <ProdPrice>${#TestCase#ProductPrice2}</ProdPrice>
+         </Ticket>
+         <Ticket>
+            <TktItem>2</TktItem>
+            <ProdCode>${#TestCase#ProductCode3}</ProdCode>
+            <ProdQty>1</ProdQty>
+            <ProdPrice>${#TestCase#ProductPrice3}</ProdPrice>
+         </Ticket>
          <Payment>
             <PayItem>1</PayItem>
             <PayType>
@@ -45181,16 +45231,16 @@ else if(failedMap.size() > 0)
                   </CCManual>
                </CreditCard>
             </PayType>
-            <PayAmount>0</PayAmount>
+            <PayAmount>${#TestCase#ProductPriceTotal}</PayAmount>
          </Payment>
          <Eligibility>
-            <Group>DLR</Group>
-            <Member>300047229</Member>
+            <Group>GP</Group>
+            <Member/>
          </Eligibility>
          <Reservation>
-            <ResCode>DLRY2000010000174716</ResCode>
-            <ResCreateDate>2017-10-16</ResCreateDate>
-            <ResPickupDate>2017-10-16</ResPickupDate>
+            <ResCode>${#TestCase#RESCode}</ResCode>
+            <ResCreateDate>${#TestCase#Currentdate}</ResCreateDate>
+            <ResPickupDate>${#TestCase#Currentdate}</ResPickupDate>
             <ResPickupArea>PrintOnWeb</ResPickupArea>
             <ResSalesType>PrintOnWeb</ResSalesType>
          </Reservation>
@@ -45617,12 +45667,17 @@ def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
 //Get Ticket NIDs from multiple tickets
 def responseHolderProduct = groovyUtils.getXmlHolder("transmission - CreateReservation#Response")
-TktNID = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/CreateTicketResponse[1]/Ticket[1]/TktID[1]/TktNID[1]"]
-
+TktNID = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/ReservationResponse[1]/Ticket[1]/TktID[1]/External[1]"]
+if(TktNID == []){
+TktNID = responseHolderProduct["//Transmission[1]/Payload[1]/Command[1]/ReservationResponse[1]/Ticket[1]/TktID[1]/Barcode[1]"]	
+}
+if(TktNID == []){
+	TktNID = "803300015204752169"
+}
 //To set Product code and price property Value
-testRunner.testCase.setPropertyValue("TktNID",TktNID)
+testRunner.testCase.setPropertyValue("TktNID",TktNID.toString())
 
-log.info "TktNID property is set to value: " +  TktNID</script></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryTicket" id="82b30524-846a-4fbe-abc3-6f1a2ab15600"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+log.info "VisualId for the product: " +  TktNID</script></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryTicket" id="82b30524-846a-4fbe-abc3-6f1a2ab15600" disabled="true"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -45639,7 +45694,7 @@ Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 
-log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryTicket" id="7cc16c89-43fb-4b49-be5f-ffbb552172d4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryTicket" id="6ac50131-5d74-452a-b554-8c8438ab0108"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryTicket" id="7cc16c89-43fb-4b49-be5f-ffbb552172d4" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryTicket" id="6ac50131-5d74-452a-b554-8c8438ab0108"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Payload>
       <PayloadHeader>
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>
@@ -46129,7 +46184,7 @@ log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con
             <Ticket>
                <TktItem>1</TktItem>
                <TktID>
-                  <External>469740050500000495</External>
+                  <External>${#TestCase#TktNId}</External>
                </TktID>
                <SaleType>UPGRADE</SaleType>
             </Ticket>
@@ -46532,7 +46587,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for VoidTicket" id="a1c0d4c3-658b-4c7a-99fc-3be619409138"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for VoidTicket" id="a1c0d4c3-658b-4c7a-99fc-3be619409138" disabled="true"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
@@ -46549,7 +46604,7 @@ Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
 
-log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - VoidTicket" id="9f5df37e-d9da-417c-b690-a8c38cc96ff2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - VoidTicket" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/void_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - VoidTicket" id="9f5df37e-d9da-417c-b690-a8c38cc96ff2" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - VoidTicket" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/void_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Payload>
       <PayloadHeader>
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>
@@ -46986,7 +47041,7 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for Voided QueryTicket" id="76c1fd93-c393-4d7f-8026-29e8072c43b7"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for Voided QueryTicket" id="76c1fd93-c393-4d7f-8026-29e8072c43b7" disabled="true"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 //def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
 
 //Set payload ID in transmission - QueryTicket after Void
@@ -47006,7 +47061,7 @@ Payload_ID = workString.substring(0,20)
 //To set Payload_ID property Value
 testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID)
 
-log.info "Payload_ID value is set to: " + Payload_ID</script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryTicket after Void" id="07751de7-0308-4344-85e2-529d11232795"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryTicket after Void" id="ac0b9019-47dd-4cbf-9a9d-47b9ced8c1a3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+log.info "Payload_ID value is set to: " + Payload_ID</script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryTicket after Void" id="07751de7-0308-4344-85e2-529d11232795" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryTicket after Void" id="ac0b9019-47dd-4cbf-9a9d-47b9ced8c1a3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_ticket_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <Payload>
       <PayloadHeader>
          <PayloadID>${#TestCase#Payload_ID}</PayloadID>
@@ -47445,7 +47500,915 @@ else if(failedMap.size() > 0)
 {
 	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
 	assert false ////To mark the assertion failed
-}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-latest.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>2</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120171026150902082</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-10-26</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>10501610101700008</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>10051</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>107.57</con:value></con:property></con:properties></con:testCase><con:testCase id="e67211ac-1051-496a-8425-92a7747f255b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_DLR_QEP_PLU_OfflineCode" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_DLRPLU" id="5eb42edc-2bdb-4213-baa6-cc5d56d5bf84"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_InEligible_Renew" id="4a0843a5-526a-4b5d-81d8-8b2cba7552cb"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert payloadid in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
+Payload_ID = workString.substring(0,20)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
+
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryEligibleProducts_InEligible_DLR_Renew" id="cc7f867c-3c77-45c4-9531-5f13beeb7ac8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryEligibleProducts_InEligible_DLR_Renew" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_eligible_products_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>
+         <Target>Test-DLR</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
+         <TransmitTime>11:56:39.58</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONADLR</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>DLR_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>
+            <CmdTime>11:56:39.58</CmdTime>
+            <CmdInvoice>2018895220000011272</CmdInvoice>
+            <CmdDevice>PAULH</CmdDevice>
+            <CmdOperator>PAULH</CmdOperator>
+         </CommandHeader>
+         <QueryEligibleProductsRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <External>${#TestCase#TktNId}</External>
+               </TktID>
+               <SaleType>RENEW</SaleType>
+            </Ticket>
+         </QueryEligibleProductsRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="8abee21c-141a-4510-9641-e9443c72939b" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
+ * Assertion to validate the Header existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Header Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of QueryEligibleProduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 4th colum of the data sheet
+			String header = sheet.getCell(3, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+			
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode("//"+elements[j]+"[1]")
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="2d41d5a4-0d49-4c72-ab5f-a77cb1ed2951" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
+ * Xpath assertion to validate the Tag existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Tag Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  QueryEligibleProduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 5th colum of the data sheet
+			String header = sheet.getCell(4, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode(elements[j])
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="f7918578-d083-44cf-b1ac-01ccb1da6fa6" name="String Validation - Script Assertion"><con:configuration><scriptText>/*
+ * String assertion to validate the string existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** String Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of QueryEligibleproduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 6th colum of the data sheet
+			String header = sheet.getCell(5, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+			
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getNodeValue(elements[j])
+				if(responseElement != null)
+				{
+					if(responseElement instanceof String)
+					{
+						log.info  elements[j]  + " :: The element contains string value"
+						passedMap.put(j,elements[j])
+					}
+					else
+					{
+						log.info  elements[j]  + " :: The element contains non string value"
+						failedMap.put(j,elements[j])
+					}
+				}
+				else
+				{
+					log.info  elements[j]  +" :: Element Not found"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+////Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All Xpath are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These XPath are not returned in the response or returned incorrectly : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0d00be00-44e9-47d7-8039-f01032de32ad" name="Numeric Validation - Script Assertion"><con:configuration><scriptText>/*
+ * Numeric assertion to validate the Numeric existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Numeric Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  QueryEligibleproduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 7th colum of the data sheet
+			String header = sheet.getCell(6, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getNodeValue(elements[j])
+				if(responseElement != null)
+				{
+					if(responseElement.isNumber())
+					{
+						log.info  elements[j]  + " :: The element contains Numeric value"
+						passedMap.put(j,elements[j])
+					}
+					else
+					{
+						log.info  elements[j]  + " :: The element contains non numeric value"
+						failedMap.put(j,elements[j])
+					}
+				}
+				else
+				{
+					log.info  elements[j]  +" :: Element Not found"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+////Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All XPath are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_InEligible_Barcode" id="ab390a9c-4e0f-460a-a881-1c33426d355b"><con:settings/><con:config><script>import java.text.SimpleDateFormat
+
+//get date in "MM/dd/yyyy" 
+def date = new Date()
+sdf = new SimpleDateFormat("MM/dd/yyyy")
+datemmddyyyy=sdf.format(date)
+
+def uniqueId = testRunner.testCase.getPropertyValue("counter").toInteger()*testRunner.testCase.getPropertyValue("factor").toInteger();
+testRunner.testCase.setPropertyValue("factor", String.valueOf(++testRunner.testCase.getPropertyValue("factor").toInteger()))
+
+//Convert Payload_ID in to 20 character in "911" + "YYYY" + "mm" +DD + XXXX format
+def workString = "911" + datemmddyyyy.substring(6,10)+  datemmddyyyy.substring(0,2)+ datemmddyyyy.substring(3,5) +  (System.currentTimeMillis()+uniqueId)
+Payload_ID = workString.substring(0,20)
+
+//To set Payload_ID property Value
+testRunner.testCase.setPropertyValue("Payload_ID",Payload_ID )
+
+log.info "Payload_ID value is set to: " + Payload_ID </script></con:config></con:testStep><con:testStep type="request" name="transmission - QueryEligibleProducts_InEligible_DLR_Barcode" id="8378f480-a756-48a9-acbe-b3b58af7994b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>DisneyTicketingServiceSoapBinding</con:interface><con:operation>transmission</con:operation><con:request name="transmission - QueryEligibleProducts_InEligible_DLR_Barcode" id="6b2e632e-7d7e-4a9d-803a-a297aa448117"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#TestCase#DTIAppUrl}</con:endpoint><con:request><![CDATA[<Transmission xsi:noNamespaceSchemaLocation="${#TestCase#BasePath}/query_eligible_products_request.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <Payload>
+      <PayloadHeader>
+         <PayloadID>${#TestCase#Payload_ID}</PayloadID>
+         <Target>Test-DLR</Target>
+         <Version>1.0</Version>
+         <Comm>
+            <Protocol>IP</Protocol>
+            <Method>Network</Method>
+         </Comm>
+         <TransmitDate>${#TestCase#CurrentDate}</TransmitDate>
+         <TransmitTime>11:56:39.58</TransmitTime>
+         <TktSeller>
+            <TSMAC>WDPRONADLR</TSMAC>
+            <TSSystem>CC</TSSystem>
+            <TSLocation>DLR_MOBILE</TSLocation>
+            <TSSecurity>WaltDisney1</TSSecurity>
+         </TktSeller>
+         <CommandCount>1</CommandCount>
+      </PayloadHeader>
+      <Command>
+         <CommandHeader>
+            <CmdItem>1</CmdItem>
+            <CmdTimeout>45</CmdTimeout>
+            <CmdDate>${#TestCase#CurrentDate}</CmdDate>
+            <CmdTime>11:56:39.58</CmdTime>
+            <CmdInvoice>2018895220000011272</CmdInvoice>
+            <CmdDevice>PAULH</CmdDevice>
+            <CmdOperator>PAULH</CmdOperator>
+         </CommandHeader>
+         <QueryEligibleProductsRequest>
+            <Ticket>
+               <TktItem>1</TktItem>
+               <TktID>
+                  <Barcode>${#TestCase#TktNId}</Barcode>
+               </TktID>
+               <SaleType>UPGRADE</SaleType>
+            </Ticket>
+         </QueryEligibleProductsRequest>
+      </Command>
+   </Payload>
+</Transmission>]]></con:request><con:assertion type="GroovyScriptAssertion" id="8abee21c-141a-4510-9641-e9443c72939b" name="Headers Existence - Script Assertion"><con:configuration><scriptText>/*
+ * Assertion to validate the Header existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Header Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of QueryEligibleProduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 4th colum of the data sheet
+			String header = sheet.getCell(3, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+			
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode("//"+elements[j]+"[1]")
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="2d41d5a4-0d49-4c72-ab5f-a77cb1ed2951" name="XPath Existence - Script Assertion"><con:configuration><scriptText>/*
+ * Xpath assertion to validate the Tag existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Tag Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  QueryEligibleProduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 5th colum of the data sheet
+			String header = sheet.getCell(4, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getDomNode(elements[j])
+				if(responseElement != null)
+				{
+					log.info  elements[j]  + " :: assertion  Passed"
+					passedMap.put(j,elements[j])
+				}
+				else
+				{
+					log.info  elements[j]  +" :: assertion  Failed"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+//Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All headers are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These headers are not returned in the response : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="f7918578-d083-44cf-b1ac-01ccb1da6fa6" name="String Validation - Script Assertion"><con:configuration><scriptText>/*
+ * String assertion to validate the string existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** String Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of QueryEligibleproduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 6th colum of the data sheet
+			String header = sheet.getCell(5, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+			
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getNodeValue(elements[j])
+				if(responseElement != null)
+				{
+					if(responseElement instanceof String)
+					{
+						log.info  elements[j]  + " :: The element contains string value"
+						passedMap.put(j,elements[j])
+					}
+					else
+					{
+						log.info  elements[j]  + " :: The element contains non string value"
+						failedMap.put(j,elements[j])
+					}
+				}
+				else
+				{
+					log.info  elements[j]  +" :: Element Not found"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+////Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All Xpath are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These XPath are not returned in the response or returned incorrectly : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0d00be00-44e9-47d7-8039-f01032de32ad" name="Numeric Validation - Script Assertion"><con:configuration><scriptText>/*
+ * Numeric assertion to validate the Numeric existence
+ * in accordance with the data populated in the excel sheet - "LifeCycleValidation.xls"
+ */
+ 
+import jxl.*; 
+import com.eviware.soapui.support.xml.XmlUtils;
+import com.eviware.soapui.support.GroovyUtils;
+import org.apache.commons.lang.StringUtils;
+
+
+log.info "****************** Numeric Validation *****************"
+def groovyUtils = new GroovyUtils( context )
+def responseHolder = groovyUtils.getXmlHolder( messageExchange.responseContent )
+def failedMap = [:]
+def passedMap = [:]
+def elements
+
+
+//Get the Project path using Properties
+projectFile = messageExchange.modelItem.parent.parent.parent.parent.getPath()
+projectpath = projectFile.substring(0, projectFile.lastIndexOf("\\"));
+//def projectpath = groovyUtils.projectPath  
+
+if   (projectpath.toLowerCase().contains("jenkins")) { 
+	projectpath = projectpath + "\\"+ "DTI Automation Test 01\\src\\test\\soapui\\DTI"//Set the path of the project root from Slave
+						  
+}
+log.info projectpath 
+
+//Get Current Test Case and Test step in order to match with excel sheet data
+currentTestcase = messageExchange.modelItem.parent.parent.name
+currentTeststep = messageExchange.modelItem.parent.name
+log.info "Current test case name : " + currentTestcase
+log.info "Current test step name : " + currentTeststep
+
+
+//Read Excel LifeCycleValidation.xls for pareameterization
+Workbook workbook = Workbook.getWorkbook(new File(projectpath +"\\LifeCycleValidation.xls"))
+Sheet sheet = workbook.getSheet(0)
+
+//Loop through the rows of excel sheet starting from the second row
+for (int i = 1; i &lt; sheet.getRows(); i++) 
+{
+	Cell cell = sheet.getCell(0, i)
+	CellType type = cell.getType()
+	def runFlag = cell.getContents()
+//	Start Validation of  QueryEligibleproduct Response
+	if (runFlag == "YES")
+	{
+		
+
+//		Pass in to validation only when the current test case and step matches with the excel mappings
+		if (currentTestcase == sheet.getCell(1, i).getContents() &amp;&amp; currentTeststep == sheet.getCell(2, i).getContents())
+		{
+			log.info "Test Case : " + i + " ==> " + sheet.getCell(1, i).getContents()
+			log.info "Test Step : " + i + " ==> " + sheet.getCell(2, i).getContents()
+			log.info "Row Number : " + i
+//			Get the header data from the 7th colum of the data sheet
+			String header = sheet.getCell(6, i).getContents();
+			elements = header.tokenize(';;;');
+
+//			Using Map to collect the failed assertions
+//			Initially declaring an empty map
+		
+			for (int j = 0; j &lt; elements.size(); j++)
+			{
+				def responseElement = responseHolder.getNodeValue(elements[j])
+				if(responseElement != null)
+				{
+					if(responseElement.isNumber())
+					{
+						log.info  elements[j]  + " :: The element contains Numeric value"
+						passedMap.put(j,elements[j])
+					}
+					else
+					{
+						log.info  elements[j]  + " :: The element contains non numeric value"
+						failedMap.put(j,elements[j])
+					}
+				}
+				else
+				{
+					log.info  elements[j]  +" :: Element Not found"
+					failedMap.put(j,elements[j])
+				}
+			}
+		}		
+	}
+}
+workbook.close()
+
+////Asserting the collection
+if (passedMap.size() == elements.size())
+{
+	log.info "All XPath are returned as expected"
+	assert true //To mark the assertion passed
+}
+else if(failedMap.size() > 0)
+{
+	log.info "These Xpaths are not returned in the response or returned incorrectly : " + failedMap
+	assert false ////To mark the assertion failed
+}</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>DTIAppUrl</con:name><con:value>https://dti-stage.disney.pvt/DTIApp/DTIApp</con:value></con:property><con:property><con:name>factor</con:name><con:value>4</con:value></con:property><con:property><con:name>counter</con:name><con:value>100000</con:value></con:property><con:property><con:name>Payload_ID</con:name><con:value>91120171116151082350</con:value></con:property><con:property><con:name>CurrentDate</con:name><con:value>2017-11-16</con:value></con:property><con:property><con:name>DTIInfoSysServlet</con:name><con:value>https://dti-latest.disney.pvt/DTIInfoSys/DTIInfoSysServlet</con:value></con:property><con:property><con:name>TktNId</con:name><con:value>4685755637903746438</con:value></con:property><con:property><con:name>Basepath</con:name><con:value>/var/opt/apps/RT/schemas</con:value></con:property><con:property><con:name>ProductCode</con:name><con:value>46857PAH</con:value></con:property><con:property><con:name>ProductPrice</con:name><con:value>110.00</con:value></con:property><con:property><con:name>ProductCode2</con:name><con:value>46858PAH</con:value></con:property><con:property><con:name>ProductPrice2</con:name><con:value>104.00</con:value></con:property><con:property><con:name>ProductCode3</con:name><con:value>33708</con:value></con:property><con:property><con:name>ProductPrice3</con:name><con:value>0.00</con:value></con:property><con:property><con:name>ProductPriceTotal</con:name><con:value>214.0</con:value></con:property><con:property><con:name>RESCode</con:name><con:value>DLRY2000010001776363</con:value></con:property></con:properties></con:testCase><con:testCase id="e67211ac-1051-496a-8425-92a7747f255b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="SmokeTest_Ticket LifeCycleTest_DLR_QEP_PLU_OfflineCode" searchProperties="true"><con:settings/><con:testStep type="groovy" name="GeneratePayload for QueryEligibleProducts_DLRPLU" id="5eb42edc-2bdb-4213-baa6-cc5d56d5bf84"><con:settings/><con:config><script>import java.text.SimpleDateFormat
 
 //get date in "MM/dd/yyyy" 
 def date = new Date()
