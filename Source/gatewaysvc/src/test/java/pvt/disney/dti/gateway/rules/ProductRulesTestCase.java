@@ -1111,17 +1111,17 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 	}
 
 	/**
-    * JUnit validateWdwTicketDemo
-    */
-   @Test
-   public void testValidateWdwTicketDemo() {
-      ArrayList<TicketTO> tktListTO = new ArrayList<>();
-      getDemographics(tktListTO);
+	 * JUnit validateWdwTicketDemo
+	 */
+	@Test
+	public void testValidateWdwTicketDemo() {
+		ArrayList<TicketTO> tktListTO = new ArrayList<>();
+		getDemographics(tktListTO);
       tktListTO.get(0).getTicketDemoList().get(0).setFirstName("firstName");
-      /*
-       * Scenario :: 1 Expected Exception is For DLR, Zip has invalid length
-       * for TktDemoData (expected 1 to 10, but found a length of 12).
-       */
+		/*
+		 * Scenario :: 1 Expected Exception is For DLR, Zip has invalid length
+		 * for TktDemoData (expected 1 to 10, but found a length of 12).
+		 */
       try {
          ProductRules.validateWdwTicketDemo(tktListTO);
       } catch (DTIException dtie) {
@@ -1134,34 +1134,34 @@ public class ProductRulesTestCase extends CommonBusinessTest {
                "For DLR, Zip has invalid length for TktDemoData (expected 1 to 10, but found a length of 12).",
                dtie.getLogMessage());
       }
-      /*
-       * Scenario :: 2 Expected Exception is For DLR, OptInSolicit is a
-       * mandatory field for TktDemoData. TktItem failing was null.
-       */
-      tktListTO.get(0).getTicketDemoList().get(0).setZip("12345");
-      tktListTO.get(0).getTicketDemoList().get(0).setOptInSolicit(null);
-      try {
-         ProductRules.validateDlrTicketDemo(tktListTO);
-         Assert.fail("For DLR, OptInSolicit is a mandatory field for TktDemoData.  TktItem failing was null.");
-      } catch (DTIException dtie) {
-         assertEquals(
+		/*
+		 * Scenario :: 2 Expected Exception is For DLR, OptInSolicit is a
+		 * mandatory field for TktDemoData. TktItem failing was null.
+		 */
+		tktListTO.get(0).getTicketDemoList().get(0).setZip("12345");
+		tktListTO.get(0).getTicketDemoList().get(0).setOptInSolicit(null);
+		try {
+			ProductRules.validateDlrTicketDemo(tktListTO);
+			Assert.fail("For DLR, OptInSolicit is a mandatory field for TktDemoData.  TktItem failing was null.");
+		} catch (DTIException dtie) {
+			assertEquals(
                "For DLR, OptInSolicit is a mandatory field for TktDemoData.  TktItem failing was null.",
-               dtie.getLogMessage());
-      }
-      /*
-       * Scenario :: 3 Expected Exception is For WDW, DateOfBirth is a
-       * mandatory field for TktDemoData. TktItem failing was null.
-       */
-      tktListTO.get(0).getTicketDemoList().get(0).setDateOfBirth(null);
-      try {
-         ProductRules.validateWdwTicketDemo(tktListTO);
-         Assert.fail("For WDW, DateOfBirth is a mandatory field for TktDemoData.  TktItem failing was null.");
-      } catch (DTIException dtie) {
-         assertEquals(
+					dtie.getLogMessage());
+		}
+		/*
+		 * Scenario :: 3 Expected Exception is For WDW, DateOfBirth is a
+		 * mandatory field for TktDemoData. TktItem failing was null.
+		 */
+		tktListTO.get(0).getTicketDemoList().get(0).setDateOfBirth(null);
+		try {
+			ProductRules.validateWdwTicketDemo(tktListTO);
+			Assert.fail("For WDW, DateOfBirth is a mandatory field for TktDemoData.  TktItem failing was null.");
+		} catch (DTIException dtie) {
+			assertEquals(
                "For WDW, DateOfBirth is a mandatory field for TktDemoData.  TktItem failing was null.",
-               dtie.getLogMessage());
-      }
-   }
+					dtie.getLogMessage());
+		}
+	}
 
 	/**
 	 * JUnit validateDlrTicketDemo
