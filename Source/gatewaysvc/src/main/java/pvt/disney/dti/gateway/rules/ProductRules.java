@@ -880,12 +880,15 @@ public class ProductRules {
           boolean optional = false;
           boolean required = true;
           BigInteger itemNumber = aTicketTO.getTktItem();
-
-          // FirstName (XSD required, 1 - 15 char)
-          validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 15, true, itemNumber);
-
-          // LastName (XSD required, 1 - 20 char)
-          validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 20, true, itemNumber);
+          
+          //FirstName
+          String firstName = aDemoTO.getFirstName().trim();
+          
+          //LastName
+          String lastName = aDemoTO.getLastName().trim();
+          
+          // FirstName+LastName(1 - 35 char)
+          validateStringDemo(park, "FullName", firstName+lastName, 1, 35, true, itemNumber);
 
           // DateOfBirth (required, date)
           if (aDemoTO.getDateOfBirth() == null) {

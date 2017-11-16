@@ -1117,23 +1117,23 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 	public void testValidateWdwTicketDemo() {
 		ArrayList<TicketTO> tktListTO = new ArrayList<>();
 		getDemographics(tktListTO);
+      tktListTO.get(0).getTicketDemoList().get(0).setFirstName("firstName");
 		/*
 		 * Scenario :: 1 Expected Exception is For DLR, Zip has invalid length
 		 * for TktDemoData (expected 1 to 10, but found a length of 12).
 		 */
-		/*try {
-			ProductRules.validateWdwTicketDemo(tktListTO);
-		} catch (DTIException dtie) {
-		}
-		tktListTO.get(0).getTicketDemoList().get(0).setZip("121212124525");
-		try {
-			ProductRules.validateDlrTicketDemo(tktListTO);
-			Assert.fail("For DLR, Zip has invalid length for TktDemoData (expected 1 to 10, but found a length of 12).");
-		} catch (DTIException dtie) {
-			assertEquals(
-					"For DLR, Zip has invalid length for TktDemoData (expected 1 to 10, but found a length of 12).",
-					dtie.getLogMessage());
-		}*/
+      try {
+         ProductRules.validateWdwTicketDemo(tktListTO);
+      } catch (DTIException dtie) {
+      }
+      tktListTO.get(0).getTicketDemoList().get(0).setZip("121212124525");
+      try {
+         ProductRules.validateDlrTicketDemo(tktListTO);
+      } catch (DTIException dtie) {
+         assertEquals(
+               "For DLR, Zip has invalid length for TktDemoData (expected 1 to 10, but found a length of 12).",
+               dtie.getLogMessage());
+      }
 		/*
 		 * Scenario :: 2 Expected Exception is For DLR, OptInSolicit is a
 		 * mandatory field for TktDemoData. TktItem failing was null.
@@ -1145,7 +1145,7 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 			Assert.fail("For DLR, OptInSolicit is a mandatory field for TktDemoData.  TktItem failing was null.");
 		} catch (DTIException dtie) {
 			assertEquals(
-					"For DLR, FirstName is a mandatory field for TktDemoData.  TktItem failing was null.",
+               "For DLR, OptInSolicit is a mandatory field for TktDemoData.  TktItem failing was null.",
 					dtie.getLogMessage());
 		}
 		/*
@@ -1158,7 +1158,7 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 			Assert.fail("For WDW, DateOfBirth is a mandatory field for TktDemoData.  TktItem failing was null.");
 		} catch (DTIException dtie) {
 			assertEquals(
-					"For WDW, FirstName is a mandatory field for TktDemoData.  TktItem failing was null.",
+               "For WDW, DateOfBirth is a mandatory field for TktDemoData.  TktItem failing was null.",
 					dtie.getLogMessage());
 		}
 	}
