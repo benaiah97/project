@@ -119,11 +119,13 @@ public abstract class VoidReservationXML {
           aProduct.setProdTax2(aProductTO.getProdTax2());
         }
 
-        if (aProductTO.getProdDescription() != null) aProduct
-            .setProdDescription(aProductTO.getProdDescription());
+        if (aProductTO.getProdDescription() != null) {
+           aProduct.setProdDescription(aProductTO.getProdDescription());
+        }
 
-        if (aProductTO.getProdReceiptMsg() != null) aProduct
-            .setProdReceiptMsg(aProductTO.getProdReceiptMsg());
+        if (aProductTO.getProdReceiptMsg() != null) {
+           aProduct.setProdReceiptMsg(aProductTO.getProdReceiptMsg());
+        }
 
         productList.add(aProduct);
       }
@@ -143,8 +145,7 @@ public abstract class VoidReservationXML {
       String message = voidResRespTO.getReceiptMessage();
 
       QName qName = new QName("Message");
-      JAXBElement<String> rcpMsg = new JAXBElement(qName,
-          message.getClass(), message);
+      JAXBElement<String> rcpMsg = new JAXBElement(qName,message.getClass(), message);
       receipt.getTotalOrTaxTotalOrTax1().add(rcpMsg);
 
       resResp.setReceipt(receipt);
@@ -157,20 +158,24 @@ public abstract class VoidReservationXML {
       ReservationTO reservationTO = voidResRespTO.getReservation();
 
       // Optional fields
-      if (reservationTO.getResCode() != null) reservation
-          .setResCode(reservationTO.getResCode());
-      if (reservationTO.getResNumber() != null) reservation
-          .setResNumber(reservationTO.getResNumber());
-      if (reservationTO.getResCreateDate() != null) reservation
-          .setResCreateDate(UtilXML.convertToXML(reservationTO
-              .getResCreateDate()));
-      if (reservationTO.getResPickupDate() != null) reservation
-          .setResPickupDate(UtilXML.convertToXML(reservationTO
-              .getResPickupDate()));
-      if (reservationTO.getResPickupArea() != null) reservation
-          .setResPickupArea(reservationTO.getResPickupArea());
-      if (reservationTO.getResSalesType() != null) reservation
-          .setResSalesType(reservationTO.getResSalesType());
+      if (reservationTO.getResCode() != null) {
+         reservation.setResCode(reservationTO.getResCode());
+      }
+      if (reservationTO.getResNumber() != null) {
+         reservation.setResNumber(reservationTO.getResNumber());
+      }
+      if (reservationTO.getResCreateDate() != null) {
+         reservation.setResCreateDate(UtilXML.convertToXML(reservationTO.getResCreateDate()));
+      }
+      if (reservationTO.getResPickupDate() != null) {
+         reservation.setResPickupDate(UtilXML.convertToXML(reservationTO.getResPickupDate()));
+      }
+      if (reservationTO.getResPickupArea() != null) {
+         reservation.setResPickupArea(reservationTO.getResPickupArea());
+      }
+      if (reservationTO.getResSalesType() != null) {
+         reservation.setResSalesType(reservationTO.getResSalesType());
+      }
 
       resResp.setReservation(reservation);
     }
@@ -181,8 +186,9 @@ public abstract class VoidReservationXML {
       VoidReservationResponse.ClientData clientData = new VoidReservationResponse.ClientData();
 
       // Optional field
-      if (voidResRespTO.getClientData().getClientId() != null) clientData
-          .setClientId(voidResRespTO.getClientData().getClientId());
+      if (voidResRespTO.getClientData().getClientId() != null) {
+         clientData.setClientId(voidResRespTO.getClientData().getClientId());
+      }
 
       resResp.setClientData(clientData);
     }
@@ -204,6 +210,7 @@ public abstract class VoidReservationXML {
   private static void setJaxbPaymentList(
       List<VoidReservationResponse.Payment> paymentList,
       ArrayList<PaymentTO> paymentListTO) throws JAXBException {
+     
     for /* each */(PaymentTO aPaymentTO : /* in */paymentListTO) {
 
       VoidReservationResponse.Payment aPayment = new VoidReservationResponse.Payment();
@@ -221,11 +228,12 @@ public abstract class VoidReservationXML {
         aCreditCard.setCCAuthCode(aCreditCardTO.getCcAuthCode());
 
         // Optional fields
-        if (aCreditCardTO.getCcAuthNumber() != null) aCreditCard
-            .setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
-        if (aCreditCardTO.getCcAuthSysResponse() != null) aCreditCard
-            .setCCAuthSysResponse(aCreditCardTO
-                .getCcAuthSysResponse());
+        if (aCreditCardTO.getCcAuthNumber() != null) {
+           aCreditCard.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
+        }
+        if (aCreditCardTO.getCcAuthSysResponse() != null) {
+           aCreditCard.setCCAuthSysResponse(aCreditCardTO.getCcAuthSysResponse());
+        }
         if (aCreditCardTO.getCcNumber() != null) {
           aCreditCard.setCCNumber(aCreditCardTO.getCcNumber());
         }
@@ -242,16 +250,18 @@ public abstract class VoidReservationXML {
         aGiftCard.setGCAuthCode(aGiftCardTO.getGcAuthCode());
 
         // Optional fields
-        if (aGiftCardTO.getGcAuthNumber() != null) aGiftCard
-            .setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
-        if (aGiftCardTO.getGcAuthSysResponse() != null) aGiftCard
-            .setGCAuthSysResponse(aGiftCardTO
-                .getGcAuthSysResponse());
-        if (aGiftCardTO.getGcNumber() != null) aGiftCard
-            .setGCNumber(aGiftCardTO.getGcNumber());
-        if (aGiftCardTO.getGcRemainingBalance() != null) aGiftCard
-            .setGCRemainingBalance(aGiftCardTO
-                .getGcRemainingBalance());
+        if (aGiftCardTO.getGcAuthNumber() != null) {
+           aGiftCard.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
+        }
+        if (aGiftCardTO.getGcAuthSysResponse() != null) {
+           aGiftCard.setGCAuthSysResponse(aGiftCardTO.getGcAuthSysResponse());
+        }
+        if (aGiftCardTO.getGcNumber() != null) {
+           aGiftCard.setGCNumber(aGiftCardTO.getGcNumber());
+        }
+        if (aGiftCardTO.getGcRemainingBalance() != null) {
+           aGiftCard.setGCRemainingBalance(aGiftCardTO.getGcRemainingBalance());
+        }
         if (aGiftCardTO.getGcPromoExpDate() != null) {
           aGiftCard.setGCPromoExpDate(UtilXML
               .convertToXML(aGiftCardTO.getGcPromoExpDate()));
@@ -290,13 +300,11 @@ public abstract class VoidReservationXML {
       // Ticket Item
       BigInteger tktItemTO = aTicketTO.getTktItem();
       QName qName = new QName("TktItem");
-      JAXBElement<BigInteger> tktItem = new JAXBElement(qName,
-          tktItemTO.getClass(), tktItemTO);
+      JAXBElement<BigInteger> tktItem = new JAXBElement(qName,tktItemTO.getClass(), tktItemTO);
       aTicket.getTktItemOrTktIDOrTktPrice().add(tktItem);
 
       // TktID
-      ArrayList<TicketTO.TicketIdType> typeList = aTicketTO
-          .getTicketTypes();
+      ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
 
       if (typeList.size() > 0) {
 

@@ -6,9 +6,6 @@ import java.util.GregorianCalendar;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.AssociateMediaToAccountRequestTO;
 import pvt.disney.dti.gateway.data.AssociateMediaToAccountResponseTO;
@@ -32,9 +29,6 @@ import pvt.disney.dti.gateway.response.xsd.Ticket.TktID;
  * 
  */
 public abstract class AssociateMediaToAccountXML {
-
-	private static final EventLogger logger = EventLogger
-			.getLogger(AssociateMediaToAccountXML.class.getCanonicalName());
 
 	/**
 	 * When passed the JAXB object, return the DTI application object.

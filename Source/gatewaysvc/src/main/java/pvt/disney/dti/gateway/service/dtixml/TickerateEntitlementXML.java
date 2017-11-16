@@ -6,9 +6,6 @@ import java.util.GregorianCalendar;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.TickerateEntitlementRequestTO;
 import pvt.disney.dti.gateway.data.TickerateEntitlementResponseTO;
@@ -17,14 +14,12 @@ import pvt.disney.dti.gateway.data.common.NewMediaDataTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.request.xsd.TickerateEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.Ticket;
-import pvt.disney.dti.gateway.request.xsd.VoidTicketRequest;
 import pvt.disney.dti.gateway.request.xsd.Ticket.TktID.TktDSSN;
 import pvt.disney.dti.gateway.request.xsd.MediaData;
 import pvt.disney.dti.gateway.response.xsd.EntitlementAccount;
 import pvt.disney.dti.gateway.response.xsd.TickerateEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.TktError;
 import pvt.disney.dti.gateway.response.xsd.Ticket.TktID;
-import pvt.disney.dti.gateway.util.CustomDataTypeConverter;
 
 /**
  * This class is responsible for transforming the JAXB parsed request into a transfer object as well as transforming the transfer object response back into a JAXB structure.
@@ -34,9 +29,6 @@ import pvt.disney.dti.gateway.util.CustomDataTypeConverter;
  * 
  */
 public abstract class TickerateEntitlementXML {
-
-	private static final EventLogger logger = EventLogger
-			.getLogger(TickerateEntitlementXML.class.getCanonicalName());
 
 	/**
 	 * When passed the JAXB object, return the DTI application object.

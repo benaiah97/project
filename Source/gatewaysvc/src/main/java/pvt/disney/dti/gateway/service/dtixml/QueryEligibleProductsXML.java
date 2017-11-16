@@ -387,8 +387,6 @@ public class QueryEligibleProductsXML {
 
 			}
 
-			
-
 			// EligibleProducts
 			if ((aTicketTO.getEligibleProducts() != null) && (aTicketTO.getEligibleProducts().size() > 0)) {
 				for (EligibleProductsTO eligibleProduct : aTicketTO.getEligibleProducts()) {

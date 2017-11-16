@@ -178,8 +178,6 @@ public class TransmissionRespXML {
     marshaller = jc.createMarshaller();
     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
     marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-//    marshaller
-//        .setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
 
     StringWriter objStringWriter = new StringWriter();
     marshaller.marshal(jaxbResp, objStringWriter);

@@ -110,8 +110,7 @@ public class UpdateTicketXML {
 		TicketTO aTicketTO = new TicketTO();
 
 		// Required items
-		List<JAXBElement<?>> stanzaList = aTicket
-				.getTktItemOrTktIDOrTktStatus();
+		List<JAXBElement<?>> stanzaList = aTicket.getTktItemOrTktIDOrTktStatus();
 
 		for /* each */(JAXBElement<?> stanza : /* in */stanzaList) {
 
@@ -130,16 +129,13 @@ public class UpdateTicketXML {
 				 */
 				if (tktID.getBarcode() != null) {
 					aTicketTO.setBarCode(tktID.getBarcode());
-				}
-				else {
+				} else {
 					if (tktID.getExternal() != null) {
 						aTicketTO.setExternal(tktID.getExternal());
-					}
-					else {
+					} else {
 						if (tktID.getTktNID() != null) {
 							aTicketTO.setTktNID(tktID.getTktNID());
-						}
-						else {
+						} else {
 							if (tktID.getMag() != null) {
 								UpdateTicketRequest.Ticket.TktID.Mag tktMag = tktID
 										.getMag();
@@ -148,12 +144,10 @@ public class UpdateTicketXML {
 
 								if (mag2 != null) {
 									aTicketTO.setMag(mag1, mag2);
-								}
-								else {
+								} else {
 									aTicketTO.setMag(mag1);
 								}
-							}
-							else {
+							} else {
 								if (tktID.getTktDSSN() != null) {
 									UpdateTicketRequest.Ticket.TktID.TktDSSN tktDssn = tktID
 											.getTktDSSN();
@@ -176,8 +170,7 @@ public class UpdateTicketXML {
 
 			// TktStatus
 			if (stanza.getName().getLocalPart().equalsIgnoreCase("TktStatus")) {
-				ArrayList<TktStatusTO> tktStatusListTO = aTicketTO
-						.getTktStatusList();
+				ArrayList<TktStatusTO> tktStatusListTO = aTicketTO.getTktStatusList();
 				UpdateTicketRequest.Ticket.TktStatus aTktStatus = (UpdateTicketRequest.Ticket.TktStatus) stanza
 						.getValue();
 				TicketTO.TktStatusTO aTktStatusTO = aTicketTO.new TktStatusTO();
@@ -198,12 +191,10 @@ public class UpdateTicketXML {
 
 					QName validityFieldName = aValidityDate.getName();
 
-					if (validityFieldName.getLocalPart().equalsIgnoreCase(
-							"ValidStart")) {
+					if (validityFieldName.getLocalPart().equalsIgnoreCase("ValidStart")) {
 						if (aValidityDate.getValue() != null) {
 
-							XMLGregorianCalendar tXCal = aValidityDate
-									.getValue();
+							XMLGregorianCalendar tXCal = aValidityDate.getValue();
 							GregorianCalendar tempCalendar = new GregorianCalendar(
 									tXCal.getEonAndYear().intValue(),
 									tXCal.getMonth() - 1, tXCal.getDay());
@@ -212,11 +203,9 @@ public class UpdateTicketXML {
 						}
 					}
 
-					if (validityFieldName.getLocalPart().equalsIgnoreCase(
-							"ValidEnd")) {
+					if (validityFieldName.getLocalPart().equalsIgnoreCase("ValidEnd")) {
 						if (aValidityDate.getValue() != null) {
-							XMLGregorianCalendar tXCal = aValidityDate
-									.getValue();
+							XMLGregorianCalendar tXCal = aValidityDate.getValue();
 							GregorianCalendar tempCalendar = new GregorianCalendar(
 									tXCal.getEonAndYear().intValue(),
 									tXCal.getMonth() - 1, tXCal.getDay());

@@ -139,7 +139,6 @@ public abstract class ReservationXML {
       ClientDataTO clientDataTO = new ClientDataTO();
       setTOClientData(clientData, clientDataTO);
       resReqTO.setClientData(clientDataTO);
-
     }
 
     // Agency
@@ -196,11 +195,13 @@ public abstract class ReservationXML {
 
       } else if (entitlement.getSpecifiedAccount() != null) {
 
-        logger.sendEvent("ReservationXML: Not a default account, get account data", EventType.DEBUG, THISOBJECT);
+        logger.sendEvent("ReservationXML: Not a default account, get account data", 
+                 EventType.DEBUG, THISOBJECT);
 
         ArrayList<SpecifiedAccountTO> specifiedAccounts = resReqTO.getSpecifiedAccounts();
 
-        for (ReservationRequest.EntitlementAccount.SpecifiedAccount specified : entitlement.getSpecifiedAccount()) {
+        for (ReservationRequest.EntitlementAccount.SpecifiedAccount specified : 
+           entitlement.getSpecifiedAccount()) {
 
           SpecifiedAccountTO specifiedTO = new SpecifiedAccountTO();
 
@@ -228,6 +229,7 @@ public abstract class ReservationXML {
     
     // Ext Txn Identifier (as of 2.16.2, JTL)
     if (resReq.getExtTxnIdentifier() != null) {
+       
       ExtTxnIdentifierTO extTxnIdTO = new ExtTxnIdentifierTO();
       
       ExtTxnIdentifier extTxnId = resReq.getExtTxnIdentifier();

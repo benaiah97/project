@@ -343,20 +343,27 @@ public abstract class CreateTicketXML {
 				creditCardTO.setCcExpiration(ccManual.getCCExpiration());
 
 				// Optional fields
-				if (ccManual.getCCVV() != null) creditCardTO.setCcVV(ccManual
-						.getCCVV());
-				if (ccManual.getCCName() != null) creditCardTO
-						.setCcName(ccManual.getCCName());
-				if (ccManual.getCCStreet() != null) creditCardTO
-						.setCcStreet(ccManual.getCCStreet());
-				if (ccManual.getCCZipcode() != null) creditCardTO
-						.setCcZipCode(ccManual.getCCZipcode());
-				if (ccManual.getCCCAVV() != null) creditCardTO
-						.setCcCAVV(ccManual.getCCCAVV());
-				if (ccManual.getCCEcommerce() != null) creditCardTO
-						.setCcEcommerce(ccManual.getCCEcommerce());
-				if (ccManual.getCCType() != null) creditCardTO
-						.setCcType(ccManual.getCCType());
+				if (ccManual.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccManual.getCCVV());
+				}
+				if (ccManual.getCCName() != null) { 
+				   creditCardTO.setCcName(ccManual.getCCName());
+				}
+				if (ccManual.getCCStreet() != null) {
+				   creditCardTO.setCcStreet(ccManual.getCCStreet());
+				}
+				if (ccManual.getCCZipcode() != null) {
+				   creditCardTO.setCcZipCode(ccManual.getCCZipcode());
+				}
+				if (ccManual.getCCCAVV() != null) {
+				   creditCardTO.setCcCAVV(ccManual.getCCCAVV());
+				}
+				if (ccManual.getCCEcommerce() != null) {
+				   creditCardTO.setCcEcommerce(ccManual.getCCEcommerce());
+				}
+				if (ccManual.getCCType() != null) {
+				   creditCardTO.setCcType(ccManual.getCCType());
+				}
 
 			}
 			else if (creditCard.getCCSwipe() != null) {
@@ -371,10 +378,12 @@ public abstract class CreateTicketXML {
 				// Optional fields
 				if (ccSwipe.getCCVV() != null) creditCardTO.setCcVV(ccSwipe
 						.getCCVV());
-				if (ccSwipe.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
-				if (ccSwipe.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				if (ccSwipe.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
+				}
+				if (ccSwipe.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				}
 
 			}
 			else if (creditCard.getCCWireless() != null) { // as of 2.12
@@ -388,31 +397,33 @@ public abstract class CreateTicketXML {
 				creditCardTO.setCcTrack2(ccWireless.getCCTrack2());
 
 				// Optional fields
-				if (ccWireless.getCCVV() != null) creditCardTO
-						.setCcVV(ccWireless.getCCVV());
-				if (ccWireless.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccWireless.getPosTerminal());
-				if (ccWireless.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				if (ccWireless.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccWireless.getCCVV());
+				}
+				if (ccWireless.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccWireless.getPosTerminal());
+				}
+				if (ccWireless.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				}
 			}
 
 			aPaymentTO.setCreditCard(creditCardTO);
 
-		}
-		else if (payType.getVoucher() != null) { // THIS IS A VOUCHER
+		} else if (payType.getVoucher() != null) { // THIS IS A VOUCHER
 			VoucherTO voucherTO = new VoucherTO();
 
 			// Required fields
 			voucherTO.setMainCode(payType.getVoucher().getMainCode());
 
 			// Optional fields
-			if (payType.getVoucher().getUniqueCode() != null) voucherTO
-					.setUniqueCode(payType.getVoucher().getUniqueCode());
+			if (payType.getVoucher().getUniqueCode() != null) { 
+			   voucherTO.setUniqueCode(payType.getVoucher().getUniqueCode());
+			}
 
 			aPaymentTO.setVoucher(voucherTO);
 
-		}
-		else if (payType.getGiftCard() != null) { // THIS IS A GIFT CARD
+		} else if (payType.getGiftCard() != null) { // THIS IS A GIFT CARD
 			GiftCardTO giftCardTO = new GiftCardTO();
 
 			if (payType.getGiftCard().getGCManual() != null) {
@@ -433,8 +444,7 @@ public abstract class CreateTicketXML {
 
 				aPaymentTO.setGiftCard(giftCardTO);
 
-			}
-			else if (payType.getGiftCard().getGCSwipe() != null) {
+			} else if (payType.getGiftCard().getGCSwipe() != null) {
 
 				CreateTicketRequest.Payment.PayType.GiftCard.GCSwipe gcSwipe = payType
 						.getGiftCard().getGCSwipe();
@@ -514,6 +524,7 @@ public abstract class CreateTicketXML {
 	private static void setJaxbPaymentList(
 			List<CreateTicketResponse.Payment> paymentList,
 			ArrayList<PaymentTO> paymentListTO) throws JAXBException {
+	   
 		for /* each */(PaymentTO aPaymentTO : /* in */paymentListTO) {
 
 			CreateTicketResponse.Payment aPayment = new CreateTicketResponse.Payment();
@@ -531,19 +542,19 @@ public abstract class CreateTicketXML {
 				aCreditCard.setCCAuthCode(aCreditCardTO.getCcAuthCode());
 
 				// Optional fields
-				if (aCreditCardTO.getCcAuthNumber() != null) aCreditCard
-						.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
-				if (aCreditCardTO.getCcAuthSysResponse() != null) aCreditCard
-						.setCCAuthSysResponse(aCreditCardTO
-								.getCcAuthSysResponse());
+				if (aCreditCardTO.getCcAuthNumber() != null) {
+				   aCreditCard.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
+				}
+				if (aCreditCardTO.getCcAuthSysResponse() != null) {
+				   aCreditCard.setCCAuthSysResponse(aCreditCardTO.getCcAuthSysResponse());
+				}
 				if (aCreditCardTO.getCcNumber() != null) {
 					aCreditCard.setCCNumber(aCreditCardTO.getCcNumber());
 				}
 
 				aPayType.setCreditCard(aCreditCard);
 
-			}
-			else if (aPaymentTO.getGiftCard() != null) {
+			} else if (aPaymentTO.getGiftCard() != null) {
 
 				CreateTicketResponse.Payment.PayType.GiftCard aGiftCard = new CreateTicketResponse.Payment.PayType.GiftCard();
 				GiftCardTO aGiftCardTO = aPaymentTO.getGiftCard();
@@ -552,16 +563,18 @@ public abstract class CreateTicketXML {
 				aGiftCard.setGCAuthCode(aGiftCardTO.getGcAuthCode());
 
 				// Optional fields
-				if (aGiftCardTO.getGcAuthNumber() != null) aGiftCard
-						.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
-				if (aGiftCardTO.getGcAuthSysResponse() != null) aGiftCard
-						.setGCAuthSysResponse(aGiftCardTO
-								.getGcAuthSysResponse());
-				if (aGiftCardTO.getGcNumber() != null) aGiftCard
-						.setGCNumber(aGiftCardTO.getGcNumber());
-				if (aGiftCardTO.getGcRemainingBalance() != null) aGiftCard
-						.setGCRemainingBalance(aGiftCardTO
-								.getGcRemainingBalance());
+				if (aGiftCardTO.getGcAuthNumber() != null) {
+				   aGiftCard.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
+				}
+				if (aGiftCardTO.getGcAuthSysResponse() != null) {
+				   aGiftCard.setGCAuthSysResponse(aGiftCardTO.getGcAuthSysResponse());
+				}
+				if (aGiftCardTO.getGcNumber() != null) {
+				   aGiftCard.setGCNumber(aGiftCardTO.getGcNumber());
+				}
+				if (aGiftCardTO.getGcRemainingBalance() != null) {
+				   aGiftCard.setGCRemainingBalance(aGiftCardTO.getGcRemainingBalance());
+				}
 				if (aGiftCardTO.getGcPromoExpDate() != null) {
 					aGiftCard.setGCPromoExpDate(UtilXML
 							.convertToXML(aGiftCardTO.getGcPromoExpDate()));
@@ -687,8 +700,9 @@ public abstract class CreateTicketXML {
 				}
 
 				// TranNID
-				if (tktTranTO.getTranNID() != null) tktTran
-						.setTranNID(tktTranTO.getTranNID());
+				if (tktTranTO.getTranNID() != null) {
+				   tktTran.setTranNID(tktTranTO.getTranNID());
+				}
 
 				qName = new QName("TktTransaction");
 				JAXBElement section = new JAXBElement(qName,
@@ -902,8 +916,9 @@ public abstract class CreateTicketXML {
 
 		// Optional items
 		// ProdPrice
-		if (aTicket.getProdPrice() != null) aTicketTO
-				.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
+		if (aTicket.getProdPrice() != null) {
+		   aTicketTO.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
+		}
 
 		// TktValidity - Added as of DTI 2.16.1 APMP - JTL
 		if (aTicket.getTktValidity() != null) {

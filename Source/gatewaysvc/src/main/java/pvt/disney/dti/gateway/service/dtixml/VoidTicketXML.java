@@ -124,8 +124,7 @@ public abstract class VoidTicketXML {
 			aTicket.getTktItemOrTktIDOrTktTransaction().add(tktItem);
 
 			// TktID
-			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO
-					.getTicketTypes();
+			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
 
 			if (typeList.size() > 0) {
 
@@ -179,8 +178,9 @@ public abstract class VoidTicketXML {
 				TicketTransactionTO tktTranTO = aTicketTO.getTktTran();
 
 				// TktProvider
-				if (tktTranTO.getTktProvider() != null) tktTran
-						.setTktProvider(tktTranTO.getTktProvider());
+				if (tktTranTO.getTktProvider() != null) {
+				   tktTran.setTktProvider(tktTranTO.getTktProvider());
+				}
 
 				// TranDSSN
 				if (tktTranTO.getDssnDate() != null) {
@@ -197,12 +197,12 @@ public abstract class VoidTicketXML {
 				}
 
 				// TranNID
-				if (tktTranTO.getTranNID() != null) tktTran
-						.setTranNID(tktTranTO.getTranNID());
+				if (tktTranTO.getTranNID() != null) {
+				   tktTran.setTranNID(tktTranTO.getTranNID());
+				}
 
 				qName = new QName("TktTransaction");
-				JAXBElement section = new JAXBElement(qName,
-						tktTran.getClass(), tktTran);
+				JAXBElement section = new JAXBElement(qName, tktTran.getClass(), tktTran);
 				aTicket.getTktItemOrTktIDOrTktTransaction().add(section);
 
 			}
@@ -217,11 +217,9 @@ public abstract class VoidTicketXML {
 				tktError.setTktErrorText(errorTO.getErrorText());
 
 				qName = new QName("TktError");
-				JAXBElement<String> tktErrorElement = new JAXBElement(qName,
-						tktError.getClass(), tktError);
+				JAXBElement<String> tktErrorElement = new JAXBElement(qName, tktError.getClass(), tktError);
 
-				aTicket.getTktItemOrTktIDOrTktTransaction()
-						.add(tktErrorElement);
+				aTicket.getTktItemOrTktIDOrTktTransaction().add(tktErrorElement);
 			}
 
 			ticketList.add(aTicket);
@@ -251,38 +249,38 @@ public abstract class VoidTicketXML {
 
 		if (payType.getCreditCard() != null) { // THIS IS A CREDIT CARD
 			CreditCardTO creditCardTO = new CreditCardTO();
-			VoidTicketRequest.Payment.PayType.CreditCard creditCard = payType
-					.getCreditCard();
+			VoidTicketRequest.Payment.PayType.CreditCard creditCard = payType.getCreditCard();
 
 			if (creditCard.getCCManual() != null) {
 
-				VoidTicketRequest.Payment.PayType.CreditCard.CCManual ccManual = creditCard
-						.getCCManual();
+				VoidTicketRequest.Payment.PayType.CreditCard.CCManual ccManual = creditCard.getCCManual();
 
 				// Required fields
 				creditCardTO.setCcNbr(ccManual.getCCNbr());
 				creditCardTO.setCcExpiration(ccManual.getCCExpiration());
 
 				// Optional fields
-				if (ccManual.getCCVV() != null) creditCardTO.setCcVV(ccManual
-						.getCCVV());
-				if (ccManual.getCCName() != null) creditCardTO
-						.setCcName(ccManual.getCCName());
-				if (ccManual.getCCStreet() != null) creditCardTO
-						.setCcStreet(ccManual.getCCStreet());
-				if (ccManual.getCCZipcode() != null) creditCardTO
-						.setCcZipCode(ccManual.getCCZipcode());
+				if (ccManual.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccManual.getCCVV());
+				}
+				if (ccManual.getCCName() != null) {
+				   creditCardTO.setCcName(ccManual.getCCName());
+				}
+				if (ccManual.getCCStreet() != null) {
+				   creditCardTO.setCcStreet(ccManual.getCCStreet());
+				}
+				if (ccManual.getCCZipcode() != null) {
+				   creditCardTO.setCcZipCode(ccManual.getCCZipcode());
+				}
 
 				if (ccManual.getCCCAVV() != null) {
-					ElementNSImpl nsElement = (ElementNSImpl) ccManual
-							.getCCCAVV();
+					ElementNSImpl nsElement = (ElementNSImpl) ccManual.getCCCAVV();
 					String cccavv = nsElement.getFirstChild().getNodeValue();
 					creditCardTO.setCcCAVV(cccavv);
 				}
 
 				if (ccManual.getCCEcommerce() != null) {
-					ElementNSImpl nsElement = (ElementNSImpl) ccManual
-							.getCCEcommerce();
+					ElementNSImpl nsElement = (ElementNSImpl) ccManual.getCCEcommerce();
 					String eComm = nsElement.getFirstChild().getNodeValue();
 					creditCardTO.setCcEcommerce(eComm);
 				}
@@ -290,26 +288,27 @@ public abstract class VoidTicketXML {
 			}
 			else if (creditCard.getCCSwipe() != null) {
 
-				VoidTicketRequest.Payment.PayType.CreditCard.CCSwipe ccSwipe = creditCard
-						.getCCSwipe();
+				VoidTicketRequest.Payment.PayType.CreditCard.CCSwipe ccSwipe = creditCard.getCCSwipe();
 
 				// Required fields
 				creditCardTO.setCcTrack1(ccSwipe.getCCTrack1());
 				creditCardTO.setCcTrack2(ccSwipe.getCCTrack2());
 
 				// Optional fields
-				if (ccSwipe.getCCVV() != null) creditCardTO.setCcVV(ccSwipe
-						.getCCVV());
-				if (ccSwipe.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
-				if (ccSwipe.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				if (ccSwipe.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccSwipe.getCCVV());
+				}
+				if (ccSwipe.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
+				}
+				if (ccSwipe.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				}
 
 			}
 			else if (creditCard.getCCWireless() != null) { // as of 2.12
 
-				VoidTicketRequest.Payment.PayType.CreditCard.CCWireless ccWireless = creditCard
-						.getCCWireless();
+				VoidTicketRequest.Payment.PayType.CreditCard.CCWireless ccWireless = creditCard.getCCWireless();
 				creditCardTO.setWireless(true);
 
 				// Required fields
@@ -317,12 +316,15 @@ public abstract class VoidTicketXML {
 				creditCardTO.setCcTrack2(ccWireless.getCCTrack2());
 
 				// Optional fields
-				if (ccWireless.getCCVV() != null) creditCardTO
-						.setCcVV(ccWireless.getCCVV());
-				if (ccWireless.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccWireless.getPosTerminal());
-				if (ccWireless.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				if (ccWireless.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccWireless.getCCVV());
+				}
+				if (ccWireless.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccWireless.getPosTerminal());
+				}
+				if (ccWireless.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				}
 			}
 
 			aPaymentTO.setCreditCard(creditCardTO);
@@ -335,8 +337,9 @@ public abstract class VoidTicketXML {
 			voucherTO.setMainCode(payType.getVoucher().getMainCode());
 
 			// Optional fields
-			if (payType.getVoucher().getUniqueCode() != null) voucherTO
-					.setUniqueCode(payType.getVoucher().getUniqueCode());
+			if (payType.getVoucher().getUniqueCode() != null) {
+			   voucherTO.setUniqueCode(payType.getVoucher().getUniqueCode());
+			}
 
 			aPaymentTO.setVoucher(voucherTO);
 
@@ -353,10 +356,8 @@ public abstract class VoidTicketXML {
 
 				// Optional fields:
 				if (gcManual.getGCStartDate() != null) {
-					XMLGregorianCalendar tXCal = (XMLGregorianCalendar) gcManual
-							.getGCStartDate();
-					GregorianCalendar tempCalendar = UtilXML
-							.convertFromXML(tXCal);
+					XMLGregorianCalendar tXCal = (XMLGregorianCalendar) gcManual.getGCStartDate();
+					GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
 					giftCardTO.setGcStartDate(tempCalendar);
 				}
 
@@ -365,8 +366,7 @@ public abstract class VoidTicketXML {
 			}
 			else if (payType.getGiftCard().getGCSwipe() != null) {
 
-				VoidTicketRequest.Payment.PayType.GiftCard.GCSwipe gcSwipe = payType
-						.getGiftCard().getGCSwipe();
+				VoidTicketRequest.Payment.PayType.GiftCard.GCSwipe gcSwipe = payType.getGiftCard().getGCSwipe();
 
 				// Required fields
 				giftCardTO.setGcTrack2(gcSwipe.getGCTrack2());
@@ -382,8 +382,9 @@ public abstract class VoidTicketXML {
 		}
 
 		// PayAmount
-		if (aPayment.getPayAmount() != null) aPaymentTO
-				.setPayAmount(new BigDecimal(aPayment.getPayAmount()));
+		if (aPayment.getPayAmount() != null) {
+		   aPaymentTO.setPayAmount(new BigDecimal(aPayment.getPayAmount()));
+		}
 
 		// Add payment to list
 		paymentListTO.add(aPaymentTO);

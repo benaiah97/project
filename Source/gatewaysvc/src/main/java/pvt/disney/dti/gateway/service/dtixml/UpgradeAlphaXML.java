@@ -126,8 +126,9 @@ public class UpgradeAlphaXML {
         aProduct.setProdTax1(aProductTO.getProdTax1());
 
         // Optional fields
-        if (aProductTO.getProdReceiptMsg() != null) aProduct
-            .setProdReceiptMsg(aProductTO.getProdReceiptMsg());
+        if (aProductTO.getProdReceiptMsg() != null) {
+           aProduct.setProdReceiptMsg(aProductTO.getProdReceiptMsg());
+        }
 
         productList.add(aProduct);
       }
@@ -135,8 +136,7 @@ public class UpgradeAlphaXML {
 
     // Payment
     if (uaRespTO.getPaymentList() != null) {
-      List<UpgradeAlphaResponse.Payment> paymentList = uaResp
-          .getPayment();
+      List<UpgradeAlphaResponse.Payment> paymentList = uaResp.getPayment();
       ArrayList<PaymentTO> paymentListTO = uaRespTO.getPaymentList();
       setJaxbPaymentList(paymentList, paymentListTO);
     }
@@ -147,8 +147,7 @@ public class UpgradeAlphaXML {
       String message = uaRespTO.getReceiptMessage();
 
       QName qName = new QName("Message");
-      JAXBElement<String> rcpMsg = new JAXBElement(qName,
-          message.getClass(), message);
+      JAXBElement<String> rcpMsg = new JAXBElement(qName, message.getClass(), message);
       receipt.getTotalOrTaxTotalOrTax1().add(rcpMsg);
 
       uaResp.setReceipt(receipt);
@@ -168,8 +167,7 @@ public class UpgradeAlphaXML {
    * @throws JAXBException
    *             for any JAXB parsing issue.
    */
-  private static void setJaxbPaymentList(
-      List<UpgradeAlphaResponse.Payment> paymentList,
+  private static void setJaxbPaymentList(List<UpgradeAlphaResponse.Payment> paymentList,
       ArrayList<PaymentTO> paymentListTO) throws JAXBException {
 
     for /* each */(PaymentTO aPaymentTO : /* in */paymentListTO) {
@@ -189,19 +187,19 @@ public class UpgradeAlphaXML {
         aCreditCard.setCCAuthCode(aCreditCardTO.getCcAuthCode());
 
         // Optional fields
-        if (aCreditCardTO.getCcAuthNumber() != null) aCreditCard
-            .setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
-        if (aCreditCardTO.getCcAuthSysResponse() != null) aCreditCard
-            .setCCAuthSysResponse(aCreditCardTO
-                .getCcAuthSysResponse());
+        if (aCreditCardTO.getCcAuthNumber() != null) {
+           aCreditCard.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
+        }
+        if (aCreditCardTO.getCcAuthSysResponse() != null) {
+           aCreditCard.setCCAuthSysResponse(aCreditCardTO.getCcAuthSysResponse());
+        }
         if (aCreditCardTO.getCcNumber() != null) {
           aCreditCard.setCCNumber(aCreditCardTO.getCcNumber());
         }
 
         aPayType.setCreditCard(aCreditCard);
 
-      }
-      else if (aPaymentTO.getGiftCard() != null) {
+      } else if (aPaymentTO.getGiftCard() != null) {
 
         UpgradeAlphaResponse.Payment.PayType.GiftCard aGiftCard = new UpgradeAlphaResponse.Payment.PayType.GiftCard();
         GiftCardTO aGiftCardTO = aPaymentTO.getGiftCard();
@@ -210,19 +208,20 @@ public class UpgradeAlphaXML {
         aGiftCard.setGCAuthCode(aGiftCardTO.getGcAuthCode());
 
         // Optional fields
-        if (aGiftCardTO.getGcAuthNumber() != null) aGiftCard
-            .setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
-        if (aGiftCardTO.getGcAuthSysResponse() != null) aGiftCard
-            .setGCAuthSysResponse(aGiftCardTO
-                .getGcAuthSysResponse());
-        if (aGiftCardTO.getGcNumber() != null) aGiftCard
-            .setGCNumber(aGiftCardTO.getGcNumber());
-        if (aGiftCardTO.getGcRemainingBalance() != null) aGiftCard
-            .setGCRemainingBalance(aGiftCardTO
-                .getGcRemainingBalance());
+        if (aGiftCardTO.getGcAuthNumber() != null) {
+           aGiftCard.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
+        }
+        if (aGiftCardTO.getGcAuthSysResponse() != null) {
+           aGiftCard.setGCAuthSysResponse(aGiftCardTO.getGcAuthSysResponse());
+        }
+        if (aGiftCardTO.getGcNumber() != null) {
+           aGiftCard.setGCNumber(aGiftCardTO.getGcNumber());
+        }
+        if (aGiftCardTO.getGcRemainingBalance() != null) {
+           aGiftCard.setGCRemainingBalance(aGiftCardTO.getGcRemainingBalance());
+        }
         if (aGiftCardTO.getGcPromoExpDate() != null) {
-          aGiftCard.setGCPromoExpDate(UtilXML
-              .convertToXML(aGiftCardTO.getGcPromoExpDate()));
+          aGiftCard.setGCPromoExpDate(UtilXML.convertToXML(aGiftCardTO.getGcPromoExpDate()));
         }
 
         aPayType.setGiftCard(aGiftCard);
@@ -258,13 +257,11 @@ public class UpgradeAlphaXML {
       // Ticket Item
       BigInteger tktItemTO = aTicketTO.getTktItem();
       QName qName = new QName("TktItem");
-      JAXBElement<BigInteger> tktItem = new JAXBElement(qName,
-          tktItemTO.getClass(), tktItemTO);
+      JAXBElement<BigInteger> tktItem = new JAXBElement(qName, tktItemTO.getClass(), tktItemTO);
       aTicket.getTktItemOrTktPartOrTktID().add(tktItem);
 
       // TktID
-      ArrayList<TicketTO.TicketIdType> typeList = aTicketTO
-          .getTicketTypes();
+      ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
 
       if (typeList.size() > 0) {
 
@@ -382,8 +379,7 @@ public class UpgradeAlphaXML {
         tktError.setTktErrorText(errorTO.getErrorText());
 
         qName = new QName("TktError");
-        JAXBElement<String> tktErrorElement = new JAXBElement(qName,
-            tktError.getClass(), tktError);
+        JAXBElement<String> tktErrorElement = new JAXBElement(qName, tktError.getClass(), tktError);
 
         aTicket.getTktItemOrTktPartOrTktID().add(tktErrorElement);
       }
@@ -428,23 +424,29 @@ public class UpgradeAlphaXML {
         creditCardTO.setCcExpiration(ccManual.getCCExpiration());
 
         // Optional fields
-        if (ccManual.getCCVV() != null) creditCardTO.setCcVV(ccManual
-            .getCCVV());
-        if (ccManual.getCCName() != null) creditCardTO
-            .setCcName(ccManual.getCCName());
-        if (ccManual.getCCStreet() != null) creditCardTO
-            .setCcStreet(ccManual.getCCStreet());
-        if (ccManual.getCCZipcode() != null) creditCardTO
-            .setCcZipCode(ccManual.getCCZipcode());
-        if (ccManual.getCCCAVV() != null) creditCardTO
-            .setCcCAVV(ccManual.getCCCAVV());
-        if (ccManual.getCCEcommerce() != null) creditCardTO
-            .setCcEcommerce(ccManual.getCCEcommerce());
-        if (ccManual.getCCType() != null) creditCardTO
-            .setCcType(ccManual.getCCType());
+        if (ccManual.getCCVV() != null) {
+           creditCardTO.setCcVV(ccManual.getCCVV());
+        }
+        if (ccManual.getCCName() != null) {
+           creditCardTO.setCcName(ccManual.getCCName());
+        }
+        if (ccManual.getCCStreet() != null) {
+           creditCardTO.setCcStreet(ccManual.getCCStreet());
+        }
+        if (ccManual.getCCZipcode() != null) {
+           creditCardTO.setCcZipCode(ccManual.getCCZipcode());
+        }
+        if (ccManual.getCCCAVV() != null) {
+           creditCardTO.setCcCAVV(ccManual.getCCCAVV());
+        }
+        if (ccManual.getCCEcommerce() != null) {
+           creditCardTO.setCcEcommerce(ccManual.getCCEcommerce());
+        }
+        if (ccManual.getCCType() != null) {
+           creditCardTO.setCcType(ccManual.getCCType());
+        }
 
-      }
-      else if (creditCard.getCCSwipe() != null) {
+      } else if (creditCard.getCCSwipe() != null) {
 
         UpgradeAlphaRequest.Payment.PayType.CreditCard.CCSwipe ccSwipe = creditCard
             .getCCSwipe();
@@ -454,15 +456,17 @@ public class UpgradeAlphaXML {
         creditCardTO.setCcTrack2(ccSwipe.getCCTrack2());
 
         // Optional fields
-        if (ccSwipe.getCCVV() != null) creditCardTO.setCcVV(ccSwipe
-            .getCCVV());
-        if (ccSwipe.getPosTerminal() != null) // as of 2.12
-        creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
-        if (ccSwipe.getExtnlDevSerial() != null) // as of 2.12
-        creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+        if (ccSwipe.getCCVV() != null) {
+           creditCardTO.setCcVV(ccSwipe.getCCVV());
+        }
+        if (ccSwipe.getPosTerminal() != null) {
+           creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
+        }
+        if (ccSwipe.getExtnlDevSerial() != null) {
+           creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+        }
 
-      }
-      else if (creditCard.getCCWireless() != null) { // as of 2.12
+      } else if (creditCard.getCCWireless() != null) { // as of 2.12
 
         UpgradeAlphaRequest.Payment.PayType.CreditCard.CCWireless ccWireless = creditCard
             .getCCWireless();
@@ -473,12 +477,15 @@ public class UpgradeAlphaXML {
         creditCardTO.setCcTrack2(ccWireless.getCCTrack2());
 
         // Optional fields
-        if (ccWireless.getCCVV() != null) creditCardTO
-            .setCcVV(ccWireless.getCCVV());
-        if (ccWireless.getPosTerminal() != null) // as of 2.12
-        creditCardTO.setPosTermID(ccWireless.getPosTerminal());
-        if (ccWireless.getExtnlDevSerial() != null) // as of 2.12
-        creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+        if (ccWireless.getCCVV() != null) {
+           creditCardTO.setCcVV(ccWireless.getCCVV());
+        }
+        if (ccWireless.getPosTerminal() != null) {
+           creditCardTO.setPosTermID(ccWireless.getPosTerminal());
+        }
+        if (ccWireless.getExtnlDevSerial() != null) {
+           creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+        }
       }
 
       aPaymentTO.setCreditCard(creditCardTO);
@@ -491,8 +498,9 @@ public class UpgradeAlphaXML {
       voucherTO.setMainCode(payType.getVoucher().getMainCode());
 
       // Optional fields
-      if (payType.getVoucher().getUniqueCode() != null) voucherTO
-          .setUniqueCode(payType.getVoucher().getUniqueCode());
+      if (payType.getVoucher().getUniqueCode() != null) {
+         voucherTO.setUniqueCode(payType.getVoucher().getUniqueCode());
+      }
 
       aPaymentTO.setVoucher(voucherTO);
 
@@ -509,10 +517,8 @@ public class UpgradeAlphaXML {
 
         // Optional fields
         if (gcManual.getGCStartDate() != null) {
-          XMLGregorianCalendar tXCal = (XMLGregorianCalendar) gcManual
-              .getGCStartDate();
-          GregorianCalendar tempCalendar = UtilXML
-              .convertFromXML(tXCal);
+          XMLGregorianCalendar tXCal = (XMLGregorianCalendar) gcManual.getGCStartDate();
+          GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
           giftCardTO.setGcStartDate(tempCalendar);
         }
 
@@ -521,8 +527,7 @@ public class UpgradeAlphaXML {
       }
       else if (payType.getGiftCard().getGCSwipe() != null) {
 
-        UpgradeAlphaRequest.Payment.PayType.GiftCard.GCSwipe gcSwipe = payType
-            .getGiftCard().getGCSwipe();
+        UpgradeAlphaRequest.Payment.PayType.GiftCard.GCSwipe gcSwipe = payType.getGiftCard().getGCSwipe();
 
         // Required fields
         giftCardTO.setGcTrack2(gcSwipe.getGCTrack2());
@@ -537,8 +542,9 @@ public class UpgradeAlphaXML {
     }
 
     // PayAmount
-    if (aPayment.getPayAmount() != null) aPaymentTO
-        .setPayAmount(new BigDecimal(aPayment.getPayAmount()));
+    if (aPayment.getPayAmount() != null) {
+       aPaymentTO.setPayAmount(new BigDecimal(aPayment.getPayAmount()));
+    }
 
     // Add payment to list
     paymentListTO.add(aPaymentTO);
@@ -618,10 +624,8 @@ public class UpgradeAlphaXML {
 
     // TktStatus
     if (aTicket.getTktStatus() != null) {
-      ArrayList<TicketTO.TktStatusTO> tktStatusListTO = aTicketTO
-          .getTktStatusList();
-      List<UpgradeAlphaRequest.Ticket.TktStatus> tktStatusList = aTicket
-          .getTktStatus();
+      ArrayList<TicketTO.TktStatusTO> tktStatusListTO = aTicketTO.getTktStatusList();
+      List<UpgradeAlphaRequest.Ticket.TktStatus> tktStatusList = aTicket.getTktStatus();
       for /* each */(UpgradeAlphaRequest.Ticket.TktStatus aTktStatus : /* in */tktStatusList) {
         TicketTO.TktStatusTO aTktStatusTO = aTicketTO.new TktStatusTO();
         aTktStatusTO.setStatusItem(aTktStatus.getStatusItem());
@@ -664,16 +668,19 @@ public class UpgradeAlphaXML {
     } // TktValidity
 
     // TktShell
-    if (aTicket.getTktShell() != null) aTicketTO.setTktShell(aTicket
-        .getTktShell());
+    if (aTicket.getTktShell() != null) {
+       aTicketTO.setTktShell(aTicket.getTktShell());
+    }
 
     // TktMarket
-    if (aTicket.getTktMarket() != null) aTicketTO.setTktMarket(aTicket
-        .getTktMarket());
+    if (aTicket.getTktMarket() != null) {
+       aTicketTO.setTktMarket(aTicket.getTktMarket());
+    }
 
     // TktNote
-    if (aTicket.getTktNote() != null) aTicketTO.setTktNote(aTicket
-        .getTktNote());
+    if (aTicket.getTktNote() != null) {
+       aTicketTO.setTktNote(aTicket.getTktNote());
+    }
 
     ticketListTO.add(aTicketTO);
   }

@@ -108,7 +108,7 @@ public abstract class CommandHeaderXML {
 		commandHeader.setCmdDate(xCalDate);
 
 		// Because of ticket seller limitations, the time format must be HH:mm:ss.SS, but .SSS is
-		// always generated. The string is therefore clipped at the end to make it acceptible.
+		// always generated. The string is therefore clipped at the end to make it acceptable.
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 		String tempCalendarString = sdf.format(gCal.getTime());
 		tempCalendarString = tempCalendarString.substring(0,

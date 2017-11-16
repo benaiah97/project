@@ -15,10 +15,6 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
 
-import pvt.disney.dti.gateway.constants.DTIErrorCode;
-import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.CosGrpKey;
-import pvt.disney.dti.gateway.dao.LookupKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
@@ -108,8 +104,6 @@ public class TransmissionRqstXML {
       thisInstance = new TransmissionRqstXML();
     }
 
-    DTITransactionTO dtiTransTO;
-    
     // Pre-processing step because schemas moved in CICD (As of 2.16.3, JTL)
     String requestXMLin = updateSchemaLocations(requestXML);
 
@@ -128,132 +122,119 @@ public class TransmissionRqstXML {
   }
   
  
-  /**
- * This will call the actual logic of converting the Transmission object to the required DTiTransaction Object  
- * @param requestType
- * @param tktBroker
- * @param jaxbReq
- * @return
- * @throws JAXBException
- */
-public static DTITransactionTO getDtiTransactionTo(
-		TransactionType requestType, String tktBroker, Transmission jaxbReq)
-		throws JAXBException {
-	DTITransactionTO dtiTransTO;
-	dtiTransTO = new DTITransactionTO(requestType);
-    dtiTransTO.setTktBroker(tktBroker);
+ /**
+  * This will call the actual logic of converting the Transmission object to the required DTiTransaction Object  
+  * @param requestType
+  * @param tktBroker
+  * @param jaxbReq
+  * @return
+  * @throws JAXBException
+  */
+   public static DTITransactionTO getDtiTransactionTo(TransactionType requestType, String tktBroker,
+            Transmission jaxbReq) throws JAXBException {
 
-    DTIRequestTO dtiRequestTO = new DTIRequestTO();
+      DTITransactionTO dtiTransTO;
+      dtiTransTO = new DTITransactionTO(requestType);
+      dtiTransTO.setTktBroker(tktBroker);
 
-    // Get the payload header TO
-    Transmission.Payload payload = jaxbReq.getPayload();
-    PayloadHeader payloadHeader = payload.getPayloadHeader();
-    PayloadHeaderTO payloadHeaderTO = PayloadHeaderXML.getTO(payloadHeader);
-    dtiRequestTO.setPayloadHeader(payloadHeaderTO);
+      DTIRequestTO dtiRequestTO = new DTIRequestTO();
 
-    // Get the command header TO
-    CommandHeader commandHeader = payload.getCommand().getCommandHeader();
-    CommandHeaderTO commandHeaderTO = CommandHeaderXML.getTO(commandHeader);
-    dtiRequestTO.setCommandHeader(commandHeaderTO);
+      // Get the payload header TO
+      Transmission.Payload payload = jaxbReq.getPayload();
+      PayloadHeader payloadHeader = payload.getPayloadHeader();
+      PayloadHeaderTO payloadHeaderTO = PayloadHeaderXML.getTO(payloadHeader);
+      dtiRequestTO.setPayloadHeader(payloadHeaderTO);
 
-    // Get the command body TO
-    CommandBodyTO commandBodyTO = null;
-    switch (requestType) {
+      // Get the command header TO
+      CommandHeader commandHeader = payload.getCommand().getCommandHeader();
+      CommandHeaderTO commandHeaderTO = CommandHeaderXML.getTO(commandHeader);
+      dtiRequestTO.setCommandHeader(commandHeaderTO);
 
-    case QUERYTICKET:
-      QueryTicketRequest queryReq = payload.getCommand()
-          .getQueryTicketRequest();
-      commandBodyTO = QueryTicketXML.getTO(queryReq);
-      break;
+      // Get the command body TO
+      CommandBodyTO commandBodyTO = null;
+      switch (requestType) {
 
-    case RESERVATION:
-      ReservationRequest resReq = payload.getCommand()
-          .getReservationRequest();
-      commandBodyTO = ReservationXML.getTO(resReq);
-      break;
+      case QUERYTICKET:
+         QueryTicketRequest queryReq = payload.getCommand().getQueryTicketRequest();
+         commandBodyTO = QueryTicketXML.getTO(queryReq);
+         break;
 
-    case UPGRADEALPHA:
-      UpgradeAlphaRequest uaReq = payload.getCommand()
-          .getUpgradeAlphaRequest();
-      commandBodyTO = UpgradeAlphaXML.getTO(uaReq);
-      break;
+      case RESERVATION:
+         ReservationRequest resReq = payload.getCommand().getReservationRequest();
+         commandBodyTO = ReservationXML.getTO(resReq);
+         break;
 
-    case VOIDTICKET:
-      VoidTicketRequest vtReq = payload.getCommand()
-          .getVoidTicketRequest();
-      commandBodyTO = VoidTicketXML.getTO(vtReq);
-      break;
+      case UPGRADEALPHA:
+         UpgradeAlphaRequest uaReq = payload.getCommand().getUpgradeAlphaRequest();
+         commandBodyTO = UpgradeAlphaXML.getTO(uaReq);
+         break;
 
-    case CREATETICKET:
-      CreateTicketRequest ctReq = payload.getCommand()
-          .getCreateTicketRequest();
-      commandBodyTO = CreateTicketXML.getTO(ctReq);
-      break;
+      case VOIDTICKET:
+         VoidTicketRequest vtReq = payload.getCommand().getVoidTicketRequest();
+         commandBodyTO = VoidTicketXML.getTO(vtReq);
+         break;
 
-    case UPDATETICKET:
-      UpdateTicketRequest uTktReq = payload.getCommand()
-          .getUpdateTicketRequest();
-      commandBodyTO = UpdateTicketXML.getTO(uTktReq);
-      break;
+      case CREATETICKET:
+         CreateTicketRequest ctReq = payload.getCommand().getCreateTicketRequest();
+         commandBodyTO = CreateTicketXML.getTO(ctReq);
+         break;
 
-    case UPDATETRANSACTION:
-      UpdateTransactionRequest uTxnReq = payload.getCommand()
-          .getUpdateTransactionRequest();
-      commandBodyTO = UpdateTransactionXML.getTO(uTxnReq);
-      break;
+      case UPDATETICKET:
+         UpdateTicketRequest uTktReq = payload.getCommand().getUpdateTicketRequest();
+         commandBodyTO = UpdateTicketXML.getTO(uTktReq);
+         break;
 
-    case QUERYRESERVATION:
-      QueryReservationRequest qResReq = payload.getCommand()
-          .getQueryReservationRequest();
-      commandBodyTO = QueryReservationXML.getTO(qResReq);
-      break;
+      case UPDATETRANSACTION:
+         UpdateTransactionRequest uTxnReq = payload.getCommand().getUpdateTransactionRequest();
+         commandBodyTO = UpdateTransactionXML.getTO(uTxnReq);
+         break;
 
-    case UPGRADEENTITLEMENT: // 2.10
-      UpgradeEntitlementRequest uEntReq = payload.getCommand()
-          .getUpgradeEntitlementRequest();
-      commandBodyTO = UpgradeEntitlementXML.getTO(uEntReq);
-      break;
+      case QUERYRESERVATION:
+         QueryReservationRequest qResReq = payload.getCommand().getQueryReservationRequest();
+         commandBodyTO = QueryReservationXML.getTO(qResReq);
+         break;
 
-    case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
-      AssociateMediaToAccountRequest amReq = payload.getCommand()
-          .getAssociateMediaToAccountRequest();
-      commandBodyTO = AssociateMediaToAccountXML.getTO(amReq);
-      break;
+      case UPGRADEENTITLEMENT: // 2.10
+         UpgradeEntitlementRequest uEntReq = payload.getCommand().getUpgradeEntitlementRequest();
+         commandBodyTO = UpgradeEntitlementXML.getTO(uEntReq);
+         break;
 
-    case TICKERATEENTITLEMENT: // 2.16.1 BIEST001
-      TickerateEntitlementRequest teReq = payload.getCommand()
-          .getTickerateEntitlementRequest();
-      commandBodyTO = TickerateEntitlementXML.getTO(teReq);
-      break;
+      case ASSOCIATEMEDIATOACCOUNT: // 2.16.1 BIEST001
+         AssociateMediaToAccountRequest amReq = payload.getCommand().getAssociateMediaToAccountRequest();
+         commandBodyTO = AssociateMediaToAccountXML.getTO(amReq);
+         break;
 
-    case RENEWENTITLEMENT: // as of 2.16.1, JTL
-      RenewEntitlementRequest rEntReq = payload.getCommand()
-          .getRenewEntitlementRequest();
-      commandBodyTO = RenewEntitlementXML.getTO(rEntReq);
-      break;
-      
-    case VOIDRESERVATION: // as of 2.16.3, JTL
-      VoidReservationRequest vResReq = payload.getCommand().getVoidReservationRequest();
-      commandBodyTO = VoidReservationXML.getTO(vResReq);
-      break;  
-      
-    case QUERYELIGPRODUCTS: // as of part of AP Upgrade Service
-	  QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand()
-		   .getQueryEligibleProductsRequest();
-	   commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
-	  break;  
+      case TICKERATEENTITLEMENT: // 2.16.1 BIEST001
+         TickerateEntitlementRequest teReq = payload.getCommand().getTickerateEntitlementRequest();
+         commandBodyTO = TickerateEntitlementXML.getTO(teReq);
+         break;
 
-    default:
-      break;
+      case RENEWENTITLEMENT: // as of 2.16.1, JTL
+         RenewEntitlementRequest rEntReq = payload.getCommand().getRenewEntitlementRequest();
+         commandBodyTO = RenewEntitlementXML.getTO(rEntReq);
+         break;
 
-    }
+      case VOIDRESERVATION: // as of 2.16.3, JTL
+         VoidReservationRequest vResReq = payload.getCommand().getVoidReservationRequest();
+         commandBodyTO = VoidReservationXML.getTO(vResReq);
+         break;
 
-    dtiRequestTO.setCommandBody(commandBodyTO);
+      case QUERYELIGPRODUCTS: // as of part of AP Upgrade Service
+         QueryEligibleProductsRequest queryEligPrdReq = payload.getCommand().getQueryEligibleProductsRequest();
+         commandBodyTO = QueryEligibleProductsXML.getTO(queryEligPrdReq);
+         break;
 
-    dtiTransTO.setRequest(dtiRequestTO);
+      default:
+         break;
 
-    return dtiTransTO;
-}
+      }
+
+      dtiRequestTO.setCommandBody(commandBodyTO);
+
+      dtiTransTO.setRequest(dtiRequestTO);
+
+      return dtiTransTO;
+   }
   
   /**
    * Update required for CICD
@@ -266,6 +247,5 @@ public static DTITransactionTO getDtiTransactionTo(
     
     return returnString;
   }
-  
   
 }

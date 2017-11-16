@@ -35,7 +35,7 @@ import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse.Payment;
 
 /**
- * 
+ * This class contains all of the translation logic for handling XML -> object transformations.
  * @author HUFFM017
  * 
  */
@@ -81,8 +81,7 @@ public class UpgradeEntitlementXML {
 	    	UpgradeEntitlementRequest.Reservation renewEnt = upgradeEntitlementReq
 	          .getReservation();
 	      ReservationTO resvTO = new ReservationTO();
-	      List<JAXBElement<?>> aReservationList = renewEnt
-	          .getResCodeOrResCreateDateOrResPickupDate();
+	      List<JAXBElement<?>> aReservationList = renewEnt.getResCodeOrResCreateDateOrResPickupDate();
 	      for /* each */(JAXBElement<?> aReservationEntry : /* in */aReservationList) {
 	        setTOReservation(resvTO, aReservationEntry);
 	      }
@@ -91,8 +90,7 @@ public class UpgradeEntitlementXML {
 
 	    // ClientData
 	    if (upgradeEntitlementReq.getClientData() != null) {
-	    	UpgradeEntitlementRequest.ClientData clientData = upgradeEntitlementReq
-	          .getClientData();
+	    	UpgradeEntitlementRequest.ClientData clientData = upgradeEntitlementReq.getClientData();
 	      ClientDataTO clientDataTO = new ClientDataTO();
 	      setTOClientData(clientData, clientDataTO);
 	      upgradeEntitlementReqTO.setClientData(clientDataTO);
@@ -100,8 +98,7 @@ public class UpgradeEntitlementXML {
 	    
 	    // Eligibility
 	    if (upgradeEntitlementReq.getEligibility() != null) {
-	       UpgradeEntitlementRequest.Eligibility elig = upgradeEntitlementReq
-	          .getEligibility();
+	       UpgradeEntitlementRequest.Eligibility elig = upgradeEntitlementReq.getEligibility();
 	       upgradeEntitlementReqTO.setEligibilityGroup(elig.getGroup());
 	       upgradeEntitlementReqTO.setEligibilityMember(elig.getMember());
 	    }
@@ -129,14 +126,12 @@ public class UpgradeEntitlementXML {
 	      resvTO.setResNumber((String) aReservationEntry.getValue());
 	    }
 	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResCreateDate")) {
-	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
-	          .getValue();
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry.getValue();
 	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
 	      resvTO.setResCreateDate(tempCalendar);
 	    }
 	    else if (fieldName.getLocalPart().equalsIgnoreCase("ResPickupDate")) {
-	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry
-	          .getValue();
+	      XMLGregorianCalendar tXCal = (XMLGregorianCalendar) aReservationEntry.getValue();
 	      GregorianCalendar tempCalendar = UtilXML.convertFromXML(tXCal);
 	      resvTO.setResPickupDate(tempCalendar);
 	    }
@@ -163,12 +158,15 @@ public class UpgradeEntitlementXML {
 	      ClientDataTO clientDataTO) {
 
 	    // Optional fields
-	    if (clientData.getClientType() != null) clientDataTO
-	        .setClientType(clientData.getClientType());
-	    if (clientData.getClientCategory() != null) clientDataTO
-	        .setClientCategory(clientData.getClientCategory());
-	    if (clientData.getDemoLanguage() != null) clientDataTO
-	        .setDemoLanguage(clientData.getDemoLanguage());
+	    if (clientData.getClientType() != null) {
+	       clientDataTO.setClientType(clientData.getClientType());
+	    }
+	    if (clientData.getClientCategory() != null) {
+	       clientDataTO.setClientCategory(clientData.getClientCategory());
+	    }
+	    if (clientData.getDemoLanguage() != null) {
+	       clientDataTO.setDemoLanguage(clientData.getDemoLanguage());
+	    }
 
 	    // Optional Demographics
 	    if (clientData.getDemoData() != null) {
@@ -178,33 +176,45 @@ public class UpgradeEntitlementXML {
 
 	      if (demoData.getBill() != null) {
 	        DemographicsTO demoTO = new DemographicsTO();
-	        UpgradeEntitlementRequest.ClientData.DemoData.Bill billData = demoData
-	            .getBill();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Bill billData = demoData.getBill();
 
 	        // Optional Attributes
-	        if (billData.getName() != null) demoTO.setName(billData
-	            .getName());
-	        if (billData.getLastName() != null) demoTO.setLastName(billData
-	            .getLastName());
-	        if (billData.getFirstName() != null) demoTO
-	            .setFirstName(billData.getFirstName());
-	        if (billData.getAddr1() != null) demoTO.setAddr1(billData
-	            .getAddr1());
-	        if (billData.getAddr2() != null) demoTO.setAddr2(billData
-	            .getAddr2());
-	        if (billData.getCity() != null) demoTO.setCity(billData
-	            .getCity());
-	        if (billData.getState() != null) demoTO.setState(billData
-	            .getState());
-	        if (billData.getZip() != null) demoTO.setZip(billData.getZip());
-	        if (billData.getCountry() != null) demoTO.setCountry(billData
-	            .getCountry());
-	        if (billData.getTelephone() != null) demoTO
-	            .setTelephone(billData.getTelephone());
-	        if (billData.getEmail() != null) demoTO.setEmail(billData
-	            .getEmail());
-	        if (billData.getSellerResNbr() != null) demoTO
-	            .setSellerResNbr(billData.getSellerResNbr());
+	        if (billData.getName() != null) {
+	           demoTO.setName(billData.getName());
+	        }
+	        if (billData.getLastName() != null) {
+	           demoTO.setLastName(billData.getLastName());
+	        }
+	        if (billData.getFirstName() != null) {
+	           demoTO.setFirstName(billData.getFirstName());
+	        }
+	        if (billData.getAddr1() != null) {
+	           demoTO.setAddr1(billData.getAddr1());
+	        }
+	        if (billData.getAddr2() != null) {
+	           demoTO.setAddr2(billData.getAddr2());
+	        }
+	        if (billData.getCity() != null) {
+	           demoTO.setCity(billData.getCity());
+	        }
+	        if (billData.getState() != null) {
+	           demoTO.setState(billData.getState());
+	        }
+	        if (billData.getZip() != null) {
+	           demoTO.setZip(billData.getZip());
+	        }
+	        if (billData.getCountry() != null) {
+	           demoTO.setCountry(billData.getCountry());
+	        }
+	        if (billData.getTelephone() != null) {
+	           demoTO.setTelephone(billData.getTelephone());
+	        }
+	        if (billData.getEmail() != null) {
+	           demoTO.setEmail(billData.getEmail());
+	        }
+	        if (billData.getSellerResNbr() != null) {
+	           demoTO.setSellerResNbr(billData.getSellerResNbr());
+	        }
 
 	        clientDataTO.setBillingInfo(demoTO);
 
@@ -213,31 +223,42 @@ public class UpgradeEntitlementXML {
 	      if (demoData.getShip() != null) {
 
 	        DemographicsTO demoTO = new DemographicsTO();
-	        UpgradeEntitlementRequest.ClientData.DemoData.Ship shipData = demoData
-	            .getShip();
+	        UpgradeEntitlementRequest.ClientData.DemoData.Ship shipData = demoData.getShip();
 
 	        // Optional Attributes
-	        if (shipData.getName() != null) demoTO.setName(shipData
-	            .getName());
-	        if (shipData.getLastName() != null) demoTO.setLastName(shipData
-	            .getLastName());
-	        if (shipData.getFirstName() != null) demoTO
-	            .setFirstName(shipData.getFirstName());
-	        if (shipData.getAddr1() != null) demoTO.setAddr1(shipData
-	            .getAddr1());
-	        if (shipData.getAddr2() != null) demoTO.setAddr2(shipData
-	            .getAddr2());
-	        if (shipData.getCity() != null) demoTO.setCity(shipData
-	            .getCity());
-	        if (shipData.getState() != null) demoTO.setState(shipData
-	            .getState());
-	        if (shipData.getZip() != null) demoTO.setZip(shipData.getZip());
-	        if (shipData.getCountry() != null) demoTO.setCountry(shipData
-	            .getCountry());
-	        if (shipData.getTelephone() != null) demoTO
-	            .setTelephone(shipData.getTelephone());
-	        if (shipData.getEmail() != null) demoTO.setEmail(shipData
-	            .getEmail());
+	        if (shipData.getName() != null) {
+	           demoTO.setName(shipData.getName());
+	        }
+	        if (shipData.getLastName() != null) {
+	           demoTO.setLastName(shipData.getLastName());
+	        }
+	        if (shipData.getFirstName() != null) {
+	           demoTO.setFirstName(shipData.getFirstName());
+	        }
+	        if (shipData.getAddr1() != null) {
+	           demoTO.setAddr1(shipData.getAddr1());
+	        }
+	        if (shipData.getAddr2() != null) {
+	           demoTO.setAddr2(shipData.getAddr2());
+	        }
+	        if (shipData.getCity() != null) {
+	           demoTO.setCity(shipData.getCity());
+	        }
+	        if (shipData.getState() != null) {
+	           demoTO.setState(shipData.getState());
+	        }
+	        if (shipData.getZip() != null) {
+	           demoTO.setZip(shipData.getZip());
+	        }
+	        if (shipData.getCountry() != null) {
+	           demoTO.setCountry(shipData.getCountry());
+	        }
+	        if (shipData.getTelephone() != null) {
+	           demoTO.setTelephone(shipData.getTelephone());
+	        }
+	        if (shipData.getEmail() != null) {
+	           demoTO.setEmail(shipData.getEmail());
+	        }
 
 	        clientDataTO.setShippingInfo(demoTO);
 
@@ -493,20 +514,27 @@ public class UpgradeEntitlementXML {
 				creditCardTO.setCcExpiration(ccManual.getCCExpiration());
 
 				// Optional fields
-				if (ccManual.getCCVV() != null) creditCardTO.setCcVV(ccManual
-						.getCCVV());
-				if (ccManual.getCCName() != null) creditCardTO
-						.setCcName(ccManual.getCCName());
-				if (ccManual.getCCStreet() != null) creditCardTO
-						.setCcStreet(ccManual.getCCStreet());
-				if (ccManual.getCCZipcode() != null) creditCardTO
-						.setCcZipCode(ccManual.getCCZipcode());
-				if (ccManual.getCCCAVV() != null) creditCardTO
-						.setCcCAVV(ccManual.getCCCAVV());
-				if (ccManual.getCCEcommerce() != null) creditCardTO
-						.setCcEcommerce(ccManual.getCCEcommerce());
-				if (ccManual.getCCType() != null) creditCardTO
-						.setCcType(ccManual.getCCType());
+				if (ccManual.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccManual.getCCVV());
+				}
+				if (ccManual.getCCName() != null) {
+				   creditCardTO.setCcName(ccManual.getCCName());
+				}
+				if (ccManual.getCCStreet() != null) {
+				   creditCardTO.setCcStreet(ccManual.getCCStreet());
+				}
+				if (ccManual.getCCZipcode() != null) {
+				   creditCardTO.setCcZipCode(ccManual.getCCZipcode());
+				}
+				if (ccManual.getCCCAVV() != null) {
+				   creditCardTO.setCcCAVV(ccManual.getCCCAVV());
+				}
+				if (ccManual.getCCEcommerce() != null) {
+				   creditCardTO.setCcEcommerce(ccManual.getCCEcommerce());
+				}
+				if (ccManual.getCCType() != null) {
+				   creditCardTO.setCcType(ccManual.getCCType());
+				}
 
 			}
 			else if (creditCard.getCCSwipe() != null) {
@@ -519,12 +547,15 @@ public class UpgradeEntitlementXML {
 				creditCardTO.setCcTrack2(ccSwipe.getCCTrack2());
 
 				// Optional fields
-				if (ccSwipe.getCCVV() != null) creditCardTO.setCcVV(ccSwipe
-						.getCCVV());
-				if (ccSwipe.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
-				if (ccSwipe.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				if (ccSwipe.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccSwipe.getCCVV());
+				}
+				if (ccSwipe.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccSwipe.getPosTerminal());
+				}
+				if (ccSwipe.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccSwipe.getExtnlDevSerial());
+				}
 
 			}
 			else if (creditCard.getCCWireless() != null) { // as of 2.12
@@ -538,12 +569,15 @@ public class UpgradeEntitlementXML {
 				creditCardTO.setCcTrack2(ccWireless.getCCTrack2());
 
 				// Optional fields
-				if (ccWireless.getCCVV() != null) creditCardTO
-						.setCcVV(ccWireless.getCCVV());
-				if (ccWireless.getPosTerminal() != null) // as of 2.12
-				creditCardTO.setPosTermID(ccWireless.getPosTerminal());
-				if (ccWireless.getExtnlDevSerial() != null) // as of 2.12
-				creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				if (ccWireless.getCCVV() != null) {
+				   creditCardTO.setCcVV(ccWireless.getCCVV());
+				}
+				if (ccWireless.getPosTerminal() != null) {
+				   creditCardTO.setPosTermID(ccWireless.getPosTerminal());
+				}
+				if (ccWireless.getExtnlDevSerial() != null) {
+				   creditCardTO.setExtnlDevSerial(ccWireless.getExtnlDevSerial());
+				}
 			}
 
 			aPaymentTO.setCreditCard(creditCardTO);
@@ -556,8 +590,9 @@ public class UpgradeEntitlementXML {
 			voucherTO.setMainCode(payType.getVoucher().getMainCode());
 
 			// Optional fields
-			if (payType.getVoucher().getUniqueCode() != null) voucherTO
-					.setUniqueCode(payType.getVoucher().getUniqueCode());
+			if (payType.getVoucher().getUniqueCode() != null) {
+			   voucherTO.setUniqueCode(payType.getVoucher().getUniqueCode());
+			}
 
 			aPaymentTO.setVoucher(voucherTO);
 
@@ -614,14 +649,18 @@ public class UpgradeEntitlementXML {
             installCCTO.setCcExpiration(installCard.getCCManual().getCCExpiration());
             installCCTO.setCcName(installCard.getCCManual().getCCName());
 
-            if (installCard.getCCManual().getCCVV() != null)
+            if (installCard.getCCManual().getCCVV() != null) {
                installCCTO.setCcVV(installCard.getCCManual().getCCVV());
-            if (installCard.getCCManual().getCCStreet() != null)
+            }
+            if (installCard.getCCManual().getCCStreet() != null) {
                installCCTO.setCcStreet(installCard.getCCManual().getCCStreet());
-            if (installCard.getCCManual().getCCZipcode() != null)
+            }
+            if (installCard.getCCManual().getCCZipcode() != null) {
                installCCTO.setCcZipCode(installCard.getCCManual().getCCZipcode());
-            if (installCard.getCCManual().getCCType() != null)
+            }
+            if (installCard.getCCManual().getCCType() != null) {
                installCCTO.setCcType(installCard.getCCManual().getCCType());
+            }
 
          } else {
             installCCTO.setCcTrack1(installCard.getCCSwipe().getCCTrack1());
@@ -745,12 +784,12 @@ public class UpgradeEntitlementXML {
 			UpgradeEntitlementResponse.Ticket aTicket = new UpgradeEntitlementResponse.Ticket();
 
 			// Ticket Item
-			if (aTicketTO.getTktItem() != null) aTicket.setTktItem(aTicketTO
-					.getTktItem());
+			if (aTicketTO.getTktItem() != null) {
+			   aTicket.setTktItem(aTicketTO.getTktItem());
+			}
 
 			// TktID
-			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO
-					.getTicketTypes();
+			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
 
 			if (typeList.size() > 0) {
 
@@ -815,12 +854,14 @@ public class UpgradeEntitlementXML {
 			}
 
 			// Ticket Price
-			if (aTicketTO.getTktPrice() != null) aTicket.setTktPrice(aTicketTO
-					.getTktPrice());
+			if (aTicketTO.getTktPrice() != null) {
+			   aTicket.setTktPrice(aTicketTO.getTktPrice());
+			}
 
 			// Ticket Tax
-			if (aTicketTO.getTktTax() != null) aTicket.setTktTax(aTicketTO
-					.getTktTax());
+			if (aTicketTO.getTktTax() != null) {
+			   aTicket.setTktTax(aTicketTO.getTktTax());
+			}
 
 			// Ticket Validity
 			if ((aTicketTO.getTktValidityValidStart() != null) && (aTicketTO
@@ -840,8 +881,7 @@ public class UpgradeEntitlementXML {
 
 				qName = new QName("ValidEnd");
 				@SuppressWarnings("rawtypes")
-				JAXBElement<XMLGregorianCalendar> tktValEnd = new JAXBElement(
-						qName, tXCal.getClass(), tXCal);
+				JAXBElement<XMLGregorianCalendar> tktValEnd = new JAXBElement(qName, tXCal.getClass(), tXCal);
 				tktValidity.setValidEnd(tktValEnd.getValue());
 
 				aTicket.setTktValidity(tktValidity);
@@ -861,8 +901,9 @@ public class UpgradeEntitlementXML {
 			}
 
 			// Ticket (To) Prod Code
-			if (aTicketTO.getProdCode() != null) aTicket
-					.setTktProdCode(aTicketTO.getProdCode());
+			if (aTicketTO.getProdCode() != null) {
+			   aTicket.setTktProdCode(aTicketTO.getProdCode());
+			}
 
 			// TktTransaction
 			if (aTicketTO.getTktTran() != null) {
@@ -885,8 +926,9 @@ public class UpgradeEntitlementXML {
 				}
 
 				// TranNID
-				if (tktTranTO.getTranNID() != null) tktTran
-						.setTranNID(tktTranTO.getTranNID());
+				if (tktTranTO.getTranNID() != null) {
+				   tktTran.setTranNID(tktTranTO.getTranNID());
+				}
 
 				aTicket.setTktTransaction(tktTran);
 
@@ -925,11 +967,12 @@ public class UpgradeEntitlementXML {
 				aCreditCard.setCCAuthCode(aCreditCardTO.getCcAuthCode());
 
 				// Optional fields
-				if (aCreditCardTO.getCcAuthNumber() != null) aCreditCard
-						.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
-				if (aCreditCardTO.getCcAuthSysResponse() != null) aCreditCard
-						.setCCAuthSysResponse(aCreditCardTO
-								.getCcAuthSysResponse());
+				if (aCreditCardTO.getCcAuthNumber() != null) {
+				   aCreditCard.setCCAuthNumber(aCreditCardTO.getCcAuthNumber());
+				}
+				if (aCreditCardTO.getCcAuthSysResponse() != null) {
+				   aCreditCard.setCCAuthSysResponse(aCreditCardTO.getCcAuthSysResponse());
+				}
 				if (aCreditCardTO.getCcNumber() != null) {
 					aCreditCard.setCCNumber(aCreditCardTO.getCcNumber());
 				}
@@ -947,19 +990,20 @@ public class UpgradeEntitlementXML {
 				aGiftCard.setGCAuthCode(aGiftCardTO.getGcAuthCode());
 
 				// Optional fields
-				if (aGiftCardTO.getGcAuthNumber() != null) aGiftCard
-						.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
-				if (aGiftCardTO.getGcAuthSysResponse() != null) aGiftCard
-						.setGCAuthSysResponse(aGiftCardTO
-								.getGcAuthSysResponse());
-				if (aGiftCardTO.getGcNumber() != null) aGiftCard
-						.setGCNumber(aGiftCardTO.getGcNumber());
-				if (aGiftCardTO.getGcRemainingBalance() != null) aGiftCard
-						.setGCRemainingBalance(aGiftCardTO
-								.getGcRemainingBalance());
+				if (aGiftCardTO.getGcAuthNumber() != null) {
+				   aGiftCard.setGCAuthNumber(aGiftCardTO.getGcAuthNumber());
+				}
+				if (aGiftCardTO.getGcAuthSysResponse() != null) {
+				   aGiftCard.setGCAuthSysResponse(aGiftCardTO.getGcAuthSysResponse());
+				}
+				if (aGiftCardTO.getGcNumber() != null) {
+				   aGiftCard.setGCNumber(aGiftCardTO.getGcNumber());
+				}
+				if (aGiftCardTO.getGcRemainingBalance() != null) {
+				   aGiftCard.setGCRemainingBalance(aGiftCardTO.getGcRemainingBalance());
+				}
 				if (aGiftCardTO.getGcPromoExpDate() != null) {
-					aGiftCard.setGCPromoExpDate(UtilXML
-							.convertToXML(aGiftCardTO.getGcPromoExpDate()));
+					aGiftCard.setGCPromoExpDate(UtilXML.convertToXML(aGiftCardTO.getGcPromoExpDate()));
 				}
 
 				aPayType.setGiftCard(aGiftCard);

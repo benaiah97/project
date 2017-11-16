@@ -45,8 +45,8 @@ public class UpdateTransactionXML {
 			// Transaction
 			// TktItem
 
-			if (stanza.getClass().getSimpleName()
-					.equalsIgnoreCase("Transaction")) {
+			if (stanza.getClass().getSimpleName().equalsIgnoreCase("Transaction")) {
+			   
 				UpdateTransactionRequest.Transaction tran = (UpdateTransactionRequest.Transaction) stanza;
 				TicketTransactionTO tktTranTO = new TicketTransactionTO();
 

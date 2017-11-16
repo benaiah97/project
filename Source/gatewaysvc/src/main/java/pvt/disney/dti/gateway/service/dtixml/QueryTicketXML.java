@@ -11,9 +11,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
-import com.disney.logging.EventLogger;
-import com.disney.logging.audit.EventType;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
@@ -32,8 +29,6 @@ import pvt.disney.dti.gateway.response.xsd.QueryTicketResponse;
  */
 public abstract class QueryTicketXML {
 
-	  private static final EventLogger logger = EventLogger
-		      .getLogger(QueryTicketXML.class.getCanonicalName());
   /**
    * When passed the JAXB object, return the DTI application object.
    * 
