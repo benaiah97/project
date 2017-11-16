@@ -51,11 +51,11 @@
     </logger>
     <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->
     <logger additivity="false" name="CONFIG_ONLY">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="CONFIG"/>
     </logger>
     <root>
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="DEVNULL"/>
     </root>
 </log4j:configuration>

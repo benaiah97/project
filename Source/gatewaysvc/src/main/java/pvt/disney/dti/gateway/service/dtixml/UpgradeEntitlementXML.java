@@ -27,12 +27,10 @@ import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
 import pvt.disney.dti.gateway.data.common.TicketTransactionTO;
 import pvt.disney.dti.gateway.data.common.VoucherTO;
-import pvt.disney.dti.gateway.request.xsd.RenewEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket.ProdDemoData;
 import pvt.disney.dti.gateway.request.xsd.UpgradeEntitlementRequest.Ticket.ProdDemoData.TktDemoData;
-import pvt.disney.dti.gateway.response.xsd.RenewEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse;
 import pvt.disney.dti.gateway.response.xsd.UpgradeEntitlementResponse.Payment;
 
@@ -251,18 +249,17 @@ public class UpgradeEntitlementXML {
 	  }
 
 	/**
-	 * 
+	 * Sets the Transfer Object ticket list for the upgrade entitlement command. 
 	 * @param ticketListTO
 	 * @param aTicket
 	 */
-	private static void setTOTicketList(ArrayList<TicketTO> ticketListTO,
-			Ticket aTicket) {
+   private static void setTOTicketList(ArrayList<TicketTO> ticketListTO, Ticket aTicket) {
 
 		TicketTO aTicketTO = new TicketTO();
 
 		// TktItem
-		if (aTicket.getTktItem() != null) aTicketTO.setTktItem(aTicket
-				.getTktItem());
+      if (aTicket.getTktItem() != null)
+         aTicketTO.setTktItem(aTicket.getTktItem());
 
 		// TktId
 		if (aTicket.getTktID() != null) {
@@ -272,51 +269,53 @@ public class UpgradeEntitlementXML {
 			// Mag
 			if (aTktId.getMag() != null) {
 
-				UpgradeEntitlementRequest.Ticket.TktID.Mag aMag = aTktId
-						.getMag();
+            UpgradeEntitlementRequest.Ticket.TktID.Mag aMag = aTktId.getMag();
 
-				if (aMag != null) aTicketTO.setMag(aMag.getMagTrack1(),
-						aMag.getMagTrack2());
+            if (aMag != null) {
+               aTicketTO.setMag(aMag.getMagTrack1(), aMag.getMagTrack2());
+            }
 			}
 
 			// BarCode
-			if (aTktId.getBarcode() != null) aTicketTO.setBarCode(aTktId
-					.getBarcode());
+         if (aTktId.getBarcode() != null) {
+            aTicketTO.setBarCode(aTktId.getBarcode());
+         }
 
 			// TktDSSN
 			if (aTktId.getTktDSSN() != null) {
 
-				UpgradeEntitlementRequest.Ticket.TktID.TktDSSN aDssn = aTktId
-						.getTktDSSN();
+            UpgradeEntitlementRequest.Ticket.TktID.TktDSSN aDssn = aTktId.getTktDSSN();
 
 				// TktDate | TktSite | TktStation | TktNbr
 				XMLGregorianCalendar tXCal = aDssn.getTktDate();
 
-				GregorianCalendar tempCalendar = new GregorianCalendar(tXCal
-						.getEonAndYear().intValue(), (tXCal.getMonth() - 1),
-						tXCal.getDay());
+            GregorianCalendar tempCalendar = new GregorianCalendar(tXCal.getEonAndYear().intValue(),
+                     (tXCal.getMonth() - 1), tXCal.getDay());
 
-				aTicketTO.setDssn(tempCalendar, aDssn.getTktSite(),
-						aDssn.getTktStation(), aDssn.getTktNbr());
+            aTicketTO.setDssn(tempCalendar, aDssn.getTktSite(), aDssn.getTktStation(), aDssn.getTktNbr());
 			}
 
 			// TktNID
-			if (aTktId.getTktNID() != null) aTicketTO.setTktNID(aTktId
-					.getTktNID());
+         if (aTktId.getTktNID() != null) {
+            aTicketTO.setTktNID(aTktId.getTktNID());
+         }
 
 			// External
-			if (aTktId.getExternal() != null) aTicketTO.setExternal(aTktId
-					.getExternal());
+         if (aTktId.getExternal() != null) {
+            aTicketTO.setExternal(aTktId.getExternal());
+         }
 
 		}
 
 		// (To) ProdCode
-		if (aTicket.getProdCode() != null) aTicketTO.setProdCode(aTicket
-				.getProdCode());
+      if (aTicket.getProdCode() != null) {
+         aTicketTO.setProdCode(aTicket.getProdCode());
+      }
 
 		// (To) ProdPrice
-		if (aTicket.getProdPrice() != null) aTicketTO
-				.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
+      if (aTicket.getProdPrice() != null) {
+         aTicketTO.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
+      }
 
 		// (To) ProdDemoData (as of 2.15, JTL)
 		// Optional items
@@ -381,8 +380,9 @@ public class UpgradeEntitlementXML {
         }
 
         // Country
-        if (aTktDemographic.getCountry() != null)
+            if (aTktDemographic.getCountry() != null) {
         aTicketDemoTO.setCountry(aTktDemographic.getCountry());
+            }
 
         // Telephone (opt) as of 2.16.1 APMP (JTL)
         if (aTktDemographic.getTelephone() != null) {
@@ -420,25 +420,35 @@ public class UpgradeEntitlementXML {
 		}
 
 		// UpgrdPrice
-		if (aTicket.getUpgrdPrice() != null) aTicketTO
-				.setUpgrdPrice(new BigDecimal(aTicket.getUpgrdPrice()));
+      if (aTicket.getUpgrdPrice() != null) {
+         aTicketTO.setUpgrdPrice(new BigDecimal(aTicket.getUpgrdPrice()));
+      }
 
 		// FromProdCode
-		if (aTicket.getFromProdCode() != null) aTicketTO
-				.setFromProdCode(aTicket.getFromProdCode());
+      if (aTicket.getFromProdCode() != null) {
+         aTicketTO.setFromProdCode(aTicket.getFromProdCode());
+      }
+      
+      // FromDLRPLU // As of 2.17.3, JTL
+      if (aTicket.getFromDLRPLU() != null) {
+         aTicketTO.setFromDlrPLU(aTicket.getFromDLRPLU());
+      }
 
 		// FromPrice
-		if (aTicket.getFromPrice() != null) aTicketTO
-				.setFromPrice(new BigDecimal(aTicket.getFromPrice()));
+      if (aTicket.getFromPrice() != null) {
+         aTicketTO.setFromPrice(new BigDecimal(aTicket.getFromPrice()));
+      }
 
-		// (as of 2.15, JTL) On an upgrade, it is implicit that the quantity is one.
+      // (as of 2.15, JTL) On an upgrade, it is implicit that the quantity is
+      // one.
 		// As this is a purchase, however, the quantity of purchased items must be
 		// set.
 		aTicketTO.setProdQty(new BigInteger("1"));
 
 		// TktNote
-		if (aTicket.getTktNote() != null) aTicketTO.setTktNote(aTicket
-				.getTktNote());
+      if (aTicket.getTktNote() != null) {
+         aTicketTO.setTktNote(aTicket.getTktNote());
+      }
 
 		// add ticket to list
 		ticketListTO.add(aTicketTO);

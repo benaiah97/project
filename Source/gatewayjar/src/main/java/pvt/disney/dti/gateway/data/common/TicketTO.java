@@ -30,179 +30,6 @@ public class TicketTO implements Serializable, Cloneable {
       return;
    }
 
-   /**
-    * Overrides Object.clone() to provide a shallow copy of the TicketTO object.
-    * 
-    * @return TicketTO
-    */
-   @Override
-   @SuppressWarnings("unchecked")
-   public TicketTO clone() throws CloneNotSupportedException {
-
-      TicketTO aClone = new TicketTO();
-
-      aClone.tktItem = new BigInteger(this.tktItem.toString());
-
-      aClone.prodCode = this.prodCode;
-
-      if (this.fromProdCode != null) {
-         aClone.fromProdCode = this.fromProdCode;
-      }
-
-      aClone.prodQty = new BigInteger(this.prodQty.toString());
-
-      if (this.prodPrice != null) {
-         aClone.prodPrice = new BigDecimal(this.prodPrice.toString());
-      }
-
-      if (this.upgrdPrice != null) {
-         aClone.upgrdPrice = new BigDecimal(this.upgrdPrice.toString());
-      }
-
-      if (this.fromPrice != null) {
-         aClone.fromPrice = new BigDecimal(this.fromPrice.toString());
-      }
-
-      if (this.tktSecurityLevel != null) {
-         aClone.tktSecurityLevel = this.tktSecurityLevel;
-      }
-
-      if (this.tktMarket != null) {
-         aClone.tktMarket = this.tktMarket;
-      }
-
-      if (this.tktShell != null) {
-         aClone.tktShell = this.tktShell;
-      }
-
-      if (this.tktValidityValidStart != null) {
-         aClone.tktValidityValidStart = this.tktValidityValidStart;
-      }
-
-      if (this.tktValidityValidEnd != null) {
-         aClone.tktValidityValidEnd = this.tktValidityValidEnd;
-      }
-
-      if (this.tktNote != null) {
-         aClone.tktNote = this.tktNote;
-      }
-
-      if (this.magTrack1 != null) {
-         aClone.magTrack1 = this.magTrack1;
-      }
-
-      if (this.magTrack2 != null) {
-         aClone.magTrack2 = this.magTrack2;
-      }
-
-      if (this.barCode != null) {
-         aClone.barCode = this.barCode;
-      }
-
-      if (this.dssnDate != null) {
-         aClone.dssnDate = this.dssnDate;
-      }
-
-      if (this.dssnSite != null) {
-         aClone.dssnSite = this.dssnSite;
-      }
-
-      if (this.dssnStation != null) {
-         aClone.dssnStation = this.dssnStation;
-      }
-
-      if (this.dssnNumber != null) {
-         aClone.dssnNumber = this.dssnNumber;
-      }
-
-      if (this.tktNID != null) {
-         aClone.tktNID = this.tktNID;
-      }
-
-      if (this.external != null) {
-         aClone.external = this.external;
-      }
-
-      aClone.tktIdentityTypes = (ArrayList<TicketIdType>) this.tktIdentityTypes.clone();
-
-      // Output or status fields
-      if (this.tktPrice != null) {
-         aClone.tktPrice = new BigDecimal(this.tktPrice.toString());
-      }
-
-      if (this.tktTax != null) {
-         aClone.tktTax = new BigDecimal(this.tktTax.toString());
-      }
-
-      aClone.tktStatusList = (ArrayList<TktStatusTO>) this.tktStatusList.clone();
-
-      if (this.ageGroup != null) {
-         aClone.ageGroup = this.ageGroup;
-      }
-
-      if (this.mediaType != null) {
-         aClone.mediaType = this.mediaType;
-      }
-
-      if (this.passType != null) {
-         aClone.passType = this.passType;
-      }
-
-      if (this.passClass != null) {
-         aClone.passClass = this.passClass;
-      }
-
-      if (this.resident != null) {
-         aClone.resident = this.resident;
-      }
-
-      if (this.passRenew != null) {
-         aClone.passRenew = this.passRenew;
-      }
-
-      if (this.lastDateUsed != null) {
-         aClone.lastDateUsed = this.lastDateUsed;
-      }
-
-      if (this.timesUsed != null) {
-         aClone.timesUsed = new BigInteger(this.timesUsed.toString());
-      }
-
-      if (this.replacedByPass != null) {
-         aClone.replacedByPass = this.replacedByPass;
-      }
-
-      if (this.tktTran != null) {
-         try {
-            aClone.tktTran = this.tktTran.clone();
-         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-         }
-      }
-
-      aClone.attributed = this.isAttributed();
-
-      if (this.providerTicketType != null) {
-         this.providerTicketType = new BigInteger(this.providerTicketType.toString());
-      }
-
-      aClone.tktStatusList = (ArrayList<TktStatusTO>) this.tktStatusList.clone();
-
-      aClone.ticketDemoList = (ArrayList<DemographicsTO>) this.ticketDemoList.clone();
-
-      aClone.ticketAssignmets = (ArrayList<TktAssignmentTO>) this.ticketAssignmets.clone();
-
-      if (this.visualId != null) {
-         aClone.visualId = this.visualId;
-      }
-
-      if (this.accountId != null) {
-         aClone.accountId = this.accountId;
-      }
-
-      return aClone;
-   }
-
    // Input fields
    /** Defines what possible variations of ticket identities there are. */
    public enum TicketIdType {
@@ -234,6 +61,9 @@ public class TicketTO implements Serializable, Cloneable {
    /** The from product code. */
    private String fromProdCode; // 2.10
 
+   /** The from product code. */
+   private String fromDlrPLU; // 2.17.3
+   
    /** The product quantity. */
    private BigInteger prodQty;
 
@@ -363,21 +193,6 @@ public class TicketTO implements Serializable, Cloneable {
    /** The dlr PLU. */
    private String dlrPLU;
 
-   /**
-    * @return the showGroup
-    */
-   public String getShowGroup() {
-      return showGroup;
-   }
-
-   /**
-    * @param showGroup
-    *           the showGroup to set
-    */
-   public void setShowGroup(String showGroup) {
-      this.showGroup = showGroup;
-   }
-
    /** Show group. As of 2.17.1, JTL */
    private String showGroup;
 
@@ -505,6 +320,21 @@ public class TicketTO implements Serializable, Cloneable {
 
    // SETTERS
 
+   /**
+    * @return the showGroup
+    */
+   public String getShowGroup() {
+      return showGroup;
+   }
+
+   /**
+    * @param showGroup
+    *           the showGroup to set
+    */
+   public void setShowGroup(String showGroup) {
+      this.showGroup = showGroup;
+   }
+   
    /**
     * Adds a status to the list.
     */
@@ -1227,6 +1057,13 @@ public class TicketTO implements Serializable, Cloneable {
    public TicketTO getExistingTktID() {
       return existingTktID;
    }
+   
+   /**
+    * @return the fromDlrPLU
+    */
+   public String getFromDlrPLU() {
+      return fromDlrPLU;
+   }
 
    /**
     * @param existingTktID
@@ -1376,6 +1213,190 @@ public class TicketTO implements Serializable, Cloneable {
     */
    public void setDlrPLU(String dlrPLU) {
       this.dlrPLU = dlrPLU;
+   }
+   
+   /**
+    * @param fromDlrPLU the fromDlrPLU to set
+    */
+   public void setFromDlrPLU(String fromDlrPLU) {
+      this.fromDlrPLU = fromDlrPLU;
+   }
+   
+   /**
+    * Overrides Object.clone() to provide a shallow copy of the TicketTO object.
+    * 
+    * @return TicketTO
+    */
+   @Override
+   @SuppressWarnings("unchecked")
+   public TicketTO clone() throws CloneNotSupportedException {
+
+      TicketTO aClone = new TicketTO();
+
+      aClone.tktItem = new BigInteger(this.tktItem.toString());
+
+      aClone.prodCode = this.prodCode;
+
+      if (this.fromProdCode != null) {
+         aClone.fromProdCode = this.fromProdCode;
+      }
+      
+      if (this.fromDlrPLU != null) {
+         aClone.fromDlrPLU = this.fromDlrPLU;
+      }
+
+      aClone.prodQty = new BigInteger(this.prodQty.toString());
+
+      if (this.prodPrice != null) {
+         aClone.prodPrice = new BigDecimal(this.prodPrice.toString());
+      }
+
+      if (this.upgrdPrice != null) {
+         aClone.upgrdPrice = new BigDecimal(this.upgrdPrice.toString());
+      }
+
+      if (this.fromPrice != null) {
+         aClone.fromPrice = new BigDecimal(this.fromPrice.toString());
+      }
+
+      if (this.tktSecurityLevel != null) {
+         aClone.tktSecurityLevel = this.tktSecurityLevel;
+      }
+
+      if (this.tktMarket != null) {
+         aClone.tktMarket = this.tktMarket;
+      }
+
+      if (this.tktShell != null) {
+         aClone.tktShell = this.tktShell;
+      }
+
+      if (this.tktValidityValidStart != null) {
+         aClone.tktValidityValidStart = this.tktValidityValidStart;
+      }
+
+      if (this.tktValidityValidEnd != null) {
+         aClone.tktValidityValidEnd = this.tktValidityValidEnd;
+      }
+
+      if (this.tktNote != null) {
+         aClone.tktNote = this.tktNote;
+      }
+
+      if (this.magTrack1 != null) {
+         aClone.magTrack1 = this.magTrack1;
+      }
+
+      if (this.magTrack2 != null) {
+         aClone.magTrack2 = this.magTrack2;
+      }
+
+      if (this.barCode != null) {
+         aClone.barCode = this.barCode;
+      }
+
+      if (this.dssnDate != null) {
+         aClone.dssnDate = this.dssnDate;
+      }
+
+      if (this.dssnSite != null) {
+         aClone.dssnSite = this.dssnSite;
+      }
+
+      if (this.dssnStation != null) {
+         aClone.dssnStation = this.dssnStation;
+      }
+
+      if (this.dssnNumber != null) {
+         aClone.dssnNumber = this.dssnNumber;
+      }
+
+      if (this.tktNID != null) {
+         aClone.tktNID = this.tktNID;
+      }
+
+      if (this.external != null) {
+         aClone.external = this.external;
+      }
+
+      aClone.tktIdentityTypes = (ArrayList<TicketIdType>) this.tktIdentityTypes.clone();
+
+      // Output or status fields
+      if (this.tktPrice != null) {
+         aClone.tktPrice = new BigDecimal(this.tktPrice.toString());
+      }
+
+      if (this.tktTax != null) {
+         aClone.tktTax = new BigDecimal(this.tktTax.toString());
+      }
+
+      aClone.tktStatusList = (ArrayList<TktStatusTO>) this.tktStatusList.clone();
+
+      if (this.ageGroup != null) {
+         aClone.ageGroup = this.ageGroup;
+      }
+
+      if (this.mediaType != null) {
+         aClone.mediaType = this.mediaType;
+      }
+
+      if (this.passType != null) {
+         aClone.passType = this.passType;
+      }
+
+      if (this.passClass != null) {
+         aClone.passClass = this.passClass;
+      }
+
+      if (this.resident != null) {
+         aClone.resident = this.resident;
+      }
+
+      if (this.passRenew != null) {
+         aClone.passRenew = this.passRenew;
+      }
+
+      if (this.lastDateUsed != null) {
+         aClone.lastDateUsed = this.lastDateUsed;
+      }
+
+      if (this.timesUsed != null) {
+         aClone.timesUsed = new BigInteger(this.timesUsed.toString());
+      }
+
+      if (this.replacedByPass != null) {
+         aClone.replacedByPass = this.replacedByPass;
+      }
+
+      if (this.tktTran != null) {
+         try {
+            aClone.tktTran = this.tktTran.clone();
+         } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+         }
+      }
+
+      aClone.attributed = this.isAttributed();
+
+      if (this.providerTicketType != null) {
+         this.providerTicketType = new BigInteger(this.providerTicketType.toString());
+      }
+
+      aClone.tktStatusList = (ArrayList<TktStatusTO>) this.tktStatusList.clone();
+
+      aClone.ticketDemoList = (ArrayList<DemographicsTO>) this.ticketDemoList.clone();
+
+      aClone.ticketAssignmets = (ArrayList<TktAssignmentTO>) this.ticketAssignmets.clone();
+
+      if (this.visualId != null) {
+         aClone.visualId = this.visualId;
+      }
+
+      if (this.accountId != null) {
+         aClone.accountId = this.accountId;
+      }
+
+      return aClone;
    }
 
 }

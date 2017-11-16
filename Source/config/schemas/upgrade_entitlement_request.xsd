@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by James Todd Lewis (WALT DISNEY WORLD RESORT) -->
+<!-- edited with STS (x64) (https://spring.io/tools) by MOONS012 -->
+<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by Todd Lewis (Walt Disney Attractions Tech.) -->
 <!--TiXML 1.0 12/17/02 Copyright The Walt Disney Company -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
 	<xs:element name="Transmission">
@@ -87,6 +88,15 @@
 									<xs:restriction base="xs:string">
 										<xs:minLength value="1"/>
 										<xs:maxLength value="15"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SellerId" minOccurs="0" maxOccurs="1">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="5"/>
+										<xs:pattern value="[0-9]+"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
@@ -312,13 +322,16 @@
 								</xs:complexType>
 							</xs:element>
 							<xs:element name="UpgrdPrice" type="xs:string"/>
-							<xs:element name="FromProdCode" type="xs:string"/>
+							<xs:choice>
+								<xs:element name="FromProdCode" type="xs:string"/>
+								<xs:element name="FromDLRPLU" type="xs:string"/>
+							</xs:choice>
 							<xs:element name="FromPrice" type="xs:string"/>
 							<xs:element name="TktValidity" minOccurs="0">
 								<xs:annotation>
 									<xs:documentation>
-										Not Currently Implemented
-									</xs:documentation>
+                                        Not Currently Implemented
+                                    </xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
 									<xs:choice maxOccurs="unbounded">
@@ -331,6 +344,14 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="Eligibility" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Group" type="xs:string"/>
+							<xs:element name="Member" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="Payment" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
@@ -338,16 +359,6 @@
 							<xs:element name="PayType">
 								<xs:complexType>
 									<xs:choice>
-										<xs:element name="Cash" type="xs:string">
-											<xs:annotation>
-												<xs:documentation>Not supported by DTI</xs:documentation>
-											</xs:annotation>
-										</xs:element>
-										<xs:element name="CreditLine" type="xs:string">
-											<xs:annotation>
-												<xs:documentation>Not supported by DTI</xs:documentation>
-											</xs:annotation>
-										</xs:element>
 										<xs:element name="CreditCard">
 											<xs:complexType>
 												<xs:choice>
@@ -425,16 +436,6 @@
 												</xs:choice>
 											</xs:complexType>
 										</xs:element>
-										<xs:element name="DisneyDollars" type="xs:string">
-											<xs:annotation>
-												<xs:documentation>Not supported by DTI</xs:documentation>
-											</xs:annotation>
-										</xs:element>
-										<xs:element name="JobNbr" type="xs:string">
-											<xs:annotation>
-												<xs:documentation>Not supported by DTI</xs:documentation>
-											</xs:annotation>
-										</xs:element>
 										<xs:element name="Voucher">
 											<xs:complexType>
 												<xs:sequence>
@@ -444,9 +445,6 @@
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="GiftCard">
-											<xs:annotation>
-												<xs:documentation>Not supported by DTI</xs:documentation>
-											</xs:annotation>
 											<xs:complexType>
 												<xs:choice>
 													<xs:element name="GCManual">
@@ -468,6 +466,150 @@
 												</xs:choice>
 											</xs:complexType>
 										</xs:element>
+										<xs:element name="Installment">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="InstallmentCreditCard">
+														<xs:complexType>
+															<xs:choice>
+																<xs:element name="CCManual">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="CCNbr" type="xs:string"/>
+																			<xs:element name="CCExpiration">
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="CCName" type="xs:string"/>
+																			<xs:element name="CCVV" type="xs:string" minOccurs="0"/>
+																			<xs:element name="CCStreet" type="xs:string" minOccurs="0"/>
+																			<xs:element name="CCZipcode" type="xs:string" minOccurs="0"/>
+																			<xs:element name="CCType" type="xs:string" minOccurs="0"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="CCSwipe">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="CCTrack1" type="xs:string"/>
+																			<xs:element name="CCTrack2" type="xs:string"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:choice>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="InstallmentDemoData">
+														<xs:complexType>
+															<xs:attribute name="FirstName" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="25"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="MiddleName" use="optional">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="25"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="LastName" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="25"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="DateOfBirth" use="optional">
+																<xs:simpleType>
+																	<xs:restriction base="xs:date"/>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Addr1" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="40"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Addr2" use="optional">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="40"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="City" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="25"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="State" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="2"/>
+																		<xs:maxLength value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Zip" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="10"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Country" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="15"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Telephone" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="15"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="AltTelephone" use="optional">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="15"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="Email" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="5"/>
+																		<xs:maxLength value="50"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>
@@ -481,6 +623,74 @@
 							<xs:maxLength value="40"/>
 						</xs:restriction>
 					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Reservation" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Required for DLR transactions</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:choice maxOccurs="unbounded">
+							<xs:element name="ResCode" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Required for DLR transactions
+                                    </xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ResCreateDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupDate" type="xs:date" minOccurs="0"/>
+							<xs:element name="ResPickupArea" type="xs:string" minOccurs="0"/>
+							<xs:element name="ResSalesType" type="xs:string" minOccurs="0"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ClientData" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Required for DLR transactions</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ClientType" type="xs:string" minOccurs="0"/>
+							<xs:element name="ClientCategory" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoLanguage" type="xs:string" minOccurs="0"/>
+							<xs:element name="DemoData" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Bill" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:anySimpleType" use="optional"/>
+												<xs:attribute name="SellerResNbr" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Ship" minOccurs="0">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="optional"/>
+												<xs:attribute name="LastName" type="xs:string" use="optional"/>
+												<xs:attribute name="FirstName" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr1" type="xs:string" use="optional"/>
+												<xs:attribute name="Addr2" type="xs:string" use="optional"/>
+												<xs:attribute name="City" type="xs:string" use="optional"/>
+												<xs:attribute name="State" type="xs:string" use="optional"/>
+												<xs:attribute name="Zip" type="xs:string" use="optional"/>
+												<xs:attribute name="Country" type="xs:string" use="optional"/>
+												<xs:attribute name="Telephone" type="xs:string" use="optional"/>
+												<xs:attribute name="Email" type="xs:string" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
@@ -525,7 +735,7 @@
 			<xs:element name="MediaId">
 				<xs:annotation>
 					<xs:documentation>(aka SecureID) Could be xBandID, RFID, etc.
-					</xs:documentation>
+                    </xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -546,7 +756,7 @@
 			<xs:element name="VisualId">
 				<xs:annotation>
 					<xs:documentation>Required along with MediaID and Manufacturer's ID
-					</xs:documentation>
+                    </xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -590,9 +800,12 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<!-- NGE 1212 (GBTS 196) - Remove the indexes on both the Visual Id and the Manufacturer's Id <xs:element name="ExistingMfrId"> <xs:simpleType> <xs:restriction base="xs:string"> 
-				<xs:maxLength value="20"/> </xs:restriction> </xs:simpleType> </xs:element> <xs:element name="ExistingVisualId"> <xs:simpleType> <xs:restriction base="xs:string"> <xs:maxLength value="32"/> 
-				</xs:restriction> </xs:simpleType> </xs:element> -->
+			<!-- NGE 1212 (GBTS 196) - Remove the indexes on both the Visual Id and 
+                the Manufacturer's Id <xs:element name="ExistingMfrId"> <xs:simpleType> <xs:restriction 
+                base="xs:string"> <xs:maxLength value="20"/> </xs:restriction> </xs:simpleType> 
+                </xs:element> <xs:element name="ExistingVisualId"> <xs:simpleType> <xs:restriction 
+                base="xs:string"> <xs:maxLength value="32"/> </xs:restriction> </xs:simpleType> 
+                </xs:element> -->
 			<xs:element name="AccountId">
 				<xs:annotation>
 					<xs:documentation>Overview Internal Account Id</xs:documentation>

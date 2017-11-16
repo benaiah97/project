@@ -574,6 +574,9 @@ public class ProductRules {
       String ticketFromPdtCode = aTicketTO.getFromProdCode();
       BigDecimal ticketFromPdtPrice = aTicketTO.getFromPrice();
       DBProductTO dbFromProduct = dbProdMap.get(ticketFromPdtCode);
+
+         if (dbFromProduct != null) { // Can't edit the info for non-DTI products
+
       BigDecimal dbFromUnitPrice = dbFromProduct.getUnitPrice();
       BigDecimal dbFromSRPrice = dbFromProduct.getStandardRetailPrice();
 
@@ -598,6 +601,7 @@ public class ProductRules {
       }
 
     }
+      }
 
     return;
   }
@@ -826,18 +830,35 @@ public class ProductRules {
   }
 
   /**
-   * Validate that the products listed as targeted upgrades are, in fact, valid.
+    * Validate that the products listed as targeted upgrades are, in fact,
+    * valid.  This method now takes into account that not all "from" products
+    * are, in fact, DTI products.  That said, it only evaluates the DTI products
+    * which might, in point of fact, have been zero.
    * 
    * @throws DTIException
+    * @returns Count of DTI products
    */
-  public static void validateUpgradeProducts(ArrayList<DBProductTO> dbUpgrdProdList) throws DTIException {
+   public static int validateUpgradeProducts(ArrayList<DBProductTO> dbUpgrdProdList,
+            ArrayList<TicketTO> upgradeTicketList) throws DTIException {
 
-    if (dbUpgrdProdList.size() == 0) {
+      // Create a set of unique product code strings
+      HashSet<String> productCodeSet = new HashSet<String>();
+      
+      for /* each */(TicketTO aTicketTO : /* in */upgradeTicketList) {
+
+         if (aTicketTO.getFromProdCode() != null) {
+            productCodeSet.add(aTicketTO.getFromProdCode());
+         }
+
+      }
+
+      // Ideally, the number of "from" products should equal the result set.
+      if (dbUpgrdProdList.size() != productCodeSet.size()) {
       throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRODUCT_CODE,
-          "Upgrade product list from database is empty: invalid FROM product(s).");
+                  "Unable to identify specified DTI product codes in database: invalid FROM product(s).");
     }
 
-    return;
+      return productCodeSet.size();
   }
 
   /**
@@ -934,13 +955,10 @@ public class ProductRules {
           BigInteger itemNumber = aTicketTO.getTktItem();
 
           // FirstName (XSD required, 1 - 30 char)
-          validateStringDemo( park, "FirstName", aDemoTO.getFirstName(), 1, 
-              30, true, itemNumber);
-
+               validateStringDemo(park, "FirstName", aDemoTO.getFirstName(), 1, 30, true, itemNumber);
           
           // LastName (XSD required, 1 - 30 char)
-          validateStringDemo( park, "LastName", aDemoTO.getLastName(), 1, 
-              30, true, itemNumber);
+               validateStringDemo(park, "LastName", aDemoTO.getLastName(), 1, 30, true, itemNumber);
           
           // DateOfBirth (required, date) 
           if (aDemoTO.getDateOfBirth() == null) {
@@ -1052,6 +1070,7 @@ public class ProductRules {
 
   /**
    * Validates string demographic 
+    * 
    * @param park
    * @param fieldName
    * @param fieldValue

@@ -225,7 +225,7 @@ public class QueryEligibleProductsXML {
 
          }
 
-			// prod code
+			// Product code
 			if (aTicketTO.getProdCode() != null) {
 				String prodCode = aTicketTO.getProdCode();
 				qName = new QName("ProdCode");
@@ -234,7 +234,7 @@ public class QueryEligibleProductsXML {
 				aTicket.getTktItemOrTktIDOrProdIDType().add(pdtCode);
 			}
 			
-			// DLR PLU , added for offline codes from galaxy 
+			// DLR PLU , added for off-line codes from galaxy 
          if (aTicketTO.getDlrPLU() != null) {
             String pluCode = aTicketTO.getDlrPLU();
             qName = new QName("DLRPLU");
@@ -243,7 +243,7 @@ public class QueryEligibleProductsXML {
             aTicket.getTktItemOrTktIDOrProdIDType().add(dlrPLU);
          }
          
-			// Prod Guest type
+			// Product Guest type
 			if (aTicketTO.getGuestType() != null) {
 				String prodGuestType = null;
 				if (aTicketTO.getGuestType().compareTo(GuestType.ADULT) == 0) {

@@ -2578,7 +2578,10 @@
                                 </xs:complexType>
                             </xs:element>
                             <xs:element name="UpgrdPrice" type="xs:string" />
+							<xs:choice>
                             <xs:element name="FromProdCode" type="xs:string" />
+								<xs:element name="FromDLRPLU" type="xs:string"/>
+							</xs:choice>
                             <xs:element name="FromPrice" type="xs:string" />
                             <xs:element name="TktValidity" minOccurs="0">
                                 <xs:annotation>

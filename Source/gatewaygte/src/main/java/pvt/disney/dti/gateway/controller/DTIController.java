@@ -31,6 +31,7 @@ import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.EntityTO;
 import pvt.disney.dti.gateway.service.DTIService;
+import pvt.disney.dti.gateway.util.BrokerUtil;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 import pvt.disney.dti.gateway.util.DTITracker;
 import pvt.disney.dti.gateway.util.DateTime;
@@ -104,7 +105,7 @@ public class DTIController {
       }
       
       // tktBroker
-      tktBroker = PropertyHelper.readPropsValue(PropertyName.POS_TKT_BROKER, props, null);
+      tktBroker = BrokerUtil.getBrokerName();
       
       // Application
       String application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);

@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
@@ -325,6 +326,12 @@ public class WDWUpgradeEntitlementRules {
       ArrayList<TicketTO> tktListTO = upgrdEntReqTO.getTicketList();
 
       for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
+         
+         // Validate that WDW is not attempting to use DLR PLU specific fields.
+         if (aTicketTO.getDlrPLU() != null) {
+            throw new DTIException(WDWUpgradeEntitlementRules.class, DTIErrorCode.INVALID_PRODUCT_UPGRADE_PATH, 
+                     "From product for a WDW entitlement upgrade cannot be a DLR PLU.  It must be a product code.");
+         }
 
          // validate the TO price is greater than or equal to the FROM price
          if (aTicketTO.getProdPrice() != null) {
