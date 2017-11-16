@@ -12,17 +12,21 @@ import pvt.disney.dti.gateway.constants.DTICalmException;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.PropertyName;
+import pvt.disney.dti.gateway.dao.BarricadeKey;
 import pvt.disney.dti.gateway.dao.PropertyKey;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
+import pvt.disney.dti.gateway.data.common.BarricadeTO;
+import pvt.disney.dti.gateway.data.common.CosGrpTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PropertyTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
-import pvt.disney.dti.gateway.data.common.TktSellerTO;
 import pvt.disney.dti.gateway.data.common.TicketTO.TktStatusTO;
+import pvt.disney.dti.gateway.data.common.TktSellerTO;
+import pvt.disney.dti.gateway.util.CosUtil;
 import pvt.disney.dti.gateway.util.DTIFormatter;
 
 import com.disney.logging.EventLogger;
@@ -121,18 +125,26 @@ public class CalmRules {
 	public void checkContingencyActionsLogicModule(DTITransactionTO dtiTxn) throws DTIException,
 			DTICalmException {
 
-		String tpiCode = dtiTxn.getTpiCode();
-		File downFile = null;
+      String tpiCode = dtiTxn.getTpiCode();
+      File downFile = null;
 
       if (tpiCode.equals(DTITransactionTO.TPI_CODE_WDW)) {
+
          tpoId = 2;
          if (isWallRaised()) {
             executeWDWDownRules(dtiTxn);
+         } else if (isBarricadeRaised(dtiTxn)) {
+            throw new DTIException(CalmRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
+                     "WDW Request attempted when Barricade is raised.");
          }
       } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_DLR)) {
+
          tpoId = 1;
          if (isWallRaised()) {
             executeDLRDownRules(dtiTxn);
+         } else if (isBarricadeRaised(dtiTxn)) {
+            throw new DTIException(CalmRules.class, DTIErrorCode.INVALID_SALES_DATE_TIME,
+                     "DLR Request attempted when Barricade is raised.");
          }
       } else if (tpiCode.equals(DTITransactionTO.TPI_CODE_HKD) && hkdCalmActive) {
          downFile = new File(hkdDownFileName);
@@ -217,7 +229,8 @@ public class CalmRules {
 				throw new DTICalmException(dtiTxn);
 			}
 		}
-		throw new DTIException(BusinessRules.class,
+
+      throw new DTIException(CalmRules.class,
 				DTIErrorCode.INVALID_SALES_DATE_TIME,
 				"DLR Request attempted when DLRDown outage wall property is present in the database (CALM).");
 	}
@@ -391,9 +404,9 @@ public class CalmRules {
 			}
 		}
 
-		throw new DTIException(BusinessRules.class,
-				DTIErrorCode.INVALID_SALES_DATE_TIME,
-				"HKD Request attempted when HKDDown outage wall file is present (CALM).");
+      throw new DTIException(CalmRules.class,
+            DTIErrorCode.INVALID_SALES_DATE_TIME,
+            "HKD Request attempted when HKDDown outage wall file is present (CALM).");
   }
 
    /**
@@ -425,4 +438,72 @@ public class CalmRules {
 
    }
 
+  
+   /**
+    * Checks if barricade is raised.
+    * @param dtiTxn the dti txn
+    * @return the boolean
+    */
+   private boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
+
+      try {
+         // barricadeTOs
+         List<BarricadeTO> barricadeTOs;
+         // ownerId
+         String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
+
+         // To get the CosGrpid
+         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
+
+         // To get the Barricade details for COS group Id and OwnerId
+         barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
+         
+         if (null != barricadeTOs && barricadeTOs.size() > 0) {
+
+            for (BarricadeTO barricadeTO : barricadeTOs) {
+
+               isBarricadeActive(dtiTxn, barricadeTO);
+            }
+         }
+      } catch (Exception ex) {
+         logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
+      }
+      return false;
+   }
+
+   /**
+    * Checks barricadeTO with dtiTxnTO to identify if barricade is active
+    * @param dtiTxn
+    * @param barricadeTO
+     @return the boolean
+    */
+   private boolean isBarricadeActive(DTITransactionTO dtiTxn, BarricadeTO barricadeTO) {
+      
+      // TsMac attribute and TsLoc attribute of a Barricade are null
+      if ((null == barricadeTO.getTsMacID()) && (null == barricadeTO.getTsLocID())) {
+         return true;
+      }
+
+      // TsMac attribute is not null and TsLoc is null
+      if ((null != barricadeTO.getTsMacID()) && (null == barricadeTO.getTsLocID())) {
+
+         if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getMacEntityId())) {
+            return true;
+         }
+      }
+
+      // TsMac attribute and the barricade TsLoc attribute are not null
+      if ((null != barricadeTO.getTsMacID()) && (null != barricadeTO.getTsLocID())) {
+
+         // Barricade TsMac and TsLoc matches with TsMac and TsLoc in
+         // the DTI transaction request
+         if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getMacEntityId())
+                  && (barricadeTO.getTsLocID() == dtiTxn.getEntityTO().getEntityId())) {
+            return true;
+         }
+      }
+      return false;
+   }
+
 }
+
