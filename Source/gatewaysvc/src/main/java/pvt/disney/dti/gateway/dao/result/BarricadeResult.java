@@ -52,8 +52,8 @@ public class BarricadeResult implements ResultSetProcessor{
       barricadeTO.setCosGrpID(rs.getInt("COSGRP_ID"));
       barricadeTO.setCreatorID(rs.getInt("CREATORID"));
       barricadeTO.setOwnerID(rs.getString("OWNERID"));
-      barricadeTO.setTsLocID(rs.getInt("TSLOCID"));
-      barricadeTO.setTsMacID(rs.getInt("TSMACID"));
+      barricadeTO.setTsLocID(rs.getString("TSLOCID"));
+      barricadeTO.setTsMacID(rs.getString("TSMACID"));
       barricadeTOs.add(barricadeTO);
       this.recordsProcessed++;
 

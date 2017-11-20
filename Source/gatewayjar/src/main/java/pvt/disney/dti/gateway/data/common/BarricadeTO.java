@@ -14,10 +14,10 @@ public class BarricadeTO {
    private Integer cosGrpID;
    
    /** The ts mac ID. */
-   private Integer tsMacID;
+   private String tsMacID;
    
    /** The ts loc ID. */
-   private Integer tsLocID;
+   private String tsLocID;
    
    /** The owner ID. */
    private String ownerID;
@@ -65,7 +65,7 @@ public class BarricadeTO {
     *
     * @return the ts mac ID
     */
-   public Integer getTsMacID() {
+   public String getTsMacID() {
       return tsMacID;
    }
 
@@ -74,7 +74,7 @@ public class BarricadeTO {
     *
     * @param tsMacID the new tsmac ID
     */
-   public void setTsMacID(Integer tsMacID) {
+   public void setTsMacID(String tsMacID) {
       this.tsMacID = tsMacID;
    }
 
@@ -83,7 +83,7 @@ public class BarricadeTO {
     *
     * @return the tsloc ID
     */
-   public Integer getTsLocID() {
+   public String getTsLocID() {
       return tsLocID;
    }
 
@@ -92,7 +92,7 @@ public class BarricadeTO {
     *
     * @param tsLocID the new ts loc ID
     */
-   public void setTsLocID(Integer tsLocID) {
+   public void setTsLocID(String tsLocID) {
       this.tsLocID = tsLocID;
    }
 

@@ -1080,7 +1080,7 @@ public class DTIMockUtil extends CommonTestUtils {
                List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
                BarricadeTO barricadeTO = new BarricadeTO();
                barricadeTO.setBarricadeID(1);
-               barricadeTO.setTsMacID(0);
+               barricadeTO.setTsMacID("0");
                barricadeTOs.add(barricadeTO);
                return barricadeTOs;
             }
@@ -1102,8 +1102,8 @@ public class DTIMockUtil extends CommonTestUtils {
                List<BarricadeTO> barricadeTOs = new ArrayList<BarricadeTO>();
                BarricadeTO barricadeTO = new BarricadeTO();
                barricadeTO.setBarricadeID(1);
-               barricadeTO.setTsMacID(0);
-               barricadeTO.setTsLocID(1);
+               barricadeTO.setTsMacID("0");
+               barricadeTO.setTsLocID("1");
                barricadeTOs.add(barricadeTO);
                return barricadeTOs;
             }
