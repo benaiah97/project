@@ -180,7 +180,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
                   dtie.getLogMessage());
       }
    }
-
+   
    /**
     * Getting dtiTransaction
     * 
@@ -195,8 +195,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
 
    /*
     * Property Configuration for calm Rules
-    * 
-    * @see pvt.disney.dti.gateway.rules.CommonBusinessTest#setConfigProperty()
+    *
     */
    public Properties setConfigProperty() {
       props = new Properties();
