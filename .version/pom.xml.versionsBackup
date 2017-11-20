@@ -27,7 +27,6 @@
       <ns0:module>gatewaysvc</ns0:module>
       <ns0:module>gatewaygte</ns0:module>
       <ns0:module>gatewaywar</ns0:module>   
-	  <ns0:module>gatewayadm</ns0:module>
     </ns0:modules>
 
 
