@@ -28,7 +28,6 @@
       <module>gatewaysvc</module>
       <module>gatewaygte</module>
       <module>gatewaywar</module>   
-	  <module>gatewayadm</module>
     </modules>
 
 
