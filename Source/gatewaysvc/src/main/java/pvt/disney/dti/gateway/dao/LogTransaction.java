@@ -122,7 +122,6 @@ public class LogTransaction {
     } catch (SQLException exc) {
 
       eventLogger.sendEvent("SQLException on inbound TS log insert: " + exc.toString(), EventType.WARN, this);
-      exc.printStackTrace();
 
       try {
         // Attempt to shut down connections
@@ -219,7 +218,6 @@ public class LogTransaction {
     } catch (SQLException exc) {
 
       eventLogger.sendEvent("SQLException on inbound TS log insert: " + exc.toString(), EventType.WARN, this);
-      exc.printStackTrace();
 
       try {
         // Attempt to shut down connections
@@ -326,7 +324,6 @@ public class LogTransaction {
     } catch (SQLException exc) {
 
       eventLogger.sendEvent("SQLException on inbound TS log insert: " + exc.toString(), EventType.WARN, this);
-      exc.printStackTrace();
 
       try {
         // Attempt to shut down connections
@@ -444,7 +441,6 @@ public class LogTransaction {
     } catch (SQLException exc) {
 
       eventLogger.sendEvent("SQLException on inbound TS log insert: " + exc.toString(), EventType.WARN, this);
-      exc.printStackTrace();
 
       try {
         // Attempt to shut down connections
@@ -549,7 +545,6 @@ public class LogTransaction {
     } catch (SQLException exc) {
 
       eventLogger.sendEvent("SQLException on selectOTSLog: " + exc.toString(), EventType.WARN, this);
-      exc.printStackTrace();
 
       throw new DTIException(LogTransaction.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
           "Exception executing query in selectOTSLog", exc);
@@ -557,7 +552,6 @@ public class LogTransaction {
     } catch (IOException ioe) {
       
       eventLogger.sendEvent("SQLException on selectOTSLog: " + ioe.toString(), EventType.WARN, this);
-      ioe.printStackTrace();
       
     } finally {
       try {
@@ -572,7 +566,6 @@ public class LogTransaction {
       } catch (SQLException exc2) {
         eventLogger
             .sendEvent("Did NOT successfully close CLOB DB connection: " + exc2.toString(), EventType.WARN, this);
-        exc2.printStackTrace();
       }
     }
 
@@ -613,7 +606,7 @@ public class LogTransaction {
       tempClobWriter.write(xmlData);
 
     } catch (Exception exc) {
-      exc.printStackTrace();
+    	eventLogger.sendEvent("Unable to populate the CLOB: " + exc.toString(), EventType.WARN, this);
       throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
           DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(), "Exception in populating the CLOB", exc);
     } finally {
@@ -625,11 +618,11 @@ public class LogTransaction {
         // Close the temporary CLOB
         tempClob.close();
       } catch (IOException ioe) {
-        ioe.printStackTrace();
+    	  eventLogger.sendEvent("Unable to flush Writer object: " + ioe.toString(), EventType.WARN, this);
         throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
             DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(), "Exception flushing Writer object.", ioe);
       } catch (SQLException sqe) {
-        sqe.printStackTrace();
+    	  eventLogger.sendEvent("Unable to close CLOB instance: " + sqe.toString(), EventType.WARN, this);
         throw new DTIException("getXMLCLOB()", LogTransaction.class, 3,
             DTIErrorCode.UNABLE_TO_LOG_TRANSACTION_DB.getErrorCode(), "Exception closing CLOB instance.", sqe);
       }
