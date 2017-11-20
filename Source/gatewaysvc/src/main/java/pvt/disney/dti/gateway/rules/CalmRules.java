@@ -445,7 +445,9 @@ public class CalmRules {
     * @return the boolean
     */
    private boolean isBarricadeRaised(DTITransactionTO dtiTxn) {
-
+      
+      boolean isBarricadeAvailable = false;
+      
       try {
          // barricadeTOs
          List<BarricadeTO> barricadeTOs;
@@ -460,13 +462,29 @@ public class CalmRules {
          
          if (null != barricadeTOs && barricadeTOs.size() > 0) {
 
-            for (BarricadeTO barricadeTO : barricadeTOs) {
-
-               isBarricadeActive(dtiTxn, barricadeTO);
-            }
+            isBarricadeAvailable = checkBarricade(dtiTxn, barricadeTOs);
          }
       } catch (Exception ex) {
          logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
+      }
+      return isBarricadeAvailable;
+   }
+
+   /**
+    * Iterating through barricadeTO list and checking if barricade is active
+    * 
+    * @param dtiTxn
+    * @param isActive
+    * @param barricadeTOs
+    * @return the boolean
+    */
+   private boolean checkBarricade(DTITransactionTO dtiTxn, List<BarricadeTO> barricadeTOs) {
+       
+      for (BarricadeTO barricadeTO : barricadeTOs) {
+
+         if(isBarricadeActive(dtiTxn, barricadeTO)){
+            return true;
+         }
       }
       return false;
    }
@@ -487,7 +505,7 @@ public class CalmRules {
       // TsMac attribute is not null and TsLoc is null
       if ((null != barricadeTO.getTsMacID()) && (null == barricadeTO.getTsLocID())) {
 
-         if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getMacEntityId())) {
+         if (Integer.parseInt(barricadeTO.getTsMacID()) == dtiTxn.getEntityTO().getMacEntityId()) {
             return true;
          }
       }
@@ -497,10 +515,11 @@ public class CalmRules {
 
          // Barricade TsMac and TsLoc matches with TsMac and TsLoc in
          // the DTI transaction request
-         if ((barricadeTO.getTsMacID() == dtiTxn.getEntityTO().getMacEntityId())
-                  && (barricadeTO.getTsLocID() == dtiTxn.getEntityTO().getEntityId())) {
+         if ((Integer.parseInt(barricadeTO.getTsMacID()) == dtiTxn.getEntityTO().getMacEntityId())
+                  && (Integer.parseInt(barricadeTO.getTsLocID()) == dtiTxn.getEntityTO().getEntityId())) {
             return true;
          }
+         
       }
       return false;
    }
