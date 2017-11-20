@@ -5,13 +5,13 @@ USING DOCKER-COMPOSE DURING DEVELOPMENT : AUTHOR: DR. SHAN MOON (MOONS012, SHAN.
 Docker-Compose allows you to orchestrate an entire set of applications at once.
 
 This document details how to use the docker-compose from a docker command line to bring up the
-entire dti application suite at once (gateway, monitor, product-admin).
+entire DTI application suite at once (gateway, monitor, product-admin).
 
-This does not necesarilly use all recommended best practices for CI/CD pipelines.
+This does not necessarily use all recommended best practices for CI/CD pipelines.
 It is intended as a quick n dirty local docker solution to eliminate the need
 for local dev environment setup.
 
-It does not provide an in-depth explanation of docker-compise synax, and uses simple examples for the purpose of
+It does not provide an in-depth explanation of docker-compose syntax, and uses simple examples for the purpose of
 getting started. In depth and high quality documentation can be found on docker.com. It would be pointless
 to reproduce it here. 
 
@@ -43,7 +43,7 @@ D:/EXAMPLE_FOLDER/ProductAdmin
 ################################################################################################################
 PORT MAPPINGS
 ################################################################################################################
-The docker compose conigurations maps the following ports for DTI Services (as listed under ports for each service
+The docker compose configurations maps the following ports for DTI Services (as listed under ports for each service
 in the compose configs.
 
 dtiproductadmin:
@@ -71,9 +71,9 @@ To build and start a local suite with LOCAL HK CONFIGS:
 
 	docker-compose -f docker-compose-LCL_HK.yml up 
 
-By default docker-compose will assum the filename is docker-compose.yml.
+By default docker-compose will assume the filename is docker-compose.yml.
 The -f argument allows you to pass in an alternate filename, in this case
-a compose file that uses HK conigurations.	
+a compose file that uses HK configurations.	
 
 ################################################################################################################
 STARTING ONE SERVICE THAT IS PART OF THE DTI APPLICATION SUITE

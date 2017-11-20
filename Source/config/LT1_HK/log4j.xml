@@ -28,15 +28,15 @@
         <layout class="com.disney.log4j.EventTextLayout"/>
     </appender>
     <logger additivity="false" name="com.disney.jdbc.dao">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <logger additivity="false" name="com.dti.app">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <logger additivity="false" name="pvt.disney.dti">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="GATEASYNC"/>
     </logger>
     <!-- DO NOT REMOVE... this is for configuration of Log Levels and LoggingInfoMapper -->

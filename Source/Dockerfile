@@ -52,8 +52,6 @@ RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/app
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/sub.pem -alias twdc-sub -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/sub2.pem -alias twdc-sub2  -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt
 
-
-
 RUN echo “Installing HK certs required to run gateway.”
 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/entrust-root.cer -alias hk-entrust-root  -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt
@@ -61,10 +59,10 @@ RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/app
 #RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/iago-latest-apac-wdpr-disney-com.pem -alias iago-latest-apac  -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt
 
 RUN echo “Installing Domestic ATS Lab certs.”
+
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-1.cer -alias wm-flor-dv078.wdw.disney.com-1 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-2.cer -alias wm-flor-dv078.wdw.disney.com-2 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
 RUN /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/keytool -import -file /var/opt/apps/WDPRApps/DTI/CERTS/wm-flor-dv078.wdw.disney.com-3.cer -alias wm-flor-dv078.wdw.disney.com-3 -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/jssecacerts -storepass changeit -noprompt 
-
 
 ###############################################################################
 # LINUX ADDITIONS FOR DEVELOPER CONVENIENCE
@@ -108,7 +106,6 @@ ADD docker/tomcat/setenv.sh /usr/local/tomcat/bin/setenv.sh
 
 RUN echo "Copying tomcat-users.xml to Tomcat conf for mng gui users/roles"
 ADD docker/tomcat/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
-
 
 RUN echo "Copying catalina.properties to Tomcat conf for shared loader"
 ADD docker/tomcat/catalina.properties /usr/local/tomcat/conf/catalina.properties
