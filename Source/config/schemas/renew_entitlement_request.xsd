@@ -357,6 +357,7 @@
 																<xs:element name="CCName" type="xs:string" minOccurs="0"/>
 																<xs:element name="CCStreet" type="xs:string" minOccurs="0"/>
 																<xs:element name="CCZipcode" type="xs:string" minOccurs="0"/>
+																<xs:element name="CCXid" type="xs:string" minOccurs="0" />
 																<xs:element name="CCCAVV" type="xs:string" minOccurs="0"/>
 																<xs:element name="CCEcommerce" type="xs:string" minOccurs="0"/>
 																<xs:element name="CCType" type="xs:string" minOccurs="0"/>
