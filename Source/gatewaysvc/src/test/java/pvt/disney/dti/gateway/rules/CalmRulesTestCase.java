@@ -195,7 +195,7 @@ public class CalmRulesTestCase extends CommonBusinessTest {
 
    /*
     * Property Configuration for calm Rules
-    * 
+    *  
     */
    public Properties setConfigProperty() {
       props = new Properties();
