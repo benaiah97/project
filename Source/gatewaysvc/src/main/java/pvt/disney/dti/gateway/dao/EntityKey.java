@@ -116,10 +116,13 @@ public class EntityKey {
 			result.setTsLocation(tsLocation);
 		}
 		else {
-			result = new EntityTO();
-			result.setEntityId(0);
-			result.setTsMac(tsMac);
-			result.setTsLocation(tsLocation);
+         logger.sendEvent("No Entity found for given TSMac " + tsMac + 
+                  "and TSLocation " + tsLocation + ".",
+                       EventType.DEBUG, THISINSTANCE);
+         throw new DTIException(EntityKey.class, DTIErrorCode.INVALID_ENTITY, 
+                  "No Entity found for given TSMac "
+                          + tsMac + "and TSLocation " + tsLocation + ".");
+		
 		}
 
 		return result;
