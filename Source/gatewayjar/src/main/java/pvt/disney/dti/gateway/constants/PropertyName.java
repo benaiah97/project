@@ -47,9 +47,6 @@ public interface PropertyName {
 	
 	/** The Constant DTI_APPLICATION. */
    public static final String DTI_APPLICATION = "DtiApp.Application";
-
-   /** The Constant DTI_ENVIRONMENT. */
-   public static final String DTI_ENVIRONMENT = "DtiApp.Environment";
    
    /** The Constant for the CALM section. */
    public static final String DTI_CALM_SECTION = "WALL";

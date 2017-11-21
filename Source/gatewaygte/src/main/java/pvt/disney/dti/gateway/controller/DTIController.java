@@ -111,7 +111,7 @@ public class DTIController {
       String application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
       
       // Environment
-      String environment = PropertyHelper.readPropsValue(PropertyName.DTI_ENVIRONMENT, props, null);
+      String environment = System.getProperty("APP_ENV");
 
       if (StringUtils.isBlank(application) || StringUtils.isBlank(environment)) {
          throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
