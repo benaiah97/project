@@ -53,7 +53,6 @@ public class CommonTestUtils {
 		props.setProperty("READ_TIMEOUT_MILLIS", "35000");
 		props.setProperty("READ_TIMEOUT_MILLIS.RENEWAL", "60000");
 		props.setProperty("DtiApp.Application", "DTIGateway");
-		props.setProperty("DtiApp.Environment", "Latest");
 		
 		return props;
 	}
