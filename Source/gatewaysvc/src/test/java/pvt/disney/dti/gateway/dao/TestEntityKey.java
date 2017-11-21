@@ -29,8 +29,8 @@ public class TestEntityKey extends CommonTestDao {
 		String tsMac = null;
 		String tsLocation = null;
 		EntityTO result = null;
-		DTIMockUtil
-		.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
+		DTIMockUtil.mockNullResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");
+		
 		/* Scenario::1 Passing null as tsMac */
 		try {
 			result = EntityKey.getEntity(tsMac, tsLocation);
@@ -39,40 +39,33 @@ public class TestEntityKey extends CommonTestDao {
 			assertEquals("Insufficient parameters to execute getEntity.",
 					dtie.getLogMessage());
 		}
-		/* Scenario::2 Passing the object without mocking DB */
+		
+		/*Scenario::2 Passing the object by mocking DB and getting value of
+		  result as not null.  */
+	
 		tsMac = "1";
 		tsLocation = "1";
-		try {
-			result = EntityKey.getEntity(tsMac, tsLocation);
-		} catch (DTIException dtie) {
-			assertEquals(DTIErrorCode.FAILED_DB_OPERATION_SVC,
-					dtie.getDtiErrorCode());
-			assertEquals("Exception executing getEntity", dtie.getLogMessage());
-		}
-		/*
-		 * Scenario::3 Passing the object by mocking DB and getting null as
-		 * result
-		 */
-		
-		try {
-			result = EntityKey.getEntity(tsMac, tsLocation);
-			assertNotNull(result);
-		} catch (DTIException dtie) {
-			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
-		}
-		/*
-		 * Scenario::4 Passing the object by mocking DB and getting value as
-		 * result
-		 */
-	/*	DTIMockUtil
-				.mockResultProcessor("pvt.disney.dti.gateway.dao.result.EntityResult");*/
 		DTIMockUtil.processMockprepareAndExecuteSql();
 		try {
 			result = EntityKey.getEntity(tsMac, tsLocation);
 			assertNotNull(result);
 		} catch (DTIException dtie) {
-			Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
+         Assert.fail("Unexpected Exception::" + dtie.getLogMessage());
 		}
+		
+		/*
+       * Scenario::3 Passing the object by mocking DB and getting null as
+       * result
+       */
+      
+      try {
+         result = EntityKey.getEntity(tsMac, tsLocation);
+         assertNotNull(result);
+      } catch (DTIException dtie) {
+         assertEquals(DTIErrorCode.INVALID_ENTITY, dtie.getDtiErrorCode());
+         assertEquals("No Entity found for given TSMac "+tsMac+ "and TSLocation "+tsLocation +".", 
+                  dtie.getLogMessage());
+      }
 	}
 
 	/**
