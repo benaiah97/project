@@ -1128,41 +1128,48 @@ public class ProductRules {
 			case PLAT:
 				if (isDaySubClassDisqualfied(usageSiteSet, PLAT_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case PLATPLUS:
 				break;
 
 			case EPCTAFT4:
 				if (isDaySubClassDisqualfied(usageSiteSet, EPCTAFT4_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case GOLD:
 				if (isDaySubClassDisqualfied(usageSiteSet, GOLD_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case SILVER:
 				if (isDaySubClassDisqualfied(usageSiteSet, SILVER_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case WEEKDAY:
 				if (isDaySubClassDisqualfied(usageSiteSet, WEEKDAY_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case WP:
 				if (isDaySubClassDisqualfied(usageSiteSet, WP_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			case WPAFT2:
 				if (isDaySubClassDisqualfied(usageSiteSet, WPAFT2_RULE_DISQUAL_LIST)) {
 					upGradeProductTO.removeDaySubclass(daySubclass);
-					break;
 				}
+				break;
+				
 			default:
 				upGradeProductTO.removeDaySubclass(daySubclass);
 				break;
