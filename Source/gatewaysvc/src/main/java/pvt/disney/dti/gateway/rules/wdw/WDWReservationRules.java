@@ -342,7 +342,7 @@ public class WDWReservationRules {
       executeOverride = false;
       logger.sendEvent(
           "Encode everything overriden because rule is turned off.",
-          EventType.WARN, THISOBJECT);
+          EventType.DEBUG, THISOBJECT);
     }
 
     // Is the rule active for this seller?
@@ -352,7 +352,7 @@ public class WDWReservationRules {
         executeOverride = false;
         logger.sendEvent(
             "Encode everything overriden because seller override is set.",
-            EventType.WARN, THISOBJECT);
+            EventType.DEBUG, THISOBJECT);
       }
     }
 
@@ -361,7 +361,7 @@ public class WDWReservationRules {
       executeOverride = false;
       logger.sendEvent(
           "Encode everything overriden because order is not paid.",
-          EventType.WARN, THISOBJECT);
+          EventType.DEBUG, THISOBJECT);
     }
 
     // Does the rule exceed atsMaxEncodeAllCnt?
@@ -369,7 +369,7 @@ public class WDWReservationRules {
       executeOverride = false;
       logger.sendEvent(
           "Encode everything overriden because number of tickets (" + numberOfTickets + ") is greater than " + atsMaxEncodeAllCnt + ".",
-          EventType.WARN, THISOBJECT);
+          EventType.DEBUG, THISOBJECT);
     }
     else {
       logger.sendEvent(
@@ -1094,7 +1094,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     // Try 10 times to create.  If you can, great.  If not, error.
     if (resCode == null) {
       
-      logger.sendEvent("Initial reservation code generation failure.  Reattempting for payload ID: " + payloadId,EventType.WARN, THISOBJECT);
+      logger.sendEvent("Initial reservation code generation failure.  Reattempting for payload ID: " + payloadId,EventType.DEBUG, THISOBJECT);
     
       int counter = 0;
       while ((resCode == null) && (counter < 10)) {
