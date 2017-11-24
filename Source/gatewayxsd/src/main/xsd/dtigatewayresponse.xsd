@@ -2300,14 +2300,10 @@
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>
-							<xs:element name="ProdIDType">
-								<xs:complexType>
-									<xs:choice maxOccurs="1">
-										<xs:element name="ProdCode" type="xs:string" />
-										<xs:element name="DLRPLU" type="xs:string" />
-									</xs:choice>
-								</xs:complexType>
-							</xs:element>
+						<xs:choice maxOccurs="1">
+							<xs:element name="ProdCode" type="xs:string" />
+							<xs:element name="DLRPLU" type="xs:string" />
+						</xs:choice>
 							<xs:element name="ProdGuestType" minOccurs="0">
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
