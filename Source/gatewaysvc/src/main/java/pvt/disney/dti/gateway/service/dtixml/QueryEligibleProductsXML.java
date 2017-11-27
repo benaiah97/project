@@ -167,7 +167,7 @@ public class QueryEligibleProductsXML {
 			BigInteger tktItemTO = aTicketTO.getTktItem();
 			qName = new QName("TktItem");
 			JAXBElement<BigInteger> tktItem = new JAXBElement(qName, tktItemTO.getClass(), tktItemTO);
-			aTicket.getTktItemOrTktIDOrProdIDType().add(tktItem);
+			aTicket.getTktItemOrTktIDOrProdCode().add(tktItem);
 
 			// TktID ??
 			ArrayList<TicketTO.TicketIdType> typeList = aTicketTO.getTicketTypes();
@@ -221,7 +221,7 @@ public class QueryEligibleProductsXML {
 
             JAXBElement<String> tktId = new JAXBElement(qName, tktIdObj.getClass(), tktIdObj);
 
-            aTicket.getTktItemOrTktIDOrProdIDType().add(tktId);
+            aTicket.getTktItemOrTktIDOrProdCode().add(tktId);
 
          }
 
@@ -231,7 +231,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("ProdCode");
 
 				JAXBElement<String> pdtCode = new JAXBElement(qName, prodCode.getClass(), prodCode);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(pdtCode);
+				aTicket.getTktItemOrTktIDOrProdCode().add(pdtCode);
 			}
 			
 			// DLR PLU , added for off-line codes from galaxy 
@@ -240,7 +240,7 @@ public class QueryEligibleProductsXML {
             qName = new QName("DLRPLU");
 
             JAXBElement<String> dlrPLU = new JAXBElement(qName, pluCode.getClass(), pluCode);
-            aTicket.getTktItemOrTktIDOrProdIDType().add(dlrPLU);
+            aTicket.getTktItemOrTktIDOrProdCode().add(dlrPLU);
          }
          
 			// Product Guest type
@@ -255,7 +255,7 @@ public class QueryEligibleProductsXML {
 				}
 				qName = new QName("ProdGuestType");
 				JAXBElement<String> pdtGuest = new JAXBElement(qName, prodGuestType.getClass(), prodGuestType);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(pdtGuest);
+				aTicket.getTktItemOrTktIDOrProdCode().add(pdtGuest);
 			}
 
 			// TktStatus?
@@ -270,7 +270,7 @@ public class QueryEligibleProductsXML {
                qName = new QName("TktStatus");
 
                JAXBElement<String> tktStatusElement = new JAXBElement(qName, tktStatus.getClass(), tktStatus);
-               aTicket.getTktItemOrTktIDOrProdIDType().add(tktStatusElement);
+               aTicket.getTktItemOrTktIDOrProdCode().add(tktStatusElement);
             }
          }
 			// Ticket Demographics
@@ -331,7 +331,7 @@ public class QueryEligibleProductsXML {
 
 					tktDemo.setDemoData(demoData);
 					JAXBElement<String> tktDemographicsElement = new JAXBElement(qName, tktDemo.getClass(), tktDemo);
-					aTicket.getTktItemOrTktIDOrProdIDType().add(tktDemographicsElement);
+					aTicket.getTktItemOrTktIDOrProdCode().add(tktDemographicsElement);
 
 				}
 			}
@@ -346,7 +346,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("TktValidity");
 
 				JAXBElement<String> tktValidityElement = new JAXBElement(qName, tktValidity.getClass(), tktValidity);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(tktValidityElement);
+				aTicket.getTktItemOrTktIDOrProdCode().add(tktValidityElement);
 
 			}
 
@@ -356,7 +356,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("SRPPrice");
 
 				JAXBElement<String> sRPPrice = new JAXBElement(qName, tktPriceTO.getClass(), tktPriceTO);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(sRPPrice);
+				aTicket.getTktItemOrTktIDOrProdCode().add(sRPPrice);
 
 			}
 
@@ -366,7 +366,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("SRPTax");
 
 				JAXBElement<String> sRTax = new JAXBElement(qName, tktTax.getClass(), tktTax);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(sRTax);
+				aTicket.getTktItemOrTktIDOrProdCode().add(sRTax);
 
 			}
 
@@ -383,7 +383,7 @@ public class QueryEligibleProductsXML {
 				qName = new QName("ResultStatus");
 
 				JAXBElement<String> resultStatus = new JAXBElement(qName, result.getClass(), result);
-				aTicket.getTktItemOrTktIDOrProdIDType().add(resultStatus);
+				aTicket.getTktItemOrTktIDOrProdCode().add(resultStatus);
 
 			}
 
@@ -414,7 +414,7 @@ public class QueryEligibleProductsXML {
 					qName = new QName("EligibleProducts");
 
 					JAXBElement<String> eligible = new JAXBElement(qName, eligibleproduct.getClass(), eligibleproduct);
-					aTicket.getTktItemOrTktIDOrProdIDType().add(eligible);
+					aTicket.getTktItemOrTktIDOrProdCode().add(eligible);
 				}
 			}
 			
@@ -430,7 +430,7 @@ public class QueryEligibleProductsXML {
 	        qName = new QName("TktError");
 	        JAXBElement<String> tktErrorElement = new JAXBElement(qName,
 	            tktError.getClass(), tktError);
-	        aTicket.getTktItemOrTktIDOrProdIDType().add(tktErrorElement);
+	        aTicket.getTktItemOrTktIDOrProdCode().add(tktErrorElement);
 	      }
 	      
 	      // Adding the ticket details in Query Eligible Product Response
