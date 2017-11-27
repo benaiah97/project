@@ -486,7 +486,7 @@ public class DTIController {
     try {
       // Retrieve error info from DB
       eventLogger.sendEvent("Building error XML for ticket seller because: " + e + " Using PayloadID: " + newPayloadId,
-          EventType.WARN, this);
+          EventType.DEBUG, this);
       DTIErrorTO dtiErrorTO = ErrorKey.getErrorDetail(e.getDtiErrorCode());
       eventLogger.sendEvent("Getting error text from database for ERROR: " + e.getCode(), EventType.INFO, this);
 
