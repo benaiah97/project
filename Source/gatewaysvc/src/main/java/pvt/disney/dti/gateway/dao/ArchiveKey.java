@@ -663,7 +663,8 @@ public class ArchiveKey {
 			}
 
 			/*
-			 * If the DTI Product Id is not returned from the query then we will log a warning saying that the DTI product ID is not found and we will be unable to update the database
+			 * If the DTI Product Id is not returned from the query then we will log a warning saying 
+			 * that the DTI product ID is not found and we will be unable to update the database
 			 */
 			if ((dtiProdId == null) || (dtiProdId.intValue() == 0)) {
 				logger.sendEvent(
@@ -683,7 +684,9 @@ public class ArchiveKey {
 						"Checking for the existence of the record to update",
 						EventType.DEBUG, THISOBJ);
 				/*
-				 * If the record does not exist matching the id, then throw an exception with RECORD_ DOES_NOT_EXIST_IN_DATABASE. Since this is an update and we can perform an update without the record existing, so we will put this message
+				 * If the record does not exist matching the id, then throw an exception with 
+				 * RECORD_ DOES_NOT_EXIST_IN_DATABASE. Since this is an update and we can perform an update
+				 *  without the record existing, so we will put this message
 				 * back to the queue
 				 */
 				if (!doesRecordExistInDatabase(tktSlrTxnId, tktOrderSeqNum)) {
