@@ -85,7 +85,7 @@ RUN chmod -R 777  /var/opt/apps/RT/schemas
 ###############################################################################
 # MODIFY TOMCAT AS NEEDED
 # DEFAULT CATOMCAT ENVIROMENT FROM OFFICIAL TOMCAT 7 IMAGE
-#CATALINA_BASE:   /usr/local/tomcat
+# CATALINA_BASE:   /usr/local/tomcat
 # CATALINA_HOME:   /usr/local/tomcat
 # CATALINA_TMPDIR: /usr/local/tomcat/temp
 # JRE_HOME:        /usr
@@ -101,8 +101,8 @@ EXPOSE 8000 8000
 
 ENTRYPOINT ["catalina.sh", "jpda", "run"]
 
-RUN echo "Copying setenv.sh to Tomcat bin so CATALINA_OPTS set on startup"
-ADD docker/tomcat/setenv.sh /usr/local/tomcat/bin/setenv.sh
+RUN echo "Copying setenv.sh to Tomcat bin so CATALINA_OPTS set on startup: " $CONFIG
+ADD docker/tomcat/$CONFIG/setenv.sh /usr/local/tomcat/bin/setenv.sh
 
 RUN echo "Copying tomcat-users.xml to Tomcat conf for mng gui users/roles"
 ADD docker/tomcat/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
