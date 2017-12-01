@@ -1495,19 +1495,8 @@ public class DAOHelper
             }
             catch (SQLException sqle)
             {
-               /* WrappedException ex =
-                    new WrappedException(
-                        "An exception occurred while performing the SQL: "
-                            + sql
-                            + " ["
-                            + parameters
-                            + ']',
-                        sqle,
-                        ErrorCode.DATABASE_SQL_EXCEPTION);
-	                    evl.sendException(EventType.EXCEPTION, ErrorCode.DATABASE_SQL_EXCEPTION, sqle, this);*/
+              
             	eventLogger.sendEvent("SQLException: " + sqle.toString(), EventType.EXCEPTION, this);
-
-
                 throwException = true;
                 exceptionList.add(sqle);
             }
