@@ -891,7 +891,7 @@ public abstract class BusinessRules {
 		// RULE : if the sale Type provided is other than UPGRADE
 		queryReq = (QueryEligibleProductsRequestTO) commandBody;
 		aTktList = queryReq.getTktList();
-		if (aTktList.get(0).getSaleType().compareToIgnoreCase("UPGRADE") != 0) {
+		if (aTktList.get(0).getSaleType().compareToIgnoreCase("UPGRADE_TO_AP") != 0) {
 			throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
 						"Sale Type provided other than UPGRADE: " + aTktList.get(0).getSaleType());
 		}
