@@ -172,6 +172,9 @@ public class DAOHelper
     private boolean refreshCachedObject;
     private long refreshCachedObjectInterval = REFRESH_CACHED_OBJECT_INTERVAL_DEFAULT;
     private String dataSourceName = null;
+    
+    /** The standard core logging mechanism. */
+	private EventLogger eventLogger = EventLogger.getLogger(this.getClass());
 
     //~ Constructors -------------------------------------------------------------------------------
 
@@ -1492,19 +1495,10 @@ public class DAOHelper
             }
             catch (SQLException sqle)
             {
-                WrappedException ex =
-                    new WrappedException(
-                        "An exception occurred while performing the SQL: "
-                            + sql
-                            + " ["
-                            + parameters
-                            + ']',
-                        sqle,
-                        ErrorCode.DATABASE_SQL_EXCEPTION);
-                evl.sendException(EventType.EXCEPTION, ErrorCode.DATABASE_SQL_EXCEPTION, ex, this);
-
+              
+            	eventLogger.sendEvent("SQLException: " + sqle.toString(), EventType.EXCEPTION, this);
                 throwException = true;
-                exceptionList.add(ex);
+                exceptionList.add(sqle);
             }
             catch (WrappedException ee)
             {
