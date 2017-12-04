@@ -448,27 +448,25 @@ public class CalmRules {
       
       boolean isBarricadeAvailable = false;
 
-      // JTL - 11/30/2017 Because of Database Grants not allowing barricade to be pulled down, 
-      // this code is temporarily bypassed.
-//      try {
-//         // barricadeTOs
-//         List<BarricadeTO> barricadeTOs;
-//         // ownerId
-//         String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
-//
-//         // To get the CosGrpid
-//         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
-//
-//         // To get the Barricade details for COS group Id and OwnerId
-//         barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
-//         
-//         if (null != barricadeTOs && barricadeTOs.size() > 0) {
-//
-//            isBarricadeAvailable = checkBarricade(dtiTxn, barricadeTOs);
-//         }
-//      } catch (Exception ex) {
-//         logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
-//      }
+      try {
+         // barricadeTOs
+         List<BarricadeTO> barricadeTOs;
+         // ownerId
+         String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
+
+         // To get the CosGrpid
+         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
+
+         // To get the Barricade details for COS group Id and OwnerId
+         barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
+         
+         if (null != barricadeTOs && barricadeTOs.size() > 0) {
+
+            isBarricadeAvailable = checkBarricade(dtiTxn, barricadeTOs);
+         }
+      } catch (Exception ex) {
+         logger.sendEvent("Exception executing isBarricadeRaised ", EventType.WARN, this);
+      }
       return isBarricadeAvailable;
    }
 
