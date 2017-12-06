@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import com.disney.logging.EventLogger;
@@ -71,7 +72,6 @@ import pvt.disney.dti.gateway.rules.wdw.WDWUpdateTransactionRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWUpgradeAlphaRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWUpgradeEntitlementRules;
 import pvt.disney.dti.gateway.rules.wdw.WDWVoidTicketRules;
-
 /**
  * This class has the responsibility of running all rules (such as pricing, permission to sell a ticket, batch hours, permission to run a transactions, etc.) at both the general and specific transaction level.
  * 
@@ -89,6 +89,10 @@ public abstract class BusinessRules {
 
   public final static String CREATETAG = "Create";
 
+  /** The Constant sellTypeList. */
+  private static List<String> sellTypeList=new ArrayList<>();
+  
+  
   /** This holds the contingency rules object. */
   private static CalmRules calmRules = null;
   
@@ -891,7 +895,11 @@ public abstract class BusinessRules {
 		// RULE : if the sale Type provided is other than UPGRADE
 		queryReq = (QueryEligibleProductsRequestTO) commandBody;
 		aTktList = queryReq.getTktList();
-		if (aTktList.get(0).getSaleType().compareToIgnoreCase("UPGRADE") != 0) {
+		// adding the sell type in the list
+		sellTypeList.add("UPGRADE_TO_AP");
+		sellTypeList.add("RENEW_AP");
+		sellTypeList.add("MODIFY_ENT");
+		if (!sellTypeList.contains(aTktList.get(0).getSaleType())) {
 			throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
 						"Sale Type provided other than UPGRADE: " + aTktList.get(0).getSaleType());
 		}
