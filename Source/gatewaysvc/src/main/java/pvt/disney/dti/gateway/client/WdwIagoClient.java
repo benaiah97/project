@@ -49,14 +49,14 @@ public class WdwIagoClient {
 	/** Properties file. */
 	private Properties props;
 
- 	/** The cos endpoints next read time for refreshing from the database. */
-	protected static long cosEndpointsNextRead = new Date().getTime();
-
-	/**
-	 * The cos refresh interval - drives when the cos endpoints are refreshed from
-	 * the dti database.
-	 */
-	private static int cosRefreshIntervalMillis = 60000;
+//	/** The cos endpoints next read time for refreshing from the database. */
+//	protected static long cosEndpointsNextRead = new Date().getTime();
+//
+//	/**
+//	 * The cos refresh interval - drives when the cos endpoints are refreshed from
+//	 * the dti database.
+//	 */
+//	private static int cosRefreshIntervalMillis = 60000;
 
 	//TODO: remove when we switch to cos endpoints
 	/** endpoint for iago connection */
@@ -109,9 +109,9 @@ public class WdwIagoClient {
 			logger.sendEvent("Successfully Initialized IAGO.properties file ...", EventType.DEBUG, this);
 			
 			//TODO remove property based endpoint when we switch to cos
-			//ENDPOINT = PropertyHelper.readPropsValue("iago.endpoint", props, null);
+			ENDPOINT = PropertyHelper.readPropsValue("iago.endpoint", props, null);
 			//TODO uncomment this when we are ready to push cos
-			ENDPOINTS = WdwIagoClient.loadClassOfServiceEndpoints();
+			//ENDPOINTS = WdwIagoClient.loadClassOfServiceEndpoints();
 			
 			READ_TIMEOUT_RENEWAL_STRING = PropertyHelper.readPropsValue("iago.socketTimeout.renewal", props, null);
 			if (READ_TIMEOUT_RENEWAL_STRING == null) {
@@ -141,7 +141,7 @@ public class WdwIagoClient {
 			CONNECTION_TIMEOUT = Integer.parseInt(PropertyHelper.readPropsValue("iago.connectionTimeout", props, null));
 
 			//TODO Uncomment this when COS goes live
-			logger.sendEvent("WdwIago Class of service endpoints are: " + ENDPOINTS, EventType.DEBUG, this);
+			//logger.sendEvent("WdwIago Class of service endpoints are: " + ENDPOINTS, EventType.DEBUG, this);
 
 			logger.sendEvent("iago.socketTimeout is " + READ_TIMEOUT_STANDARD, EventType.DEBUG, this);
 			logger.sendEvent("iago.socketTimeout.renewal is " + READ_TIMEOUT_RENEWAL, EventType.DEBUG, this);
@@ -220,14 +220,14 @@ public class WdwIagoClient {
 			logger.sendEvent("Successfully INITIALIZED docRequest ...", EventType.DEBUG, this);
 
 			//synchronize check for is the database is due for refresh
-			synchronized (WdwIagoClient.class) {
-				checkForCosRefresh();				
-			}
+//			synchronized (WdwIagoClient.class) {
+//				checkForCosRefresh();				
+//			}
 			
 			//TODO REMOVE WHEN WE SWITCH TO COS ENDPOINTS
-			//URL url = new URL(ENDPOINT);
+			URL url = new URL(ENDPOINT);
 			// get correct class of service endpoint by transaction type
-			URL url = new URL(ENDPOINTS.get(dtiTxn.getTransactionType()));
+			//URL url = new URL(ENDPOINTS.get(dtiTxn.getTransactionType()));
 
 			logger.sendEvent("About to send message to ATS '" + campus + "' provider system.", EventType.INFO, this);
 
@@ -331,26 +331,26 @@ public class WdwIagoClient {
 	 *
 	 * @return the hashtable
 	 */
-	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
-		Hashtable<String, String> endpoints = new Hashtable<String, String>();
-
-	    // Get the cos grp	    
-		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
-	    try {
-	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("WDW");
-	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
-	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
-	    	        logger.sendEvent("WDWIAGOCLIENT added" + cosTpGrp.getCmdcode() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
-	    	    }
-		} catch (Exception e) {
-			logger.sendEvent(
-					"Unable to load WDW Class of Service End"
-					+ "points...",
-					EventType.EXCEPTION, WdwIagoClient.class);
-			e.printStackTrace();
-		}
-		return endpoints;
-	}
+//	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
+//		Hashtable<String, String> endpoints = new Hashtable<String, String>();
+//
+//	    // Get the cos grp	    
+//		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
+//	    try {
+//	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("WDW");
+//	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
+//	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
+//	    	        logger.sendEvent("WDWIAGOCLIENT added" + cosTpGrp.getCmdcode() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
+//	    	    }
+//		} catch (Exception e) {
+//			logger.sendEvent(
+//					"Unable to load WDW Class of Service End"
+//					+ "points...",
+//					EventType.EXCEPTION, WdwIagoClient.class);
+//			e.printStackTrace();
+//		}
+//		return endpoints;
+//	}
 
 	/**
 	 * Helper. This method compares the current time to last read value. If the difference
@@ -358,30 +358,30 @@ public class WdwIagoClient {
 	 * 
 	 * Sets the next refresh time.
 	 */
-	private synchronized static void nextRefreshTime() {
-		// Initializing the next read value.
-		cosEndpointsNextRead = new Date().getTime() + cosRefreshIntervalMillis;
-	}
-
-	/**
-	 * Gets the cos refresh interval millis.
-	 *
-	 * @return the cos refresh interval millis
-	 */
-	public static int getCosRefreshIntervalMillis() {
-		return cosRefreshIntervalMillis;
-	}
+//	private synchronized static void nextRefreshTime() {
+//		// Initializing the next read value.
+//		cosEndpointsNextRead = new Date().getTime() + cosRefreshIntervalMillis;
+//	}
+//
+//	/**
+//	 * Gets the cos refresh interval millis.
+//	 *
+//	 * @return the cos refresh interval millis
+//	 */
+//	public static int getCosRefreshIntervalMillis() {
+//		return cosRefreshIntervalMillis;
+//	}
 	/**
 	 * Check for cos refresh helper.
 	 */
-	private  void checkForCosRefresh() {
-		if (new Date().getTime() >= cosEndpointsNextRead) {
-			//set the time for next database refresh
-			String threadInfo = Thread.currentThread().getId() + ": " + Thread.currentThread().getName();
-			logger.sendEvent("WdwIago Class of service determined that endpoint refresh is required by thread: " + threadInfo, EventType.DEBUG, this);
-			WdwIagoClient.loadClassOfServiceEndpoints();
-		}
-	}
+//	private  void checkForCosRefresh() {
+//		if (new Date().getTime() >= cosEndpointsNextRead) {
+//			//set the time for next database refresh
+//			String threadInfo = Thread.currentThread().getId() + ": " + Thread.currentThread().getName();
+//			logger.sendEvent("WdwIago Class of service determined that endpoint refresh is required by thread: " + threadInfo, EventType.DEBUG, this);
+//			WdwIagoClient.loadClassOfServiceEndpoints();
+//		}
+//	}
     
 	/**
 	 * returns the static set of endpoints
