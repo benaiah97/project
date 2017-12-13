@@ -80,12 +80,10 @@ public class GWOrderXML {
       orderElement.addElement("OrderID").addText(orderTO.getOrderID());
 
       // CustomerID
-      orderElement.addElement("CustomerID").addText(
-          orderTO.getCustomerID());
+      orderElement.addElement("CustomerID").addText(orderTO.getCustomerID());
 
       // Order Date
-      orderElement.addElement("OrderDate")
-          .addText(orderTO.getOrderDate());
+      orderElement.addElement("OrderDate").addText(orderTO.getOrderDate());
 
       // OrderStatus
       if (orderTO.getOrderStatus() != null && !orderTO.getOrderStatus()
@@ -95,52 +93,38 @@ public class GWOrderXML {
 
       // SalesProgram
       if (orderTO.getSalesProgram() != null) {
-        orderElement.addElement("SalesProgram").addText(
-            orderTO.getSalesProgram());
+        orderElement.addElement("SalesProgram").addText(orderTO.getSalesProgram());
       }
 
       // OrderTotal
-      orderElement.addElement("OrderTotal").addText(
-          orderTO.getOrderTotal().toString());
+      orderElement.addElement("OrderTotal").addText(orderTO.getOrderTotal().toString());
 
       // PaymentContracts (SECTION)
       if (orderTO.getPaymntContractList().size() > 0) {
         Element pmntCntrctsElement = orderElement
             .addElement("PaymentContracts");
 
-        ArrayList<GWPaymentContractTO> paymentContractList = orderTO
-            .getPaymntContractList();
+        ArrayList<GWPaymentContractTO> paymentContractList = orderTO.getPaymntContractList();
         // There should be only one.
         GWPaymentContractTO gwPayContract = paymentContractList.get(0);
 
-        Element pmntCntrctElement = pmntCntrctsElement
-            .addElement("PaymentContract");
-        Element recurElement = pmntCntrctElement
-            .addElement("RecurrencePattern");
+        Element pmntCntrctElement = pmntCntrctsElement.addElement("PaymentContract");
+        Element recurElement = pmntCntrctElement.addElement("RecurrencePattern");
 
-        recurElement.addElement("RecurrenceType").addText(
-            gwPayContract.getRecurrenceType());
-        recurElement.addElement("DayOfMonth").addText(
-            gwPayContract.getDayOfMonth().toString());
-        recurElement.addElement("Interval").addText(
-            gwPayContract.getInterval().toString());
-        recurElement.addElement("StartDate").addText(
-            gwPayContract.getStartDate());
-        recurElement.addElement("EndDate").addText(
-            gwPayContract.getEndDate());
+        recurElement.addElement("RecurrenceType").addText(gwPayContract.getRecurrenceType());
+        recurElement.addElement("DayOfMonth").addText(gwPayContract.getDayOfMonth().toString());
+        recurElement.addElement("Interval").addText(gwPayContract.getInterval().toString());
+        recurElement.addElement("StartDate").addText(gwPayContract.getStartDate());
+        recurElement.addElement("EndDate").addText(gwPayContract.getEndDate());
 
-        pmntCntrctElement.addElement("PaymentPlanID").addText(
-            gwPayContract.getPaymentPlanID());
-        pmntCntrctElement.addElement("RenewContract").addText(
-            gwPayContract.getRenewContract().toString());
+        pmntCntrctElement.addElement("PaymentPlanID").addText(gwPayContract.getPaymentPlanID());
+        pmntCntrctElement.addElement("RenewContract").addText(gwPayContract.getRenewContract().toString());
         pmntCntrctElement.addElement("PaymentContractStatusID")
             .addText(gwPayContract.getPaymentContractStatusID());
         if (gwPayContract.getDownPaymentAmount() != null) {
-          pmntCntrctElement.addElement("DownPaymentAmount").addText(
-              gwPayContract.getDownPaymentAmount());
+          pmntCntrctElement.addElement("DownPaymentAmount").addText(gwPayContract.getDownPaymentAmount());
         }
-        pmntCntrctElement.addElement("ContactMethod").addText(
-            gwPayContract.getContactMethod());
+        pmntCntrctElement.addElement("ContactMethod").addText(gwPayContract.getContactMethod());
       }
 
       // OrderReference
@@ -168,8 +152,7 @@ public class GWOrderXML {
       addOrderLines(orderTO, orderElement);
 
       // PCI Control -DO NOT REMOVE!!! (unless you removed the debug statement
-      String cleanXML = PCIControl.overwritePciDataInXML(bodyElement
-          .asXML());
+      String cleanXML = PCIControl.overwritePciDataInXML(bodyElement.asXML());
       // END PCI Controls.
       eventLogger.sendEvent("GWOrderXML: XML Body Element: '" + cleanXML,
           EventType.DEBUG, Object.class);
@@ -302,11 +285,15 @@ public class GWOrderXML {
 
         // Total
         orderLineElement.addElement("Total").addText(lineTO.getTotal());
+        
+        // Upgrade From Visual ID
+        if (lineTO.getUpgradeFromVisualID() != null) {
+           orderLineElement.addElement("UpgradeFromVisualID").addText(lineTO.getUpgradeFromVisualID());
+        }
 
         // Are there demographics (there should be only one per line item,
         // thanks to flattening done prior during GW object creation.
-        ArrayList<GWMemberDemographicsTO> memberList = lineTO
-            .getMemberList();
+        ArrayList<GWMemberDemographicsTO> memberList = lineTO.getMemberList();
         if ((memberList != null) && (memberList.size() > 0)) {
 
           GWMemberDemographicsTO gwDemoTO = memberList.get(0);
@@ -316,56 +303,47 @@ public class GWOrderXML {
 
           // FirstName
           if (gwDemoTO.getFirstName() != null) {
-            passElement.addElement("FirstName").addText(
-                gwDemoTO.getFirstName());
+            passElement.addElement("FirstName").addText(gwDemoTO.getFirstName());
           }
 
           // LastName
           if (gwDemoTO.getLastName() != null) {
-            passElement.addElement("LastName").addText(
-                gwDemoTO.getLastName());
+            passElement.addElement("LastName").addText(gwDemoTO.getLastName());
           }
 
           // Street1
           if (gwDemoTO.getStreet1() != null) {
-            passElement.addElement("Street1").addText(
-                gwDemoTO.getStreet1());
+            passElement.addElement("Street1").addText(gwDemoTO.getStreet1());
           }
 
           // Street2
           if (gwDemoTO.getStreet2() != null) {
-            passElement.addElement("Street2").addText(
-                gwDemoTO.getStreet2());
+            passElement.addElement("Street2").addText(gwDemoTO.getStreet2());
           }
 
           // City
           if (gwDemoTO.getCity() != null) {
-            passElement.addElement("City").addText(
-                gwDemoTO.getCity());
+            passElement.addElement("City").addText(gwDemoTO.getCity());
           }
 
           // State
           if (gwDemoTO.getState() != null) {
-            passElement.addElement("State").addText(
-                gwDemoTO.getState());
+            passElement.addElement("State").addText(gwDemoTO.getState());
           }
 
           // ZIP
           if (gwDemoTO.getZip() != null) {
-            passElement.addElement("ZIP")
-                .addText(gwDemoTO.getZip());
+            passElement.addElement("ZIP").addText(gwDemoTO.getZip());
           }
 
           // CountryCode
           if (gwDemoTO.getCountryCode() != null) {
-            passElement.addElement("CountryCode").addText(
-                gwDemoTO.getCountryCode());
+            passElement.addElement("CountryCode").addText(gwDemoTO.getCountryCode());
           }
 
           // Phone
           if (gwDemoTO.getPhone() != null) {
-            passElement.addElement("Phone").addText(
-                gwDemoTO.getPhone());
+            passElement.addElement("Phone").addText(gwDemoTO.getPhone());
 
           }
 
@@ -373,20 +351,17 @@ public class GWOrderXML {
 
           // DOB
           if (gwDemoTO.getDateOfBirth() != null) {
-            passElement.addElement("DOB").addText(
-                gwDemoTO.getDateOfBirth());
+            passElement.addElement("DOB").addText(gwDemoTO.getDateOfBirth());
           }
 
           // Gender
           if (gwDemoTO.getGender() != null) {
-            passElement.addElement("Gender").addText(
-                gwDemoTO.getGender());
+            passElement.addElement("Gender").addText(gwDemoTO.getGender());
           }
 
           // VisualID
           if (gwDemoTO.getVisualID() != null) {
-            passElement.addElement("VisualID").addText(
-                gwDemoTO.getVisualID());
+            passElement.addElement("VisualID").addText(gwDemoTO.getVisualID());
           }
 
         }
@@ -394,8 +369,7 @@ public class GWOrderXML {
       }
       else {
         throw new DTIException(GWOrderXML.class,
-            DTIErrorCode.INVALID_MSG_CONTENT,
-            "Invalid OrderLine DetailType");
+            DTIErrorCode.INVALID_MSG_CONTENT, "Invalid OrderLine DetailType");
       }
     }
   }
@@ -627,19 +601,16 @@ public class GWOrderXML {
   }
 
   /**
-   * 
+   * Sets up the products in the response.  Note, excludes negative quantity items.
    * @param productsElement
    * @param gwOrdersRespTO
    */
   @SuppressWarnings({ "unchecked" })
-  public static void setProducts(Element productsElement,
-      GWOrdersRespTO gwOrdersRespTO) {
+  public static void setProducts(Element productsElement, GWOrdersRespTO gwOrdersRespTO) {
 
-    eventLogger.sendEvent("Entering GWOrderXML.setProducts()",
-        EventType.DEBUG, Object.class);
+    eventLogger.sendEvent("Entering GWOrderXML.setProducts()", EventType.DEBUG, Object.class);
 
-    ArrayList<GWOrdersRespTO.TicketRecord> gwTicketListTO = gwOrdersRespTO
-        .getTicketArray();
+    ArrayList<GWOrdersRespTO.TicketRecord> gwTicketListTO = gwOrdersRespTO.getTicketArray();
 
     // Iterate through each product element
     for (Iterator<org.dom4j.Element> productListIter = productsElement
@@ -663,9 +634,9 @@ public class GWOrderXML {
       if (isATicket) {
 
         GWOrdersRespTO.TicketRecord gwTicketTO = gwOrdersRespTO.new TicketRecord();
+        boolean isPositiveQuantity = true;
 
-        for (Iterator<org.dom4j.Element> ticketIter = productElement
-            .elementIterator(); ticketIter.hasNext();) {
+        for (Iterator<org.dom4j.Element> ticketIter = productElement.elementIterator(); ticketIter.hasNext();) {
 
           Element ticketElement = ticketIter.next();
 
@@ -678,7 +649,18 @@ public class GWOrderXML {
           if (ticketElement.getName().compareTo("PLU") == 0) {
             gwTicketTO.setPlu(ticketElement.getText());
           }
-
+          
+          // Get the Qty (Quantity) to determine if this should be output.
+          if (ticketElement.getName().compareTo("Qty") == 0) {
+             String quantityString = ticketElement.getText();
+             int qty = Integer.parseInt(quantityString);
+             if (qty > 0) {
+               isPositiveQuantity = true;
+             } else {
+               isPositiveQuantity = false;
+             }
+          }
+          
           // Get the ItemDescription
           if (ticketElement.getName().compareTo("ItemSecription") == 0) {
             gwTicketTO.setDescription(ticketElement.getText());
@@ -687,25 +669,24 @@ public class GWOrderXML {
           // Get the price (Strip $, w/2.16.1, JTL)
           if (ticketElement.getName().compareTo("Price") == 0) {
             String formattedPriceString = ticketElement.getText();
-            String priceString = formattedPriceString.replaceAll(
-                "[$,]", "");
-            if (priceString.contains(".")) gwTicketTO
-                .setPrice(new BigDecimal(priceString));
-            else gwTicketTO.setPrice(new BigDecimal(
-                priceString + ".00"));
+            String priceString = formattedPriceString.replaceAll("[$,]", "");
+            if (priceString.contains(".")) { 
+               gwTicketTO.setPrice(new BigDecimal(priceString));
+            } else {
+               gwTicketTO.setPrice(new BigDecimal(priceString + ".00"));
+            }
           }
         }
 
         // if the Visual ID is present, add the ticket to the array.
-        if (gwTicketTO.getVisualID() != null) {
+        if ((gwTicketTO.getVisualID() != null) && (isPositiveQuantity)) {
           gwTicketListTO.add(gwTicketTO);
         }
       } // is a ticket
 
     } // product for loop
 
-    eventLogger
-        .sendEvent(
+    eventLogger.sendEvent(
             "GWOrderXML.setProducts() found this number of tickets: '" + gwTicketListTO
                 .size(), EventType.DEBUG, Object.class);
 

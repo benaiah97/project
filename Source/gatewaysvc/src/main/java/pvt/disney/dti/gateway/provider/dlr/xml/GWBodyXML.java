@@ -117,17 +117,13 @@ public class GWBodyXML {
 
 		if (txnType == GWEnvelopeTO.GWTransactionType.QUERYTICKET) {
 			GWQueryTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
-		else if (txnType == GWEnvelopeTO.GWTransactionType.TICKETACTIVATION) {
+		} else if (txnType == GWEnvelopeTO.GWTransactionType.TICKETACTIVATION) {
 			GWTicketActivationXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
-		else if (txnType == GWEnvelopeTO.GWTransactionType.ORDERS) {
+		} else if (txnType == GWEnvelopeTO.GWTransactionType.ORDERS) {
 			GWOrderXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
-		else if (txnType == GWEnvelopeTO.GWTransactionType.QUERYORDER) {
+		} else if (txnType == GWEnvelopeTO.GWTransactionType.QUERYORDER) {
 			GWQueryOrderXML.setRespBodyTO(gwBodyTO, bodyElement);
-		}
-		else {
+		} else {
 			throw new DTIException(GWBodyXML.class,
 					DTIErrorCode.TP_INTERFACE_FAILURE,
 					"Ticket provider returned Body without known transaction type in XML.");

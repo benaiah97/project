@@ -901,7 +901,7 @@ public abstract class BusinessRules {
 		sellTypeList.add("MODIFY_ENT");
 		if (!sellTypeList.contains(aTktList.get(0).getSaleType())) {
 			throw new DTIException(BusinessRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-						"Sale Type provided other than UPGRADE: " + aTktList.get(0).getSaleType());
+						"Sale Type provided other than UPGRADE_TO_AP: " + aTktList.get(0).getSaleType());
 		}
 	  }
   
