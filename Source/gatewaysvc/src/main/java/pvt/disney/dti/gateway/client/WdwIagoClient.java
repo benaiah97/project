@@ -90,7 +90,12 @@ public class WdwIagoClient {
 
 	/** Checks property initialization. */
 	private static boolean INITIALIZED = false;
-
+	
+	/**
+	 *  used to get environment
+	 */
+	private static String environment = null;
+	
 	/**
 	 * Constructor for IagoSoapClient. Gets the logger for the class and initializes
 	 * connection properties (if not already INITIALIZED).
@@ -334,10 +339,11 @@ public class WdwIagoClient {
 //	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
 //		Hashtable<String, String> endpoints = new Hashtable<String, String>();
 //
-//	    // Get the cos grp	    
+//	    // Get the cos grp
+//		environment = System.getProperty("APP_ENV");
 //		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
 //	    try {
-//	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("WDW");
+//	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("WDW", environment);
 //	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
 //	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
 //	    	        logger.sendEvent("WDWIAGOCLIENT added" + cosTpGrp.getCmdcode() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );

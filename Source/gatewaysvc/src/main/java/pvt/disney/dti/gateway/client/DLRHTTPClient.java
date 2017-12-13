@@ -105,7 +105,12 @@ public class DLRHTTPClient {
 	 * used to check initialized status
 	 */
 	private static boolean INITIALIZED = false;
-
+	
+	/**
+	 *  used to get environment
+	 */
+	private static String environment = null;
+	
 	/**
 	 * Constructor for HTTPController. Gets the logger for the class.
 	 * 
@@ -375,10 +380,11 @@ public class DLRHTTPClient {
 	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
 		Hashtable<String, String> endpoints = new Hashtable<String, String>();
 
-	    // Get the cos grp	    
+	    // Get the cos grp	 
+		environment = System.getProperty("APP_ENV");
 		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
 	    try {
-	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("DLR");
+	    		cosList = CosTpGrpCmdKey.getTpCosGrpCmd("DLR", environment);
 	    		for (CosTpGrpCmdTO cosTpGrp : cosList) {
 	    	        endpoints.put(cosTpGrp.getCmdcode().toUpperCase() ,cosTpGrp.getEndpointurl());
 	    	        logger.sendEvent("DLRHTTPClient added" + cosTpGrp.getCmdcode().toUpperCase() + " with " + cosTpGrp.getEndpointurl(), EventType.INFO, null );
