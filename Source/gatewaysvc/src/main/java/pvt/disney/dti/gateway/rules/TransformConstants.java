@@ -179,6 +179,13 @@ public interface TransformConstants {
 
   /** Ship delivery code for renewals. */
   String GW_SHIP_DELIVERY = "17";
+  
+  /** Print On Web for renewals. */
+  String GW_PRINT_ON_WEB = "PrintOnWeb";
+
+  /** Ship delivery code for renewals. */
+  String GW_PRINT_ON_WEB_NBR = "9";
+  
 
   // ===============================================
   // OT PREFIX INDICATES OMNITICKET (WDW) CONSTANTS

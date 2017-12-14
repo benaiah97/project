@@ -10,8 +10,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
-//import org.apache.commons.lang.StringUtils;
-
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ErrorKey;
@@ -50,7 +48,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWPaymentContractTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
 import pvt.disney.dti.gateway.provider.dlr.data.UtilityXML;
-import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeUpgradeEntitlementXML;
+import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.PaymentRules;
 import pvt.disney.dti.gateway.rules.ProductRules;
@@ -130,8 +128,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 			// Sales Program (order level, not contract level)
 			String salesProgram = instLookupMap.get(GW_ORDERS_SALESPROGRAM_DBKEY);
-			
-		
+					
 			if ((salesProgram == null) || (salesProgram.length() == 0)) {
 			   
 			   logger.sendEvent("DLR Installmnt SalesProgram not in TP_LOOKUP Table. ", EventType.EXCEPTION, THISINSTANCE);
@@ -163,10 +160,10 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 	      String lookupEligibilityPlan=null;
 
 	      if (SOCA_RES.equalsIgnoreCase(eligMember)) {
-	        lookupEligibilityPlan = GW_ORDERS_SOCARENEWPLAN;
+	        lookupEligibilityPlan = GW_ORDERS_SOCAPURCHPLAN;
 	      
 	      }else{
-	        lookupEligibilityPlan = GW_ORDERS_CARENEWPLAN;
+	        lookupEligibilityPlan = GW_ORDERS_CAPURCHPLAN;
 	     }
 	      
 	      // looking for payment plan
@@ -233,7 +230,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		envelopeTO.setHeaderTO(headerTO);
 		envelopeTO.setBodyTO(bodyTO);
 
-		xmlRequest = GWEnvelopeUpgradeEntitlementXML.getXML(envelopeTO);
+		//xmlRequest = GWEnvelopeUpgradeEntitlementXML.getXML(envelopeTO);
+		xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
 
 		return xmlRequest;
 	}
@@ -490,28 +488,28 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 		// use the lookup map for details & lookup our various values
 		try {
 
-			orderTO.setShipDeliveryDetails(GW_AUTO_ACTIVATION);
-			orderTO.setShipDeliveryMethod(GW_SHIP_DELIVERY); // delivery method
+			orderTO.setShipDeliveryDetails(GW_PRINT_ON_WEB);
+			orderTO.setShipDeliveryMethod(GW_PRINT_ON_WEB_NBR); // delivery method
 																
-			// TODO RASTA006 DO we need Group Visit Details
-			String resPickup = UtilityXML.getEGalaxyDateFromGCalNoTime(upgradeEntReq.getReservation().getResPickupDate());
-			orderTO.setGroupVisitDate(resPickup + "00:00:00");
-
-			// Since 2.9 Put bill name in group description (per Art Wightman)
-			// Change for 2.12 - No longer check to see if shipping method is 1,2, or 6.
-			// No longer require a payment clause to be present on the in-bound request.
-			if ((upgradeEntReq.getClientData().getBillingInfo() != null)
-					&& (upgradeEntReq.getClientData().getBillingInfo().getName() != null)) {
-
-				orderTO.setGroupVisitDescription(upgradeEntReq.getClientData().getBillingInfo().getName());
-
-				// Populate Group Visit Reference only for BOLT style orders.
-				if (upgradeEntReq.getEligibilityGroup() != null
-						&& upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
-					orderTO.setGroupVisitReference(upgradeEntReq.getClientData().getBillingInfo().getName());
-				}
-
-			}
+//			// TODO RASTA006 DO we need Group Visit Details
+//			String resPickup = UtilityXML.getEGalaxyDateFromGCalNoTime(upgradeEntReq.getReservation().getResPickupDate());
+//			orderTO.setGroupVisitDate(resPickup + "00:00:00");
+//
+//			// Since 2.9 Put bill name in group description (per Art Wightman)
+//			// Change for 2.12 - No longer check to see if shipping method is 1,2, or 6.
+//			// No longer require a payment clause to be present on the in-bound request.
+//			if ((upgradeEntReq.getClientData().getBillingInfo() != null)
+//					&& (upgradeEntReq.getClientData().getBillingInfo().getName() != null)) {
+//
+//				orderTO.setGroupVisitDescription(upgradeEntReq.getClientData().getBillingInfo().getName());
+//
+//				// Populate Group Visit Reference only for BOLT style orders.
+//				if (upgradeEntReq.getEligibilityGroup() != null
+//						&& upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
+//					orderTO.setGroupVisitReference(upgradeEntReq.getClientData().getBillingInfo().getName());
+//				}
+//
+//			}
 
 		} catch (NumberFormatException nfe) {
 		   
@@ -539,7 +537,8 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 	 */
 	static DTITransactionTO transformResponse(DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
 
-		GWEnvelopeTO gwEnvRespTO = GWEnvelopeUpgradeEntitlementXML.getTO(xmlResponse);
+		//GWEnvelopeTO gwEnvRespTO = GWEnvelopeUpgradeEntitlementXML.getTO(xmlResponse);
+		GWEnvelopeTO gwEnvRespTO = GWEnvelopeXML.getTO(xmlResponse);
 
 		DTIResponseTO dtiRespTO = new DTIResponseTO();
 
@@ -933,6 +932,11 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 			// set the total on the line item
 			gwLineItemTO.setTotal(String.valueOf(productTotal));
+			
+			// Get upgrade from visual ID.
+         if (dtiTicket.getExternal() != null) {
+            gwLineItemTO.setUpgradeFromVisualID(dtiTicket.getExternal());
+         }
 
 			// Add demographics, if present (note: because of activity above,
 			// only one expected per line). (As of 2.16.1, JTL)
@@ -1011,11 +1015,6 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
 					gwLineItemTO.addMember(gwDemo);
 				}
-
-				// Visual ID
-            if (dtiTicket.getExternal() != null) {
-               gwDemo.setVisualID(dtiTicket.getExternal());
-            }
 
 			}
 

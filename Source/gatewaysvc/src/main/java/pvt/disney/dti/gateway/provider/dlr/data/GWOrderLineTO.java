@@ -41,6 +41,8 @@ public class GWOrderLineTO {
 	private String cvn;
 	/** PaymentPlanID - detail type 8 */
 	private String paymentPlanID;
+	/** Upgrade From Visual ID */
+	private String upgradeFromVisualID;
 	
 	/** pass members */
 	private ArrayList<GWMemberDemographicsTO> memberList = new ArrayList<GWMemberDemographicsTO>();
@@ -309,5 +311,19 @@ public class GWOrderLineTO {
   public void setBillingStreet(String billingStreet) {
     this.billingStreet = billingStreet;
   }
+
+/**
+ * @return the upgradeFromVisualID
+ */
+public String getUpgradeFromVisualID() {
+   return upgradeFromVisualID;
+}
+
+/**
+ * @param upgradeFromVisualID the upgradeFromVisualID to set
+ */
+public void setUpgradeFromVisualID(String upgradeFromVisualID) {
+   this.upgradeFromVisualID = upgradeFromVisualID;
+}
 
 }

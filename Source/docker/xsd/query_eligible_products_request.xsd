@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with STS (x64) (https://spring.io/tools) by MOONS012 -->
 <!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by Todd Lewis (Walt Disney Attractions Tech.) -->
 <!--TiXML 1.0 12/17/02 Copyright The Walt Disney Company -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
@@ -13,7 +12,7 @@
 							<xs:element name="Command">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element ref="CommandHeader"/>
+										<xs:element ref="CommandHeader"/>								
 										<xs:element ref="QueryEligibleProductsRequest" minOccurs="0"/>
 									</xs:sequence>
 								</xs:complexType>
@@ -88,15 +87,6 @@
 									<xs:restriction base="xs:string">
 										<xs:minLength value="1"/>
 										<xs:maxLength value="15"/>
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:element>
-							<xs:element name="SellerId" minOccurs="0" maxOccurs="1">
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:minLength value="1"/>
-										<xs:maxLength value="5"/>
-										<xs:pattern value="[0-9]+"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
@@ -196,8 +186,9 @@
 							<xs:element name="SaleType">
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
-										<xs:enumeration value="UPGRADE"/>
-										<xs:enumeration value="RENEW"/>
+										<xs:enumeration value="UPGRADE_TO_AP"/>
+										<xs:enumeration value="RENEW_AP"/>
+										<xs:enumeration value="MODIFY_ENT"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:element>
@@ -207,128 +198,4 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name="ExternalReferenceType">
-		<xs:sequence>
-			<xs:element name="ExternalReferenceType">
-				<xs:annotation>
-					<xs:documentation>See enumeration for list...</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:enumeration value="XBANDID"/>
-						<xs:enumeration value="GXP_LINK_ID"/>
-						<xs:enumeration value="XBAND_EXTERNAL_NUMBER"/>
-						<xs:enumeration value="SWID"/>
-						<xs:enumeration value="GUID"/>
-						<xs:enumeration value="XBMS_LINK_ID"/>
-						<xs:enumeration value="XPASSID"/>
-						<xs:enumeration value="TRANSACTIONAL_GUEST_ID"/>
-						<xs:enumeration value="ADMISSION_LINK_ID"/>
-						<xs:enumeration value="PAYMENT_LINK_ID"/>
-						<xs:enumeration value="MEDIA_LINK_ID"/>
-						<xs:enumeration value="XID"/>
-						<xs:enumeration value="DME_LINK_ID"/>
-						<xs:enumeration value="SECURE_ID"/>
-						<xs:enumeration value="TXN_GUID"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="ExternalReferenceValue">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="64"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="MediaData">
-		<xs:sequence>
-			<xs:element name="MediaId">
-				<xs:annotation>
-					<xs:documentation>(aka SecureID) Could be xBandID, RFID, etc.
-                    </xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="32"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="MfrId">
-				<xs:annotation>
-					<xs:documentation>Manufacturer's ID</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="20"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="VisualId">
-				<xs:annotation>
-					<xs:documentation>Required along with MediaID and Manufacturer's ID
-                    </xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="32"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="Ticket">
-		<xs:sequence>
-			<xs:element name="TktItem" type="xs:integer"/>
-			<xs:element name="TktID">
-				<xs:complexType>
-					<xs:choice>
-						<xs:element name="Mag" type="xs:string"/>
-						<xs:element name="Barcode" type="xs:string"/>
-						<xs:element name="TktDSSN">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="TktDate" type="xs:date"/>
-									<xs:element name="TktSite" type="xs:string"/>
-									<xs:element name="TktStation" type="xs:string"/>
-									<xs:element name="TktNbr" type="xs:string"/>
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="TktNID" type="xs:string"/>
-						<xs:element name="External" type="xs:string"/>
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="EntitlementAccount">
-		<xs:choice>
-			<xs:element name="ExistingMediaId">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="32"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<!-- NGE 1212 (GBTS 196) - Remove the indexes on both the Visual Id and 
-                the Manufacturer's Id <xs:element name="ExistingMfrId"> <xs:simpleType> <xs:restriction 
-                base="xs:string"> <xs:maxLength value="20"/> </xs:restriction> </xs:simpleType> 
-                </xs:element> <xs:element name="ExistingVisualId"> <xs:simpleType> <xs:restriction 
-                base="xs:string"> <xs:maxLength value="32"/> </xs:restriction> </xs:simpleType> 
-                </xs:element> -->
-			<xs:element name="AccountId">
-				<xs:annotation>
-					<xs:documentation>Overview Internal Account Id</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:maxLength value="17"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:element>
-			<xs:element name="Ticket" type="Ticket"/>
-		</xs:choice>
-	</xs:complexType>
 </xs:schema>

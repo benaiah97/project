@@ -932,9 +932,9 @@ public class UpgradeEntitlementXML {
 
 				aTicket.setTktTransaction(tktTran);
 
-				ticketList.add(aTicket);
-
 			}
+			
+         ticketList.add(aTicket);
 
 		} // end for loop
 		return;
