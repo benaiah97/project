@@ -216,16 +216,11 @@ public class GWOrderXML {
 
         // Payment (Type 2 Detail)
       }
-      else if (detailType
-          .equals(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM)) {
-        orderLineElement.addElement("PaymentCode").addText(
-            lineTO.getPaymentCode());
-        orderLineElement.addElement("PaymentDate").addText(
-            lineTO.getPaymentDate());
-        orderLineElement.addElement("Description").addText(
-            lineTO.getDescription());
-        orderLineElement.addElement("Endorsement").addText(
-            lineTO.getEndorsement());
+      else if (detailType.equals(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM)) {
+        orderLineElement.addElement("PaymentCode").addText(lineTO.getPaymentCode());
+        orderLineElement.addElement("PaymentDate").addText(lineTO.getPaymentDate());
+        orderLineElement.addElement("Description").addText(lineTO.getDescription());
+        orderLineElement.addElement("Endorsement").addText(lineTO.getEndorsement());
 
         // Check for billing street (as of 2.16.2, JTL)
         String billingStreet = lineTO.getBillingStreet();
