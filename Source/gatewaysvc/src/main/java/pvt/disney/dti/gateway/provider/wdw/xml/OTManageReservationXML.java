@@ -518,6 +518,12 @@ public class OTManageReservationXML {
             aProductTO.getPrice().toString());
       }
 
+      // QuoteToken
+      if (aProductTO.getProdPriceToken() != null) {
+        pdtStanza.addElement("QuoteToken").addText(
+            aProductTO.getProdPriceToken().toString());
+      }
+        
       // TicketNote (omitted)
       // TicketAttribute (omitted)
       // GroupTicket (omitted)
@@ -833,13 +839,6 @@ public class OTManageReservationXML {
         otPdtTO.setPrice(new BigDecimal(inString));
       }
 
-      //QuoteToken
-      Node quoteTokenNode = aNode.selectSingleNode("QuoteToken");
-      if (quoteTokenNode != null) {
-        inString = quoteTokenNode.getText();
-        otPdtTO.setProdPriceToken(inString);
-      }
-      
       // Qty
       Node qtyNode = aNode.selectSingleNode("Qty");
       if (qtyNode != null) {
