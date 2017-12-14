@@ -187,8 +187,7 @@ public class DLRReservationRules implements TransformConstants {
         dtiProductMap, resReq);
 
     // Set the order lines, returning the order total (required by the header)
-    BigDecimal orderTotal = setProductOrderLines(resReq, orderTO,
-        dtiProductMap, dtiFlatTktList);
+    BigDecimal orderTotal = setProductOrderLines(resReq, orderTO, dtiProductMap, dtiFlatTktList);
 
     // Order>OrderTotal: Set the order total based on the products
     orderTO.setOrderTotal(orderTotal);
@@ -196,8 +195,7 @@ public class DLRReservationRules implements TransformConstants {
     // Set OrderLine(s), payments info
     // use this to get order line item that are payments
     HashMap<String, String> payCardMap = dtiTxn.getPaymentCardMap();
-    boolean missingCvv = setPaymentOrderLines(resReq, orderTO, orderTotal,
-        payCardMap);
+    boolean missingCvv = setPaymentOrderLines(resReq, orderTO, orderTotal, payCardMap);
 
     // Set the source ID to the TS MAC
     String sourceID = dtiTxn.getRequest().getPayloadHeader().getTktSeller()

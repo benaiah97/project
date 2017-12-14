@@ -24,10 +24,12 @@ import pvt.disney.dti.gateway.data.common.ClientDataTO;
 import pvt.disney.dti.gateway.data.common.CommandBodyTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.CreditCardTO;
+import pvt.disney.dti.gateway.data.common.CreditCardTO.CreditCardType;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO.PaymentType;
@@ -62,323 +64,323 @@ import com.disney.logging.audit.EventType;
  * The Class DLRUpgradeEntitlementRules.
  */
 public class DLRUpgradeEntitlementRules implements TransformConstants {
-   
+
    /** Object instance used for logging. */
    private static final DLRUpgradeEntitlementRules THISINSTANCE = new DLRUpgradeEntitlementRules();
-   
+
    /** logger */
-   private static EventLogger logger = EventLogger
-         .getLogger(DLRUpgradeEntitlementRules.class);
+   private static EventLogger logger = EventLogger.getLogger(DLRUpgradeEntitlementRules.class);
 
-	/**
-	 * Transforms the request in the DTI transfer object into a valid eGalaxy
-	 * request string.
-	 * 
-	 * @param dtiTxn
-	 *            the DTI transfer object
-	 * @return eGalaxy request string
-	 * @throws DTIException
-	 *             should a problem with conversion occur
-	 */
-	static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
+   /**
+    * Transforms the request in the DTI transfer object into a valid eGalaxy
+    * request string.
+    * 
+    * @param dtiTxn
+    *           the DTI transfer object
+    * @return eGalaxy request string
+    * @throws DTIException
+    *            should a problem with conversion occur
+    */
+   static String transformRequest(DTITransactionTO dtiTxn) throws DTIException {
 
-		String xmlRequest;
-		GWEnvelopeTO envelopeTO = new GWEnvelopeTO(GWEnvelopeTO.GWTransactionType.ORDERS);
+      String xmlRequest;
+      GWEnvelopeTO envelopeTO = new GWEnvelopeTO(GWEnvelopeTO.GWTransactionType.ORDERS);
 
-		GWHeaderTO headerTO = envelopeTO.getHeaderTO();
-		GWBodyTO bodyTO = envelopeTO.getBodyTO();
-		GWOrdersRqstTO ordersReqTO = new GWOrdersRqstTO();
+      GWHeaderTO headerTO = envelopeTO.getHeaderTO();
+      GWBodyTO bodyTO = envelopeTO.getBodyTO();
+      GWOrdersRqstTO ordersReqTO = new GWOrdersRqstTO();
 
-		UpgradeEntitlementRequestTO upgradeRequest = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+      UpgradeEntitlementRequestTO upgradeRequest = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
 
-		// CREATE the ORDER TO
-		GWOrderTO orderTO = createOrderTO(dtiTxn);
+      // CREATE the ORDER TO
+      GWOrderTO orderTO = createOrderTO(dtiTxn);
 
-		// Installment Fields - Set Contract clause and sales program in the Order clause TODO RASTA006 , need to work on PaymentPlan
-		if (upgradeRequest.isInstallmentRequest()) {
+      // Installment Fields - Set Contract clause and sales program in the Order
+      // clause TODO RASTA006 , need to work on PaymentPlan
+      if (upgradeRequest.isInstallmentRequest()) {
 
-		   GWPaymentContractTO contract = new GWPaymentContractTO();
+         GWPaymentContractTO contract = new GWPaymentContractTO();
 
-			// Set Constants
-			contract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
-			contract.setInterval(GW_ORDERS_CONTRACT_RECURRENCE_INTERVAL);
-			contract.setRenewContract(GW_ORDERS_CONTRACT_RENEW_CONTRACT);
-	      contract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
-			contract.setUpgradeContract(GW_ORDERS_CONTRACT_UPGRADE_CONTRACT);
-			contract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
-		
-			// Removing the downPaymentAmount Information TODO RASTA006
-			if (upgradeRequest.getInstallmentDownpayment() != null) {
-				String downPaymentAmount = upgradeRequest.getInstallmentDownpayment().toString();
-				contract.setDownPaymentAmount(downPaymentAmount);
-			}
-			contract.setContactMethod(GW_ORDERS_CONTRACT_CONTACT_METHOD);
+         // Set Constants
+         contract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
+         contract.setInterval(GW_ORDERS_CONTRACT_RECURRENCE_INTERVAL);
+         contract.setRenewContract(GW_ORDERS_CONTRACT_RENEW_CONTRACT);
+         contract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
+         contract.setUpgradeContract(GW_ORDERS_CONTRACT_UPGRADE_CONTRACT);
+         contract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
 
-			// Get TP Lookups - note, must be list used here, not hash as
-			// several installment values use the same key...
-			ArrayList<TPLookupTO> tpLookupList = dtiTxn.getTpLookupTOList();
+         // Removing the downPaymentAmount Information TODO RASTA006
+         if (upgradeRequest.getInstallmentDownpayment() != null) {
+            String downPaymentAmount = upgradeRequest.getInstallmentDownpayment().toString();
+            contract.setDownPaymentAmount(downPaymentAmount);
+         }
+         contract.setContactMethod(GW_ORDERS_CONTRACT_CONTACT_METHOD);
 
-			// Loop through the tpList and build an "installment" hash map.
-			HashMap<String, String> instLookupMap = new HashMap<String, String>();
-			for ( /* each */ TPLookupTO aTPLookup :  /* in */ tpLookupList) {
-				if (aTPLookup.getLookupType() == TPLookupType.INSTALLMENT) {
-					instLookupMap.put(aTPLookup.getLookupDesc(), aTPLookup.getLookupValue());
-				}
-			}
+         // Get TP Lookups - note, must be list used here, not hash as
+         // several installment values use the same key...
+         ArrayList<TPLookupTO> tpLookupList = dtiTxn.getTpLookupTOList();
 
-			// Sales Program (order level, not contract level)
-			String salesProgram = instLookupMap.get(GW_ORDERS_SALESPROGRAM_DBKEY);
-					
-			if ((salesProgram == null) || (salesProgram.length() == 0)) {
-			   
-			   logger.sendEvent("DLR Installmnt SalesProgram not in TP_LOOKUP Table. ", EventType.EXCEPTION, THISINSTANCE);
-				throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-						"Internal Error:  DLR Installmnt SalesProgram not in TP_LOOKUP Table.");
-			}
-			orderTO.setSalesProgram(salesProgram);
+         // Loop through the tpList and build an "installment" hash map.
+         HashMap<String, String> instLookupMap = new HashMap<String, String>();
+         for ( /* each */TPLookupTO aTPLookup : /* in */tpLookupList) {
+            if (aTPLookup.getLookupType() == TPLookupType.INSTALLMENT) {
+               instLookupMap.put(aTPLookup.getLookupDesc(), aTPLookup.getLookupValue());
+            }
+         }
 
-			GregorianCalendar gCal = new GregorianCalendar();
+         // Sales Program (order level, not contract level)
+         String salesProgram = instLookupMap.get(GW_ORDERS_SALESPROGRAM_DBKEY);
 
-			// Day of Month
-			contract.setDayOfMonth(Integer.valueOf(gCal.get(Calendar.DAY_OF_MONTH)));
+         if ((salesProgram == null) || (salesProgram.length() == 0)) {
 
-			// Start Date (Today +1 month)
-			gCal.add(Calendar.MONTH, 1);
-			String startDate = UtilityXML.getEGalaxyDateFromGCalNoTime(gCal);
-			contract.setStartDate(startDate);
+            logger.sendEvent("DLR Installmnt SalesProgram not in TP_LOOKUP Table. ", EventType.EXCEPTION, THISINSTANCE);
+            throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+                     "Internal Error:  DLR Installmnt SalesProgram not in TP_LOOKUP Table.");
+         }
+         orderTO.setSalesProgram(salesProgram);
 
-			// End Date (Start date + 10 months (11 months from today))
-			gCal.add(Calendar.MONTH, 10);
-			String endDate = UtilityXML.getEGalaxyDateFromGCalNoTime(gCal);
-			contract.setEndDate(endDate);
-			
-			// PaymentPlan
-	      String eligMember = upgradeRequest.getEligibilityMember();
-	      
-	      // PaymentPlan TODO RASTA006 09282017 Need to rework on Payment Plan 3 and 7 payplan Id 
-	      String paymentPlan=null;
-	      String lookupEligibilityPlan=null;
+         GregorianCalendar gCal = new GregorianCalendar();
 
-	      if (SOCA_RES.equalsIgnoreCase(eligMember)) {
-	        lookupEligibilityPlan = GW_ORDERS_SOCAPURCHPLAN;
-	      
-	      }else{
-	        lookupEligibilityPlan = GW_ORDERS_CAPURCHPLAN;
-	     }
-	      
-	      // looking for payment plan
-	      paymentPlan = instLookupMap.get(lookupEligibilityPlan);
+         // Day of Month
+         contract.setDayOfMonth(Integer.valueOf(gCal.get(Calendar.DAY_OF_MONTH)));
+
+         // Start Date (Today +1 month)
+         gCal.add(Calendar.MONTH, 1);
+         String startDate = UtilityXML.getEGalaxyDateFromGCalNoTime(gCal);
+         contract.setStartDate(startDate);
+
+         // End Date (Start date + 10 months (11 months from today))
+         gCal.add(Calendar.MONTH, 10);
+         String endDate = UtilityXML.getEGalaxyDateFromGCalNoTime(gCal);
+         contract.setEndDate(endDate);
+
+         // PaymentPlan
+         String eligMember = upgradeRequest.getEligibilityMember();
+
+         // PaymentPlan 
+         String paymentPlan = null;
+         String lookupEligibilityPlan = null;
+
+         if (SOCA_RES.equalsIgnoreCase(eligMember)) {
+            lookupEligibilityPlan = GW_ORDERS_SOCAPURCHPLAN;
+         } else {
+            lookupEligibilityPlan = GW_ORDERS_CAPURCHPLAN;
+         }
+
+         // looking for payment plan
+         paymentPlan = instLookupMap.get(lookupEligibilityPlan);
          if (paymentPlan == null) {
-            
-           logger.sendEvent("DLR Installmnt paymentPlan not in TP_LOOKUP Table for. ", EventType.EXCEPTION, THISINSTANCE);
-           throw new DTIException(
-               TransformRules.class,
-               DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
-               "Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for " + lookupEligibilityPlan + ".");
+            logger.sendEvent("DLR Installmnt paymentPlan not in TP_LOOKUP Table for. ", EventType.EXCEPTION,
+                     THISINSTANCE);
+            throw new DTIException(TransformRules.class, DTIErrorCode.UNDEFINED_CRITICAL_ERROR,
+                     "Internal Error:  DLR Installmnt paymentPlan not in TP_LOOKUP Table for " + lookupEligibilityPlan
+                              + ".");
          }
          contract.setPaymentPlanID(paymentPlan);
-	      
-	      
-			// Add the contract to the order
-			orderTO.addPaymentContract(contract);
 
-		} // is installment
+         // Add the contract to the order
+         orderTO.addPaymentContract(contract);
 
+      } // is installment
 
-		// Set OrderLine(s), product info
-		ArrayList<TicketTO> dtiTktList = upgradeRequest.getTicketList();
+      // Set OrderLine(s), product info
+      ArrayList<TicketTO> dtiTktList = upgradeRequest.getTicketList();
 
-		// Get the product map so for various product related value lookups
-		HashMap<String, DBProductTO> dtiProductMap = dtiTxn.getDbProdMap();
+      // Get the product map so for various product related value lookups
+      HashMap<String, DBProductTO> dtiProductMap = dtiTxn.getDbProdMap();
 
-		// Set the order lines, returning the order total (required by the header)
-		BigDecimal orderTotal = setProductOrderLines(upgradeRequest, orderTO, dtiProductMap, dtiTktList);
+      // Set the order lines, returning the order total (required by the header)
+      BigDecimal orderTotal = setProductOrderLines(upgradeRequest, orderTO, dtiProductMap, dtiTktList);
 
-		// Order>OrderTotal: Set the order total based on the products
-		orderTO.setOrderTotal(orderTotal);
+      // Order>OrderTotal: Set the order total based on the products
+      orderTO.setOrderTotal(orderTotal);
 
-		// Set OrderLine(s), payments info
-		// use this to get order line item that are payments
-		HashMap<String, String> payCardMap = dtiTxn.getPaymentCardMap();
-		boolean missingCvv = setPaymentOrderLines(upgradeRequest, orderTO, orderTotal, payCardMap);
+      // Set OrderLine(s), payments info
+      // use this to get order line item that are payments
+      HashMap<String, String> payCardMap = dtiTxn.getPaymentCardMap();
+      boolean missingCvv = setPaymentOrderLines(upgradeRequest, orderTO, orderTotal, payCardMap);
 
-		// Set the source ID to the TS MAC
-		String sourceID = dtiTxn.getRequest().getPayloadHeader().getTktSeller().getTsMac();
-		if (missingCvv) {
-		   
-			// credit card w/o CVV, and from WDPro send to secondary DLR source
-			if (GW_WDPRO.compareTo(sourceID) == 0)
-				sourceID = GW_WDPRO_NO_CVV;
-		}
-		headerTO.setSourceID(sourceID);
+      // Set the source ID to the TS MAC
+      String sourceID = dtiTxn.getRequest().getPayloadHeader().getTktSeller().getTsMac();
+      if (missingCvv) {
 
-		// Set MessageID to DTI Payload ID (to TpRefNum as of 2.16.1)
-		headerTO.setMessageID(new BigInteger(dtiTxn.getTpRefNum().toString()));
+         // credit card w/o CVV, and from WDPro send to secondary DLR source
+         if (GW_WDPRO.compareTo(sourceID) == 0)
+            sourceID = GW_WDPRO_NO_CVV;
+      }
+      headerTO.setSourceID(sourceID);
 
-		// Set the echo data to the DTI payload ID (as of 2.16.1, JTL)
-		headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader().getPayloadID());
+      // Set MessageID to DTI Payload ID (to TpRefNum as of 2.16.1)
+      headerTO.setMessageID(new BigInteger(dtiTxn.getTpRefNum().toString()));
 
-		// Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
-		headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
+      // Set the echo data to the DTI payload ID (as of 2.16.1, JTL)
+      headerTO.setEchoData(dtiTxn.getRequest().getPayloadHeader().getPayloadID());
 
-		// Set the message type to a fixed value
-		headerTO.setMessageType(GW_ORDERS_MESSAGE_TYPE);
+      // Set the time stamp to the GMT date/time now. (as of 2.17.2, JTL)
+      headerTO.setTimeStamp(DateTimeRules.getPTDateNow());
 
-		ordersReqTO.addOrder(orderTO);
+      // Set the message type to a fixed value
+      headerTO.setMessageType(GW_ORDERS_MESSAGE_TYPE);
 
-		bodyTO.setOrdersRqstTO(ordersReqTO);
-		envelopeTO.setHeaderTO(headerTO);
-		envelopeTO.setBodyTO(bodyTO);
+      ordersReqTO.addOrder(orderTO);
 
-		//xmlRequest = GWEnvelopeUpgradeEntitlementXML.getXML(envelopeTO);
-		xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
+      bodyTO.setOrdersRqstTO(ordersReqTO);
+      envelopeTO.setHeaderTO(headerTO);
+      envelopeTO.setBodyTO(bodyTO);
 
-		return xmlRequest;
-	}
+      // xmlRequest = GWEnvelopeUpgradeEntitlementXML.getXML(envelopeTO);
+      xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
 
-	/**
-	 * Creates the order TO.
-	 *
-	 * @param dtiTxn the dti txn
-	 * @return the GW order TO
-	 * @throws DTIException the DTI exception
-	 */
-	private static GWOrderTO createOrderTO(DTITransactionTO dtiTxn) throws DTIException {
+      return xmlRequest;
+   }
 
-		GWOrderTO orderTO = new GWOrderTO();
+   /**
+    * Creates the order TO.
+    * 
+    * @param dtiTxn
+    *           the dti txn
+    * @return the GW order TO
+    * @throws DTIException
+    *            the DTI exception
+    */
+   private static GWOrderTO createOrderTO(DTITransactionTO dtiTxn) throws DTIException {
 
-		UpgradeEntitlementRequestTO upgradeEntReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+      GWOrderTO orderTO = new GWOrderTO();
 
-		// OrderID
-		orderTO.setOrderID(upgradeEntReq.getReservation().getResCode());
+      UpgradeEntitlementRequestTO upgradeEntReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
 
-		// CustomerID
-		// if the override customer ID is present, use it, otherwise use what in the database
+      // OrderID
+      orderTO.setOrderID(upgradeEntReq.getReservation().getResCode());
+
+      // CustomerID
+      // if the override customer ID is present, use it, otherwise use what in
+      // the database
       if ((upgradeEntReq.getEligibilityGroup() != null)
-               && (upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(TransformConstants.GW_ORDERS_DLR_ELIGIBILITY_GROUP))) {
+               && (upgradeEntReq.getEligibilityGroup()
+                        .equalsIgnoreCase(TransformConstants.GW_ORDERS_DLR_ELIGIBILITY_GROUP))) {
          orderTO.setCustomerID(upgradeEntReq.getEligibilityMember());
       } else {
          orderTO.setCustomerID(dtiTxn.getEntityTO().getCustomerId());
       }
 
-		// OrderDate
-		orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getGMTDateNow()));
+      // OrderDate
+      orderTO.setOrderDate(UtilityXML.getEGalaxyDateFromGCal(DateTimeRules.getGMTDateNow()));
 
-		// OrderStatus ( 1 if unpaid, 2 if paid )
-		ArrayList<PaymentTO> payListTO = upgradeEntReq.getPaymentList();
-		if (payListTO.size() > 0) {
-			orderTO.setOrderStatus(TransformConstants.GW_ORDERS_PAID_ORDER_STATUS);
-		} else {
-			orderTO.setOrderStatus(TransformConstants.GW_ORDERS_UNPAID_ORDER_STATUS);
-		}
+      // OrderStatus ( 1 if unpaid, 2 if paid )
+      ArrayList<PaymentTO> payListTO = upgradeEntReq.getPaymentList();
+      if (payListTO.size() > 0) {
+         orderTO.setOrderStatus(TransformConstants.GW_ORDERS_PAID_ORDER_STATUS);
+      } else {
+         orderTO.setOrderStatus(TransformConstants.GW_ORDERS_UNPAID_ORDER_STATUS);
+      }
 
-		// SalesProgram (include if the order is installment) as of 2.16.1, JTL
-		// Also, since values will be required later, put together a map of keys
-		// and values for ready access.
-		HashMap<String, String> instTPLookupMap = new HashMap<String, String>();
-		if (upgradeEntReq.isInstallmentRequest()) {
+      // SalesProgram (include if the order is installment) as of 2.16.1, JTL
+      // Also, since values will be required later, put together a map of keys
+      // and values for ready access.
+      HashMap<String, String> instTPLookupMap = new HashMap<String, String>();
+      if (upgradeEntReq.isInstallmentRequest()) {
 
-			ArrayList<TPLookupTO> tpLookupList = dtiTxn.getTpLookupTOList();
-			String salesProgram = null;
-			for (/* each */TPLookupTO aTPLookup : /* in */tpLookupList) {
+         ArrayList<TPLookupTO> tpLookupList = dtiTxn.getTpLookupTOList();
+         String salesProgram = null;
+         for (/* each */TPLookupTO aTPLookup : /* in */tpLookupList) {
 
-				if ((aTPLookup.getLookupDesc().equalsIgnoreCase("SalesProgram"))
-						&& (aTPLookup.getLookupType() == TPLookupTO.TPLookupType.INSTALLMENT)) {
-					salesProgram = aTPLookup.getLookupValue();
-				}
+            if ((aTPLookup.getLookupDesc().equalsIgnoreCase("SalesProgram"))
+                     && (aTPLookup.getLookupType() == TPLookupTO.TPLookupType.INSTALLMENT)) {
+               salesProgram = aTPLookup.getLookupValue();
+            }
 
-				instTPLookupMap.put(aTPLookup.getLookupDesc(), aTPLookup.getLookupValue());
+            instTPLookupMap.put(aTPLookup.getLookupDesc(), aTPLookup.getLookupValue());
 
-			} // for loop
+         } // for loop
 
-			if (salesProgram == null) {
-				throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_FAILURE,
-						"GWTPLookup for SalesProgram is missing in the database.");
-			} else {
-				orderTO.setSalesProgram(salesProgram);
-			}
-			
-			// OrderTotal	
-			orderTO.setOrderTotal(upgradeEntReq.getTotalOrderAmount());
+         if (salesProgram == null) {
+            throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_FAILURE,
+                     "GWTPLookup for SalesProgram is missing in the database.");
+         } else {
+            orderTO.setSalesProgram(salesProgram);
+         }
 
-		} // If is installment request
+         // OrderTotal
+         orderTO.setOrderTotal(upgradeEntReq.getTotalOrderAmount());
 
-		 
-		// OrderReference
-		// If the order is a "BOLT" order, then put the LMS number in Order
-		// Reference.
-		if (upgradeEntReq.getEligibilityGroup() != null) {
-			if (upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
-				if (upgradeEntReq.getEligibilityMember() != null) {
-					orderTO.setOrderReference(upgradeEntReq.getEligibilityMember());
-				}
-			}
-		}
+      } // If is installment request
 
-		// PaymentContracts (as of 2.16.1, JTL) 
-		if (upgradeEntReq.isInstallmentRequest()) {
+      // OrderReference
+      // If the order is a "BOLT" order, then put the LMS number in Order
+      // Reference.
+      if (upgradeEntReq.getEligibilityGroup() != null) {
+         if (upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
+            if (upgradeEntReq.getEligibilityMember() != null) {
+               orderTO.setOrderReference(upgradeEntReq.getEligibilityMember());
+            }
+         }
+      }
 
-			GWPaymentContractTO payContract = new GWPaymentContractTO();
+      // PaymentContracts (as of 2.16.1, JTL)
+      if (upgradeEntReq.isInstallmentRequest()) {
 
-			// RecurrenceType
-			payContract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
+         GWPaymentContractTO payContract = new GWPaymentContractTO();
 
-			// DayOfMonth (Set to today's day).
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
-			String dayString = dateFormat.format(new Date());
-			payContract.setDayOfMonth(new Integer(dayString));
+         // RecurrenceType
+         payContract.setRecurrenceType(GW_ORDERS_CONTRACT_MONTHLY_RECURRENCE);
 
-			// Interval
-			payContract.setInterval(GW_ORDERS_CONTRACT_RECURRENCE_INTERVAL);
+         // DayOfMonth (Set to today's day).
+         SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+         String dayString = dateFormat.format(new Date());
+         payContract.setDayOfMonth(new Integer(dayString));
 
-			// StartDate (+1 month from today including last day of month logic)
-			GregorianCalendar startCal = new GregorianCalendar();
-			startCal.add(Calendar.MONTH, 1);
-			payContract.setStartDate(UtilityXML.getEGalaxyDateFromGCal(startCal));
+         // Interval
+         payContract.setInterval(GW_ORDERS_CONTRACT_RECURRENCE_INTERVAL);
 
-			// EndDate (+11 months from today)
-			GregorianCalendar endCal = new GregorianCalendar();
-			startCal.add(Calendar.MONTH, 11);
-			payContract.setEndDate(UtilityXML.getEGalaxyDateFromGCal(endCal));
+         // StartDate (+1 month from today including last day of month logic)
+         GregorianCalendar startCal = new GregorianCalendar();
+         startCal.add(Calendar.MONTH, 1);
+         payContract.setStartDate(UtilityXML.getEGalaxyDateFromGCal(startCal));
 
-			// PaymentPlanID
-			String paymentPlan = null;
-			if (upgradeEntReq.getEligibilityMember() != null && upgradeEntReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
-				paymentPlan = instTPLookupMap.get(GW_ORDERS_SOCARENEWPLAN);
-			} else {
-				paymentPlan = instTPLookupMap.get(GW_ORDERS_CARENEWPLAN);
-			}
-			if (paymentPlan == null) {
-				throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_FAILURE,
-						"GWTPLookup for " + GW_ORDERS_SOCARENEWPLAN + " or " + GW_ORDERS_CARENEWPLAN
-								+ " is missing in the database.");
-			}
-			payContract.setPaymentPlanID(paymentPlan);
+         // EndDate (+11 months from today)
+         GregorianCalendar endCal = new GregorianCalendar();
+         startCal.add(Calendar.MONTH, 11);
+         payContract.setEndDate(UtilityXML.getEGalaxyDateFromGCal(endCal));
 
-			// Renew Contract
-			payContract.setUpgradeContract(GW_ORDERS_CONTRACT_UPGRADE_CONTRACT);
+         // PaymentPlanID
+         String paymentPlan = null;
+         if (upgradeEntReq.getEligibilityMember() != null
+                  && upgradeEntReq.getEligibilityMember().equalsIgnoreCase(SOCA_RES)) {
+            paymentPlan = instTPLookupMap.get(GW_ORDERS_SOCARENEWPLAN);
+         } else {
+            paymentPlan = instTPLookupMap.get(GW_ORDERS_CARENEWPLAN);
+         }
+         if (paymentPlan == null) {
+            throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.UNDEFINED_FAILURE, "GWTPLookup for "
+                     + GW_ORDERS_SOCARENEWPLAN + " or " + GW_ORDERS_CARENEWPLAN + " is missing in the database.");
+         }
+         payContract.setPaymentPlanID(paymentPlan);
 
-			// PaymentContractStatusID
-			payContract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
+         // Renew Contract
+         payContract.setUpgradeContract(GW_ORDERS_CONTRACT_UPGRADE_CONTRACT);
 
-			// ContactMethod
-			payContract.setContactMethod(GW_ORDERS_CONTRACT_CONTACT_METHOD);
+         // PaymentContractStatusID
+         payContract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
 
-		}
+         // ContactMethod
+         payContract.setContactMethod(GW_ORDERS_CONTRACT_CONTACT_METHOD);
 
-		// BEGIN OrderContactInfo field set order contact info using billing demographics info
-		DemographicsTO demoTO = upgradeEntReq.getClientData().getBillingInfo();
-		GWOrderContactTO orderContactTO = new GWOrderContactTO();
-		
+      }
+
+      // BEGIN OrderContactInfo field set order contact info using billing
+      // demographics info
+      DemographicsTO demoTO = upgradeEntReq.getClientData().getBillingInfo();
+      GWOrderContactTO orderContactTO = new GWOrderContactTO();
+
       if (demoTO != null) {
 
          // First Name
          String firstName = demoTO.getFirstName();
-            orderContactTO.setFirstName(firstName);
+         orderContactTO.setFirstName(firstName);
 
          // Last Name
          String lastName = demoTO.getLastName();
-            orderContactTO.setLastName(lastName);
+         orderContactTO.setLastName(lastName);
 
          // Street 1
          orderContactTO.setStreet1(demoTO.getAddr1());
@@ -399,294 +401,301 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
          // City
          String city = demoTO.getCity();
-            orderContactTO.setCity(city);
+         orderContactTO.setCity(city);
 
          // State
          String state = demoTO.getState();
-            orderContactTO.setState(state);
+         orderContactTO.setState(state);
 
          // Zip
          String zip = demoTO.getZip();
-            orderContactTO.setZip(zip);
+         orderContactTO.setZip(zip);
 
          // Country
          String country = demoTO.getCountry();
-            orderContactTO.setCountry(country);
+         orderContactTO.setCountry(country);
 
          // Phone
          String phone = demoTO.getTelephone();
-            orderContactTO.setPhone(phone);
+         orderContactTO.setPhone(phone);
 
          // Email
          String email = demoTO.getEmail();
-            orderContactTO.setEmail(email);
-         
+         orderContactTO.setEmail(email);
+
          // add the contact on the order
          orderTO.setOrderContact(orderContactTO);
-      }else{
-         logger.sendEvent("Billing demographics Information is not provided in the request. ", EventType.INFO, THISINSTANCE);
+      } else {
+         logger.sendEvent("Billing demographics Information is not provided in the request. ", EventType.INFO,
+                  THISINSTANCE);
       }
-		
-		
-		// END OrderContactInfo field
 
-		
-		// BEGIN ShipToContact field
-		// set ship to contact info using shipping info
-		GWOrderContactTO shipContactTO = new GWOrderContactTO();
-		DemographicsTO shippingTO = upgradeEntReq.getClientData().getShippingInfo();
+      // END OrderContactInfo field
 
-		if (shippingTO != null) { // As of 2.12 , permit Shipping to be absent.
-		   
-		   // First Name
-			if ((shippingTO.getFirstName() != null) && (shippingTO.getFirstName() != "")) {
-				shipContactTO.setFirstName(shippingTO.getFirstName());
-			}
-			
-			// Last Name
-			if ((shippingTO.getLastName() != null) && (shippingTO.getLastName() != "")) {
-				shipContactTO.setLastName(shippingTO.getLastName());
-			}
-			
-			// Street 1
-			shipContactTO.setStreet1(shippingTO.getAddr1());
-			
-			// Street 2
-			if ((shippingTO.getAddr2() != null) && (shippingTO.getAddr2() != "")) {
-				shipContactTO.setStreet2(shippingTO.getAddr2());
-			}
+      // BEGIN ShipToContact field
+      // set ship to contact info using shipping info
+      GWOrderContactTO shipContactTO = new GWOrderContactTO();
+      DemographicsTO shippingTO = upgradeEntReq.getClientData().getShippingInfo();
 
-			// Since 2.11 - If group is "BOLT", then "org name" goes to Street
-			// 3.
-			if (upgradeEntReq.getEligibilityGroup() != null) {
-				if (upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
-					if (shippingTO.getName() != null) {
-						shipContactTO.setStreet3(shippingTO.getName());
-					}
-				}
-			}
+      if (shippingTO != null) { // As of 2.12 , permit Shipping to be absent.
 
-			shipContactTO.setCity(shippingTO.getCity());
-			// WDPROFIX
-			if (shippingTO.getState() != null && shippingTO.getState().length() > 0) {
-				shipContactTO.setState(shippingTO.getState());
-			}
-			shipContactTO.setZip(shippingTO.getZip());
-			shipContactTO.setCountry(shippingTO.getCountry());
-			shipContactTO.setPhone(shippingTO.getTelephone());
-			shipContactTO.setEmail(shippingTO.getEmail());
-			// add the contact on the order
-			orderTO.setShipToContact(shipContactTO);
-			// END ShipToContact field
-		} else { // as of 2.16.1, JTL
-			if (upgradeEntReq.isInstallmentRequest()) {
-				shipContactTO.setSameAsOrderContact(true);
-			}
-		}
+         // First Name
+         if ((shippingTO.getFirstName() != null) && (shippingTO.getFirstName() != "")) {
+            shipContactTO.setFirstName(shippingTO.getFirstName());
+         }
 
-		// BEGIN Shipping field & children, ShipDetails, ShipMethod
-		// use the lookup map for details & lookup our various values
-		try {
+         // Last Name
+         if ((shippingTO.getLastName() != null) && (shippingTO.getLastName() != "")) {
+            shipContactTO.setLastName(shippingTO.getLastName());
+         }
 
-			orderTO.setShipDeliveryDetails(GW_PRINT_ON_WEB);
-			orderTO.setShipDeliveryMethod(GW_PRINT_ON_WEB_NBR); // delivery method
-																
-//			// TODO RASTA006 DO we need Group Visit Details
-//			String resPickup = UtilityXML.getEGalaxyDateFromGCalNoTime(upgradeEntReq.getReservation().getResPickupDate());
-//			orderTO.setGroupVisitDate(resPickup + "00:00:00");
-//
-//			// Since 2.9 Put bill name in group description (per Art Wightman)
-//			// Change for 2.12 - No longer check to see if shipping method is 1,2, or 6.
-//			// No longer require a payment clause to be present on the in-bound request.
-//			if ((upgradeEntReq.getClientData().getBillingInfo() != null)
-//					&& (upgradeEntReq.getClientData().getBillingInfo().getName() != null)) {
-//
-//				orderTO.setGroupVisitDescription(upgradeEntReq.getClientData().getBillingInfo().getName());
-//
-//				// Populate Group Visit Reference only for BOLT style orders.
-//				if (upgradeEntReq.getEligibilityGroup() != null
-//						&& upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
-//					orderTO.setGroupVisitReference(upgradeEntReq.getClientData().getBillingInfo().getName());
-//				}
-//
-//			}
+         // Street 1
+         shipContactTO.setStreet1(shippingTO.getAddr1());
 
-		} catch (NumberFormatException nfe) {
-		   
-		   logger.sendEvent("TPLookup value ShipType or ShipDetail was not a valid integer in the database. ", EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"TPLookup value ShipType or ShipDetail was not a valid integer in the database.");
-		}
+         // Street 2
+         if ((shippingTO.getAddr2() != null) && (shippingTO.getAddr2() != "")) {
+            shipContactTO.setStreet2(shippingTO.getAddr2());
+         }
 
-		return orderTO;
-	}
+         // Since 2.11 - If group is "BOLT", then "org name" goes to Street
+         // 3.
+         if (upgradeEntReq.getEligibilityGroup() != null) {
+            if (upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP)) {
+               if (shippingTO.getName() != null) {
+                  shipContactTO.setStreet3(shippingTO.getName());
+               }
+            }
+         }
 
-	/**
-	 * Transforms the eGalaxy XML response string into response objects within
-	 * the DTI transfer object.
-	 * 
-	 * @param dtiTxn
-	 *            the DTI transfer object without any response information from
-	 *            eGalaxy.
-	 * @param xmlResponse
-	 *            the eGalaxy XML response string
-	 * @return the DTI transfer object that has response information from
-	 *         eGalaxy.
-	 * @throws DTIException
-	 *             should any issues during conversion occur
-	 */
-	static DTITransactionTO transformResponse(DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
+         shipContactTO.setCity(shippingTO.getCity());
+         // WDPROFIX
+         if (shippingTO.getState() != null && shippingTO.getState().length() > 0) {
+            shipContactTO.setState(shippingTO.getState());
+         }
+         shipContactTO.setZip(shippingTO.getZip());
+         shipContactTO.setCountry(shippingTO.getCountry());
+         shipContactTO.setPhone(shippingTO.getTelephone());
+         shipContactTO.setEmail(shippingTO.getEmail());
+         // add the contact on the order
+         orderTO.setShipToContact(shipContactTO);
+         // END ShipToContact field
+      } else { // as of 2.16.1, JTL
+         if (upgradeEntReq.isInstallmentRequest()) {
+            shipContactTO.setSameAsOrderContact(true);
+         }
+      }
 
-		//GWEnvelopeTO gwEnvRespTO = GWEnvelopeUpgradeEntitlementXML.getTO(xmlResponse);
-		GWEnvelopeTO gwEnvRespTO = GWEnvelopeXML.getTO(xmlResponse);
+      // BEGIN Shipping field & children, ShipDetails, ShipMethod
+      // use the lookup map for details & lookup our various values
+      try {
 
-		DTIResponseTO dtiRespTO = new DTIResponseTO();
+         orderTO.setShipDeliveryDetails(GW_PRINT_ON_WEB);
+         orderTO.setShipDeliveryMethod(GW_PRINT_ON_WEB_NBR); // delivery method
 
-		UpgradeEntitlementResponseTO upgradeEntitlementResTO = new UpgradeEntitlementResponseTO();
+         // // TODO RASTA006 DO we need Group Visit Details
+         // String resPickup =
+         // UtilityXML.getEGalaxyDateFromGCalNoTime(upgradeEntReq.getReservation().getResPickupDate());
+         // orderTO.setGroupVisitDate(resPickup + "00:00:00");
+         //
+         // // Since 2.9 Put bill name in group description (per Art Wightman)
+         // // Change for 2.12 - No longer check to see if shipping method is
+         // 1,2, or 6.
+         // // No longer require a payment clause to be present on the in-bound
+         // request.
+         // if ((upgradeEntReq.getClientData().getBillingInfo() != null)
+         // && (upgradeEntReq.getClientData().getBillingInfo().getName() !=
+         // null)) {
+         //
+         // orderTO.setGroupVisitDescription(upgradeEntReq.getClientData().getBillingInfo().getName());
+         //
+         // // Populate Group Visit Reference only for BOLT style orders.
+         // if (upgradeEntReq.getEligibilityGroup() != null
+         // &&
+         // upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP))
+         // {
+         // orderTO.setGroupVisitReference(upgradeEntReq.getClientData().getBillingInfo().getName());
+         // }
+         //
+         // }
 
-		// Set up the Payload and Command Header Responses.
-		PayloadHeaderTO payloadHdrTO = TransformRules.createRespPayloadHdr(dtiTxn);
-		CommandHeaderTO commandHdrTO = TransformRules.createRespCmdHdr(dtiTxn);
+      } catch (NumberFormatException nfe) {
 
-		dtiRespTO.setPayloadHeader(payloadHdrTO);
-		dtiRespTO.setCommandHeader(commandHdrTO);
+         logger.sendEvent("TPLookup value ShipType or ShipDetail was not a valid integer in the database. ",
+                  EventType.EXCEPTION, THISINSTANCE);
+         throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+                  "TPLookup value ShipType or ShipDetail was not a valid integer in the database.");
+      }
 
-		// get the body and order response TOs
-		GWBodyTO gwBodyTO = gwEnvRespTO.getBodyTO();
+      return orderTO;
+   }
 
-		// BEGIN ERROR CHECKING
-		// search for blatant error first
-		if (gwBodyTO == null) {
-		   
-		   logger.sendEvent("Gateway XML allowed a response with null body. ", EventType.EXCEPTION, THISINSTANCE);
-			// throw bad provider response error
-			throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null body.");
-			
-		}
+   /**
+    * Transforms the eGalaxy XML response string into response objects within
+    * the DTI transfer object.
+    * 
+    * @param dtiTxn
+    *           the DTI transfer object without any response information from
+    *           eGalaxy.
+    * @param xmlResponse
+    *           the eGalaxy XML response string
+    * @return the DTI transfer object that has response information from
+    *         eGalaxy.
+    * @throws DTIException
+    *            should any issues during conversion occur
+    */
+   static DTITransactionTO transformResponse(DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
 
-		// check status related errors
-		GWStatusTO gwStatusTO = gwBodyTO.getStatusTO();
-		if (gwStatusTO == null) {
-		   
-			// throw bad provider response error
-		   logger.sendEvent("Gateway XML allowed a response with null status. ", EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null status.");
-		}
+      // GWEnvelopeTO gwEnvRespTO =
+      // GWEnvelopeUpgradeEntitlementXML.getTO(xmlResponse);
+      GWEnvelopeTO gwEnvRespTO = GWEnvelopeXML.getTO(xmlResponse);
 
-		String statusString = gwStatusTO.getStatusCode();
-		if (statusString == null) {
-		   
-		   logger.sendEvent("Gateway XML allowed a response with null status code. ", EventType.EXCEPTION, THISINSTANCE);
-			// throw bad provider response error
-			throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Internal Error:  Gateway XML allowed a response with null status code.");
-		}
+      DTIResponseTO dtiRespTO = new DTIResponseTO();
 
-		// Get the provider response status code
-		int statusCode = -1;
+      UpgradeEntitlementResponseTO upgradeEntitlementResTO = new UpgradeEntitlementResponseTO();
 
-		try {
-			statusCode = Integer.parseInt(statusString);
-			dtiRespTO.setProviderErrCode(statusString);
-		} catch (NumberFormatException e) {
-		   
-		   logger.sendEvent("Provider responded with a non-numeric status code. ", EventType.EXCEPTION, THISINSTANCE);
-			throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
-					"Provider responded with a non-numeric status code.");
-		}
+      // Set up the Payload and Command Header Responses.
+      PayloadHeaderTO payloadHdrTO = TransformRules.createRespPayloadHdr(dtiTxn);
+      CommandHeaderTO commandHdrTO = TransformRules.createRespCmdHdr(dtiTxn);
 
-		// If the provider had an error, map it and generate the response.
-		// Copy the ticket identity and default the TktStatus Voidable to No
-		if (statusCode != 0) {
-			dtiTxn = transformError(dtiTxn, dtiRespTO, statusString, xmlResponse);
-			return dtiTxn; // NOTE: multiple return points is an anti-pattern,
-			// this
-			// should be re-factored
-		}
+      dtiRespTO.setPayloadHeader(payloadHdrTO);
+      dtiRespTO.setCommandHeader(commandHdrTO);
 
-		// Price mismatch warning
-		if (dtiTxn.isPriceMismatch()) {
-			DTIErrorTO mismatchWarn = ErrorKey.getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
-			dtiRespTO.setDtiError(mismatchWarn);
-		}
+      // get the body and order response TOs
+      GWBodyTO gwBodyTO = gwEnvRespTO.getBodyTO();
 
-		// END ERROR CHECKING
+      // BEGIN ERROR CHECKING
+      // search for blatant error first
+      if (gwBodyTO == null) {
 
-		GWOrdersRespTO gwOrdResp = gwEnvRespTO.getBodyTO().getOrdersRespTO();
+         logger.sendEvent("Gateway XML allowed a response with null body. ", EventType.EXCEPTION, THISINSTANCE);
+         // throw bad provider response error
+         throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+                  "Internal Error:  Gateway XML allowed a response with null body.");
 
-		String galaxyOrderID = gwOrdResp.getGalaxyOrderID();
+      }
 
-		// don't be confused by the use of authorization code here...
-		// it is used to set CCAuthNumber on the DTI response, not CCAuthCode
-		String authNumber = gwOrdResp.getAuthCode();
+      // check status related errors
+      GWStatusTO gwStatusTO = gwBodyTO.getStatusTO();
+      if (gwStatusTO == null) {
 
-		PaymentTO paymentTO = new PaymentTO();
+         // throw bad provider response error
+         logger.sendEvent("Gateway XML allowed a response with null status. ", EventType.EXCEPTION, THISINSTANCE);
+         throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+                  "Internal Error:  Gateway XML allowed a response with null status.");
+      }
 
-		// PER WMB, if authorization code == 1
-		if (authNumber != null) {
-			paymentTO.setPayItem(new BigInteger("1"));
-			CreditCardTO dtiCredCardTO = new CreditCardTO();
-			dtiCredCardTO.setCcAuthCode("0"); // Hard-coded as in WMB
-			dtiCredCardTO.setCcAuthNumber(authNumber);
-			paymentTO.setCreditCard(dtiCredCardTO);
-		}
+      String statusString = gwStatusTO.getStatusCode();
+      if (statusString == null) {
 
-		upgradeEntitlementResTO.getPaymentList().add(paymentTO);
+         logger.sendEvent("Gateway XML allowed a response with null status code. ", EventType.EXCEPTION, THISINSTANCE);
+         // throw bad provider response error
+         throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+                  "Internal Error:  Gateway XML allowed a response with null status code.");
+      }
 
-		// set contract (if there) as of 2.16.1, JTL
-		if (gwOrdResp.getPaymentContractID() != null) {
-			upgradeEntitlementResTO.setContractId(gwOrdResp.getPaymentContractID());
-		}
+      // Get the provider response status code
+      int statusCode = -1;
 
-		// set client data client ID from galaxyOrderID
-		ClientDataTO clientDataTO = new ClientDataTO();
-		clientDataTO.setClientId(galaxyOrderID);
+      try {
+         statusCode = Integer.parseInt(statusString);
+         dtiRespTO.setProviderErrCode(statusString);
+      } catch (NumberFormatException e) {
 
-		upgradeEntitlementResTO.setClientData(clientDataTO);
+         logger.sendEvent("Provider responded with a non-numeric status code. ", EventType.EXCEPTION, THISINSTANCE);
+         throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+                  "Provider responded with a non-numeric status code.");
+      }
 
-		// Add tickets if present
-		ArrayList<TicketRecord> gwTicketArray = gwOrdResp.getTicketArray();
-		if (gwTicketArray.size() > 0) {
+      // If the provider had an error, map it and generate the response.
+      // Copy the ticket identity and default the TktStatus Voidable to No
+      if (statusCode != 0) {
+         dtiTxn = transformError(dtiTxn, dtiRespTO, statusString, xmlResponse);
+         return dtiTxn; // NOTE: multiple return points is an anti-pattern,
+         // this
+         // should be re-factored
+      }
 
-			// ArrayList<TicketTO> dtiTicketArray =
-			// dtiResRespTO.getTicketList();
-			for (int i = 0; gwTicketArray.size() > i; i++) {
+      // Price mismatch warning
+      if (dtiTxn.isPriceMismatch()) {
+         DTIErrorTO mismatchWarn = ErrorKey.getErrorDetail(DTIErrorCode.PRICE_MISMATCH_WARNING);
+         dtiRespTO.setDtiError(mismatchWarn);
+      }
 
-				TicketRecord gwTicket = gwTicketArray.get(i);
+      // END ERROR CHECKING
 
-				TicketTO dtiTicket = new TicketTO();
+      GWOrdersRespTO gwOrdResp = gwEnvRespTO.getBodyTO().getOrdersRespTO();
 
-				// TktItem
-				BigInteger tktItem = new BigInteger(Integer.toString((i + 1)));
-				dtiTicket.setTktItem(tktItem);
+      String galaxyOrderID = gwOrdResp.getGalaxyOrderID();
 
-				// Visual ID to BarCode
-				dtiTicket.setBarCode(gwTicket.getVisualID());
+      // don't be confused by the use of authorization code here...
+      // it is used to set CCAuthNumber on the DTI response, not CCAuthCode
+      String authNumber = gwOrdResp.getAuthCode();
 
-				upgradeEntitlementResTO.addTicket(dtiTicket);
+      PaymentTO paymentTO = new PaymentTO();
 
-			}
+      // PER WMB, if authorization code == 1
+      if (authNumber != null) {
+         paymentTO.setPayItem(new BigInteger("1"));
+         CreditCardTO dtiCredCardTO = new CreditCardTO();
+         dtiCredCardTO.setCcAuthCode("0"); // Hard-coded as in WMB
+         dtiCredCardTO.setCcAuthNumber(authNumber);
+         paymentTO.setCreditCard(dtiCredCardTO);
+      }
 
-		}
+      upgradeEntitlementResTO.getPaymentList().add(paymentTO);
 
-		// set TOs back on various places
-		dtiRespTO.setCommandBody(upgradeEntitlementResTO);
-		dtiTxn.setResponse(dtiRespTO);
+      // set contract (if there) as of 2.16.1, JTL
+      if (gwOrdResp.getPaymentContractID() != null) {
+         upgradeEntitlementResTO.setContractId(gwOrdResp.getPaymentContractID());
+      }
 
-		return dtiTxn;
-	}
+      // set client data client ID from galaxyOrderID
+      ClientDataTO clientDataTO = new ClientDataTO();
+      clientDataTO.setClientId(galaxyOrderID);
 
-	/**
-	 * Apply DLR Upgrade entitlement rules.
-	 * 
-	 * @param dtiTxn
-	 *            the DTI transaction
-	 * 
-	 * @throws DTIException
-	 *             the DTI exception
-	 */
+      upgradeEntitlementResTO.setClientData(clientDataTO);
+
+      // Add tickets if present
+      ArrayList<TicketRecord> gwTicketArray = gwOrdResp.getTicketArray();
+      if (gwTicketArray.size() > 0) {
+
+         // ArrayList<TicketTO> dtiTicketArray =
+         // dtiResRespTO.getTicketList();
+         for (int i = 0; gwTicketArray.size() > i; i++) {
+
+            TicketRecord gwTicket = gwTicketArray.get(i);
+
+            TicketTO dtiTicket = new TicketTO();
+
+            // TktItem
+            BigInteger tktItem = new BigInteger(Integer.toString((i + 1)));
+            dtiTicket.setTktItem(tktItem);
+
+            // Visual ID to BarCode
+            dtiTicket.setBarCode(gwTicket.getVisualID());
+
+            upgradeEntitlementResTO.addTicket(dtiTicket);
+
+         }
+
+      }
+
+      // set TOs back on various places
+      dtiRespTO.setCommandBody(upgradeEntitlementResTO);
+      dtiTxn.setResponse(dtiRespTO);
+
+      return dtiTxn;
+   }
+
+   /**
+    * Apply DLR Upgrade entitlement rules.
+    * 
+    * @param dtiTxn
+    *           the DTI transaction
+    * 
+    * @throws DTIException
+    *            the DTI exception
+    */
    public static void applyDLRUpgradeEntitlementRules(DTITransactionTO dtiTxn) throws DTIException {
 
       DTIRequestTO dtiRequest = dtiTxn.getRequest();
@@ -695,16 +704,18 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
       // DLR upgrade transactions must have a Reservation Section
       if (dtiUpgradeReq.getReservation() == null) {
-         
-         logger.sendEvent("DLR Upgrade Entitlement transaction did not have a Reservation section. ", EventType.EXCEPTION, THISINSTANCE);
+
+         logger.sendEvent("DLR Upgrade Entitlement transaction did not have a Reservation section. ",
+                  EventType.EXCEPTION, THISINSTANCE);
          throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                   "DLR Upgrade Entitlement transaction did not have a Reservation section.");
       }
 
       // DLR upgrade transaction must have Client Data
       if (dtiUpgradeReq.getClientData() == null) {
-         
-         logger.sendEvent("DLR Upgrade Entitlement transaction did not have a ClientData section. ", EventType.EXCEPTION, THISINSTANCE);
+
+         logger.sendEvent("DLR Upgrade Entitlement transaction did not have a ClientData section. ",
+                  EventType.EXCEPTION, THISINSTANCE);
          throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                   "DLR Upgrade Entitlement transaction did not have a ClientData section.");
       }
@@ -714,8 +725,9 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
          String resCode = dtiUpgradeReq.getReservation().getResCode();
 
          if (((resCode == null) || (resCode.length() == 0)) || resCode.length() > 20) {
-            
-            logger.sendEvent("ResCode is not between required lengths (1 - 20) for DLR. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("ResCode is not between required lengths (1 - 20) for DLR. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "ResCode is not between required lengths (1 - 20) for DLR.");
          }
@@ -726,76 +738,84 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
       DemographicsTO billingTO = dtiUpgradeReq.getClientData().getBillingInfo();
       // Checking for billingTO
       if (billingTO != null) {
-         
+
          // First Name
          String firstName = billingTO.getFirstName();
-         
-         // Last Name 
+
+         // Last Name
          String lastName = billingTO.getLastName();
-         
+
          // Street1
          String street1 = billingTO.getAddr1();
-         
+
          // City
          String city = billingTO.getCity();
-         
+
          // Zip
          String zip = billingTO.getZip();
-         
+
          // Country
          String country = billingTO.getCountry();
-         
+
          // Phone
          String phone = billingTO.getTelephone();
-         
+
          // Email
          String email = billingTO.getEmail();
 
          if ((firstName == null) || (firstName.length() == 0)) {
-            
-            logger.sendEvent("Billing First Name is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing First Name is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing first name field is missing in DLR Upgrade Entitlement Request.");
          }
          if ((lastName == null) || (lastName.length() == 0)) {
-            
-            logger.sendEvent("Billing Last Name is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing Last Name is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing Last Name field is missing in DLR Upgrade Entitlement Request.");
          }
          if ((street1 == null) || (street1.length() == 0)) {
-            
-            logger.sendEvent("Billing First Address is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing First Address is missing in DLR Upgrade Entitlement Request. ",
+                     EventType.EXCEPTION, THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing First Address field is missing in DLR Upgrade Entitlement Request.");
          }
          if ((city == null) || (city.length() == 0)) {
-            
-            logger.sendEvent("Billing City is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing City is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing City is missing in DLR Upgrade Entitlement Request.");
          }
-         if ((zip == null) || (zip.length() == 0 )) {
-            
-            logger.sendEvent("Billing Zip is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+         if ((zip == null) || (zip.length() == 0)) {
+
+            logger.sendEvent("Billing Zip is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing Zip is missing in DLR Upgrade Entitlement Request.");
          }
          if ((country == null) || (country.length() == 0)) {
-            
-            logger.sendEvent("Billing country detail is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing country detail is missing in DLR Upgrade Entitlement Request. ",
+                     EventType.EXCEPTION, THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing country detail is missing in DLR Upgrade Entitlement Request.");
          }
          if ((phone == null) || (phone.length() == 0)) {
-            
-            logger.sendEvent("Billing phone no is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+
+            logger.sendEvent("Billing phone no is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing phone no is missing in DLR Upgrade Entitlement Request.");
          }
-         if ((email == null) || (email.length() == 0)) { 
-            
-            logger.sendEvent("Billing email is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION, THISINSTANCE);
+         if ((email == null) || (email.length() == 0)) {
+
+            logger.sendEvent("Billing email is missing in DLR Upgrade Entitlement Request. ", EventType.EXCEPTION,
+                     THISINSTANCE);
             throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                      "Billing email is missing in DLR Upgrade Entitlement Request.");
          }
@@ -821,9 +841,10 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
       ArrayList<TPLookupTO> tpLookups = LookupKey.getGWTPCommandLookup(tpiCode, txnType, shipMethod, shipDetail);
 
       if (tpLookups.size() == 0) {
-         
-         logger.sendEvent("TPCommandLookup query on Upgrade entitlement did not return with responses as expected (set-up incomplete): "
-                           + tpLookups.size()+". ", EventType.EXCEPTION, THISINSTANCE);
+
+         logger.sendEvent(
+                  "TPCommandLookup query on Upgrade entitlement did not return with responses as expected (set-up incomplete): "
+                           + tpLookups.size() + ". ", EventType.EXCEPTION, THISINSTANCE);
          throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.FAILED_DB_OPERATION_SVC,
                   "TPCommandLookup query on Upgrade entitlement did not return with responses as expected (set-up incomplete): "
                            + tpLookups.size());
@@ -854,12 +875,27 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
          }
       } // for each ticket
 
-      // Determine if this is an installment transaction, and if so, mark it in the transfer object.
+      // Determine if this is an installment transaction, and if so, mark it in
+      // the transfer object.
       ArrayList<PaymentTO> payListTO = dtiUpgradeReq.getPaymentList();
       for (/* each */PaymentTO aPayment : /* in */payListTO) {
 
          if (aPayment.getPayType() == PaymentType.INSTALLMENT) {
             dtiUpgradeReq.setInstallmentRequest(true);
+            
+            // Make sure CC Type is provided for DLR installment purchases for upgrades.
+            InstallmentTO installTO = aPayment.getInstallment();
+            InstallmentCreditCardTO installCCTO = installTO.getCreditCard();
+            
+            if (installCCTO.getCcManualOrSwipe() == CreditCardType.CCMANUAL) {
+               
+               if (installCCTO.getCcType() == null) {
+                  throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                           "DLR Manual Credit Card missing required CCType field.");
+               }
+               
+            }
+            
          }
 
       }
@@ -876,227 +912,223 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
    }
 
-	/**
-	 * Sets the product-based order lines on the out-going request.
-	 * 
-	 * @param renEntReq
-	 * @param orderTO
-	 * @param dtiProductMap
-	 * @param dtiFlatTktList
-	 * @return the order total (needed in the GW header)
-	 */
-	private static BigDecimal setProductOrderLines(UpgradeEntitlementRequestTO upgradeRequest, GWOrderTO orderTO,
-			HashMap<String, DBProductTO> dtiProductMap, ArrayList<TicketTO> dtiFlatTktList) {
+   /**
+    * Sets the product-based order lines on the out-going request.
+    * 
+    * @param renEntReq
+    * @param orderTO
+    * @param dtiProductMap
+    * @param dtiFlatTktList
+    * @return the order total (needed in the GW header)
+    */
+   private static BigDecimal setProductOrderLines(UpgradeEntitlementRequestTO upgradeRequest, GWOrderTO orderTO,
+            HashMap<String, DBProductTO> dtiProductMap, ArrayList<TicketTO> dtiFlatTktList) {
 
-		BigDecimal orderTotal = new BigDecimal("0.00");
+      BigDecimal orderTotal = new BigDecimal("0.00");
 
-		// iterate through the DTI tickets
-		Iterator<TicketTO> iter = dtiFlatTktList.iterator();
-		while (iter.hasNext()) {
+      // iterate through the DTI tickets
+      Iterator<TicketTO> iter = dtiFlatTktList.iterator();
+      while (iter.hasNext()) {
 
-			TicketTO dtiTicket = iter.next();
+         TicketTO dtiTicket = iter.next();
 
-			DBProductTO dtiProduct = dtiProductMap.get(dtiTicket.getProdCode());
+         DBProductTO dtiProduct = dtiProductMap.get(dtiTicket.getProdCode());
 
-			GWOrderLineTO gwLineItemTO = new GWOrderLineTO();
-			gwLineItemTO.setAmount(String.valueOf(dtiTicket.getUpgrdPrice()));
+         GWOrderLineTO gwLineItemTO = new GWOrderLineTO();
+         gwLineItemTO.setAmount(String.valueOf(dtiTicket.getUpgrdPrice()));
 
-			gwLineItemTO.setDescription(dtiProduct.getPdtDesc());
+         gwLineItemTO.setDescription(dtiProduct.getPdtDesc());
 
-         // Set the detail type based on the type of product 
-			// x 
-			
-			gwLineItemTO.setDetailType(TransformConstants.GW_ORDERS_PASS_ORDER_LINE_ITEM);
-       	
-			// PLU (mapped from Ticket Name, not ticket code because of length)
-			DBProductTO dtiDbProduct = dtiProductMap.get(dtiTicket.getProdCode());
-			gwLineItemTO.setPlu(dtiDbProduct.getMappedProviderTktName());
+         // Set the detail type based on the type of product
+         // x
 
-			// PaymentPlanID
-			if (upgradeRequest.isInstallmentRequest()) {
-				GWPaymentContractTO contract = orderTO.getPaymntContractList().get(0);
-				String paymentPlanID = contract.getPaymentPlanID();
-				gwLineItemTO.setPaymentPlanID(paymentPlanID);
-			}
+         gwLineItemTO.setDetailType(TransformConstants.GW_ORDERS_PASS_ORDER_LINE_ITEM);
 
-			// Qty
-			gwLineItemTO.setQty(String.valueOf(dtiTicket.getProdQty()));
-			gwLineItemTO.setTaxCode(""); // FUTURE EXPANSION, TaxCode not used
+         // PLU (mapped from Ticket Name, not ticket code because of length)
+         DBProductTO dtiDbProduct = dtiProductMap.get(dtiTicket.getProdCode());
+         gwLineItemTO.setPlu(dtiDbProduct.getMappedProviderTktName());
 
-			// figure out the product total
-			BigDecimal prodCost = dtiTicket.getUpgrdPrice();
-			BigDecimal productTotal = prodCost.multiply(new BigDecimal(dtiTicket.getProdQty()));
+         // PaymentPlanID
+         if (upgradeRequest.isInstallmentRequest()) {
+            GWPaymentContractTO contract = orderTO.getPaymntContractList().get(0);
+            String paymentPlanID = contract.getPaymentPlanID();
+            gwLineItemTO.setPaymentPlanID(paymentPlanID);
+         }
 
-			// add it to the total cost of the order
-			orderTotal = orderTotal.add(productTotal);
+         // Qty
+         gwLineItemTO.setQty(String.valueOf(dtiTicket.getProdQty()));
+         gwLineItemTO.setTaxCode(""); // FUTURE EXPANSION, TaxCode not used
 
-			// set the total on the line item
-			gwLineItemTO.setTotal(String.valueOf(productTotal));
-			
-			// Get upgrade from visual ID.
+         // figure out the product total
+         BigDecimal prodCost = dtiTicket.getUpgrdPrice();
+         BigDecimal productTotal = prodCost.multiply(new BigDecimal(dtiTicket.getProdQty()));
+
+         // add it to the total cost of the order
+         orderTotal = orderTotal.add(productTotal);
+
+         // set the total on the line item
+         gwLineItemTO.setTotal(String.valueOf(productTotal));
+
+         // Get upgrade from visual ID.
          if (dtiTicket.getExternal() != null) {
             gwLineItemTO.setUpgradeFromVisualID(dtiTicket.getExternal());
          }
 
-			// Add demographics, if present (note: because of activity above,
-			// only one expected per line). (As of 2.16.1, JTL)
-			if (dtiTicket.getTicketDemoList().size() != 0) {
+         // Add demographics, if present (note: because of activity above,
+         // only one expected per line). (As of 2.16.1, JTL)
+         if (dtiTicket.getTicketDemoList().size() != 0) {
 
-			   // One and only one.
-				DemographicsTO dtiDemo = dtiTicket.getTicketDemoList().get(0); 
+            // One and only one.
+            DemographicsTO dtiDemo = dtiTicket.getTicketDemoList().get(0);
 
-				GWMemberDemographicsTO gwDemo = new GWMemberDemographicsTO();
+            GWMemberDemographicsTO gwDemo = new GWMemberDemographicsTO();
 
-				// First Name
-				if (dtiDemo.getFirstName() != null) {
-					gwDemo.setFirstName(dtiDemo.getFirstName());
-				}
+            // First Name
+            if (dtiDemo.getFirstName() != null) {
+               gwDemo.setFirstName(dtiDemo.getFirstName());
+            }
 
-				// Last Name
-				if (dtiDemo.getLastName() != null) {
-					gwDemo.setLastName(dtiDemo.getLastName());
-				}
+            // Last Name
+            if (dtiDemo.getLastName() != null) {
+               gwDemo.setLastName(dtiDemo.getLastName());
+            }
 
-				// Street 1
-				if (dtiDemo.getAddr1() != null) {
-					gwDemo.setStreet1(dtiDemo.getAddr1());
-				}
+            // Street 1
+            if (dtiDemo.getAddr1() != null) {
+               gwDemo.setStreet1(dtiDemo.getAddr1());
+            }
 
-				// Street 2
-				if (dtiDemo.getAddr2() != null) {
-					gwDemo.setStreet2(dtiDemo.getAddr2());
-				}
+            // Street 2
+            if (dtiDemo.getAddr2() != null) {
+               gwDemo.setStreet2(dtiDemo.getAddr2());
+            }
 
-				// City
-				if (dtiDemo.getCity() != null) {
-					gwDemo.setCity(dtiDemo.getCity());
-				}
+            // City
+            if (dtiDemo.getCity() != null) {
+               gwDemo.setCity(dtiDemo.getCity());
+            }
 
-				// State
-				if (dtiDemo.getState() != null) {
-					gwDemo.setState(dtiDemo.getState());
-				}
+            // State
+            if (dtiDemo.getState() != null) {
+               gwDemo.setState(dtiDemo.getState());
+            }
 
-				// ZIP
-				if (dtiDemo.getZip() != null) {
-					gwDemo.setZip(dtiDemo.getZip());
-				}
+            // ZIP
+            if (dtiDemo.getZip() != null) {
+               gwDemo.setZip(dtiDemo.getZip());
+            }
 
-				// CountryCode
-				if (dtiDemo.getCountry() != null) {
-					gwDemo.setCountryCode(dtiDemo.getCountry());
-				}
+            // CountryCode
+            if (dtiDemo.getCountry() != null) {
+               gwDemo.setCountryCode(dtiDemo.getCountry());
+            }
 
-				// Phone Number
-				if (dtiDemo.getTelephone() != null) {
-					gwDemo.setPhone(dtiDemo.getTelephone());
-				}
+            // Phone Number
+            if (dtiDemo.getTelephone() != null) {
+               gwDemo.setPhone(dtiDemo.getTelephone());
+            }
 
-				// E-mail
-				if (dtiDemo.getEmail() != null) {
-					gwDemo.seteMail(dtiDemo.getEmail());
-				}
+            // E-mail
+            if (dtiDemo.getEmail() != null) {
+               gwDemo.seteMail(dtiDemo.getEmail());
+            }
 
-				// Date of Birth
-				if (dtiDemo.getDateOfBirth() != null) {
-					String dateOfBirth = UtilityXML.getEGalaxyDateFromGCal(dtiDemo.getDateOfBirth());
-					gwDemo.setDateOfBirth(dateOfBirth);
-				}
+            // Date of Birth
+            if (dtiDemo.getDateOfBirth() != null) {
+               String dateOfBirth = UtilityXML.getEGalaxyDateFromGCal(dtiDemo.getDateOfBirth());
+               gwDemo.setDateOfBirth(dateOfBirth);
+            }
 
-				// Gender (Added default for unspecified, as of 2.16.1)
-				if (dtiDemo.getGenderType() != DemographicsTO.GenderType.NOTPRESENT) {
-					if (dtiDemo.getGenderType() == DemographicsTO.GenderType.MALE) {
-						gwDemo.setGender("1");
-					} else if (dtiDemo.getGenderType() == DemographicsTO.GenderType.FEMALE) {
-						gwDemo.setGender("2");
-					} else {
-						gwDemo.setGender("0");
-					}
+            // Gender (Added default for unspecified, as of 2.16.1)
+            if (dtiDemo.getGenderType() != DemographicsTO.GenderType.NOTPRESENT) {
+               if (dtiDemo.getGenderType() == DemographicsTO.GenderType.MALE) {
+                  gwDemo.setGender("1");
+               } else if (dtiDemo.getGenderType() == DemographicsTO.GenderType.FEMALE) {
+                  gwDemo.setGender("2");
+               } else {
+                  gwDemo.setGender("0");
+               }
 
-					gwLineItemTO.addMember(gwDemo);
-				}
+               gwLineItemTO.addMember(gwDemo);
+            }
 
-			}
+         }
 
-			// add to orderTO
-			orderTO.addOrderLine(gwLineItemTO);
-		}
-		// END OrderLine(s), product info
-		return orderTotal;
-	}
+         // add to orderTO
+         orderTO.addOrderLine(gwLineItemTO);
+      }
+      // END OrderLine(s), product info
+      return orderTotal;
+   }
 
-	/**
-	 * Sets the payment order lines, based on the DTI input.
-	 * 
-	 * @param upgradeEntReq
-	 * @param orderTO
-	 * @param orderTotal
-	 * @param payCardMap
-	 * @return true or false if the CVV was found or not.
-	 */
-	private static boolean setPaymentOrderLines(UpgradeEntitlementRequestTO upgradeRequest, GWOrderTO orderTO,
-			BigDecimal orderTotal, HashMap<String, String> payCardMap) {
-	    String paymentCode = null;
-	    boolean missingCvv = false;
+   /**
+    * Sets the payment order lines, based on the DTI input.
+    * 
+    * @param upgradeEntReq
+    * @param orderTO
+    * @param orderTotal
+    * @param payCardMap
+    * @return true or false if the CVV was found or not.
+    */
+   private static boolean setPaymentOrderLines(UpgradeEntitlementRequestTO upgradeRequest, GWOrderTO orderTO,
+            BigDecimal orderTotal, HashMap<String, String> payCardMap) {
+      String paymentCode = null;
+      boolean missingCvv = false;
 
-	    Iterator<PaymentTO> paymentIter = upgradeRequest.getPaymentList().iterator();
-	    while (paymentIter.hasNext()) {
-	      // lookup TO is used to setting paymentCode on the order line to
-	      PaymentTO paymentTO = paymentIter.next();
+      Iterator<PaymentTO> paymentIter = upgradeRequest.getPaymentList().iterator();
+      while (paymentIter.hasNext()) {
+         // lookup TO is used to setting paymentCode on the order line to
+         PaymentTO paymentTO = paymentIter.next();
 
-	      GWOrderLineTO gwOrderLinePayTO = new GWOrderLineTO();
-	      gwOrderLinePayTO
-	          .setDetailType(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM);
+         GWOrderLineTO gwOrderLinePayTO = new GWOrderLineTO();
+         gwOrderLinePayTO.setDetailType(TransformConstants.GW_ORDERS_PAYMENT_ORDER_LINE_ITEM);
 
-	      // CREDITCARD, VOUCHER, GIFTCARD, or INSTALLMENT/UNSUPPORTED
-	      if (paymentTO.getPayType() == PaymentType.CREDITCARD) {
-	        // set the credit card stuff
-	        CreditCardTO cCardTO = paymentTO.getCreditCard();
-	        gwOrderLinePayTO.setEndorsement(cCardTO.getCcNbr());
-	        gwOrderLinePayTO.setDescription(cCardTO.getCcType());
-	        gwOrderLinePayTO.setBillingZip(cCardTO.getCcZipCode());
+         // CREDITCARD, VOUCHER, GIFTCARD, or INSTALLMENT/UNSUPPORTED
+         if (paymentTO.getPayType() == PaymentType.CREDITCARD) {
+            // set the credit card stuff
+            CreditCardTO cCardTO = paymentTO.getCreditCard();
+            gwOrderLinePayTO.setEndorsement(cCardTO.getCcNbr());
+            gwOrderLinePayTO.setDescription(cCardTO.getCcType());
+            gwOrderLinePayTO.setBillingZip(cCardTO.getCcZipCode());
 
-	        if (cCardTO.getCcStreet() != null) {
-	           gwOrderLinePayTO.setBillingStreet(cCardTO.getCcStreet());
-	        }
-	        
-	        // eGalaxy requires MMYY
-	        gwOrderLinePayTO.setExpDate(cCardTO.getCcExpiration());
-	        if (cCardTO.getCcVV() != null && cCardTO.getCcVV().length() > 0) {
-	          gwOrderLinePayTO.setCvn(cCardTO.getCcVV());
-	        }
-	        else {
-	          missingCvv = true;
-	        }
-	        // use the map to set payment type,get card type to get
-	        // paymentCode,
-	        // set after if conditions below
-	        paymentCode = payCardMap.get(cCardTO.getCcType());
-	        paymentTO.setCreditCard(cCardTO);
-	      }
+            if (cCardTO.getCcStreet() != null) {
+               gwOrderLinePayTO.setBillingStreet(cCardTO.getCcStreet());
+            }
 
-	      // if the pay type is Installment
+            // eGalaxy requires MMYY
+            gwOrderLinePayTO.setExpDate(cCardTO.getCcExpiration());
+            if (cCardTO.getCcVV() != null && cCardTO.getCcVV().length() > 0) {
+               gwOrderLinePayTO.setCvn(cCardTO.getCcVV());
+            } else {
+               missingCvv = true;
+            }
+            // use the map to set payment type,get card type to get
+            // paymentCode,
+            // set after if conditions below
+            paymentCode = payCardMap.get(cCardTO.getCcType());
+            paymentTO.setCreditCard(cCardTO);
+         }
+
+         // if the pay type is Installment
          if (paymentTO.getPayType() == PaymentType.INSTALLMENT) {
 
             // set the credit card stuff
-            InstallmentCreditCardTO cCardTO = paymentTO.getInstallment()
-                .getCreditCard();
+            InstallmentCreditCardTO cCardTO = paymentTO.getInstallment().getCreditCard();
             gwOrderLinePayTO.setEndorsement(cCardTO.getCcNbr());
             gwOrderLinePayTO.setDescription(cCardTO.getCcType());
-            
+
             // As of 2.16.2, JTL
             if (cCardTO.getCcStreet() != null) {
-              gwOrderLinePayTO.setBillingStreet(cCardTO.getCcStreet());
+               gwOrderLinePayTO.setBillingStreet(cCardTO.getCcStreet());
             }
-            
+
             gwOrderLinePayTO.setBillingZip(cCardTO.getCcZipCode());
             // eGalaxy requires MMYY
             gwOrderLinePayTO.setExpDate(cCardTO.getCcExpiration());
             if (cCardTO.getCcVV() != null && cCardTO.getCcVV().length() > 0) {
-              gwOrderLinePayTO.setCvn(cCardTO.getCcVV());
-            }
-            else {
-              missingCvv = true;
+               gwOrderLinePayTO.setCvn(cCardTO.getCcVV());
+            } else {
+               missingCvv = true;
             }
             // use the map to set payment type, get card type to get
             // paymentCode, set after if conditions below
@@ -1107,79 +1139,78 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
             // set pay amount
             gwOrderLinePayTO.setAmount("0.00");
-          }
+         }
 
-	      // set the payment code
-	      gwOrderLinePayTO.setPaymentCode(paymentCode);
+         // set the payment code
+         gwOrderLinePayTO.setPaymentCode(paymentCode);
 
-	      // set payment date
-	      gwOrderLinePayTO.setPaymentDate(UtilityXML.getCurrentEgalaxyDate());
+         // set payment date
+         gwOrderLinePayTO.setPaymentDate(UtilityXML.getCurrentEgalaxyDate());
 
-	      // set pay total
-	      gwOrderLinePayTO.setTotal(String.valueOf(orderTotal));
+         // set pay total
+         gwOrderLinePayTO.setTotal(String.valueOf(orderTotal));
 
-	      // set pay amount
-	      gwOrderLinePayTO
-	          .setAmount(String.valueOf(paymentTO.getPayAmount()));
+         // set pay amount
+         gwOrderLinePayTO.setAmount(String.valueOf(paymentTO.getPayAmount()));
 
-	      // add back to the order
-	      orderTO.addOrderLine(gwOrderLinePayTO);
-	    }
-	    // END OrderLine(s), payments info
-	    return missingCvv;
-	  }
+         // add back to the order
+         orderTO.addOrderLine(gwOrderLinePayTO);
+      }
+      // END OrderLine(s), payments info
+      return missingCvv;
+   }
 
-	/**
-	 * Transforms a DLR Orders error
-	 * 
-	 * @param dtiTxn
-	 *            The DTITransacationTO object representing this transaction.
-	 * @param dtiRespTO
-	 *            The parsed version of the received response.
-	 * @param statusString
-	 *            get to get the TP provider error information.
-	 * @throws DTIException
-	 *             Should the routine be unable to find the TP error lookup.
-	 */
-	static DTITransactionTO transformError(DTITransactionTO dtiTxn, DTIResponseTO dtiRespTO, String statusString,
-			String xmlResponse) throws DTIException {
+   /**
+    * Transforms a DLR Orders error
+    * 
+    * @param dtiTxn
+    *           The DTITransacationTO object representing this transaction.
+    * @param dtiRespTO
+    *           The parsed version of the received response.
+    * @param statusString
+    *           get to get the TP provider error information.
+    * @throws DTIException
+    *            Should the routine be unable to find the TP error lookup.
+    */
+   static DTITransactionTO transformError(DTITransactionTO dtiTxn, DTIResponseTO dtiRespTO, String statusString,
+            String xmlResponse) throws DTIException {
 
-		String errorCode = DLRErrorRules.processStatusError(dtiTxn.getTransactionType(), statusString, xmlResponse);
+      String errorCode = DLRErrorRules.processStatusError(dtiTxn.getTransactionType(), statusString, xmlResponse);
 
-		DTIErrorTO dtiErrorTO = ErrorKey.getTPErrorMap(errorCode);
+      DTIErrorTO dtiErrorTO = ErrorKey.getTPErrorMap(errorCode);
 
-		DTIErrorCode.populateDTIErrorResponse(dtiErrorTO, dtiTxn, dtiRespTO);
+      DTIErrorCode.populateDTIErrorResponse(dtiErrorTO, dtiTxn, dtiRespTO);
 
-		// Copy over key ticket values for error response to match
-		// existing format.
-		if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.COMMAND) {
+      // Copy over key ticket values for error response to match
+      // existing format.
+      if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.COMMAND) {
 
-			if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.TICKET) {
-				UpgradeEntitlementRequestTO resReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
-				UpgradeEntitlementResponseTO resResp = new UpgradeEntitlementResponseTO();
+         if (dtiErrorTO.getErrorScope() == DTIErrorCode.ErrorScope.TICKET) {
+            UpgradeEntitlementRequestTO resReq = (UpgradeEntitlementRequestTO) dtiTxn.getRequest().getCommandBody();
+            UpgradeEntitlementResponseTO resResp = new UpgradeEntitlementResponseTO();
 
-				TicketTO dtiTktTO = new TicketTO();
+            TicketTO dtiTktTO = new TicketTO();
 
-				// Ticket Item
-				dtiTktTO.setTktItem(new BigInteger(ITEM_1));
+            // Ticket Item
+            dtiTktTO.setTktItem(new BigInteger(ITEM_1));
 
-				// Ticket Identity
-				if (resReq.getTicketList().size() != 0) {
-					TicketTO dtiTktTOReq = resReq.getTicketList().get(0);
-					if (dtiTktTOReq != null)
-						dtiTktTO.setExternal(dtiTktTOReq.getExternal());
-				}
+            // Ticket Identity
+            if (resReq.getTicketList().size() != 0) {
+               TicketTO dtiTktTOReq = resReq.getTicketList().get(0);
+               if (dtiTktTOReq != null)
+                  dtiTktTO.setExternal(dtiTktTOReq.getExternal());
+            }
 
-				// Add the ticket to the response
-				resResp.addTicket(dtiTktTO);
+            // Add the ticket to the response
+            resResp.addTicket(dtiTktTO);
 
-				dtiRespTO.setCommandBody(resReq);
-			}
-		}
+            dtiRespTO.setCommandBody(resReq);
+         }
+      }
 
-		dtiTxn.setResponse(dtiRespTO);
+      dtiTxn.setResponse(dtiRespTO);
 
-		return dtiTxn;
-	}
+      return dtiTxn;
+   }
 
 }
