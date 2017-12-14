@@ -342,6 +342,11 @@ public class WDWCreateTicketRules {
         otProduct.setValidity_EndDate(aDtiTicket
             .getTktValidityValidEnd());
       }
+      
+      // Price quote token for variably priced products
+      if((null != aDtiTicket.getExtrnlPrcd()) && (aDtiTicket.getExtrnlPrcd().equals("T"))) {
+         otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());   
+      }
 
       // Price (as of 2.9)
       if (aDtiTicket.getProdPrice() != null) {
@@ -621,6 +626,9 @@ public class WDWCreateTicketRules {
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
     ProductRules.validateWdwTicketDemo(tktListTO);
+    
+    // validate variably priced product
+    WDWExternalPriceRules.validateDeltaProducts(tktListTO);
 
     return;
   }

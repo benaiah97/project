@@ -562,8 +562,8 @@ public abstract class BusinessRules {
     }
 
     // RULE: Are validity dates required?
-    TicketRules
-        .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
+    //TicketRules
+      //  .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: The getProductTicketTypes query modifies the dbProdList members to
@@ -678,8 +678,8 @@ public abstract class BusinessRules {
     }
 
     // RULE: Are validity dates required?
-    TicketRules
-        .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
+    //TicketRules
+      //  .validateTicketValidityDates(tktListTO, entityTO, dbProdList);
 
     // RULE: Are the mapped ticket types valid and active?
     // NOTE: This rule modifies the dbProdList members to include ticket

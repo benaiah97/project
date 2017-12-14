@@ -44,7 +44,9 @@ public class ProductKey {
 	/** Constant representing the get products query. */
 	private static final String GET_PRODUCTS = "GET_PRODUCTS";
 
-  
+	/** The Constant GET_PRODUCTS_VARPRCD. */
+	private static final String GET_PRODUCTS_VARPRCD = "GET_PRODUCTS_VARPRCD";
+	
 	/** Constant representing the get product ticket type query. */
 	private static final String GET_PDT_TKT_TYPE = "GET_PDT_TKT_TYPE";
 
@@ -1015,4 +1017,66 @@ public class ProductKey {
 	 
 	  }  
 	  
+	  @SuppressWarnings("unchecked")
+	  public static HashMap<String, String> getOrderVarPrcdProducts(ArrayList<TicketTO> tktListTO) 
+	            throws DTIException {
+
+	      logger.sendEvent("Entering getOrderVarPrcdProducts()", EventType.DEBUG,
+	            THISINSTANCE);
+
+	      HashMap<String, String> result = null;
+
+	      // Retrieve and validate the parameters
+	      if ((tktListTO == null) || (tktListTO.size() == 0)) {
+	         throw new DTIException(ProductKey.class,
+	               DTIErrorCode.INVALID_PRODUCT_CODE,
+	               "getOrderProducts DB routine found an empty ticket list.");
+	      }
+
+	      HashSet<String> productCodeSet = new HashSet<String>();
+	      for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
+            if (aTicketTO.getProdCode() != null) {
+               productCodeSet.add(aTicketTO.getProdCode());
+            }
+	      }
+	      
+	      if (productCodeSet.size() == 0) {
+	         return result;
+	      }
+
+	      Object[] queryParms = { DBUtil.createSQLInList(productCodeSet) };
+
+	      // Replaces "?"
+	      Object[] values = {};
+
+	      // Get instance of Query Builder (Replaces "%")
+	      DBQueryBuilder qBuilder = new DBQueryBuilder();
+
+	      try {
+
+	         // Prepare query
+	         logger.sendEvent("About to getInstance from DAOHelper",
+	               EventType.DEBUG, THISINSTANCE);
+	         DAOHelper helper = DAOHelper.getInstance(GET_PRODUCTS_VARPRCD);
+
+	         // Run the SQL
+	         logger.sendEvent("About to processQuery:  GET_PRODUCTS_VARPRCD",
+	               EventType.DEBUG, THISINSTANCE);
+	         result = (HashMap<String, String>) helper.processQuery(values,
+	               queryParms, qBuilder);
+
+	         // Debug
+	         logger.sendEvent("getOrderProducts found products.",
+	               EventType.DEBUG, THISINSTANCE, result, null);
+
+	      } catch (Exception e) {
+	         logger.sendEvent(
+	               "Exception executing getOrderVarPrcdProducts: " + e.toString(),
+	               EventType.WARN, THISINSTANCE);
+	         throw new DTIException(ProductKey.class,
+	               DTIErrorCode.FAILED_DB_OPERATION_SVC,
+	               "Exception executing getOrderProducts", e);
+	      }
+	      return result;
+	   }
 	}
