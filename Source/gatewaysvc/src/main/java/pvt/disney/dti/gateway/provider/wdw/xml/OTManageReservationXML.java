@@ -833,6 +833,13 @@ public class OTManageReservationXML {
         otPdtTO.setPrice(new BigDecimal(inString));
       }
 
+      //QuoteToken
+      Node quoteTokenNode = aNode.selectSingleNode("QuoteToken");
+      if (quoteTokenNode != null) {
+        inString = quoteTokenNode.getText();
+        otPdtTO.setProdPriceToken(inString);
+      }
+      
       // Qty
       Node qtyNode = aNode.selectSingleNode("Qty");
       if (qtyNode != null) {

@@ -66,7 +66,7 @@ public class WDWExternalPriceRules {
       eventLogger.sendEvent("Entering validateExternalPricing() :", EventType.DEBUG, WDWExternalPriceRules.class);
       ArrayList<TicketTO> qouteServiceList = new ArrayList<>();
       for /* each */ (TicketTO ticketTO : /* in */tktListTOList) {
-         if ((!ticketTO.getExtrnlPrcd().isEmpty()) && (ticketTO.getExtrnlPrcd().equals("T"))) {
+         if ((!ticketTO.getExtrnlPrcd().isEmpty()) && (ticketTO.getExtrnlPrcd().equals("F"))) {
             if (validateStartAndEndDates(ticketTO)) {
                qouteServiceList.add(ticketTO);
             } else {
