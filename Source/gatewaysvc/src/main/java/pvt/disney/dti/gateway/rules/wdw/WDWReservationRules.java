@@ -627,9 +627,9 @@ public class WDWReservationRules {
       // Price
       otProduct.setPrice(aDtiTicket.getProdPrice());
       
-      //ProdPriceToken
-      if((null != aDtiTicket.getProdPriceQuoteToken()) && (aDtiTicket.getExtrnlPrcd().equalsIgnoreCase("F"))) {
-    	  otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());  
+      // ProdPriceToken
+      if ((null != aDtiTicket.getProdPriceQuoteToken()) && (aDtiTicket.getExtrnlPrcd().equalsIgnoreCase("T"))) {
+         otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());
       }
 
       // EntitlementAccountId, list of id, one for each non-consumable

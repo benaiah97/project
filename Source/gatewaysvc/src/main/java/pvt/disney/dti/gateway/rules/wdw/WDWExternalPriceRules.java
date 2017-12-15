@@ -42,7 +42,7 @@ public class WDWExternalPriceRules {
       eventLogger.sendEvent("Entering validateVariablyPriced() :", EventType.DEBUG, WDWExternalPriceRules.class);
       HashMap<String, String> result = ProductKey.getOrderVarPrcdProducts(tktListTOList);
 
-      if (!result.isEmpty()) {
+      if (!result.isEmpty() && result != null) {
          for /* each */ (TicketTO ticketTO : /* in */tktListTOList) {
             if(ticketTO.getProdCode()!=null){
                ticketTO.setExtrnlPrcd(result.get(ticketTO.getProdCode()));               
@@ -66,7 +66,7 @@ public class WDWExternalPriceRules {
       eventLogger.sendEvent("Entering validateExternalPricing() :", EventType.DEBUG, WDWExternalPriceRules.class);
       ArrayList<TicketTO> qouteServiceList = new ArrayList<>();
       for /* each */ (TicketTO ticketTO : /* in */tktListTOList) {
-         if ((!ticketTO.getExtrnlPrcd().isEmpty()) && (ticketTO.getExtrnlPrcd().equals("F"))) {
+         if ((!ticketTO.getExtrnlPrcd().isEmpty()) && (ticketTO.getExtrnlPrcd().equals("T"))) {
             if (validateStartAndEndDates(ticketTO)) {
                qouteServiceList.add(ticketTO);
             } else {

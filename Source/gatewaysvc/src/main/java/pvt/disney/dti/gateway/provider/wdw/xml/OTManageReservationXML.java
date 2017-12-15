@@ -520,8 +520,7 @@ public class OTManageReservationXML {
 
       // QuoteToken
       if (aProductTO.getProdPriceToken() != null) {
-        pdtStanza.addElement("QuoteToken").addText(
-            aProductTO.getProdPriceToken().toString());
+         pdtStanza.addElement("QuoteToken").addText(aProductTO.getProdPriceToken());
       }
         
       // TicketNote (omitted)

@@ -86,6 +86,7 @@ public class WDWReservationRulesTestCase extends CommonTestUtils {
 		ArrayList<DBProductTO> dbProductTOList = new ArrayList<DBProductTO>();
 		DBProductTO dbProductTO = new DBProductTO();
 		dbProductTO.setPdtCode("ABC");
+		
 		dbProductTO.setMappedProviderTktNbr(BigInteger.valueOf(123));
 		dbProductTO.setValidityDateInfoRequired(true);
 
@@ -348,7 +349,8 @@ public class WDWReservationRulesTestCase extends CommonTestUtils {
 		ticketTO.setTktItem(BigInteger.valueOf(1));
 		ticketTO.setProdQty(BigInteger.valueOf(1));
 		ticketTO.setProdCode("ABC");
-
+		ticketTO.setProdPriceQuoteToken("prodPriceQuoteToken");
+		ticketTO.setExtrnlPrcd("F");
 		if (productsAssignAccounts) {
 			ArrayList<TktAssignmentTO> ticketAssignmetList = new ArrayList<>();
 			TicketTO ticket = new TicketTO();

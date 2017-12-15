@@ -1591,10 +1591,10 @@ public abstract class ReservationXML {
       aTicketTO.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
     }
 
-	// ProdPricePriceTocken
-		if (aTicket.getProdPriceQuoteToken() != null) {
-			aTicketTO.setProdPriceQuoteToken(aTicket.getProdPriceQuoteToken());
-		}
+      // ProdPricePriceTocken
+      if (aTicket.getProdPriceQuoteToken() != null) {
+         aTicketTO.setProdPriceQuoteToken(aTicket.getProdPriceQuoteToken());
+      }
 		
     // TktValidity
     if (aTicket.getTktValidity() != null) {
