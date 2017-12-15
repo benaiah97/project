@@ -155,6 +155,10 @@ public class WDWUpgradeAlphaRules {
       // TktNote
       if (dtiTicket.getTktNote() != null) otTicketInfo
           .setTicketNote(dtiTicket.getTktNote());
+      
+      
+      if (dtiTicket.getProdPriceQuoteToken() != null) otTicketInfo
+      .setQuoteToken(dtiTicket.getProdPriceQuoteToken());
 
       // TicketAttribute (ignored)
       // GroupQuantity (ignored)
@@ -424,7 +428,9 @@ public class WDWUpgradeAlphaRules {
 
     // RULE: Always log WDW Upgrades to reporting
     ArchiveKey.insertUpgradeAlphaRequest(dtiTxn);
-
+    
+    // validate variably priced product
+    WDWExternalPriceRules.validateDeltaProducts(aTktListTO);
     return;
   }
 

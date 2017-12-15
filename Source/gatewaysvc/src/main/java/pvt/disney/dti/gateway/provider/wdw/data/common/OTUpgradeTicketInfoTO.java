@@ -62,7 +62,9 @@ public class OTUpgradeTicketInfoTO implements Serializable {
 
 	/** The ticket flag list. */
 	private ArrayList<Integer> ticketFlagList = new ArrayList<Integer>();
-
+	
+	/** The quote token. */
+	private String quoteToken;
 	/**
 	 * Gets the item.
 	 * 
@@ -338,6 +340,24 @@ public class OTUpgradeTicketInfoTO implements Serializable {
 	 */
 	public void setDemographicInfo(OTDemographicInfo demographicInfo) {
 		this.demographicInfo = demographicInfo;
+	}
+
+	/**
+	 * Gets the quote token.
+	 *
+	 * @return the quote token
+	 */
+	public String getQuoteToken() {
+		return quoteToken;
+	}
+
+	/**
+	 * Sets the quote token.
+	 *
+	 * @param quoteToken the new quote token
+	 */
+	public void setQuoteToken(String quoteToken) {
+		this.quoteToken = quoteToken;
 	}
 
 }
