@@ -455,7 +455,7 @@ public class CalmRules {
          String ownerId = dtiTxn.getProvider().toString().substring(0, 3);
 
          // To get the CosGrpid
-         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn);
+         CosGrpTO cosGrpTO = CosUtil.lookupCosGrp(dtiTxn, environment);
 
          // To get the Barricade details for COS group Id and OwnerId
          barricadeTOs = BarricadeKey.getBarricadeLookup(cosGrpTO.getCosgrpid(), ownerId);
