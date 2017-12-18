@@ -114,6 +114,7 @@ public class DTIController {
       String environment = System.getProperty("APP_ENV");
 
       if (StringUtils.isBlank(application) || StringUtils.isBlank(environment)) {
+         eventLogger.sendEvent("Environment is set as "+environment+" and Application as "+application+" in jvm arument : ", EventType.FATAL, this);
          throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
                   + ", Environment: " + environment);
       }
