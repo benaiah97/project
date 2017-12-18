@@ -628,7 +628,7 @@ public class WDWCreateTicketRules {
     ProductRules.validateWdwTicketDemo(tktListTO);
     
     // validate variably priced product
-    WDWExternalPriceRules.validateDeltaProducts(tktListTO);
+    WDWExternalPriceRules.validateDeltaProducts(dtiTxn, tktListTO);
 
     return;
   }
