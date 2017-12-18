@@ -19,6 +19,7 @@ import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.controller.DTIController;
 import pvt.disney.dti.gateway.service.DTIService;
 import pvt.disney.dti.gateway.util.ResourceLoader;
+import pvt.disney.dti.gateway.util.flood.FloodControlInitException;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
@@ -119,12 +120,23 @@ public class DTIApp extends HttpServlet {
           throw new DTIException("doPost()...error writing XML to POS", getClass(), 3, errorCode, e.getMessage(), e);
         } finally {
         }
-      } catch (Exception e) {
-        String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
-        eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
-        throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode, "XML is not well Formed",
-            null);
-      }
+         } catch (Exception e) {
+
+            if ((e instanceof FloodControlInitException)) {
+               PrintWriter outPrint = null;
+               String responseString = null;
+               outPrint = res.getWriter();
+               responseString = DTIService.generateGenericError(DTIErrorCode.DTI_CONFIG_ERROR, null);
+               res.setContentType("text/xml;charset=UTF-8");
+               outPrint.println(responseString);
+
+            } else {
+               String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
+               eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
+               throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode,
+                        "XML is not well Formed", null);
+            }
+         }
     } catch (Exception ee) {
       String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
       if (!(ee instanceof DTIException)) {
