@@ -208,7 +208,7 @@ public class DTIMockUtil extends CommonTestUtils {
 	 */
 	private static void setResultSet(ResultSet rs) throws Exception {
 	   EasyMock.expect(rs.getString(EasyMock.contains("EXTRNL_PRCD")))
-	      .andReturn("T").anyTimes();
+      .andReturn("T").anyTimes();
 		EasyMock.expect(rs.getString(EasyMock.contains("ACTIVE_IND")))
 				.andReturn("T").anyTimes();
 		EasyMock.expect(rs.getString(EasyMock.contains("SOLD_OUT")))

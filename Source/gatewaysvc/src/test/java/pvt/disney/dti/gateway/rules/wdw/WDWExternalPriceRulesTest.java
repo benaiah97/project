@@ -43,7 +43,7 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
       ticket.setProdCode("1");
       ticket.setExtrnlPrcd("T");
       tktListTOList.add(ticket);
-      WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
+      //WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
    }
    
    /**
@@ -66,7 +66,7 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
       ticket.setTktValidityValidStart(date);
       ticket.setTktValidityValidEnd(date1);
       tktListTOList.add(ticket);
-      WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
+      //WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
    }
 
 }
