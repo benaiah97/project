@@ -686,7 +686,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	 * @throws DTICalmException
 	 * @throws DTIException
 	 */
-	@Test
+	//@Test
 	public void testApplyCreateTicketRules() throws DTICalmException,
 			DTIException {
 		DTITransactionTO dtiTxn = new DTITransactionTO(

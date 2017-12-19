@@ -309,6 +309,17 @@
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>
+							<xs:element name="ProdPriceQuoteToken" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>For daily priced product</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="74"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
 							<xs:element name="TktAssignment" minOccurs="0" maxOccurs="20">
 								<xs:complexType>
 									<xs:sequence>

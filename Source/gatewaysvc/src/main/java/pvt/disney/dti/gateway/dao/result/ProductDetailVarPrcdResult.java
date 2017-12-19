@@ -16,33 +16,33 @@ import pvt.disney.dti.gateway.connection.ResultSetProcessor;
  */
 public class ProductDetailVarPrcdResult implements ResultSetProcessor {
 
-   /** List of database products. */
-   private HashMap<String, String> results = new HashMap<>();
+	/** List of database products. */
+	private HashMap<String, String> results = new HashMap<>();
 
-   /**
-    * Constructor for ProductDetailResult
-    */
-   public ProductDetailVarPrcdResult() {
-      super();
-   }
+	/**
+	 * Constructor for ProductDetailResult
+	 */
+	public ProductDetailVarPrcdResult() {
+		super();
+	}
 
-   /**
-    * Returns the processed object.
-    * 
-    * @see pvt.disney.dti.gateway.connection.ResultSetProcessor#getProcessedObject()
-    */
-   public Object getProcessedObject() throws WrappedException {
-      return results;
-   }
+	/**
+	 * Returns the processed object.
+	 * 
+	 * @see pvt.disney.dti.gateway.connection.ResultSetProcessor#getProcessedObject()
+	 */
+	public Object getProcessedObject() throws WrappedException {
+		return results;
+	}
 
-   /**
-    * Processes the next (or only) value in the results set.
-    * 
-    * @see pvt.disney.dti.gateway.connection.ResultSetProcessor#processNextResultSet(java.sql.ResultSet)
-    */
-   public void processNextResultSet(ResultSet rs) throws SQLException,
-         WrappedException {
-      results.put(rs.getString("PDT_CODE"), rs.getString("EXTRNL_PRCD"));
-   }
+	/**
+	 * Processes the next (or only) value in the results set.
+	 * 
+	 * @see pvt.disney.dti.gateway.connection.ResultSetProcessor#processNextResultSet(java.sql.ResultSet)
+	 */
+	public void processNextResultSet(ResultSet rs) throws SQLException,
+			WrappedException {
+		results.put(rs.getString("PDT_CODE"), rs.getString("EXTRNL_PRCD"));
+	}
 
 }

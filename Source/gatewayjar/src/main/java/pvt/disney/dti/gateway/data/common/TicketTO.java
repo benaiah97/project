@@ -220,23 +220,23 @@ public class TicketTO implements Serializable, Cloneable {
    /** The prod price token. */
    private String prodPriceQuoteToken;
    
-   /** The quote price. */
-   private BigDecimal quotePrice;
+   /** The day count. */
+   private int dayCount;
    
    /**
-    * @return the quotePrice
+    * @return the dayCount
     */
-   public BigDecimal getQuotePrice() {
-      return quotePrice;
+   public int getDayCount() {
+      return dayCount;
    }
 
    /**
-    * @param quotePrice the quotePrice to set
+    * @param dayCount the dayCount to set
     */
-   public void setQuotePrice(BigDecimal quotePrice) {
-      this.quotePrice = quotePrice;
+   public void setDayCount(int dayCount) {
+      this.dayCount = dayCount;
    }
-
+  
    /**
     * @return the extrnlPrcd
     */

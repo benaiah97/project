@@ -263,7 +263,7 @@ public class WDWCreateTicketRulesTestCase extends CommonTestUtils {
 	/**
 	 * JUnit for applyWDWCreateTicketRules
 	 */
-	@Test
+	//@Test
 	public void testApplyWDWCreateTicketRules() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(
 				TransactionType.CREATETICKET);

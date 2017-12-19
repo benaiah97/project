@@ -190,6 +190,10 @@ public class ProductDetailResult implements ResultSetProcessor {
 		else {
 			aProduct.setDaySubclass("NONE");
 		}
+		
+		// DAY_COUNT 
+		aProduct.setDayCount(rs.getInt("DAY_COUNT"));
+		
 
 		// STANDARD_RETAIL_PRICE (As of 2.12)
 		BigDecimal standardRetailPrice = rs
