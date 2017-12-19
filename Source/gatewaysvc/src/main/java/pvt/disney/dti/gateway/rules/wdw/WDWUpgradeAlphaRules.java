@@ -156,9 +156,11 @@ public class WDWUpgradeAlphaRules {
       if (dtiTicket.getTktNote() != null) otTicketInfo
           .setTicketNote(dtiTicket.getTktNote());
       
-      
-      if (dtiTicket.getProdPriceQuoteToken() != null) otTicketInfo
-      .setQuoteToken(dtiTicket.getProdPriceQuoteToken());
+      //Price quote token for variably priced products
+      if ((null != dtiTicket.getExtrnlPrcd()) && (dtiTicket.getExtrnlPrcd().equalsIgnoreCase("T"))
+                  && (null != dtiTicket.getProdPriceQuoteToken())) {
+            otTicketInfo.setProdPriceToken(dtiTicket.getProdPriceQuoteToken());
+         }
 
       // TicketAttribute (ignored)
       // GroupQuantity (ignored)
@@ -430,7 +432,7 @@ public class WDWUpgradeAlphaRules {
     ArchiveKey.insertUpgradeAlphaRequest(dtiTxn);
     
     // validate variably priced product
-    WDWExternalPriceRules.validateDeltaProducts(aTktListTO);
+    WDWExternalPriceRules.validateDeltaProducts(dtiTxn,aTktListTO);
     return;
   }
 
