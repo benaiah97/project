@@ -8,7 +8,7 @@
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>pvt.disney.dti</groupId>
-  <version>1.0.0-344.0.0.0</version>
+  <version>1.0.0-351.0.0.0</version>
   <artifactId>DTI_Gateway</artifactId>
   <packaging>pom</packaging>
   <name>DTI_Gateway</name>
@@ -28,7 +28,13 @@
       <module>gatewaygte</module>
       <module>gatewaywar</module>   
     </modules>
-
-
+    
+    <dependencies>
+		<dependency> 
+            <groupId>xerces</groupId> 
+            <artifactId>xercesImpl</artifactId> 
+            <version>2.4.0</version> 
+		</dependency>
+	</dependencies>
 	
 </project>
