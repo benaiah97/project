@@ -13,6 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
+import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.ReservationRequestTO;
 import pvt.disney.dti.gateway.data.ReservationResponseTO;
 import pvt.disney.dti.gateway.data.common.AgencyTO;
@@ -51,6 +52,7 @@ import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.ProdDemoData
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.ProdDemoData.TktDemoData;
 import pvt.disney.dti.gateway.request.xsd.ReservationRequest.Ticket.TktAssignment;
 import pvt.disney.dti.gateway.response.xsd.ReservationResponse;
+import pvt.disney.dti.gateway.rules.wdw.WDWExternalPriceRules;
 
 import com.disney.logging.EventLogger;
 import com.disney.logging.audit.EventType;
@@ -77,6 +79,9 @@ public abstract class ReservationXML {
   public static final String ACCOUNT_PER_ORDER = "AccountPerOrder";
   private static final EventLogger logger = EventLogger.getLogger(ReservationXML.class.getCanonicalName());
 
+  /** The standard core logging mechanism. */
+  private static EventLogger eventLogger = EventLogger.getLogger(WDWExternalPriceRules.class);
+
   /**
    * Gets the request transfer object from the parsed JAXB structure.
    * 
@@ -87,8 +92,9 @@ public abstract class ReservationXML {
    * 
    * @throws JAXBException
    *           for any parsing failure.
+ * @throws DTIException 
    */
-  public static ReservationRequestTO getTO(ReservationRequest resReq) throws JAXBException {
+  public static ReservationRequestTO getTO(ReservationRequest resReq) throws JAXBException, DTIException {
 
     ReservationRequestTO resReqTO = new ReservationRequestTO();
 
@@ -1466,8 +1472,9 @@ public abstract class ReservationXML {
    *          the transfer object ticket list.
    * @param aTicket
    *          a JAXB parsed ticket.
+ * @throws DTIException 
    */
-  private static void setTOTicketList(ArrayList<TicketTO> ticketListTO, ReservationRequest.Ticket aTicket) {
+  private static void setTOTicketList(ArrayList<TicketTO> ticketListTO, ReservationRequest.Ticket aTicket) throws DTIException {
 
     TicketTO aTicketTO = new TicketTO();
 
@@ -1591,9 +1598,12 @@ public abstract class ReservationXML {
       aTicketTO.setProdPrice(new BigDecimal(aTicket.getProdPrice()));
     }
 
-      // ProdPricePriceTocken
+      // ProdPriceQuoteTocken
       if (aTicket.getProdPriceQuoteToken() != null) {
-         aTicketTO.setProdPriceQuoteToken(aTicket.getProdPriceQuoteToken());
+         eventLogger.sendEvent("", EventType.WARN,
+                  WDWExternalPriceRules.class);
+         throw new DTIException(ReservationXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                  "");
       }
 		
     // TktValidity
