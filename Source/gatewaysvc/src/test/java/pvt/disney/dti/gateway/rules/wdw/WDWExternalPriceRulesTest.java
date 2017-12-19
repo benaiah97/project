@@ -12,7 +12,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
+import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.TicketTransactionTO.TransactionIDType;
 import pvt.disney.dti.gateway.test.util.CommonTestUtils;
 import pvt.disney.dti.gateway.test.util.DTIMockUtil;
 
@@ -32,10 +36,10 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
     * @throws Exception
     *            the exception
     */
-   @Test (expected=DTIException.class)
-   public void testValidateDeltaProducts() throws Exception {
-      
+   //@Test (expected=DTIException.class)
+  /* public void testValidateDeltaProducts() throws Exception {
       DTIMockUtil.processMockprepareAndExecuteSql();
+      DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.RESERVATION);
       ArrayList<TicketTO> tktListTOList= new ArrayList<>();
       TicketTO ticket = new TicketTO();
       ticket.setTktItem(new BigInteger("1"));
@@ -43,18 +47,19 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
       ticket.setProdCode("1");
       ticket.setExtrnlPrcd("T");
       tktListTOList.add(ticket);
-      //WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
-   }
+      WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTOList);
+   }*/
    
    /**
     * Test validate delta products 1.
+    * @throws DTIException 
     *
     * @throws Exception the exception
     */
-   @Test
-   public void testValidateDeltaProducts1() throws Exception {
-      
+   //@Test
+  /* public void testValidateDeltaProducts1() throws Exception {
       DTIMockUtil.processMockprepareAndExecuteSql();
+      DTITransactionTO dtiTxn=new DTITransactionTO(TransactionType.RESERVATION);
       ArrayList<TicketTO> tktListTOList= new ArrayList<>();
       TicketTO ticket = new TicketTO();
       ticket.setTktItem(new BigInteger("1"));
@@ -66,7 +71,25 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
       ticket.setTktValidityValidStart(date);
       ticket.setTktValidityValidEnd(date1);
       tktListTOList.add(ticket);
-      //WDWExternalPriceRules.validateDeltaProducts(tktListTOList);
+      WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTOList);
+   }*/
+   
+   @Test
+   public void testValidateDeltaProducts() throws DTIException{
+      DTIMockUtil.processMockprepareAndExecuteSql();
+      DTITransactionTO dtiTxn =new DTITransactionTO(TransactionType.RESERVATION);
+      ArrayList<TicketTO> tktListTO=new ArrayList<>();
+      DBProductTO dBProductTO=new DBProductTO();
+      TicketTO ticketTO=new TicketTO();
+      ArrayList<DBProductTO> dbProdListIn=new ArrayList<>();
+      dBProductTO.setPdtCode("fGh92");
+      dBProductTO.setDayCount(4);
+      ticketTO.setProdCode("fGh92");
+      ticketTO.setDayCount(4);
+      ticketTO.setExtrnlPrcd("T");
+      tktListTO.add(ticketTO);
+      dbProdListIn.add(dBProductTO);
+      dtiTxn.setDbProdList(dbProdListIn);
+      WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTO);
    }
-
 }

@@ -1039,7 +1039,7 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     ProductRules.validateWdwTicketDemo(tktListTO);
     
     //Checking Delta Product & ProdPriceQuoteToken
-    WDWExternalPriceRules.validateDeltaProducts(tktListTO);
+    WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTO);
 
     // RULE: Validate that if the "installment" type of payment is present,
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();
