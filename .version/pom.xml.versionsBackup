@@ -28,13 +28,5 @@
       <ns0:module>gatewaygte</ns0:module>
       <ns0:module>gatewaywar</ns0:module>   
     </ns0:modules>
-    
-    <ns0:dependencies>
-		<ns0:dependency> 
-            <ns0:groupId>xerces</ns0:groupId> 
-            <ns0:artifactId>xercesImpl</ns0:artifactId> 
-            <ns0:version>2.4.0</ns0:version> 
-		</ns0:dependency>
-	</ns0:dependencies>
 	
 </ns0:project>
