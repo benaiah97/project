@@ -488,16 +488,12 @@ public class ProductRules {
       dbProdMap.put(aDBProduct.getPdtCode(), aDBProduct);
     }
     
-    // DB call fetch external price flag each product
-    final HashMap<String, String> priceTypeResult = ProductKey.getOrderVarPrcdProducts(tktListTO);
-
     for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
        
-         if ((priceTypeResult != null) && (priceTypeResult.containsKey(aTicketTO.getProdCode()))
-                  && (priceTypeResult.get(aTicketTO.getProdCode()).equalsIgnoreCase("F"))) {
-            
-            String ticketPdtCode = aTicketTO.getProdCode();
-            DBProductTO dbProduct = dbProdMap.get(ticketPdtCode);
+         String ticketPdtCode = aTicketTO.getProdCode();
+         DBProductTO dbProduct = dbProdMap.get(ticketPdtCode);
+         
+         if (dbProduct.getExtrnlPrcd() != null && dbProduct.getExtrnlPrcd().equalsIgnoreCase("F")) {
 
             BigDecimal validPrice;
             if (isTaxExempt) {
