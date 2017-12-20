@@ -31,10 +31,10 @@ import org.xml.sax.SAXParseException;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
-import pvt.disney.dti.gateway.dao.CosGrpKey;
+
 import pvt.disney.dti.gateway.dao.CosTpGrpCmdKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
-import pvt.disney.dti.gateway.data.common.CosGrpTO;
+
 import pvt.disney.dti.gateway.data.common.CosTpGrpCmdTO;
 import pvt.disney.dti.gateway.util.PCIControl;
 import pvt.disney.dti.gateway.util.ResourceLoader;
@@ -86,7 +86,7 @@ public class DLRHTTPClient {
 	/**
 	 * initialized once during first instantiation
 	 */
-	private static String URL_STRING = "";
+	//private static String URL_STRING = "";
 
 	/**
 	 * initialized once during first instantiation
@@ -110,7 +110,7 @@ public class DLRHTTPClient {
 	 *  used to get environment
 	 */
 	private static String environment = null;
-	
+
 	/**
 	 * Constructor for HTTPController. Gets the logger for the class.
 	 * 
@@ -135,10 +135,10 @@ public class DLRHTTPClient {
 					props, null);
 			
 			//TODO: REOMVE WHEN WE SWITCH TO ENDPOINTS
-			URL_STRING = PropertyHelper.readPropsValue(ACTIVE_CONNECTION,
-					props, null);
+			//URL_STRING = PropertyHelper.readPropsValue(ACTIVE_CONNECTION,
+			//		props, null);
 			//TODO uncomment when we turn on COS
-			//ENDPOINTS = DLRHTTPClient.loadClassOfServiceEndpoints();
+			ENDPOINTS = DLRHTTPClient.loadClassOfServiceEndpoints();
 				
 			CONNECT_TIMEOUT_STRING = PropertyHelper.readPropsValue(
 					"CONNECT_TIMEOUT_MILLIS", props, null);
@@ -200,7 +200,7 @@ public class DLRHTTPClient {
 
 		try {
 			//TODO uncomment when we push COS
-			//checkForCosRefresh();
+			checkForCosRefresh();
 			
 			// create the document request
 			logger.sendEvent("About to build docRequest ...", EventType.DEBUG,
@@ -222,9 +222,9 @@ public class DLRHTTPClient {
 			logger.sendEvent("Message ID STRING is " + messageIdString,
 					EventType.DEBUG, this);
 			//TODO uncomment this to switch to cos endpoints
-			//URL url = new URL(ENDPOINTS.get( dtiTxn.getTransactionType() ));
+			URL url = new URL(ENDPOINTS.get(dtiTxn.getTransactionType().toString()));
 			//TODO remove url_string when we switch to COS
-			URL url = new URL(URL_STRING);
+			//URL url = new URL(URL_STRING);
 			
 			logger.sendEvent("About to send message to DLR provider system.",
 					EventType.INFO, this);
@@ -380,7 +380,7 @@ public class DLRHTTPClient {
 	protected static Hashtable<String, String> loadClassOfServiceEndpoints() {
 		Hashtable<String, String> endpoints = new Hashtable<String, String>();
 
-	    // Get the cos grp	 
+	    // Get the cos grp	    
 		environment = System.getProperty("APP_ENV");
 		ArrayList<CosTpGrpCmdTO> cosList = new ArrayList<CosTpGrpCmdTO>();
 	    try {

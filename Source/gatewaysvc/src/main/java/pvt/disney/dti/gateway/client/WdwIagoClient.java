@@ -232,7 +232,7 @@ public class WdwIagoClient {
 			//TODO REMOVE WHEN WE SWITCH TO COS ENDPOINTS
 			//URL url = new URL(ENDPOINT);
 			// get correct class of service endpoint by transaction type
-			URL url = new URL(ENDPOINTS.get(dtiTxn.getTransactionType()));
+			URL url = new URL(ENDPOINTS.get(dtiTxn.getTransactionType().toString()));
 
 			logger.sendEvent("About to send message to ATS '" + campus + "' provider system.", EventType.INFO, this);
 
@@ -364,10 +364,10 @@ public class WdwIagoClient {
 	 * 
 	 * Sets the next refresh time.
 	 */
-//	private synchronized static void nextRefreshTime() {
-//		// Initializing the next read value.
-//		cosEndpointsNextRead = new Date().getTime() + cosRefreshIntervalMillis;
-//	}
+	private synchronized static void nextRefreshTime() {
+		// Initializing the next read value.
+		cosEndpointsNextRead = new Date().getTime() + cosRefreshIntervalMillis;
+	}
 
 	/**
 	 * Gets the cos refresh interval millis.
