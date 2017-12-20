@@ -344,8 +344,9 @@ public class WDWCreateTicketRules {
       }
       
       // Price quote token for variably priced products
-      if((null != aDtiTicket.getExtrnlPrcd()) && (aDtiTicket.getExtrnlPrcd().equals("T"))) {
-         otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());   
+      if ((null != aDtiTicket.getExtrnlPrcd()) && (aDtiTicket.getExtrnlPrcd() != null)
+               && (aDtiTicket.getExtrnlPrcd().equals("F"))) {
+         otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());
       }
 
       // Price (as of 2.9)
@@ -628,7 +629,7 @@ public class WDWCreateTicketRules {
     ProductRules.validateWdwTicketDemo(tktListTO);
     
     // validate variably priced product
-    WDWExternalPriceRules.validateDeltaProducts(dtiTxn, tktListTO);
+    WDWExternalPriceRules.validateExternallyPricedProducts(dtiTxn, tktListTO);
 
     return;
   }
