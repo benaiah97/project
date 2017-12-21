@@ -122,18 +122,20 @@ public class DTIApp extends HttpServlet {
         }
          } catch (Exception e) {
 
-            if ((e instanceof FloodControlInitException)) {
-               PrintWriter outPrint = null;
-               String responseString = null;
-               outPrint = res.getWriter();
-               responseString = DTIService.generateGenericError(DTIErrorCode.DTI_CONFIG_ERROR, null);
-               res.setContentType("text/xml;charset=UTF-8");
-               outPrint.println(responseString);
+        if ((e instanceof FloodControlInitException)) {
+         // return to the POS generic error message after getting the FloodControlInitException
+         //during the instantiation of DTIController
+          PrintWriter outPrint = null;
+          String responseString = null;
+          outPrint = res.getWriter();
+          responseString = DTIService.generateGenericError(DTIErrorCode.DTI_CONFIG_ERROR, null);
+          res.setContentType("text/xml;charset=UTF-8");
+          outPrint.println(responseString);
 
-            } else {
-               String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
-               eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
-               throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode,
+        } else {
+          String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
+          eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
+          throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode,
                         "XML is not well Formed", null);
             }
          }
