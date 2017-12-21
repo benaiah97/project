@@ -257,15 +257,18 @@ public class GWOrderXML {
         if (cvn != null && cvn.length() > 0) {
           orderLineElement.addElement("CVN").addText(lineTO.getCvn());
         }
+        
         String ccavv = lineTO.getcCCAVV();
         if (ccavv != null && ccavv.length() > 0) {
           orderLineElement.addElement("CAVVValue").addText(lineTO.getcCCAVV());
           orderLineElement.addElement("CAVVFormat").addText(CAVVFORMAT_HEX);
         }
+        
         String ccEcom = lineTO.getcCEcommerce();
         if (ccEcom != null && ccEcom.length() > 0) {
           orderLineElement.addElement("ECommerceIndicator").addText(lineTO.getcCEcommerce());
         }
+        
         String xid3ds = lineTO.getXid3DS();
         if (xid3ds != null && xid3ds.length() > 0) {
           orderLineElement.addElement("XID3DS").addText(lineTO.getXid3DS());
