@@ -75,6 +75,10 @@ public class CreditCardTO implements Serializable {
 	private String ccAuthSysResponse;
 	/** Credit card number played back from the provider system. */
 	private String ccNumber;
+	
+	/** The xid for 3DS authentication. */
+	private String xid;
+	
 
 	/**
 	 * @return the ccAuthCode
@@ -404,5 +408,21 @@ public class CreditCardTO implements Serializable {
   public void setCcSubCode(String ccSubCode) {
     this.ccSubCode = ccSubCode;
   }
+
+   /**
+    * @return the xid
+    */
+   public String getXid() {
+      return xid;
+   }
+
+   /**
+    * @param xid
+    *           the xid to set
+    */
+   public void setXid(String xid) {
+      this.xid = xid;
+   }
+  
 
 }

@@ -535,6 +535,9 @@ public class UpgradeEntitlementXML {
 				if (ccManual.getCCType() != null) {
 				   creditCardTO.setCcType(ccManual.getCCType());
 				}
+				if (ccManual.getCCXid() != null) {
+				   creditCardTO.setXid(ccManual.getCCXid());
+				}
 
 			}
 			else if (creditCard.getCCSwipe() != null) {
@@ -932,9 +935,9 @@ public class UpgradeEntitlementXML {
 
 				aTicket.setTktTransaction(tktTran);
 
+				ticketList.add(aTicket);
+
 			}
-			
-         ticketList.add(aTicket);
 
 		} // end for loop
 		return;

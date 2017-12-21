@@ -1282,6 +1282,9 @@ public abstract class ReservationXML {
         if (ccManual.isCCPreApproved() != null) { // As of 2.16.2
           creditCardTO.setPreApprovedCC(ccManual.isCCPreApproved());
         }
+        if (ccManual.getCCXid() != null) {
+          creditCardTO.setXid(ccManual.getCCXid());
+        }
 
       } else if (creditCard.getCCSwipe() != null) {
 

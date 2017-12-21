@@ -1060,6 +1060,21 @@ public class DLRRenewEntitlementRules implements TransformConstants {
         else {
           missingCvv = true;
         }
+        
+        // 3DS CCCAVV
+        if (cCardTO.getCcCAVV() != null) {
+          gwOrderLinePayTO.setcCCAVV(cCardTO.getCcCAVV());
+        }
+
+        // ccEcommerce 
+        if (cCardTO.getCcEcommerce() != null) {
+          gwOrderLinePayTO.setcCEcommerce(cCardTO.getCcEcommerce());
+        }
+
+        // 3DSXID
+        if (cCardTO.getXid() != null) {
+          gwOrderLinePayTO.setXid3DS(cCardTO.getXid());
+        }
         // use the map to set payment type,get card type to get
         // paymentCode,
         // set after if conditions below

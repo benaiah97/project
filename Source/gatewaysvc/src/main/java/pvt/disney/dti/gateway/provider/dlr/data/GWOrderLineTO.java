@@ -43,6 +43,12 @@ public class GWOrderLineTO {
 	private String paymentPlanID;
 	/** Upgrade From Visual ID */
 	private String upgradeFromVisualID;
+	/** The cccavv. */
+	private String cCCAVV;
+	/** The ccEcommerce. */
+	private String cCEcommerce;
+	/** The xid. */
+	private String xid3DS;
 	
 	/** pass members */
 	private ArrayList<GWMemberDemographicsTO> memberList = new ArrayList<GWMemberDemographicsTO>();
@@ -325,5 +331,51 @@ public String getUpgradeFromVisualID() {
 public void setUpgradeFromVisualID(String upgradeFromVisualID) {
    this.upgradeFromVisualID = upgradeFromVisualID;
 }
+
+   /**
+    * @return the cCCAVV
+    */
+   public String getcCCAVV() {
+      return cCCAVV;
+   }
+
+   /**
+    * @param cCCAVV
+    *           the cCCAVV to set
+    */
+   public void setcCCAVV(String cCCAVV) {
+      this.cCCAVV = cCCAVV;
+   }
+
+   /**
+    * @return the cCEcommerce
+    */
+   public String getcCEcommerce() {
+      return cCEcommerce;
+   }
+
+   /**
+    * @param cCEcommerce
+    *           the cCEcommerce to set
+    */
+   public void setcCEcommerce(String cCEcommerce) {
+      this.cCEcommerce = cCEcommerce;
+   }
+
+   /**
+    * @return the xid3DS
+    */
+   public String getXid3DS() {
+      return xid3DS;
+   }
+
+   /**
+    * @param xid3ds
+    *           the xid3DS to set
+    */
+   public void setXid3DS(String xid3ds) {
+      xid3DS = xid3ds;
+   }
+
 
 }
