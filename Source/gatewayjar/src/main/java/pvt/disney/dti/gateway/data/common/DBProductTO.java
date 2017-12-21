@@ -140,7 +140,24 @@ public class DBProductTO implements Serializable {
 	/** The dlr PLU. */
 	private String dlrPLU;
 	
+	/** The extrnl prcd. */
+	private String extrnlPrcd;
+	
 	/**
+    * @return the extrnlPrcd
+    */
+   public String getExtrnlPrcd() {
+      return extrnlPrcd;
+   }
+
+   /**
+    * @param extrnlPrcd the extrnlPrcd to set
+    */
+   public void setExtrnlPrcd(String extrnlPrcd) {
+      this.extrnlPrcd = extrnlPrcd;
+   }
+
+   /**
 	 * Gets the quantity.
 	 *
 	 * @return the quantity

@@ -11,6 +11,7 @@ import java.util.HashSet;
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.constants.ValueConstants;
+import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.common.DBProductTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
@@ -486,49 +487,54 @@ public class ProductRules {
     for /* each */(DBProductTO aDBProduct : /* in */dbProdList) {
       dbProdMap.put(aDBProduct.getPdtCode(), aDBProduct);
     }
-
+    
     for /* each */(TicketTO aTicketTO : /* in */tktListTO) {
+       
+         String ticketPdtCode = aTicketTO.getProdCode();
+         DBProductTO dbProduct = dbProdMap.get(ticketPdtCode);
+         
+         if (dbProduct.getExtrnlPrcd() != null && dbProduct.getExtrnlPrcd().equalsIgnoreCase("F")) {
 
-      String ticketPdtCode = aTicketTO.getProdCode();
-      DBProductTO dbProduct = dbProdMap.get(ticketPdtCode);
+            BigDecimal validPrice;
+            if (isTaxExempt) {
+               validPrice = dbProduct.getPrintedPrice().subtract(dbProduct.getTax());
+            } else {
+               validPrice = dbProduct.getPrintedPrice();
+            }
 
-      BigDecimal validPrice;
-      if (isTaxExempt) {
-        validPrice = dbProduct.getPrintedPrice().subtract(dbProduct.getTax());
-      } else {
-        validPrice = dbProduct.getPrintedPrice();
-      }
+            // As of 2.9 - if no price is provided, a price of zero is presumed.
+            if (aTicketTO.getProdPrice() == null) {
+               aTicketTO.setProdPrice(new BigDecimal(0.0));
+            }
 
-      // As of 2.9 - if no price is provided, a price of zero is presumed.
-      if (aTicketTO.getProdPrice() == null) {
-        aTicketTO.setProdPrice(new BigDecimal(0.0));
-      }
+            if (aTicketTO.getProdPrice().compareTo(validPrice) != 0) {
 
-      if (aTicketTO.getProdPrice().compareTo(validPrice) != 0) {
+               if (!entityAllows) {
+                  throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE,
+                           "Entity " + entityTO.getTsMac() + "/" + entityTO.getTsLocation()
+                                    + " disallowed from selling product (" + dbProduct.getPdtCode() + " at "
+                                    + validPrice.toString() + ") off price (sale at "
+                                    + aTicketTO.getProdPrice().toString() + " was attempted.)");
+               }
+               if (!dbProduct.isPriceMismatchAllowed()) {
+                  throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE,
+                           "Product " + dbProduct.getPdtCode() + " (at " + validPrice.toString()
+                                    + ") can't be sold off price (sale at " + aTicketTO.getProdPrice().toString()
+                                    + " was attempted.)");
+               }
+               if ((dbProduct.getMisMatchTolType() == DBProductTO.MismatchToleranceType.UNDEFINED)
+                        || (dbProduct.getMisMatchTol() == null)) {
+                  throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE,
+                           "Product " + dbProduct.getPdtCode()
+                                    + " can't be sold off price because of an incomplete mismatch set-up in table.");
+               }
+               boolean ticketMismatched = validatePriceMismatch(aTicketTO, dbProduct, validPrice, isTaxExempt);
+               if (ticketMismatched) {
+                  isPriceMismatched = true;
+               }
 
-        if (!entityAllows) {
-          throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Entity " + entityTO.getTsMac() + "/"
-              + entityTO.getTsLocation() + " disallowed from selling product (" + dbProduct.getPdtCode() + " at "
-              + validPrice.toString() + ") off price (sale at " + aTicketTO.getProdPrice().toString()
-              + " was attempted.)");
-        }
-        if (!dbProduct.isPriceMismatchAllowed()) {
-          throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Product " + dbProduct.getPdtCode()
-              + " (at " + validPrice.toString() + ") can't be sold off price (sale at "
-              + aTicketTO.getProdPrice().toString() + " was attempted.)");
-        }
-        if ((dbProduct.getMisMatchTolType() == DBProductTO.MismatchToleranceType.UNDEFINED)
-            || (dbProduct.getMisMatchTol() == null)) {
-          throw new DTIException(ProductRules.class, DTIErrorCode.INVALID_PRICE, "Product " + dbProduct.getPdtCode()
-              + " can't be sold off price because of an incomplete mismatch set-up in table.");
-        }   
-        boolean ticketMismatched = validatePriceMismatch(aTicketTO, dbProduct, validPrice, isTaxExempt);
-        if (ticketMismatched) {
-          isPriceMismatched = true;
-        }
-
-      }
-
+            }
+         }
     }
 
     return isPriceMismatched;
