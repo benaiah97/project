@@ -3,13 +3,17 @@
  */
 package pvt.disney.dti.gateway.rules.wdw;
 
+import static org.junit.Assert.*;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.dao.ProductKey;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
@@ -82,14 +86,33 @@ public class WDWExternalPriceRulesTest extends CommonTestUtils{
       DBProductTO dBProductTO=new DBProductTO();
       TicketTO ticketTO=new TicketTO();
       ArrayList<DBProductTO> dbProdListIn=new ArrayList<>();
-      dBProductTO.setPdtCode("fGh92");
+      GregorianCalendar tktValidityValidstart=new GregorianCalendar();
+      GregorianCalendar tktValidityValidEnd=new GregorianCalendar();
+      tktValidityValidstart.set(2017, 12, 23);
+      tktValidityValidEnd.set(2017, 12, 27);
+      dBProductTO.setPdtCode("1");
       dBProductTO.setDayCount(4);
-      ticketTO.setProdCode("fGh92");
+      ticketTO.setProdCode("1");
       ticketTO.setDayCount(4);
       ticketTO.setExtrnlPrcd("T");
+      ticketTO.setTktValidityValidStart(tktValidityValidstart);
+      ticketTO.setTktValidityValidEnd(tktValidityValidEnd);
       tktListTO.add(ticketTO);
       dbProdListIn.add(dBProductTO);
       dtiTxn.setDbProdList(dbProdListIn);
       WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTO);
+      
+      //Expected Exception for Date validation
+      tktValidityValidstart.set(2017, 12, 27);
+      tktValidityValidEnd.set(2017, 12, 23);
+      try{
+         WDWExternalPriceRules.validateDeltaProducts(dtiTxn,tktListTO);
+      }catch(DTIException dtie){
+         assertEquals(dtie.getDtiErrorCode(), DTIErrorCode.INVALID_VALIDITY_DATES);
+         assertEquals(
+                 "Invalid/empty validity start date and validity end date.",
+                 dtie.getLogMessage());
+      }
+     
    }
 }

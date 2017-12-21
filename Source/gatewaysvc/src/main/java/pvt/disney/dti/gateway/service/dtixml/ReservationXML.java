@@ -1600,10 +1600,10 @@ public abstract class ReservationXML {
 
       // ProdPriceQuoteTocken
       if (aTicket.getProdPriceQuoteToken() != null) {
-         eventLogger.sendEvent("", EventType.WARN,
+         eventLogger.sendEvent("Invalid msg content, ProdPriceQuoteTocken should not be in the request", EventType.WARN,
                   WDWExternalPriceRules.class);
          throw new DTIException(ReservationXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                  "");
+                  "Invalid msg content, ProdPriceQuoteTocken should not be in the request");
       }
 		
     // TktValidity
