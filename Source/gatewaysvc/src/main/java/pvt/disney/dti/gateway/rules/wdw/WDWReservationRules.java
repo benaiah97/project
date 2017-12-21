@@ -628,7 +628,8 @@ public class WDWReservationRules {
       otProduct.setPrice(aDtiTicket.getProdPrice());
       
       // ProdPriceToken
-      if ((null != aDtiTicket.getProdPriceQuoteToken()) && (aDtiTicket.getExtrnlPrcd().equalsIgnoreCase("T"))) {
+      if ((null != aDtiTicket.getProdPriceQuoteToken()) && (null != aDtiTicket.getExtrnlPrcd()) 
+               && (aDtiTicket.getExtrnlPrcd().equalsIgnoreCase("T"))) {
          otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());
       }
 
