@@ -367,7 +367,7 @@ public class OTUpgradeTicketXML {
       
       // QuoteToken
       Node quoteNode = aNode.selectSingleNode("QuoteToken");
-      if (null != quoteNode) {
+      if (quoteNode != null) {
         otTktTO.setProdPriceToken(quoteNode.getText());
       }
       

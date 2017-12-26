@@ -283,7 +283,7 @@ public class OTCreateTransactionXML {
 			}
 
 			// External Code Token for variably price products
-			if(null != aProductTO.getProdPriceToken()) {
+			if(aProductTO.getProdPriceToken() != null) {
 			   pdtStanza.addElement("QuoteToken").addText(
 	                  aProductTO.getProdPriceToken());
 			}

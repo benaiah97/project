@@ -12,6 +12,7 @@ import mockit.MockUp;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTICalmException;
@@ -247,6 +248,7 @@ public class BusinessRulesTestCase extends CommonBusinessTest {
 	 * @throws DTICalmException
 	 * @throws DTIException
 	 */
+	@Ignore
 	@Test
 	public void testApplyUpgradeAlphaRules() throws DTICalmException,
 			DTIException {
