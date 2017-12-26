@@ -94,34 +94,45 @@ public class DTIController {
    public DTIController() throws FloodControlInitException {
       super();
 
+      // Environment
+      String environment = null;
+
       // Get properties manager.
       try {
-      
+
          ResourceBundle rb = ResourceLoader.getResourceBundle("dtiApp");
          props = ResourceLoader.convertResourceBundleToProperties(rb);
-   
+
       } catch (Throwable e) {
          eventLogger.sendEvent("THROWABLE initing props: " + e.toString(), EventType.FATAL, this);
       }
-      
+
       // tktBroker
       tktBroker = BrokerUtil.getBrokerName();
-      
+
       // Application
       String application = PropertyHelper.readPropsValue(PropertyName.DTI_APPLICATION, props, null);
-      
-      // Environment
-      String environment = System.getProperty("APP_ENV");
+
+      try {
+         environment = System.getProperty("APP_ENV");
+      } catch (Exception e) {
+         throw new FloodControlInitException("Unable to initialize environment" + e.toString());
+      }
 
       if (StringUtils.isBlank(application) || StringUtils.isBlank(environment)) {
-         eventLogger.sendEvent("Environment is set as "+environment+" and Application as "+application+" in jvm arument : ", EventType.FATAL, this);
+         eventLogger.sendEvent("Environment is set as " + environment + " and Application as " + application
+                  + " in jvm arument : ", EventType.FATAL, this);
          throw new FloodControlInitException("Application,Environment is not set properly. Application: " + application
                   + ", Environment: " + environment);
       }
-      //  Flood Block will need to pass in the value of “0” for tpoId.
-      //That value will be used for property values that are not campus specific.
+      // Flood Block will need to pass in the value of “0” for tpoId.
+      // That value will be used for property values that are not campus specific.
       // Creating the DTIFloodControl by passing application ,tpoId and environment
-      floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
+      try {
+         floodControl = DTIFloodControl.getInstance(application, tpoId, environment);
+      } catch (Exception e) {
+         throw new FloodControlInitException("Unable to init flood control" + e.toString());
+      }
 
       return;
    }

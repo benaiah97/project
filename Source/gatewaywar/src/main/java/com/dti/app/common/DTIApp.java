@@ -91,60 +91,62 @@ public class DTIApp extends HttpServlet {
 
     eventLogger.sendEvent("Entering doPost(req,res) ", EventType.DEBUG, this);
 
-    try {
-      // get the XML from POS
-      eventLogger.sendEvent("About to Instantiate DTIController on DTIApp side", EventType.DEBUG, this);
       try {
+         // get the XML from POS
+         eventLogger.sendEvent("About to Instantiate DTIController on DTIApp side", EventType.DEBUG, this);
+         try {
 
-        eventLogger.sendEvent("Received ticket seller request from https.", EventType.INFO, this);
+            eventLogger.sendEvent("Received ticket seller request from https.", EventType.INFO, this);
 
-        DTIController controller = new DTIController();
-        docOut = controller.processRequest(req.getInputStream());
+            DTIController controller = new DTIController();
+            docOut = controller.processRequest(req.getInputStream());
 
-        // Flood blocking response logic
-        if (docOut == null) {
-          res.sendError(HttpServletResponse.SC_GONE,
-              "If you believe you have reached this page in error, please contact DTI Support.");
-          return;
-        }
+            // Flood blocking response logic
+            if (docOut == null) {
+               res.sendError(HttpServletResponse.SC_GONE,
+                        "If you believe you have reached this page in error, please contact DTI Support.");
+               return;
+            }
 
-        req.getInputStream().close();
+            req.getInputStream().close();
 
-        // return to the POS with a confirmation message
-        try {
-          ser = new XMLSerializer(res.getOutputStream(), new OutputFormat("xml", "UTF-8", false));
-          ser.serialize(docOut);
-          res.getOutputStream().close();
-        } catch (Exception e) {
-          String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
-          throw new DTIException("doPost()...error writing XML to POS", getClass(), 3, errorCode, e.getMessage(), e);
-        } finally {
-        }
+            // return to the POS with a confirmation message
+            try {
+               ser = new XMLSerializer(res.getOutputStream(), new OutputFormat("xml", "UTF-8", false));
+               ser.serialize(docOut);
+               res.getOutputStream().close();
+            } catch (Exception e) {
+               String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
+               throw new DTIException("doPost()...error writing XML to POS", getClass(), 3, errorCode, e.getMessage(),
+                        e);
+            } finally {
+            }
          } catch (Exception e) {
 
-        if ((e instanceof FloodControlInitException)) {
-         // return to the POS generic error message after getting the FloodControlInitException
-         //during the instantiation of DTIController
-          PrintWriter outPrint = null;
-          String responseString = null;
-          outPrint = res.getWriter();
-          responseString = DTIService.generateGenericError(DTIErrorCode.DTI_CONFIG_ERROR, null);
-          res.setContentType("text/xml;charset=UTF-8");
-          outPrint.println(responseString);
+            if ((e instanceof FloodControlInitException)) {
+               // return to the POS generic error message after getting the
+               // FloodControlInitException
+               // during the instantiation of DTIController
+               PrintWriter outPrint = null;
+               String responseString = null;
+               outPrint = res.getWriter();
+               responseString = DTIService.generateGenericError(DTIErrorCode.DTI_CONFIG_ERROR, null);
+               res.setContentType("text/xml;charset=UTF-8");
+               outPrint.println(responseString);
 
-        } else {
-          String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
-          eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
-          throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode,
+            } else {
+               String errorCode = DTIErrorCode.INVALID_MSG_ELEMENT.getErrorCode();
+               eventLogger.sendEvent("Error in request: " + e.toString(), EventType.WARN, this);
+               throw new DTIException("doPost()...error in XML from POS", getClass(), 3, errorCode,
                         "XML is not well Formed", null);
             }
          }
-    } catch (Exception ee) {
-      String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
-      if (!(ee instanceof DTIException)) {
-        ee = new DTIException("doPost()", getClass(), 3, errorCode, ee.getMessage(), ee);
+      } catch (Exception ee) {
+         String errorCode = DTIErrorCode.UNABLE_TO_COMMUNICATE.getErrorCode();
+         if (!(ee instanceof DTIException)) {
+            ee = new DTIException("doPost()", getClass(), 3, errorCode, ee.getMessage(), ee);
+         }
       }
-    }
 
     eventLogger.sendEvent("Returning response to https ticket seller.  Servlet complete.", EventType.INFO, this);
   }
