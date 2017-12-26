@@ -116,7 +116,8 @@ public class DTIController {
       try {
          environment = System.getProperty("APP_ENV");
       } catch (Exception e) {
-         throw new FloodControlInitException("Unable to initialize environment" + e.toString());
+         eventLogger.sendEvent("Environment is not set in jvm argument (APP_ENV).", EventType.FATAL, this);
+         throw new FloodControlInitException("Environment is not set in jvm argument (APP_ENV)");
       }
 
       if (StringUtils.isBlank(application) || StringUtils.isBlank(environment)) {
