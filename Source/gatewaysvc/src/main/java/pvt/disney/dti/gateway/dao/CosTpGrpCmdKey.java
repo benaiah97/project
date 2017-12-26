@@ -34,14 +34,14 @@ public class CosTpGrpCmdKey {
 		 * @return
 		 * @throws DTIException
 		 */
-		public static final ArrayList<CosTpGrpCmdTO> getTpCosGrpCmd(String provider) throws DTIException {
+		public static final ArrayList<CosTpGrpCmdTO> getTpCosGrpCmd(String provider, String environment) throws DTIException {
 
 			ArrayList<CosTpGrpCmdTO> result = new ArrayList<CosTpGrpCmdTO>();
 
 			logger.sendEvent("Entering getTsCosGrps()", EventType.DEBUG, THISINSTANCE);
 
 			// Replaces "?"
-			Object[] values = { provider };
+			Object[] values = { provider, environment };
 
 			try {
 				// Prepare query

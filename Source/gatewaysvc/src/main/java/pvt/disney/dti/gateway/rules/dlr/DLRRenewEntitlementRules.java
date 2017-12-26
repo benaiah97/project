@@ -30,11 +30,13 @@ import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
 import pvt.disney.dti.gateway.data.common.GiftCardTO;
 import pvt.disney.dti.gateway.data.common.InstallmentCreditCardTO;
+import pvt.disney.dti.gateway.data.common.InstallmentTO;
 import pvt.disney.dti.gateway.data.common.PayloadHeaderTO;
 import pvt.disney.dti.gateway.data.common.PaymentTO;
 import pvt.disney.dti.gateway.data.common.ReservationTO;
 import pvt.disney.dti.gateway.data.common.TPLookupTO;
 import pvt.disney.dti.gateway.data.common.TicketTO;
+import pvt.disney.dti.gateway.data.common.CreditCardTO.CreditCardType;
 import pvt.disney.dti.gateway.data.common.PaymentTO.PaymentType;
 import pvt.disney.dti.gateway.data.common.TPLookupTO.TPLookupType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
@@ -228,7 +230,7 @@ public class DLRRenewEntitlementRules implements TransformConstants {
   }
 
   /**
-   * 
+   * Creates the Gateway Order Transfer Object
    * @param dtiTxn
    * @return
    * @throws DTIException
@@ -282,14 +284,12 @@ public class DLRRenewEntitlementRules implements TransformConstants {
           salesProgram = aTPLookup.getLookupValue();
         }
 
-        instTPLookupMap.put(aTPLookup.getLookupDesc(),
-            aTPLookup.getLookupValue());
+        instTPLookupMap.put(aTPLookup.getLookupDesc(),aTPLookup.getLookupValue());
 
       } // for loop
 
       if (salesProgram == null) {
-        throw new DTIException(DLRReservationRules.class,
-            DTIErrorCode.UNDEFINED_FAILURE,
+        throw new DTIException(DLRReservationRules.class, DTIErrorCode.UNDEFINED_FAILURE,
             "GWTPLookup for SalesProgram is missing in the database.");
       }
       else {
@@ -748,13 +748,11 @@ public class DLRRenewEntitlementRules implements TransformConstants {
     String shipMethod = dtiResTO.getResSalesType();
 
     if (shipDetail == null) {
-      throw new DTIException(DLRReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "Reservation getResSalesType cannot be null.");
     }
     if (shipMethod == null) {
-      throw new DTIException(DLRReservationRules.class,
-          DTIErrorCode.INVALID_MSG_CONTENT,
+      throw new DTIException(DLRReservationRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
           "Reservation getResSalesType cannot be null.");
     }
 
@@ -805,6 +803,20 @@ public class DLRRenewEntitlementRules implements TransformConstants {
 
       if (aPayment.getPayType() == PaymentType.INSTALLMENT) {
         dtiRenewReq.setInstallmentRenewRequest(true);
+        
+        // Make sure CC Type is provided for DLR installment purchases for upgrades.
+        InstallmentTO installTO = aPayment.getInstallment();
+        InstallmentCreditCardTO installCCTO = installTO.getCreditCard();
+        
+        if (installCCTO.getCcManualOrSwipe() == CreditCardType.CCMANUAL) {
+           
+           if (installCCTO.getCcType() == null) {
+              throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                       "DLR Manual Credit Card missing required CCType field.");
+           }
+           
+        }
+        
       }
 
     }

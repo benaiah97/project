@@ -553,8 +553,7 @@ public class DTITransactionTO implements Serializable {
       // Break out look-ups that have a different cardinality then one type to
       // one value.
       if (type == TPLookupTO.TPLookupType.CC_TYPE) {
-        paymentCardMap.put(aTPLookup.getLookupValue(),
-            aTPLookup.getLookupDesc());
+        paymentCardMap.put(aTPLookup.getLookupValue(), aTPLookup.getLookupDesc());
       }
       else {
         tpLookupTOMap.put(type, aTPLookup);

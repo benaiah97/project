@@ -93,14 +93,14 @@ public class CosGrpKey {
 	 * @return
 	 * @throws DTIException
 	 */
-	public static final CosGrpTO getTsCmdCosGrp(String provider, String cmd) throws DTIException {
+	public static final CosGrpTO getTsCmdCosGrp(String provider, String cmd, String environment) throws DTIException {
 
 		CosGrpTO result = new CosGrpTO();
 
 		logger.sendEvent("Entering getTsCmdCosGrp()", EventType.DEBUG, THISINSTANCE);
 
 		// Retrieve and validate the parameters
-		Object[] values = { provider,cmd.toUpperCase() };
+		Object[] values = { provider,cmd.toUpperCase(), environment };
 
 		try {
 			// Prepare query

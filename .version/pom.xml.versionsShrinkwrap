@@ -8,7 +8,7 @@
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>pvt.disney.dti</groupId>
-  <version>1.0.0-339.0.0.0</version>
+  <version>1.0.0-355.0.0.0</version>
   <artifactId>DTI_Gateway</artifactId>
   <packaging>pom</packaging>
   <name>DTI_Gateway</name>
@@ -28,7 +28,5 @@
       <module>gatewaygte</module>
       <module>gatewaywar</module>   
     </modules>
-
-
 	
 </project>
