@@ -2,7 +2,9 @@ package pvt.disney.dti.gateway.rules.wdw;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
@@ -39,12 +41,12 @@ public class WDWExternalPriceRules {
    }
 
    /**
-    * Validate variably priced.
+    * Validate externally priced products.
     *
     * @param dtiTxn
     *           the dti txn
     * @param tktListTO
-    *           the tkt list TO list
+    *           the tkt list TO
     * @throws DTIException
     *            the DTI exception
     */
@@ -90,7 +92,7 @@ public class WDWExternalPriceRules {
          String ticketPdtCode = ticketTO.getProdCode();
          DBProductTO dbProduct = dbProdMap.get(ticketPdtCode);
 
-         if (ticketTO.getProdCode() != null) {
+         if (ticketPdtCode != null) {
             ticketTO.setExtrnlPrcd(dbProduct.getExtrnlPrcd());
             ticketTO.setDayCount(dbProduct.getDayCount());
          }
@@ -111,15 +113,14 @@ public class WDWExternalPriceRules {
    private static void validateExternalPricing(ArrayList<TicketTO> tktListTO, EntityTO entityTO) throws DTIException {
 
       eventLogger.sendEvent("Entering validateExternalPricing() :", EventType.DEBUG, WDWExternalPriceRules.class);
-      ArrayList<TicketTO> quoteServiceTicketToList = createQuoteServiceTicketToList(tktListTO);
 
-      if ((quoteServiceTicketToList != null) && (!quoteServiceTicketToList.isEmpty())) {
-         tktListTO.removeAll(quoteServiceTicketToList);
-         // Call to Quote service util class
-         quoteUtilCall(entityTO, quoteServiceTicketToList);
-         // validate price
-         tktListTO.addAll(quoteServiceTicketToList);
+      for /* each */ (TicketTO ticketTO : /* in */tktListTO) {
+         if (ticketTO.getExtrnlPrcd().equals("T")) {
+            validateStartAndEndDates(ticketTO);
+         }
       }
+
+      quoteUtilCall(entityTO, tktListTO);
 
       eventLogger.sendEvent("Exiting validateExternalPricing() :", EventType.DEBUG, WDWExternalPriceRules.class);
       return;
@@ -141,19 +142,12 @@ public class WDWExternalPriceRules {
       eventLogger.sendEvent("Entering quoteUtilCall() :", EventType.DEBUG, WDWExternalPriceRules.class);
 
       QuoteUtil quoteUtil = new QuoteUtilImpl();
-      Collection<ProductQuoteResTO> productQuoteResTOList = null;
+      Collection<ProductQuoteResTO> productQuoteResTOList;
       Collection<ProductQuoteReqTO> productQuoteReqTOList = getProductQuoteReqTO(entityTO, quoteServiceTicketToList);
-      try {
-         productQuoteResTOList = quoteUtil.quoteProducts(productQuoteReqTOList);
-      } catch (Exception ex) {
-         eventLogger.sendEvent("Unable to verify pricing with Quote Service : " + ex.toString(), EventType.WARN,
-                  WDWExternalPriceRules.class);
-         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.DTI_PROCESS_ERROR,
-                  "Unable to verify pricing with Quote Service.");
-      }
+      productQuoteResTOList = quoteUtil.quoteProducts(productQuoteReqTOList);
 
       if ((productQuoteResTOList != null) && (!productQuoteResTOList.isEmpty())) {
-         getUpdatedTokenTicketList(quoteServiceTicketToList, productQuoteResTOList);
+         getUpdatedTicketTOList(quoteServiceTicketToList, productQuoteResTOList);
       }
 
       eventLogger.sendEvent("Exiting quoteUtilCall() :", EventType.DEBUG, WDWExternalPriceRules.class);
@@ -162,48 +156,20 @@ public class WDWExternalPriceRules {
    }
 
    /**
-    * Creates the quote service ticket to list.
-    *
-    * @param tktListTOList
-    *           the tkt list TO list
-    * @return the array list
-    * @throws DTIException
-    *            the DTI exception
-    */
-   private static ArrayList<TicketTO> createQuoteServiceTicketToList(ArrayList<TicketTO> tktListTOList)
-            throws DTIException {
-
-      eventLogger.sendEvent("Entering createQuoteServiceTicketToList() :", EventType.DEBUG,
-               WDWExternalPriceRules.class);
-
-      // Forming ArrayList containing external priced flag true
-      ArrayList<TicketTO> quoteServiceTicketToList = new ArrayList<>();
-      for /* each */ (TicketTO ticketTO : /* in */tktListTOList) {
-         if ((!ticketTO.getExtrnlPrcd().isEmpty()) && (ticketTO.getExtrnlPrcd().equals("T"))) {
-            validateStartAndEndDates(ticketTO, quoteServiceTicketToList);
-         }
-      }
-
-      eventLogger.sendEvent("Exiting createQuoteServiceTicketToList() :", EventType.DEBUG, WDWExternalPriceRules.class);
-
-      return quoteServiceTicketToList;
-   }
-
-   /**
-    * Gets the updated token ticket list.
+    * Gets the updated ticket TO list.
     *
     * @param tktListTO
-    *           the tkt list TO list
+    *           the tkt list TO
     * @param quoteServiceCollection
     *           the quote service collection
-    * @return the updated token ticket list
+    * @return the updated ticket TO list
     * @throws DTIException
     *            the DTI exception
     */
-   private static void getUpdatedTokenTicketList(ArrayList<TicketTO> tktListTO,
+   private static void getUpdatedTicketTOList(ArrayList<TicketTO> tktListTO,
             Collection<ProductQuoteResTO> quoteServiceCollection) throws DTIException {
 
-      eventLogger.sendEvent("Entering getUpdatedTokenTicketList() :", EventType.DEBUG, WDWExternalPriceRules.class);
+      eventLogger.sendEvent("Entering getUpdatedTicketTOList() :", EventType.DEBUG, WDWExternalPriceRules.class);
 
       // loop through ticketTO list and productQuoteResTO to validate response
       // and update ticketTO list with prod code token
@@ -215,12 +181,11 @@ public class WDWExternalPriceRules {
          }
       }
 
-      eventLogger.sendEvent("Exiting getUpdatedTokenTicketList() :", EventType.DEBUG, WDWExternalPriceRules.class);
+      eventLogger.sendEvent("Exiting getUpdatedTicketTOList() :", EventType.DEBUG, WDWExternalPriceRules.class);
 
       return;
    }
 
-   
    /**
     * Validate quote service resp.
     *
@@ -235,36 +200,59 @@ public class WDWExternalPriceRules {
             throws DTIException {
 
       eventLogger.sendEvent("Entering validateQuoteServiceResp() :", EventType.DEBUG, WDWExternalPriceRules.class);
-      
+
       GregorianCalendar quoteRespStartDate = productQuoteResTO.getTktValidityValidStart();
       GregorianCalendar quoteRespEndDate = productQuoteResTO.getTktValidityValidEnd();
       GregorianCalendar validStartDate = ticketTO.getTktValidityValidStart();
       GregorianCalendar validEndDate = ticketTO.getTktValidityValidEnd();
 
       // Validate response validStartDate and validEndEnd
-      if ((quoteRespStartDate != null) && (quoteRespEndDate != null) && (!validStartDate.equals(quoteRespStartDate))
-               || (!validEndDate.equals(quoteRespEndDate))) {
+      if ((quoteRespStartDate == null) && (quoteRespEndDate == null)) {
          eventLogger.sendEvent(
                   "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
-                           + " did not have ticket validity dates as required.",
+                           + " received empty start/end dates from quote service.",
                   EventType.WARN, WDWExternalPriceRules.class);
          throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
                   "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
-                           + " did not have ticket validity dates as required.");
+                           + " received empty start/end dates from quote service.");
       }
-      
+
+      if (!validStartDate.equals(quoteRespStartDate)) {
+         eventLogger.sendEvent(
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having start validity date : " + validStartDate
+                           + " not equal to quote response start date : " + quoteRespStartDate + ".",
+                  EventType.WARN, WDWExternalPriceRules.class);
+         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " having start validity date : " + validStartDate
+                           + " not equal to quote response start date : " + quoteRespStartDate + ".");
+      }
+
+      if (!validEndDate.equals(quoteRespEndDate)) {
+         eventLogger.sendEvent(
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having end validity date : " + validStartDate
+                           + " not equal to quote response end date : " + quoteRespStartDate + ".",
+                  EventType.WARN, WDWExternalPriceRules.class);
+         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having end validity date : " + validEndDate
+                           + " not equal to quote response end date : " + quoteRespEndDate + ".");
+      }
+
       BigDecimal netPrice = productQuoteResTO.getNetPrice();
       BigDecimal prodPrice = ticketTO.getProdPrice();
 
       // Validate product price
       if ((netPrice != null) && (!prodPrice.equals(netPrice))) {
-         eventLogger.sendEvent("Product " + ticketTO.getProdCode() + " (at "
-                  + productQuoteResTO.getNetPrice().toString() + ") can't be sold off price (sale at "
+         eventLogger.sendEvent("Product " + ticketTO.getProdCode() + " (price: "
+                  + productQuoteResTO.getNetPrice().toString() + ") can't be sold at this price (sale at "
                   + ticketTO.getProdPrice().toString() + " was attempted.)", EventType.WARN,
                   WDWExternalPriceRules.class);
          throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_PRICE,
-                  "Product " + ticketTO.getProdCode() + " (at " + productQuoteResTO.getNetPrice().toString()
-                           + ") can't be sold off price (sale at " + ticketTO.getProdPrice().toString()
+                  "Product " + ticketTO.getProdCode() + " (price: " + productQuoteResTO.getNetPrice().toString()
+                           + ") can't be sold at this price (sale at " + ticketTO.getProdPrice().toString()
                            + " was attempted.)");
       }
 
@@ -293,17 +281,17 @@ public class WDWExternalPriceRules {
 
       // build ProductQuoteReqTO list using tktListTO
       for (TicketTO ticketTo : tktListTO) {
-         ProductQuoteReqTO productQuoteReqTO = new ProductQuoteReqTO();
-         productQuoteReqTO.setProdCode(ticketTo.getProdCode());
-         productQuoteReqTO.setTktValidityValidStart(ticketTo.getTktValidityValidStart());
-         productQuoteReqTO.setTktValidityValidEnd(ticketTo.getTktValidityValidEnd());
-         productQuoteReqTO.setDayCount(ticketTo.getDayCount());
-         productQuoteReqTO.setSalesEntity(entityTO);
-         productQuoteReqTOList.add(productQuoteReqTO);
+         if (ticketTo.getExtrnlPrcd().equalsIgnoreCase("T")) {
+            ProductQuoteReqTO productQuoteReqTO = new ProductQuoteReqTO();
+            productQuoteReqTO.setProdCode(ticketTo.getProdCode());
+            productQuoteReqTO.setTktValidityValidStart(ticketTo.getTktValidityValidStart());
+            productQuoteReqTO.setTktValidityValidEnd(ticketTo.getTktValidityValidEnd());
+            productQuoteReqTO.setDayCount(ticketTo.getDayCount());
+            productQuoteReqTO.setSalesEntity(entityTO);
+            productQuoteReqTOList.add(productQuoteReqTO);
+         }
       }
-
       eventLogger.sendEvent("Exiting getProductQuoteReqTO() :", EventType.DEBUG, WDWExternalPriceRules.class);
-
       return productQuoteReqTOList;
    }
 
@@ -312,29 +300,80 @@ public class WDWExternalPriceRules {
     *
     * @param ticketTO
     *           the ticket TO
-    * @param quoteServiceTicketToList
+    * @param quoteServiceTicketTOList
     *           the quote service ticket to list
     * @throws DTIException
     *            the DTI exception
     */
-   private static void validateStartAndEndDates(TicketTO ticketTO, ArrayList<TicketTO> quoteServiceTicketToList)
-            throws DTIException {
-      
-      GregorianCalendar currentDate = new GregorianCalendar();
+   private static void validateStartAndEndDates(TicketTO ticketTO) throws DTIException {
 
-      GregorianCalendar validStartDate = ticketTO.getTktValidityValidStart();
-      GregorianCalendar validEndDate = ticketTO.getTktValidityValidEnd();
-      if ((validStartDate != null) && (validEndDate != null) && (validStartDate.before(validEndDate))
-               && (currentDate.before(validStartDate)) && (currentDate.before(validEndDate))) {
-         quoteServiceTicketToList.add(ticketTO);
-      } else {
+      GregorianCalendar curtDate = new GregorianCalendar();
+      Date validStartDate = ticketTO.getTktValidityValidStart().getTime();
+      Date validEndDate = ticketTO.getTktValidityValidEnd().getTime();
+      Date currentDate = setTimeToMidnight(curtDate.getTime());
+      // Date currentDate = DateUtils.truncate(curtDate.getTime(),
+      // Calendar.DATE);
+
+      if ((validStartDate == null) || (validEndDate == null)) {
          eventLogger.sendEvent(
                   "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
-                           + " did not have ticket validity dates as required.",
+                           + " have start/end ticket validity dates are empty.",
                   EventType.WARN, WDWExternalPriceRules.class);
          throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
                   "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
-                           + " did not have ticket validity dates as required.");
+                           + " have start/end ticket validity dates are empty.");
       }
+
+      if (validStartDate.after(validEndDate)) {
+         eventLogger.sendEvent(
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having start validity date : " + ticketTO.getTktValidityValidStart()
+                           + " after end validity date : " + ticketTO.getTktValidityValidEnd() + ".",
+                  EventType.WARN, WDWExternalPriceRules.class);
+         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having start validity date : " + ticketTO.getTktValidityValidStart()
+                           + " after end validity date : " + ticketTO.getTktValidityValidEnd() + ".");
+      }
+
+      if ((!validStartDate.equals(currentDate)) || (validStartDate.before(currentDate))) {
+         eventLogger.sendEvent("Ticket item " + ticketTO.getTktItem().toString() + " with product "
+                  + ticketTO.getProdCode() + " is having start validity date : " + ticketTO.getTktValidityValidStart()
+                  + " before current date : " + curtDate + ".", EventType.WARN, WDWExternalPriceRules.class);
+         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having start validity date : " + ticketTO.getTktValidityValidStart()
+                           + " before current date : " + curtDate + ".");
+      }
+
+      if ((!validEndDate.equals(currentDate)) || (validEndDate.before(currentDate))) {
+         eventLogger.sendEvent("Ticket item " + ticketTO.getTktItem().toString() + " with product "
+                  + ticketTO.getProdCode() + " should have ticket end validity date : "
+                  + ticketTO.getTktValidityValidEnd().getTime() + " before current date : " + curtDate + ".",
+                  EventType.WARN, WDWExternalPriceRules.class);
+         throw new DTIException(WDWExternalPriceRules.class, DTIErrorCode.INVALID_VALIDITY_DATES,
+                  "Ticket item " + ticketTO.getTktItem().toString() + " with product " + ticketTO.getProdCode()
+                           + " is having end validity date : " + ticketTO.getTktValidityValidEnd().getTime()
+                           + " before current date : " + curtDate + ".");
+      }
+   }
+
+   /**
+    * Sets the time to midnight.
+    *
+    * @param date
+    *           the date
+    * @return the date
+    */
+   public static Date setTimeToMidnight(Date date) {
+      Calendar calendar = Calendar.getInstance();
+
+      calendar.setTime(date);
+      calendar.set(Calendar.HOUR_OF_DAY, 0);
+      calendar.set(Calendar.MINUTE, 0);
+      calendar.set(Calendar.SECOND, 0);
+      calendar.set(Calendar.MILLISECOND, 0);
+
+      return calendar.getTime();
    }
 }

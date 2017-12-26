@@ -345,7 +345,7 @@ public class WDWCreateTicketRules {
       
       // Price quote token for variably priced products
       if ((null != aDtiTicket.getExtrnlPrcd()) && (aDtiTicket.getExtrnlPrcd() != null)
-               && (aDtiTicket.getExtrnlPrcd().equals("F"))) {
+               && (aDtiTicket.getExtrnlPrcd().equals("T"))) {
          otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());
       }
 
@@ -628,7 +628,7 @@ public class WDWCreateTicketRules {
     // As of 2.16.1 APMP JTL
     ProductRules.validateWdwTicketDemo(tktListTO);
     
-    // validate variably priced product
+    // Validate externally priced product
     WDWExternalPriceRules.validateExternallyPricedProducts(dtiTxn, tktListTO);
 
     return;

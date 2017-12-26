@@ -432,7 +432,7 @@ public class WDWUpgradeAlphaRules {
     ArchiveKey.insertUpgradeAlphaRequest(dtiTxn);
     
     // validate variably priced product
-    WDWExternalPriceRules.validateDeltaProducts(dtiTxn,aTktListTO);
+    WDWExternalPriceRules.validateExternallyPricedProducts(dtiTxn,aTktListTO);
     return;
   }
 
