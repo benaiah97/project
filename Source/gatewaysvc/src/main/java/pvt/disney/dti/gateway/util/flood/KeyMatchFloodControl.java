@@ -692,6 +692,8 @@ public abstract class KeyMatchFloodControl {
             case KEY_FREQUENCY_LIMIT_DLR_QP:
                floodControlPropertyTO.setKeyFrequencyLimitDLRQP(retrieveNumericValueProperties(propertyKey, floodControlPropertyTO.getKeyFrequencyLimitDLRQP()));
                break;
+            default:
+               eventLogger.sendEvent(propertyKey + " Command not configured in database", EventType.WARN, this);
             }
          }
 
@@ -1195,7 +1197,7 @@ public abstract class KeyMatchFloodControl {
             break;
 
          default:
-            floodControlPropertyTO.toString();
+            eventLogger.sendEvent(floodMatchSignatureTO.getTransactionType() + " Command not configured in database", EventType.WARN, this);
             return 0; // Shouldn't be able to get here, but still fail gracefully.
          }
       }
@@ -1277,7 +1279,7 @@ public abstract class KeyMatchFloodControl {
             break;
 
          default:
-            floodControlPropertyTO.toString();
+            eventLogger.sendEvent(floodMatchSignatureTO.getTransactionType() + " Command not configured in database", EventType.WARN, this);
             return 0; // Shouldn't be able to get here, but still fail
                       // gracefully.
          }
@@ -1354,7 +1356,7 @@ public abstract class KeyMatchFloodControl {
             break;
 
          default:
-            floodControlPropertyTO.toString();
+            eventLogger.sendEvent(floodMatchSignatureTO.getTransactionType() + " Command not configured in database", EventType.WARN, this);
             return 0; // Shouldn't be able to get here, but still fail gracefully.
          }
       }
