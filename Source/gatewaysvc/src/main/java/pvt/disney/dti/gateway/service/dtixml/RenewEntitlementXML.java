@@ -686,6 +686,9 @@ public abstract class RenewEntitlementXML {
         if (ccManual.getCCType() != null) {
            creditCardTO.setCcType(ccManual.getCCType());
         }
+        if (ccManual.getCCXid() != null) {
+           creditCardTO.setXid(ccManual.getCCXid());
+        }
 
       } else if (creditCard.getCCSwipe() != null) {
 
