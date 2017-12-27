@@ -28,35 +28,35 @@ import com.disney.logging.audit.EventType;
 
 /**
  * The Class TicketXML.
+ * @author MISHP012
  */
 public class GWTicketXML {
 
    /** Event logger. */
    private static final EventLogger logger = EventLogger.getLogger(GWTicketXML.class.getCanonicalName());
-
+  
    /**
     * Adds the query ticket element.
-    * 
-    * @param qtReqTO
-    *           the qt req TO
-    * @param bodyElement
-    *           the body element
-    * @throws DTIException
-    *            the DTI exception
+    *
+    * @param qtReqTO the qt req TO
+    * @param bodyElement the body element
+    * @param dataRequestStanza the data request stanza
+    * @param queryStanza the query stanza
+    * @param queryTicketElement the query ticket element
+    * @throws DTIException the DTI exception
     */
    public static void addQueryTicketElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement,
             Element dataRequestStanza, Element queryStanza, Element queryTicketElement) throws DTIException {
 
-      // Element queryTicketElement = bodyElement.addElement("QueryTicket");
-
       String visualID = qtReqTO.getVisualID();
       if (visualID == null) {
-         throw new DTIException(GWQueryEligibleProductsTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+         throw new DTIException(GWTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
                   "QueryTicket request did not have a visual ID specified.");
       }
       queryStanza.addElement("VisualID").addText(visualID);
 
       List<String> commanTag = new ArrayList<>();
+      
       commanTag.addAll(Arrays.asList("ItemKind", "Returnable", "Status", "DateSold", "TicketDate", "StartDateTime",
                "DateOpened", "ExpirationDate", "EndDateTime", "ValidUntil", "LockedOut", "VisualID", "Price",
                "UseCount", "Tax", "RemainingUse", "Kind"));
@@ -65,10 +65,13 @@ public class GWTicketXML {
 
    /**
     * Adds the element.
-    *
-    * @param element the element
-    * @param text the text
-    * @param requestStanza the request stanza
+    * 
+    * @param element
+    *           the element
+    * @param text
+    *           the text
+    * @param requestStanza
+    *           the request stanza
     */
    public static void addElement(String element, List<String> text, Element requestStanza) {
       for (String object : text) {
@@ -582,9 +585,7 @@ public class GWTicketXML {
 
       // if all went well we can start hunting for errors
       if (errorsElement != null) {
-         // System.err.println("errsElement not null:" + errorsElement);
          logger.sendEvent("QueryTicket Errors element:" + errorsElement.asXML(), EventType.DEBUG, logger);
-         // }
 
          // and try to grab //QueryTicketErrors/ERror/Error/ErrorCode
          org.dom4j.Node queryTickerErrorCode = errorsElement.selectSingleNode("//Errors/Error/ErrorCode");
@@ -592,31 +593,19 @@ public class GWTicketXML {
          // if we found one....
          if (queryTickerErrorCode != null && queryTickerErrorCode.getText() != null
                   && queryTickerErrorCode.getText().length() > 0) {
-            // System.err.println("found errrorCode:" +
-            // queryTickerErrorCode.asXML());
-            // grab the details for the error
             errorCode = queryTickerErrorCode.getText();
-            // System.err.println("qte errorCode:" + errorCode);
-            // System.err.println("seeking errorText:");
             errorText = errorsElement.selectSingleNode("//Errors/Error/ErrorText").getText();
 
-            // System.err.println("qte errorText:" + errorText);
-            // and log it
-            logger.sendEvent("GWQueryTicketXML.setErrorsTO() found a QueryTicketError: " + errorCode + ":" + errorText,
+            logger.sendEvent("GWTicketXML.setErrorsTO() found a QueryTicketError: " + errorCode + ":" + errorText,
                      EventType.DEBUG, logger);
          }
-         // if we didnt find QueryTicketErrors/Errors/Error/ErrorCode we need to
-         // check for
+         // if we didnt find QueryTicketErrors/Errors/Error/ErrorCode we need to check for
          // QueryTicketErrors/DataRequestErrors
          else if (errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorCode") != null) {
-            // System.err.println("seeking datarequesterrors");
             // if we have a DataRequestError, grab its details
             errorCode = errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorCode").getText();
-            // System.err.println("datarequest error errorCode:" + errorCode);
             errorText = errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorText").getText();
-            // System.err.println("datarequest error errorText:" + errorText);
-            // and log it
-            logger.sendEvent("GWQueryTicketXML.setErrorTO() found a DataRequestError: " + errorCode + ":" + errorText,
+            logger.sendEvent("GWTicketXML.setErrorTO() found a DataRequestError: " + errorCode + ":" + errorText,
                      EventType.DEBUG, logger);
          }
 

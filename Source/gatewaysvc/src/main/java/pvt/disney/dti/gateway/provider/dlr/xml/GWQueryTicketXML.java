@@ -18,6 +18,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.util.UtilityXML;
 
 import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 /**
  * This class has the responsibility for marshaling and unmarshlling the DLR
@@ -43,7 +44,8 @@ public class GWQueryTicketXML {
     *            should any marshaling error occur.
     */
    public static void addQueryTicketElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement) throws DTIException {
-      
+
+      logger.sendEvent("GWQueryTicketXML addQueryTicketElement", EventType.INFO, logger);
       
       Element queryTicketElement = bodyElement.addElement("QueryTicket");
       Element queryStanza = queryTicketElement.addElement("Query");
@@ -99,28 +101,28 @@ public class GWQueryTicketXML {
     *            should any unmarshalling exception occur.
     */
    public static void setRespBodyTO(GWBodyTO gwBodyTO, Element bodyElement) throws DTIException {
+      logger.sendEvent("GWQueryTicketXML setRespBodyTO", EventType.INFO, logger);
       GWTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
 
    }
 
    /**
     * Extracts the lineage info (this structure is complex).
-    * 
-    * @param dataRespTO
-    * @param i
-    * @param linReqResp
-    * @throws DTIException
-    * 
-    *            <LineageRequestResponse> <LineageRecords> <LineageRecord>
-    *            <Amount>199</Amount> <ExpirationDate>2012-08-24
-    *            00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
-    *            <VisualID>2937555200149073829</VisualID> </LineageRecord>
-    * 
+    *
+    * <LineageRequestResponse> <LineageRecords> <LineageRecord>
+    * <Amount>199</Amount> <ExpirationDate>2012-08-24
+    * 00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
+    * <VisualID>2937555200149073829</VisualID> </LineageRecord>
+    * @param dataRespTO the data resp TO
+    * @param i the i
+    * @param lineageRequestResponse the lineage request response
+    * @throws DTIException the DTI exception
     */
    @SuppressWarnings("rawtypes")
    public static void extractLineageInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
             Element lineageRequestResponse) throws DTIException {
 
+      logger.sendEvent("GWQueryTicketXML extractLineageInfo", EventType.INFO, logger);
       // LineageRequestResponse
       Node linReqResp = lineageRequestResponse;
 

@@ -18,16 +18,18 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.util.UtilityXML;
 
 import com.disney.logging.EventLogger;
+import com.disney.logging.audit.EventType;
 
 /**
+ * The Class GWQueryEligibleProductsTicketXML.
  * @author MISHP012
- *
  */
 public class GWQueryEligibleProductsTicketXML {
 
    /** Event logger. */
-   private static final EventLogger logger = EventLogger.getLogger(GWQueryEligibleProductsTicketXML.class.getCanonicalName());
-   
+   private static final EventLogger logger = EventLogger.getLogger(GWQueryEligibleProductsTicketXML.class
+            .getCanonicalName());
+
    private static final String COMMA_STRING = ",";
    private static final String EMPTY_STRING = "";
 
@@ -43,23 +45,24 @@ public class GWQueryEligibleProductsTicketXML {
     */
    public static void addQueryTicketElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement) throws DTIException {
       
+      logger.sendEvent("GWQueryEligibleProductsTicketXML addQueryTicketElement", EventType.INFO, logger);
+
       Element queryTicketElement = bodyElement.addElement("QueryTicket");
-      Element queryStanza = queryTicketElement.addElement("Query");;
-      Element dataRequestStanza  = queryTicketElement.addElement("DataRequest");;
-      GWTicketXML.addQueryTicketElement(qtReqTO, bodyElement, dataRequestStanza, queryStanza,queryTicketElement);
+      Element queryStanza = queryTicketElement.addElement("Query");
+      Element dataRequestStanza = queryTicketElement.addElement("DataRequest");
+      GWTicketXML.addQueryTicketElement(qtReqTO, bodyElement, dataRequestStanza, queryStanza, queryTicketElement);
       List<String> qepTag = new ArrayList<>();
       // Demographics Data
       if (qtReqTO.isIncludeTktDemographics()) {
-       
+
          qepTag.addAll(Arrays.asList("FirstName", "LastName", "Street1", "Street2", "City", "State", "ZIP",
                   "CountryCode", "Phone", "Email"));
 
-         
       }
-      qepTag.addAll(Arrays.asList("DOB","Gender","UpgradePLUList","PLU"));
-   
+      qepTag.addAll(Arrays.asList("DOB", "Gender", "UpgradePLUList", "PLU"));
+
       GWTicketXML.addElement("Field", qepTag, dataRequestStanza);
-      
+
       Element usageElement = dataRequestStanza.addElement("UsageRecords");
       usageElement.addElement("Field").addText("UseTime");
       usageElement.addElement("Field").addText("UseNo");
@@ -78,9 +81,8 @@ public class GWQueryEligibleProductsTicketXML {
     * @throws DTIException
     *            should any unmarshalling exception occur.
     */
-   @SuppressWarnings("unchecked")
    public static void setRespBodyTO(GWBodyTO gwBodyTO, Element bodyElement) throws DTIException {
-
+      logger.sendEvent("GWQueryEligibleProductsTicketXML setRespBodyTO", EventType.INFO, logger);
       GWTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
 
    }
@@ -100,7 +102,8 @@ public class GWQueryEligibleProductsTicketXML {
    @SuppressWarnings("rawtypes")
    public static void extractUsageRecordsInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
             Element usageRecordsResponse) throws DTIException {
-
+      
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractUsageRecordsInfo", EventType.INFO, logger);
       // Usage Record Response
       Node usageLineResponse = usageRecordsResponse;
 
@@ -159,6 +162,7 @@ public class GWQueryEligibleProductsTicketXML {
    public static void extractUpgradePLUInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
             Element upGradePLUResponse) throws DTIException {
 
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractUpgradePLUInfo", EventType.INFO, logger);
       // UpGradePLU Response
       Node upGradeLineResp = upGradePLUResponse;
 
@@ -226,6 +230,7 @@ public class GWQueryEligibleProductsTicketXML {
    private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
             throws DTIException {
 
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractPayplanInfo", EventType.INFO, logger);
       // Payment Plan response
       Node payPlanLineResp = payPlanLineResponse;
 
@@ -235,7 +240,7 @@ public class GWQueryEligibleProductsTicketXML {
 
          Node linRecord = (Node) linRecordList.get(index);
 
-         // Create the inner class
+         // Create the inner class 
 
          GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgradePLUNode.new PaymentPlan();
 
