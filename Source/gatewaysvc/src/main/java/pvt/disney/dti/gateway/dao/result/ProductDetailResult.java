@@ -190,6 +190,10 @@ public class ProductDetailResult implements ResultSetProcessor {
 		else {
 			aProduct.setDaySubclass("NONE");
 		}
+		
+		// DAY_COUNT 
+		aProduct.setDayCount(rs.getInt("DAY_COUNT"));
+		
 
 		// STANDARD_RETAIL_PRICE (As of 2.12)
 		BigDecimal standardRetailPrice = rs
@@ -197,6 +201,9 @@ public class ProductDetailResult implements ResultSetProcessor {
 		if (standardRetailPrice != null) {
 			aProduct.setStandardRetailPrice(standardRetailPrice);
 		}
+		
+		// EXTRNL_PRCD flag for all products
+		aProduct.setExtrnlPrcd(rs.getString("EXTRNL_PRCD"));
 
 		results.add(aProduct);
 

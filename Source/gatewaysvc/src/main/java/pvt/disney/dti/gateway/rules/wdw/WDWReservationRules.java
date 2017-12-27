@@ -526,7 +526,7 @@ public class WDWReservationRules {
     // Set Transaction note (2.10)
     otManageRes.setTransactionNote(dtiRequest.getPayloadHeader()
         .getPayloadID());
-    
+	
     // Set ExternalTransactionID (optional) (as of 2.16.2, JTL)
     if (dtiResReq.getExtTxnIdentifier() != null) {
       
@@ -626,6 +626,12 @@ public class WDWReservationRules {
 
       // Price
       otProduct.setPrice(aDtiTicket.getProdPrice());
+      
+      // ProdPriceToken
+      if ((null != aDtiTicket.getProdPriceQuoteToken()) && (null != aDtiTicket.getExtrnlPrcd()) 
+               && (aDtiTicket.getExtrnlPrcd().equalsIgnoreCase("T"))) {
+         otProduct.setProdPriceToken(aDtiTicket.getProdPriceQuoteToken());
+      }
 
       // EntitlementAccountId, list of id, one for each non-consumable
       // ticket of this product tied to that account
@@ -1032,6 +1038,9 @@ CVV & AVS data, if present. RULE: Validate that if the "installment" type of
     // Validate that if other ticket demographics have been provided, phone has been provided, as well.
     // As of 2.16.1 APMP JTL
     ProductRules.validateWdwTicketDemo(tktListTO);
+    
+    //Checking Delta Product & ProdPriceQuoteToken
+    WDWExternalPriceRules.validateExternallyPricedProducts(dtiTxn, tktListTO);
 
     // RULE: Validate that if the "installment" type of payment is present,
     ArrayList<TPLookupTO> tpLookups = dtiTxn.getTpLookupTOList();

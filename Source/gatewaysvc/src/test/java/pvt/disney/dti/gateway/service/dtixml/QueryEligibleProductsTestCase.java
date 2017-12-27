@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
+import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
@@ -51,9 +52,10 @@ public class QueryEligibleProductsTestCase {
 	/**
 	 * JUnit TestCase for getDtiTransactionTo with respect to TransactionType-QUERYELIGPRODUCTS
 	 * @throws DatatypeConfigurationException
+	 * @throws DTIException 
 	 */
 	@Test
-	public void testQueryEligibleProductsGetDtiTransactionTo() throws DatatypeConfigurationException
+	public void testQueryEligibleProductsGetDtiTransactionTo() throws DatatypeConfigurationException, DTIException
 	{
 		TransactionType requestType=TransactionType.QUERYELIGPRODUCTS;
 		String tktBroker= new String(DTITestUtil.TKTBROKER);

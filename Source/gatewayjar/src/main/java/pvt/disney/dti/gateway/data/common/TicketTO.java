@@ -213,6 +213,57 @@ public class TicketTO implements Serializable, Cloneable {
 
    /** Visual Id of the entitlement (As of 2.15 JTL) */
    private String visualId = null;
+   
+   /** The extrnl prcd. */
+   private String extrnlPrcd;
+   
+   /** The prod price token. */
+   private String prodPriceQuoteToken;
+   
+   /** The day count. */
+   private int dayCount;
+   
+   /**
+    * @return the dayCount
+    */
+   public int getDayCount() {
+      return dayCount;
+   }
+
+   /**
+    * @param dayCount the dayCount to set
+    */
+   public void setDayCount(int dayCount) {
+      this.dayCount = dayCount;
+   }
+  
+   /**
+    * @return the extrnlPrcd
+    */
+   public String getExtrnlPrcd() {
+      return extrnlPrcd;
+   }
+
+   /**
+    * @param extrnlPrcd the extrnlPrcd to set
+    */
+   public void setExtrnlPrcd(String extrnlPrcd) {
+      this.extrnlPrcd = extrnlPrcd;
+   }
+
+   /**
+    * @return the prodPriceToken
+    */
+   public String getProdPriceQuoteToken() {
+      return prodPriceQuoteToken;
+   }
+
+   /**
+    * @param prodPriceQuoteToken the prodPriceToken to set
+    */
+   public void setProdPriceQuoteToken(String prodPriceQuoteToken) {
+      this.prodPriceQuoteToken = prodPriceQuoteToken;
+   }
 
    /**
     * Account Id belonging to the entitlement (As of 2.16.1 BIEST001;

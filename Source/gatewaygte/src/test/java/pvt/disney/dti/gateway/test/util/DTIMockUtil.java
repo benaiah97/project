@@ -221,6 +221,9 @@ public class DTIMockUtil extends CommonTestUtils {
 				.andReturn(true).anyTimes();
 		EasyMock.expect(rs.getBigDecimal(EasyMock.anyObject(String.class)))
 				.andReturn(new BigDecimal("1.0")).anyTimes();
+		
+		
+		
 	}
 
 	/**

@@ -62,7 +62,9 @@ public class OTUpgradeTicketInfoTO implements Serializable {
 
 	/** The ticket flag list. */
 	private ArrayList<Integer> ticketFlagList = new ArrayList<Integer>();
-
+	
+	/** The prod price token. */
+	private String prodPriceToken;
 	/**
 	 * Gets the item.
 	 * 
@@ -339,5 +341,22 @@ public class OTUpgradeTicketInfoTO implements Serializable {
 	public void setDemographicInfo(OTDemographicInfo demographicInfo) {
 		this.demographicInfo = demographicInfo;
 	}
+
+   /**
+    * @return the prodPriceToken
+    */
+   public String getProdPriceToken() {
+      return prodPriceToken;
+   }
+
+   /**
+    * @param prodPriceToken
+    *           the prodPriceToken to set
+    */
+   public void setProdPriceToken(String prodPriceToken) {
+      this.prodPriceToken = prodPriceToken;
+   }
+
+
 
 }

@@ -333,7 +333,7 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 	/**
 	 * Test price matching. JUnit validateProductPrice
 	 */
-	@Test
+	//@Test
 	public final void testPriceMatching() {
 
 		// Entity Information
@@ -588,7 +588,7 @@ public class ProductRulesTestCase extends CommonBusinessTest {
 	/**
 	 * Test tax exempt. JUnit validateProductPrice
 	 */
-	@Test
+	//@Test
 	public final void testTaxExempt() {
 
 		EntityTO entityTO = new EntityTO();

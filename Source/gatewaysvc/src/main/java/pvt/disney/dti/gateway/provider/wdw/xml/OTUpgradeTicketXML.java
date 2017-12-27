@@ -126,7 +126,13 @@ public class OTUpgradeTicketXML {
       // TicketType
       upgrdTicketInfoStanza.addElement("TicketType").addText(
           otTicketInfo.getTicketType().toString());
-
+      
+      // QuoteToken
+      if (null != otTicketInfo.getProdPriceToken()) {
+            upgrdTicketInfoStanza.addElement("QuoteToken").addText(
+                     otTicketInfo.getProdPriceToken().toString());
+         }
+      
       // Price (ignored)
 
       // Validity
@@ -358,6 +364,13 @@ public class OTUpgradeTicketXML {
         otTktTO.setTax(new BigDecimal(inText));
       }
 
+      
+      // QuoteToken
+      Node quoteNode = aNode.selectSingleNode("QuoteToken");
+      if (quoteNode != null) {
+        otTktTO.setProdPriceToken(quoteNode.getText());
+      }
+      
       // Ticket
       Node ticketNode = aNode.selectSingleNode("Ticket");
       if (ticketNode != null) otTktTO.setTicket(OTCommandXML

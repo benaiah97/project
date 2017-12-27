@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
@@ -135,6 +136,7 @@ public class WDWUpgradeAlphaRulesTestCase extends CommonTestUtils {
 	/**
 	 * Test case for applyWDWUpgradeAlphaRules
 	 */
+	@Ignore
 	@Test
 	public void testApplyWDWUpgradeAlphaRules() {
 		DTITransactionTO dtiTxn = new DTITransactionTO(

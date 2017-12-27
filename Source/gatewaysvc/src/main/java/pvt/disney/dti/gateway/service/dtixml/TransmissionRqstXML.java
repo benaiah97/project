@@ -15,6 +15,7 @@ import com.disney.logging.EventLogger;
 import com.disney.logging.audit.ErrorCode;
 import com.disney.logging.audit.EventType;
 
+import pvt.disney.dti.gateway.constants.DTIException;
 import pvt.disney.dti.gateway.data.DTIRequestTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
@@ -96,9 +97,10 @@ public class TransmissionRqstXML {
    * @return The DTI Application Object
    * @throws JAXBException
    *             should any parsing errors occur.
+ * @throws DTIException 
    */
   public static DTITransactionTO getTO(String requestXML,
-      TransactionType requestType, String tktBroker) throws JAXBException {
+      TransactionType requestType, String tktBroker) throws JAXBException, DTIException {
 
     if (thisInstance == null) {
       thisInstance = new TransmissionRqstXML();
@@ -129,9 +131,10 @@ public class TransmissionRqstXML {
   * @param jaxbReq
   * @return
   * @throws JAXBException
+ * @throws DTIException 
   */
    public static DTITransactionTO getDtiTransactionTo(TransactionType requestType, String tktBroker,
-            Transmission jaxbReq) throws JAXBException {
+            Transmission jaxbReq) throws JAXBException, DTIException {
 
       DTITransactionTO dtiTransTO;
       dtiTransTO = new DTITransactionTO(requestType);

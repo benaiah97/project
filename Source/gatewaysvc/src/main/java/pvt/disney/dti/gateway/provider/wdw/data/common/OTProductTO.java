@@ -63,8 +63,25 @@ public class OTProductTO implements Serializable {
 
 	/** The Demographics. */
 	private OTDemographicInfo demographicInfo;
-
+	
+	/** The prod price token. */
+	private String prodPriceToken;
+	
 	/**
+    * @return the prodPriceToken
+    */
+   public String getProdPriceToken() {
+      return prodPriceToken;
+   }
+
+   /**
+    * @param prodPriceToken the prodPriceToken to set
+    */
+   public void setProdPriceToken(String prodPriceToken) {
+      this.prodPriceToken = prodPriceToken;
+   }
+
+   /**
 	 * 
 	 * @return the ticket attribute value.
 	 */
