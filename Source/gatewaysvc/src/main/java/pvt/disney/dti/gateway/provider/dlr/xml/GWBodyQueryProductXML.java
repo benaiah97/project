@@ -4,12 +4,10 @@ import org.dom4j.Element;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWOrdersRqstTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWQueryOrderRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
-import pvt.disney.dti.gateway.provider.dlr.data.GWTicketActivationRqstTO;
 
 public class GWBodyQueryProductXML {
 	/**
@@ -24,22 +22,21 @@ public class GWBodyQueryProductXML {
 	 *             should any parsing or marshalling issues occur.
 	 */
 	public static Element addBodyElement(GWBodyTO gwBodyTO,
-			Element envelopeElement, GWEnvelopeTO.GWTransactionType txnType) throws DTIException {
+			Element envelopeElement, TransactionType dtiTxnType) throws DTIException {
 
-		Element bodyElement = envelopeElement.addElement("Body");
+      Element bodyElement = envelopeElement.addElement("Body");
 
-		// Determine the type of transaction being passed.
-	
-			GWQueryTicketRqstTO qtReqTO = gwBodyTO.getQueryTicketRqstTO();
-			if (qtReqTO == null) {
-				throw new DTIException(GWBodyQueryProductXML.class,
-						DTIErrorCode.INVALID_MSG_CONTENT,
-						"QueryTicket request did not have a fully formed value object.");
-			}
-			GWQueryEligibleProductsTicketXML.addQueryTicketElement(qtReqTO, bodyElement);
-			
-		
-		return bodyElement;
+      // Determine the type of transaction being passed.
+      GWQueryTicketRqstTO qtReqTO = gwBodyTO.getQueryTicketRqstTO();
+      if (qtReqTO == null) {
+         throw new DTIException(GWBodyQueryProductXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                  "QueryTicket request did not have a fully formed value object.");
+      }
+      qtReqTO.setDtiTxnType(dtiTxnType);
+
+      GWQueryTicketXML.addQueryTicketElement(qtReqTO, bodyElement);
+
+      return bodyElement;
 	}
 	/**
 	 * Unmarshalls the response into the transfer/value objects.
@@ -64,7 +61,7 @@ public class GWBodyQueryProductXML {
 		}
 
 		if (txnType == GWEnvelopeTO.GWTransactionType.QUERYTICKET) {
-			GWQueryEligibleProductsTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
+		   GWQueryTicketXML.setRespBodyTO(gwBodyTO, bodyElement);
 		}
 		else {
 			throw new DTIException(GWBodyXML.class,

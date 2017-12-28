@@ -14,6 +14,7 @@ import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
@@ -101,6 +102,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
       // Set the message type to a fixed value
       headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
+      envelopeTO.setDtiTxnType(TransactionType.QUERYELIGPRODUCTS);
       xmlRequest = GWEnvelopeQueryProductXML.getXML(envelopeTO);
 
       return xmlRequest;

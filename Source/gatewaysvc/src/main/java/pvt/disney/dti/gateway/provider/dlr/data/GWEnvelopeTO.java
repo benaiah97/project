@@ -2,6 +2,8 @@ package pvt.disney.dti.gateway.provider.dlr.data;
 
 import java.io.Serializable;
 
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+
 /**
  * This class represents the Envelope portion of an eGalaxy XML.
  * 
@@ -26,6 +28,9 @@ public class GWEnvelopeTO implements Serializable {
 
 	private GWHeaderTO headerTO = new GWHeaderTO();
 	private GWBodyTO bodyTO = new GWBodyTO();
+	
+	/** The dti txn type. */
+	private TransactionType dtiTxnType ;
 
 	/**
 	 * 
@@ -82,4 +87,23 @@ public class GWEnvelopeTO implements Serializable {
 		this.txnType = txnType;
 	}
 
+   
+   /**
+    * Gets the dti txn type.
+    *
+    * @return the dti txn type
+    */
+   public TransactionType getDtiTxnType() {
+      return dtiTxnType;
+   }
+
+   /**
+    * Sets the dti txn type.
+    *
+    * @param dtiTxnType the dtiTxnType to set
+    */
+   public void setDtiTxnType(TransactionType dtiTxnType) {
+      this.dtiTxnType = dtiTxnType;
+   }
+	
 }

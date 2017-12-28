@@ -47,7 +47,7 @@ public class GWEnvelopeQueryProductXML implements TransformConstants{
 
 		GWHeaderXML.addHeaderElement(gwHdrTO, envelopeStanza);
 		GWBodyQueryProductXML
-				.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getTxnType());
+				.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getDtiTxnType());
 		xmlString = document.asXML();
 
 		return xmlString;
