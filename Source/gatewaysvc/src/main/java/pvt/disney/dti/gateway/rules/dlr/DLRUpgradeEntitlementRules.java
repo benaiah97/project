@@ -96,7 +96,6 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
       GWOrderTO orderTO = createOrderTO(dtiTxn);
 
       // Installment Fields - Set Contract clause and sales program in the Order
-      // clause TODO RASTA006 , need to work on PaymentPlan
       if (upgradeRequest.isInstallmentRequest()) {
 
          GWPaymentContractTO contract = new GWPaymentContractTO();
@@ -109,7 +108,7 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
          contract.setUpgradeContract(GW_ORDERS_CONTRACT_UPGRADE_CONTRACT);
          contract.setPaymentContractStatusID(GW_ORDERS_CONTRACT_STATUS_ID);
 
-         // Removing the downPaymentAmount Information TODO RASTA006
+         // Removing the downPaymentAmount Information 
          if (upgradeRequest.getInstallmentDownpayment() != null) {
             String downPaymentAmount = upgradeRequest.getInstallmentDownpayment().toString();
             contract.setDownPaymentAmount(downPaymentAmount);
@@ -491,32 +490,6 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
 
          orderTO.setShipDeliveryDetails(GW_PRINT_ON_WEB);
          orderTO.setShipDeliveryMethod(GW_PRINT_ON_WEB_NBR); // delivery method
-
-         // // TODO RASTA006 DO we need Group Visit Details
-         // String resPickup =
-         // UtilityXML.getEGalaxyDateFromGCalNoTime(upgradeEntReq.getReservation().getResPickupDate());
-         // orderTO.setGroupVisitDate(resPickup + "00:00:00");
-         //
-         // // Since 2.9 Put bill name in group description (per Art Wightman)
-         // // Change for 2.12 - No longer check to see if shipping method is
-         // 1,2, or 6.
-         // // No longer require a payment clause to be present on the in-bound
-         // request.
-         // if ((upgradeEntReq.getClientData().getBillingInfo() != null)
-         // && (upgradeEntReq.getClientData().getBillingInfo().getName() !=
-         // null)) {
-         //
-         // orderTO.setGroupVisitDescription(upgradeEntReq.getClientData().getBillingInfo().getName());
-         //
-         // // Populate Group Visit Reference only for BOLT style orders.
-         // if (upgradeEntReq.getEligibilityGroup() != null
-         // &&
-         // upgradeEntReq.getEligibilityGroup().equalsIgnoreCase(GW_ORDERS_DLR_BOLT_GROUP))
-         // {
-         // orderTO.setGroupVisitReference(upgradeEntReq.getClientData().getBillingInfo().getName());
-         // }
-         //
-         // }
 
       } catch (NumberFormatException nfe) {
 
