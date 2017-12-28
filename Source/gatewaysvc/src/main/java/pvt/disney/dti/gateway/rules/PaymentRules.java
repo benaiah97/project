@@ -869,7 +869,6 @@ public class PaymentRules {
       // multiple FOPs on the down payment.
       ArrayList<PaymentTO> paymentList = dtiUpgrdEnt.getPaymentList();
 
-      //BigDecimal installmentDownpayment = new BigDecimal("0.00");
       String installmentCreditCard = null;
 
       for (/* each */PaymentTO aPaymentTO : /* in */paymentList) {
@@ -889,8 +888,7 @@ public class PaymentRules {
             }
 
             // RULE: On installment payments, CCName cannot exceed 25 characters
-            // (As
-            // of 2.16.2, JTL)
+            // (As of 2.16.2, JTL)
             if (aPaymentTO.getInstallment().getCreditCard().getCcName().length() > MAXCARDHOLDERNAME) {
                throw new DTIException(PaymentRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
                         "Installment Credit Card CC Name exceeded maximum character length of " + MAXCARDHOLDERNAME

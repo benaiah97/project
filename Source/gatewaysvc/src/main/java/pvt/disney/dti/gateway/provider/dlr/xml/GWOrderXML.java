@@ -175,8 +175,7 @@ public class GWOrderXML {
     // BEGIN adding OrderLine elements to the Order element
     Element orderLines = orderElement.addElement("OrderLines");
 
-    Iterator<GWOrderLineTO> lineIter = orderTO.getOrderLineList()
-        .iterator();
+    Iterator<GWOrderLineTO> lineIter = orderTO.getOrderLineList().iterator();
     while (lineIter.hasNext()) {
 
       GWOrderLineTO lineTO = lineIter.next();
@@ -235,12 +234,10 @@ public class GWOrderXML {
         // don't have it
         String billingZip = lineTO.getBillingZip();
         if (billingZip != null && billingZip.length() > 0) {
-          orderLineElement.addElement("BillingZIP").addText(
-              lineTO.getBillingZip());
+          orderLineElement.addElement("BillingZIP").addText(lineTO.getBillingZip());
         }
         
-        orderLineElement.addElement("Amount").addText(
-            lineTO.getAmount());
+        orderLineElement.addElement("Amount").addText(lineTO.getAmount());
         orderLineElement.addElement("Total").addText(lineTO.getTotal());
 
         // null check for expirationDate, cause gift cards and other payments

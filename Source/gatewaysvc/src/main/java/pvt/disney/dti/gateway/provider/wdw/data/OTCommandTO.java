@@ -3,7 +3,6 @@ package pvt.disney.dti.gateway.provider.wdw.data;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -402,38 +401,32 @@ public class OTCommandTO implements Serializable {
     GregorianCalendar gc = new GregorianCalendar();
     gc.setTime(tempDate);
 
-    /*
-    if (gc.get(Calendar.YEAR) < OTCommandTO.OMNI_CENTURY_YEAR) {
-      gc.set(Calendar.YEAR, gc.get(Calendar.YEAR) + 100);
-    }
-    */
-    
     return gc;
 
   }
 
   /**
-   * Converts an Omni date (in the format of "yy-MM-dd") into a GregorianCalendar. Makes a correction to the parsed year based on the "OMNI_CENTURY_YEAR".
+   * Converts an Omni date (in the format of "yy-MM-dd") into a GregorianCalendar. 
    * 
    * @param stringDate
    *            the String version of the date.
-   * @return GregorianCalendar version of the date.
+   * @return GregorianCalendar version of the date, but only past dates.
    */
   public static GregorianCalendar convertTicketDOB(String stringDate) throws ParseException {
 
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-    Date tempDate = sdf.parse(stringDate);
+    Date dobDate = sdf.parse(stringDate);
 
-    GregorianCalendar gc = new GregorianCalendar();
-    gc.setTime(tempDate);
-
-    /*
-    if (gc.get(Calendar.YEAR) < OTCommandTO.OMNI_CENTURY_YEAR) {
-      gc.set(Calendar.YEAR, gc.get(Calendar.YEAR) + 100);
+    GregorianCalendar dobCalendar = new GregorianCalendar();
+    dobCalendar.setTime(dobDate);
+    
+    Date curDate = new Date();
+    
+    if (dobDate.getTime() > curDate.getTime()) {
+       dobCalendar.add(GregorianCalendar.YEAR,-100);
     }
-    */
 
-    return gc;
+    return dobCalendar;
 
   }
 

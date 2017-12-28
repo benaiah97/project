@@ -891,7 +891,17 @@ public class DLRUpgradeEntitlementRules implements TransformConstants {
                
                if (installCCTO.getCcType() == null) {
                   throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                           "DLR Manual Credit Card missing required CCType field.");
+                           "DLR Manual Credit Card missing required CCType field for installment payment.");
+               }
+
+               if (installCCTO.getCcStreet() == null) {
+                  throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                           "DLR Manual Credit Card missing required CcStreet field for installment payment.");
+               }
+               
+               if (installCCTO.getCcZipCode() == null) {
+                  throw new DTIException(DLRUpgradeEntitlementRules.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                           "DLR Manual Credit Card missing required CcZipCode field for installment payment.");
                }
                
             }
