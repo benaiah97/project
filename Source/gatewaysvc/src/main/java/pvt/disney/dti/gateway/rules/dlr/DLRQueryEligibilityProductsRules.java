@@ -14,6 +14,7 @@ import pvt.disney.dti.gateway.dao.data.GuestProductTO;
 import pvt.disney.dti.gateway.dao.data.UpgradeCatalogTO;
 import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.QueryEligibilityProductsResponseTO;
 import pvt.disney.dti.gateway.data.QueryEligibleProductsRequestTO;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
@@ -36,7 +37,7 @@ import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWQueryTicketRqstTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWStatusTO;
-import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeQueryProductXML;
+import pvt.disney.dti.gateway.provider.dlr.xml.GWEnvelopeXML;
 import pvt.disney.dti.gateway.rules.DateTimeRules;
 import pvt.disney.dti.gateway.rules.TicketRules;
 import pvt.disney.dti.gateway.rules.TransformConstants;
@@ -84,6 +85,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
       // Set the Visual ID
       queryTicketTO.setVisualID(ticket.getExternal());
+      queryTicketTO.setDtiTxnType(TransactionType.QUERYELIGPRODUCTS);
       bodyTO.setQueryTicketTO(queryTicketTO);
 
       // Set the source ID to the TS MAC
@@ -101,8 +103,9 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
       // Set the message type to a fixed value
       headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
-      xmlRequest = GWEnvelopeQueryProductXML.getXML(envelopeTO);
-
+      
+      xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
+      
       return xmlRequest;
    }
 
@@ -123,7 +126,8 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
     */
    static DTITransactionTO transformResponse(DTITransactionTO dtiTxn, String xmlResponse) throws DTIException {
       // Parse the string into the Gateway Transfer Object!!
-      GWEnvelopeTO gwRespTO = GWEnvelopeQueryProductXML.getTO(xmlResponse);
+    //  GWEnvelopeTO gwRespTO = GWEnvelopeQueryProductXML.getTO(xmlResponse);
+      GWEnvelopeTO gwRespTO = GWEnvelopeXML.getTO(xmlResponse);
       DTIResponseTO dtiRespTO = new DTIResponseTO();
 
       // Set up the Payload and Command Header Responses.

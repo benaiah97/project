@@ -13,6 +13,7 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
@@ -107,7 +108,8 @@ public class DLRQueryTicketRules implements TransformConstants {
     // Set the include renewal attributes flag (as of 2.16.1, JTL)
     queryTicketTO.setIncludeRenewalAttributes(queryReq
         .isIncludeRenewalAttributes());
-
+    queryTicketTO.setDtiTxnType(TransactionType.QUERYTICKET);
+    
     bodyTO.setQueryTicketTO(queryTicketTO);
 
     // Set the source ID to the TS MAC
@@ -127,7 +129,7 @@ public class DLRQueryTicketRules implements TransformConstants {
 
     // Set the message type to a fixed value
     headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
-
+    
     xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
 
     return xmlRequest;

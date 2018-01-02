@@ -9,6 +9,7 @@ import org.dom4j.Element;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWEnvelopeTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
@@ -43,6 +44,7 @@ public class GWEnvelopeXML implements TransformConstants {
       Element envelopeStanza = document.addElement("Envelope");
 
       GWHeaderXML.addHeaderElement(gwHdrTO, envelopeStanza);
+   
       GWBodyXML.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getTxnType());
       xmlString = document.asXML();
 

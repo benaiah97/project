@@ -3,12 +3,15 @@ package pvt.disney.dti.gateway.provider.dlr.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
+
 /**
  * This class represents the Query Ticket portion of an eGalaxy XML.
  * 
  * @author lewit019
  * 
  */
+
 public class GWQueryTicketRqstTO implements Serializable {
 
   /** Standard serial version UID. */
@@ -26,6 +29,9 @@ public class GWQueryTicketRqstTO implements Serializable {
   private String visualID;
 
   private ArrayList<String> dataRequest = new ArrayList<String>();
+  
+  /** The dti txn type. */
+  private TransactionType dtiTxnType;
 
   /**
    * 
@@ -110,4 +116,21 @@ public class GWQueryTicketRqstTO implements Serializable {
     this.includeRenewalAttributes = includeRenewalAttributes;
   }
 
+   /**
+    * @return the dtiTxnType
+    */
+   public TransactionType getDtiTxnType() {
+      return dtiTxnType;
+   }
+
+   /**
+    * @param dtiTxnType
+    *           the dtiTxnType to set
+    */
+   public void setDtiTxnType(TransactionType dtiTxnType) {
+      this.dtiTxnType = dtiTxnType;
+   }
+
+
+  
 }

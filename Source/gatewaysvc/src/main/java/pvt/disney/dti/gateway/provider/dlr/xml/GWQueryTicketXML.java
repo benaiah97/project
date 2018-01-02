@@ -3,6 +3,8 @@ package pvt.disney.dti.gateway.provider.dlr.xml;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import org.dom4j.Node;
 
 import pvt.disney.dti.gateway.constants.DTIErrorCode;
 import pvt.disney.dti.gateway.constants.DTIException;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.provider.dlr.data.GWBodyTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWDataRequestRespTO;
 import pvt.disney.dti.gateway.provider.dlr.data.GWHeaderTO;
@@ -35,9 +38,11 @@ import com.disney.logging.audit.EventType;
 public class GWQueryTicketXML {
    /** Event logger. */
    private static final EventLogger logger = EventLogger.getLogger(GWQueryTicketXML.class.getCanonicalName());
-   private static final GWQueryTicketXML logInstance = new GWQueryTicketXML();
 
    private static final int DLR_TEMP_ENTITLEMENT_LENGTH = 19;
+   
+   private static final String COMMA_STRING = ",";
+   private static final String EMPTY_STRING = "";
 
    /**
     * Adds the query ticket element.
@@ -51,79 +56,64 @@ public class GWQueryTicketXML {
     */
    public static void addQueryTicketElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement) throws DTIException {
 
+      logger.sendEvent("GWQueryTicketXML addQueryTicketElement", EventType.INFO, logger);
+
       Element queryTicketElement = bodyElement.addElement("QueryTicket");
+      Element queryStanza = queryTicketElement.addElement("Query");
+      Element dataRequestStanza = queryTicketElement.addElement("DataRequest");
+
+      addCommonElement(qtReqTO, bodyElement, dataRequestStanza, queryStanza, queryTicketElement);
 
       String visualID = qtReqTO.getVisualID();
-      if (visualID == null)
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                  "QueryTicket request did not have a visual ID specified.");
+      // to add the QEP tag in request
+      if ((qtReqTO.getDtiTxnType() != null) && (qtReqTO.getDtiTxnType().compareTo(TransactionType.QUERYELIGPRODUCTS)) == 0) {
 
-      Element queryStanza = queryTicketElement.addElement("Query");
-      queryStanza.addElement("VisualID").addText(visualID);
+         List<String> queyEligibleTag = new ArrayList<>();
+         queyEligibleTag.addAll(Arrays.asList("DOB", "Gender", "UpgradePLUList", "PLU"));
 
-      // Provide pass renewal information.
-      if (qtReqTO.isIncludeRenewalAttributes()) {
-         queryStanza.addElement("PassRenewUpgradeMode").addText("1");
-      }
+         addElement("Field", queyEligibleTag, dataRequestStanza);
+         // list of uses tag
+         List<String> usesTag = new ArrayList<>();
+         Element usageElement = dataRequestStanza.addElement("UsageRecords");
+         usesTag.addAll((Arrays.asList("UseTime", "UseNo")));
 
-      Element dataRequestStanza = queryTicketElement.addElement("DataRequest");
-      dataRequestStanza.addElement("Field").addText("ItemKind");
-      dataRequestStanza.addElement("Field").addText("Returnable");
-      dataRequestStanza.addElement("Field").addText("Status");
-      dataRequestStanza.addElement("Field").addText("DateSold");
-      dataRequestStanza.addElement("Field").addText("TicketDate");
-      dataRequestStanza.addElement("Field").addText("StartDateTime");
-      dataRequestStanza.addElement("Field").addText("DateOpened");
-      dataRequestStanza.addElement("Field").addText("ExpirationDate");
-      dataRequestStanza.addElement("Field").addText("EndDateTime");
-      dataRequestStanza.addElement("Field").addText("ValidUntil");
-      dataRequestStanza.addElement("Field").addText("LockedOut");
-      dataRequestStanza.addElement("Field").addText("VisualID");
-      dataRequestStanza.addElement("Field").addText("Price");
-      dataRequestStanza.addElement("Field").addText("UseCount");
-      dataRequestStanza.addElement("Field").addText("Tax");
-      dataRequestStanza.addElement("Field").addText("RemainingUse"); // As of
-                                                                     // DTI 2.14
+         addElement("Field", usesTag, usageElement);
 
-      // As of 2.11 for DLR Evergreen
-      dataRequestStanza.addElement("Field").addText("Kind");
+      } else {
+         // to add the Query ticket tag in request
+         // Provide pass renewal information.
+         if (qtReqTO.isIncludeRenewalAttributes()) {
+            queryStanza.addElement("PassRenewUpgradeMode").addText("1");
+         }
+         // list of query ticket tag
+         List<String> qtTag = new ArrayList<>();
+         if ((qtReqTO.isIncludeTktDemographics()) || (qtReqTO.isIncludeRenewalAttributes())) {
 
-      if ((qtReqTO.isIncludeTktDemographics()) || (qtReqTO.isIncludeRenewalAttributes())) {
-         dataRequestStanza.addElement("Field").addText("FirstName");
-         dataRequestStanza.addElement("Field").addText("LastName");
-         dataRequestStanza.addElement("Field").addText("Street1");
-         dataRequestStanza.addElement("Field").addText("Street2");
-         dataRequestStanza.addElement("Field").addText("City");
-         dataRequestStanza.addElement("Field").addText("State");
-         dataRequestStanza.addElement("Field").addText("ZIP");
-         dataRequestStanza.addElement("Field").addText("CountryCode");
-         dataRequestStanza.addElement("Field").addText("Phone");
-         dataRequestStanza.addElement("Field").addText("Email");
-      }
+            qtTag.addAll(Arrays.asList("FirstName", "LastName", "Street1", "Street2", "City", "State", "ZIP",
+                     "CountryCode", "Phone", "Email"));
+         }
 
-      // If "renewal" is indicated, then ask for DOB & Gender (As of 2.16.1,
-      // JTL)
-      if (qtReqTO.isIncludeRenewalAttributes()) {
-         dataRequestStanza.addElement("Field").addText("DOB");
-         dataRequestStanza.addElement("Field").addText("Gender");
-         dataRequestStanza.addElement("Field").addText("Renewable");
-      }
+         // If "renewal" is indicated, then ask for DOB & Gender (As of 2.16.1,JTL)
+         if (qtReqTO.isIncludeRenewalAttributes()) {
+            qtTag.add("DOB");
+            qtTag.add("Gender");
+            qtTag.add("Renewable");
+         }
+         // if IncludePassAttributes is true add the DateUsed and PassKindName to field element
+         if (qtReqTO.isIncludePassAttributes()) {
+            qtTag.add("DateUsed");
+            qtTag.add("PassKindName");
+            addElement("Field", qtTag, dataRequestStanza);
+            if (visualID.length() == DLR_TEMP_ENTITLEMENT_LENGTH) {
+               Element lineageStanza = dataRequestStanza.addElement("LineageRecords");
+               List<String> lineageList = new ArrayList<>();
+               lineageList.addAll(Arrays.asList("Amount", "Valid", "Status", "VisualID", "ExpirationDate"));
 
-      if (qtReqTO.isIncludePassAttributes()) {
-         dataRequestStanza.addElement("Field").addText("DateUsed");
-         dataRequestStanza.addElement("Field").addText("PassKindName");
-
-         if (visualID.length() == DLR_TEMP_ENTITLEMENT_LENGTH) {
-            Element lineageStanza = dataRequestStanza.addElement("LineageRecords");
-            lineageStanza.addElement("Field").addText("Amount");
-            lineageStanza.addElement("Field").addText("Valid");
-            lineageStanza.addElement("Field").addText("Status");
-            lineageStanza.addElement("Field").addText("VisualID");
-            lineageStanza.addElement("Field").addText("ExpirationDate");
+               addElement("Field", lineageList, lineageStanza);
+            }
          }
 
       }
-
       return;
    }
 
@@ -140,8 +130,8 @@ public class GWQueryTicketXML {
     */
    @SuppressWarnings("unchecked")
    public static void setRespBodyTO(GWBodyTO gwBodyTO, Element bodyElement) throws DTIException {
-
-      //
+      
+      logger.sendEvent("GWQueryTicketXML setRespBodyTO", EventType.INFO, logger);
       for (Iterator<org.dom4j.Element> i = bodyElement.elementIterator(); i.hasNext();) {
          Element element = i.next();
 
@@ -162,17 +152,345 @@ public class GWQueryTicketXML {
 
       }
 
-      if (gwBodyTO.getStatusTO() == null)
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+      if (gwBodyTO.getStatusTO() == null) {
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned QueryTicketResponse without Status clause.");
+      }
 
-      if ((gwBodyTO.getQueryTicketErrorsTO() == null) && (gwBodyTO.getQueryTicketResponseTO() == null))
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+      if ((gwBodyTO.getQueryTicketErrorsTO() == null) && (gwBodyTO.getQueryTicketResponseTO() == null)) {
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned QueryTicketResponse without Error or Response clauses.");
+      }
 
       return;
+
    }
 
+   /**
+    * Extracts the lineage info (this structure is complex).
+    *
+    * <LineageRequestResponse> <LineageRecords> <LineageRecord>
+    * <Amount>199</Amount> <ExpirationDate>2012-08-24
+    * 00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
+    * <VisualID>2937555200149073829</VisualID> </LineageRecord>
+    * @param dataRespTO the data resp TO
+    * @param i the i
+    * @param lineageRequestResponse the lineage request response
+    * @throws DTIException the DTI exception
+    */
+   @SuppressWarnings("rawtypes")
+   public static void extractLineageInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+            Element lineageRequestResponse) throws DTIException {
+
+      logger.sendEvent("GWQueryTicketXML extractLineageInfo", EventType.INFO, logger);
+      // LineageRequestResponse
+      Node linReqResp = lineageRequestResponse;
+
+      // LineageRecords
+      Node linRecords = linReqResp.selectSingleNode("LineageRecords");
+      if (linRecords == null) {
+         return;
+      }
+
+      List linRecordList = linRecords.selectNodes("LineageRecord");
+
+      for (int index = 0; index < linRecordList.size(); index++) {
+
+         Node linRecord = (Node) linRecordList.get(index);
+
+         // Create the inner class
+         GWDataRequestRespTO.LineageRecord lineageRecordTO = dataRespTO.new LineageRecord();
+
+         // Amount
+         Node amountNode = linRecord.selectSingleNode("Amount");
+         if (amountNode != null) {
+            String inText = amountNode.getText();
+            if (inText.contains("."))
+               lineageRecordTO.setAmount(new BigDecimal(inText));
+            else
+               lineageRecordTO.setAmount(new BigDecimal(inText + ".00"));
+         }
+
+         // Expiration Date
+         Node expireNode = linRecord.selectSingleNode("ExpirationDate");
+         if (expireNode != null) {
+            String inText = expireNode.getText();
+            if ((inText != null) && (inText != "")) {
+               GregorianCalendar expDate = UtilityXML.getGCalFromEGalaxyDate(inText);
+               if (expDate == null) {
+                  throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                           "Response GW XML LineageRecord has unparsable ExpirationDate: " + inText);
+               }
+               lineageRecordTO.setExpirationDate(expDate);
+            }
+         }
+
+         // Status
+         Node statusNode = linRecord.selectSingleNode("Status");
+         if (statusNode != null) {
+            String inText = statusNode.getText();
+            try {
+               lineageRecordTO.setStatus(Integer.decode(inText));
+            } catch (NumberFormatException nfe) {
+               throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                        "Response GW XML LineageRecord has non-numeric Status.");
+            }
+         }
+
+         // Valid
+         Node validNode = linRecord.selectSingleNode("Valid");
+         if (validNode != null) {
+            String validString = validNode.getText();
+            if (validString.equalsIgnoreCase("YES"))
+               lineageRecordTO.setValid(Boolean.valueOf(true));
+            else if (validString.equalsIgnoreCase("NO"))
+               lineageRecordTO.setValid(Boolean.valueOf(false));
+            else {
+               throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                        "Response GW XML LineageRecord has invalid value for Valid.");
+            }
+         }
+
+         // VisualID
+         Node visualIDNode = linRecord.selectSingleNode("VisualID");
+         if (visualIDNode != null) {
+            String inText = visualIDNode.getText();
+            lineageRecordTO.setVisualID(inText);
+         }
+         // Save it to the array
+         dataRespTO.addLineageRecord(lineageRecordTO);
+
+      }
+   }
+   /**
+    * Extract upgrade PLU info.
+    * 
+    * @param dataRespTO
+    *           the data resp TO
+    * @param i
+    *           the i
+    * @param upGradePLUResponse
+    *           the up grade PLU response
+    * @throws DTIException
+    *            the DTI exception
+    */
+   @SuppressWarnings("rawtypes")
+   public static void extractUpgradePLUInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+            Element upGradePLUResponse) throws DTIException {
+
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractUpgradePLUInfo", EventType.INFO, logger);
+      // UpGradePLU Response
+      Node upGradeLineResp = upGradePLUResponse;
+
+      List linRecordList = upGradeLineResp.selectNodes("Item");
+
+      for (int index = 0; index < linRecordList.size(); index++) {
+
+         Node linRecord = (Node) linRecordList.get(index);
+
+         // Create the inner class
+         GWDataRequestRespTO.UpgradePLU upgradePLU = dataRespTO.new UpgradePLU();
+
+         // PLU
+         Node pluNode = linRecord.selectSingleNode("PLU");
+         if (pluNode != null) {
+
+            upgradePLU.setPLU(pluNode.getText());
+         }
+
+         // Price
+         Node priceNode = linRecord.selectSingleNode("Price");
+         if (priceNode != null) {
+            String priceText = priceNode.getText();
+            if (priceText != null) {
+               priceText = priceText.replace(COMMA_STRING, EMPTY_STRING);
+               upgradePLU.setPrice(new BigDecimal(priceText));
+            }
+         }
+
+         // Upgrade Price
+         Node upgdPriceNode = linRecord.selectSingleNode("UpgradePrice");
+         if (upgdPriceNode != null) {
+            String upgdPriceText = upgdPriceNode.getText();
+
+            // if comma is present in the string (for values over 1000), remove
+            // the comma
+            if (upgdPriceText != null) {
+               upgdPriceText = upgdPriceText.replace(COMMA_STRING, EMPTY_STRING);
+               upgradePLU.setUpgradePrice(new BigDecimal(upgdPriceText));
+            }
+         }
+
+         // Adding Pay Plan information
+         if (upGradeLineResp.getName().compareTo("PaymentPlans") == 0) {
+            dataRespTO.setPayPlan("YES");
+            extractPayplanInfo(upgradePLU, upGradeLineResp);
+         }
+
+         // Save it to the array
+         dataRespTO.addUpgradePLUList(upgradePLU);
+      }
+   }
+
+   /**
+    * Extract payplan info for the pay plan tag.
+    * 
+    * @param upgradePLUNode
+    *           the upgrade PLU node
+    * @param payPlanLineResponse
+    *           the pay plan line response
+    * @throws DTIException
+    *            the DTI exception
+    */
+   @SuppressWarnings("rawtypes")
+   private static void extractPayplanInfo(GWDataRequestRespTO.UpgradePLU upgradePLUNode, Node payPlanLineResponse)
+            throws DTIException {
+
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractPayplanInfo", EventType.INFO, logger);
+      // Payment Plan response
+      Node payPlanLineResp = payPlanLineResponse;
+
+      List linRecordList = payPlanLineResp.selectNodes("PaymentPlan");
+
+      for (int index = 0; index < linRecordList.size(); index++) {
+
+         Node linRecord = (Node) linRecordList.get(index);
+
+         // Create the inner class 
+
+         GWDataRequestRespTO.UpgradePLU.PaymentPlan paymentPlan = upgradePLUNode.new PaymentPlan();
+
+         // PayplanId
+         Node payPlanId = linRecord.selectSingleNode("PaymentPlanID");
+         if (payPlanId != null) {
+            paymentPlan.setPlanId(payPlanId.getText());
+
+         }
+
+         // Description
+         Node payPlanDesc = linRecord.selectSingleNode("Description");
+         if (payPlanDesc != null) {
+            paymentPlan.setPlanId(payPlanDesc.getText());
+         }
+
+         // Name
+         Node payPlanName = linRecord.selectSingleNode("Name");
+         if (payPlanName != null) {
+            paymentPlan.setPlanId(payPlanName.getText());
+         }
+
+         upgradePLUNode.addPaymentPlans(paymentPlan);
+
+      }
+
+   }
+
+   /**
+    * Extract Usage records Info.
+    * 
+    * @param dataRespTO
+    *           the data resp TO
+    * @param i
+    *           the i
+    * @param usageRecordsResponse
+    *           the usage records
+    * @throws DTIException
+    *            the DTI exception
+    */
+   @SuppressWarnings("rawtypes")
+   public static void extractUsageRecordsInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
+            Element usageRecordsResponse) throws DTIException {
+      
+      logger.sendEvent("GWQueryEligibleProductsTicketXML extractUsageRecordsInfo", EventType.INFO, logger);
+      // Usage Record Response
+      Node usageLineResponse = usageRecordsResponse;
+
+      Node linRecords = usageLineResponse.selectSingleNode("UsageRecords");
+      if (linRecords == null) {
+         return;
+      }
+
+      List linRecordList = linRecords.selectNodes("UsageRecord");
+
+      for (int index = 0; index < linRecordList.size(); index++) {
+
+         Node linRecord = (Node) linRecordList.get(index);
+
+         // Create the inner class
+         GWDataRequestRespTO.UsageRecord usageRecord = dataRespTO.new UsageRecord();
+
+         // Use
+         Node useNoNode = linRecord.selectSingleNode("UseNo");
+         if (useNoNode != null) {
+            int inText = Integer.valueOf(useNoNode.getText());
+            usageRecord.setUseNo(inText);
+         }
+
+         // Use Time
+         Node useTimeNode = linRecord.selectSingleNode("UseTime");
+         if (useTimeNode != null) {
+            String useTime = useTimeNode.getText();
+            if ((useTime != null) && (useTime.length() > 0)) {
+               GregorianCalendar useDateTime = UtilityXML.getGCalFromEGalaxyDate(useTime);
+               if (useDateTime == null) {
+                  throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                           "Response GW XML DataRequestResp has unparsable StartDateTime: " + useTime);
+               }
+               usageRecord.setUseTime(useDateTime);
+            }
+         }
+         dataRespTO.addUsageRecords(usageRecord);
+      }
+
+   }
+   
+   
+   /**
+    * Adds the query ticket element.
+    *
+    * @param qtReqTO the qt req TO
+    * @param bodyElement the body element
+    * @param dataRequestStanza the data request stanza
+    * @param queryStanza the query stanza
+    * @param queryTicketElement the query ticket element
+    * @throws DTIException the DTI exception
+    */
+   public static void addCommonElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement,
+            Element dataRequestStanza, Element queryStanza, Element queryTicketElement) throws DTIException {
+
+      String visualID = qtReqTO.getVisualID();
+      if (visualID == null) {
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
+                  "QueryTicket request did not have a visual ID specified.");
+      }
+      queryStanza.addElement("VisualID").addText(visualID);
+
+      List<String> commonTag = new ArrayList<>();
+      // list of common tags 
+      commonTag.addAll(Arrays.asList("ItemKind", "Returnable", "Status", "DateSold", "TicketDate", "StartDateTime",
+               "DateOpened", "ExpirationDate", "EndDateTime", "ValidUntil", "LockedOut", "VisualID", "Price",
+               "UseCount", "Tax", "RemainingUse", "Kind"));
+      // add the common tag text of data request to field element
+      addElement("Field", commonTag, dataRequestStanza);
+   }
+
+   /**
+    * Adds the tag text of request to passed element.
+    * 
+    * @param element
+    *           the element
+    * @param text
+    *           the text
+    * @param requestStanza
+    *           the request stanza
+    */
+   public static void addElement(String element, List<String> text, Element requestStanza) {
+      for (String object : text) {
+         requestStanza.addElement(element).addText(object);
+      }
+
+   }
+   
    /**
     * Marshals the gateway status transfer object.
     * 
@@ -201,11 +519,11 @@ public class GWQueryTicketXML {
       }
 
       if (gwStatusTO.getStatusCode() == null)
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned Status clause missing a StatusCode.");
 
       if (gwStatusTO.getStatusText() == null)
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned Status clause missing a StatusText.");
 
       return gwStatusTO;
@@ -242,7 +560,7 @@ public class GWQueryTicketXML {
       GWDataRequestRespTO dataRespTO = new GWDataRequestRespTO();
 
       if (dataRespElement == null)
-         throw new DTIException(GWBodyXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
+         throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned QueryTicketResponse without a DataRequestResponse clause.");
 
       for (Iterator<org.dom4j.Element> i = dataRespElement.elementIterator(); i.hasNext();) {
@@ -551,11 +869,13 @@ public class GWQueryTicketXML {
             String passKindName = element.getText();
             dataRespTO.setPassKindName(passKindName);
          }
-
+         // QT
          // Compound Tags (LineageRecords)
          if (element.getName().compareTo("LineageRequestResponse") == 0) {
             extractLineageInfo(dataRespTO, i, element);
          }
+
+         // QT
 
          // PM17616 - For item kind 1 end date time is not required from
          // eGalaxy.
@@ -578,111 +898,33 @@ public class GWQueryTicketXML {
             dataRespTO.setTicketDate(ticketDate);
          }
 
+         // String PLU - this is PLU for the current guest ticket
+         if (element.getName().compareTo("PLU") == 0) {
+            String plu = element.getText();
+            dataRespTO.addPluList(plu);
+            dataRespTO.setPlu(plu);
+
+         }
+
+         // Adding new Tag UpgradePLUList - this is the list of PLUs (AP) that
+         // this ticket can be upgraded to
+         if (element.getName().compareTo("UpgradePLUList") == 0) {
+
+            extractUpgradePLUInfo(dataRespTO, i, element);
+         }
+
+         // Adding new Usage details
+         if (element.getName().compareTo("UsageRequestResponse") == 0) {
+            extractUsageRecordsInfo(dataRespTO, i, element);
+         }
+         
+         
+         
       }
 
       qtRespTO.setDataRespTO(dataRespTO);
 
       return qtRespTO;
-   }
-
-   /**
-    * Extracts the lineage info (this structure is complex).
-    * 
-    * @param dataRespTO
-    * @param i
-    * @param linReqResp
-    * @throws DTIException
-    * 
-    *            <LineageRequestResponse> <LineageRecords> <LineageRecord>
-    *            <Amount>199</Amount> <ExpirationDate>2012-08-24
-    *            00:00:00</ExpirationDate> <Status>7</Status> <Valid>NO</Valid>
-    *            <VisualID>2937555200149073829</VisualID> </LineageRecord>
-    * 
-    */
-   @SuppressWarnings("rawtypes")
-   private static void extractLineageInfo(GWDataRequestRespTO dataRespTO, Iterator<org.dom4j.Element> i,
-            Element lineageRequestResponse) throws DTIException {
-
-      // LineageRequestResponse
-      Node linReqResp = lineageRequestResponse;
-
-      // LineageRecords
-      Node linRecords = linReqResp.selectSingleNode("LineageRecords");
-      if (linRecords == null) {
-         return;
-      }
-
-      List linRecordList = linRecords.selectNodes("LineageRecord");
-
-      for (int index = 0; index < linRecordList.size(); index++) {
-
-         Node linRecord = (Node) linRecordList.get(index);
-
-         // Create the inner class
-         GWDataRequestRespTO.LineageRecord lineageRecordTO = dataRespTO.new LineageRecord();
-
-         // Amount
-         Node amountNode = linRecord.selectSingleNode("Amount");
-         if (amountNode != null) {
-            String inText = amountNode.getText();
-            if (inText.contains("."))
-               lineageRecordTO.setAmount(new BigDecimal(inText));
-            else
-               lineageRecordTO.setAmount(new BigDecimal(inText + ".00"));
-         }
-
-         // Expiration Date
-         Node expireNode = linRecord.selectSingleNode("ExpirationDate");
-         if (expireNode != null) {
-            String inText = expireNode.getText();
-            if ((inText != null) && (inText != "")) {
-               GregorianCalendar expDate = UtilityXML.getGCalFromEGalaxyDate(inText);
-               if (expDate == null) {
-                  throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                           "Response GW XML LineageRecord has unparsable ExpirationDate: " + inText);
-               }
-               lineageRecordTO.setExpirationDate(expDate);
-            }
-         }
-
-         // Status
-         Node statusNode = linRecord.selectSingleNode("Status");
-         if (statusNode != null) {
-            String inText = statusNode.getText();
-            try {
-               lineageRecordTO.setStatus(Integer.decode(inText));
-            } catch (NumberFormatException nfe) {
-               throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                        "Response GW XML LineageRecord has non-numeric Status.");
-            }
-         }
-
-         // Valid
-         Node validNode = linRecord.selectSingleNode("Valid");
-         if (validNode != null) {
-            String validString = validNode.getText();
-            if (validString.equalsIgnoreCase("YES"))
-               lineageRecordTO.setValid(Boolean.valueOf(true));
-            else if (validString.equalsIgnoreCase("NO"))
-               lineageRecordTO.setValid(Boolean.valueOf(false));
-            else {
-               throw new DTIException(GWQueryTicketXML.class, DTIErrorCode.INVALID_MSG_CONTENT,
-                        "Response GW XML LineageRecord has invalid value for Valid.");
-            }
-         }
-
-         // VisualID
-         Node visualIDNode = linRecord.selectSingleNode("VisualID");
-         if (visualIDNode != null) {
-            String inText = visualIDNode.getText();
-            lineageRecordTO.setVisualID(inText);
-         }
-
-         // Save it to the array
-         dataRespTO.addLineageRecord(lineageRecordTO);
-
-      }
-
    }
 
    /**
@@ -697,10 +939,6 @@ public class GWQueryTicketXML {
     */
    private static GWQueryTicketErrorsTO setErrorsTO(Element errorsElement) throws DTIException {
 
-      // System.err.println("GWQueryTiketXML.setErrorsTO()");
-      // System.err.println("incoming errorsElement:\n'" + errorsElement.asXML()
-      // +
-      // "'");
       GWQueryTicketErrorsTO errorsTO = new GWQueryTicketErrorsTO();
 
       // the errorCode we will hand back after checking for special errors
@@ -713,9 +951,7 @@ public class GWQueryTicketXML {
 
       // if all went well we can start hunting for errors
       if (errorsElement != null) {
-         // System.err.println("errsElement not null:" + errorsElement);
-         logger.sendEvent("QueryTicket Errors element:" + errorsElement.asXML(), EventType.DEBUG, logInstance);
-         // }
+         logger.sendEvent("QueryTicket Errors element:" + errorsElement.asXML(), EventType.DEBUG, logger);
 
          // and try to grab //QueryTicketErrors/ERror/Error/ErrorCode
          org.dom4j.Node queryTickerErrorCode = errorsElement.selectSingleNode("//Errors/Error/ErrorCode");
@@ -723,32 +959,20 @@ public class GWQueryTicketXML {
          // if we found one....
          if (queryTickerErrorCode != null && queryTickerErrorCode.getText() != null
                   && queryTickerErrorCode.getText().length() > 0) {
-            // System.err.println("found errrorCode:" +
-            // queryTickerErrorCode.asXML());
-            // grab the details for the error
             errorCode = queryTickerErrorCode.getText();
-            // System.err.println("qte errorCode:" + errorCode);
-            // System.err.println("seeking errorText:");
             errorText = errorsElement.selectSingleNode("//Errors/Error/ErrorText").getText();
 
-            // System.err.println("qte errorText:" + errorText);
-            // and log it
-            logger.sendEvent("GWQueryTicketXML.setErrorsTO() found a QueryTicketError: " + errorCode + ":" + errorText,
-                     EventType.DEBUG, logInstance);
+            logger.sendEvent("GWTicketXML.setErrorsTO() found a QueryTicketError: " + errorCode + ":" + errorText,
+                     EventType.DEBUG, logger);
          }
-         // if we didnt find QueryTicketErrors/Errors/Error/ErrorCode we need to
-         // check for
+         // if we didnt find QueryTicketErrors/Errors/Error/ErrorCode we need to check for
          // QueryTicketErrors/DataRequestErrors
          else if (errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorCode") != null) {
-            // System.err.println("seeking datarequesterrors");
             // if we have a DataRequestError, grab its details
             errorCode = errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorCode").getText();
-            // System.err.println("datarequest error errorCode:" + errorCode);
             errorText = errorsElement.selectSingleNode("//DataRequestErrors/DataRequestError/ErrorText").getText();
-            // System.err.println("datarequest error errorText:" + errorText);
-            // and log it
-            logger.sendEvent("GWQueryTicketXML.setErrorTO() found a DataRequestError: " + errorCode + ":" + errorText,
-                     EventType.DEBUG, logInstance);
+            logger.sendEvent("GWTicketXML.setErrorTO() found a DataRequestError: " + errorCode + ":" + errorText,
+                     EventType.DEBUG, logger);
          }
 
       }
@@ -764,12 +988,11 @@ public class GWQueryTicketXML {
          throw new DTIException(GWHeaderTO.class, DTIErrorCode.TP_INTERFACE_FAILURE,
                   "Ticket provider returned QueryTicketError,Errors,Error clause without ErrorText clause.");
       }
-
       errorsTO.setErrorCode(errorCode);
       errorsTO.setErrorText(errorText);
-
       return errorsTO;
 
    }
-
+  
+   
 }
