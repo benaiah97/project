@@ -13,6 +13,7 @@ import pvt.disney.dti.gateway.data.DTIResponseTO;
 import pvt.disney.dti.gateway.data.DTITransactionTO;
 import pvt.disney.dti.gateway.data.QueryTicketRequestTO;
 import pvt.disney.dti.gateway.data.QueryTicketResponseTO;
+import pvt.disney.dti.gateway.data.DTITransactionTO.TransactionType;
 import pvt.disney.dti.gateway.data.common.CommandHeaderTO;
 import pvt.disney.dti.gateway.data.common.DTIErrorTO;
 import pvt.disney.dti.gateway.data.common.DemographicsTO;
@@ -127,7 +128,8 @@ public class DLRQueryTicketRules implements TransformConstants {
 
     // Set the message type to a fixed value
     headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
-
+    
+    envelopeTO.setDtiTxnType(TransactionType.QUERYTICKET);
     xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
 
     return xmlRequest;

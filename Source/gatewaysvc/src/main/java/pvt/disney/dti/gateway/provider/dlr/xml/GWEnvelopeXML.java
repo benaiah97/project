@@ -43,6 +43,10 @@ public class GWEnvelopeXML implements TransformConstants {
       Element envelopeStanza = document.addElement("Envelope");
 
       GWHeaderXML.addHeaderElement(gwHdrTO, envelopeStanza);
+
+      // To set the DTI transaction type
+      gwBodyTO.getQueryTicketRqstTO().setDtiTxnType(gwEnvTO.getDtiTxnType());
+
       GWBodyXML.addBodyElement(gwBodyTO, envelopeStanza, gwEnvTO.getTxnType());
       xmlString = document.asXML();
 

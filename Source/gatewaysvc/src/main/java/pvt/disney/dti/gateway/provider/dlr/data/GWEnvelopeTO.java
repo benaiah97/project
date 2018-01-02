@@ -87,19 +87,14 @@ public class GWEnvelopeTO implements Serializable {
 		this.txnType = txnType;
 	}
 
-   
    /**
-    * Gets the dti txn type.
-    *
-    * @return the dti txn type
+    * @return the dtiTxnType
     */
    public TransactionType getDtiTxnType() {
       return dtiTxnType;
    }
 
    /**
-    * Sets the dti txn type.
-    *
     * @param dtiTxnType the dtiTxnType to set
     */
    public void setDtiTxnType(TransactionType dtiTxnType) {

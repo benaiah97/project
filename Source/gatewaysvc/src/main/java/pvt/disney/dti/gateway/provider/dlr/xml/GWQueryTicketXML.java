@@ -62,16 +62,16 @@ public class GWQueryTicketXML {
       Element queryStanza = queryTicketElement.addElement("Query");
       Element dataRequestStanza = queryTicketElement.addElement("DataRequest");
 
-      addQueryTicketElement(qtReqTO, bodyElement, dataRequestStanza, queryStanza, queryTicketElement);
+      addCommonElement(qtReqTO, bodyElement, dataRequestStanza, queryStanza, queryTicketElement);
 
       String visualID = qtReqTO.getVisualID();
+      // to add the QEP tag in request
+      if ((qtReqTO.getDtiTxnType() != null) && (qtReqTO.getDtiTxnType().compareTo(TransactionType.QUERYELIGPRODUCTS)) == 0) {
 
-      if ((qtReqTO.getDtiTxnType() != null) && (qtReqTO.getDtiTxnType() == TransactionType.QUERYELIGPRODUCTS)) {
+         List<String> queyEligibleTag = new ArrayList<>();
+         queyEligibleTag.addAll(Arrays.asList("DOB", "Gender", "UpgradePLUList", "PLU"));
 
-         List<String> qepTag = new ArrayList<>();
-         qepTag.addAll(Arrays.asList("DOB", "Gender", "UpgradePLUList", "PLU"));
-
-         addElement("Field", qepTag, dataRequestStanza);
+         addElement("Field", queyEligibleTag, dataRequestStanza);
          // list of uses tag
          List<String> usesTag = new ArrayList<>();
          Element usageElement = dataRequestStanza.addElement("UsageRecords");
@@ -80,7 +80,7 @@ public class GWQueryTicketXML {
          addElement("Field", usesTag, usageElement);
 
       } else {
-
+         // to add the Query ticket tag in request
          // Provide pass renewal information.
          if (qtReqTO.isIncludeRenewalAttributes()) {
             queryStanza.addElement("PassRenewUpgradeMode").addText("1");
@@ -455,7 +455,7 @@ public class GWQueryTicketXML {
     * @param queryTicketElement the query ticket element
     * @throws DTIException the DTI exception
     */
-   public static void addQueryTicketElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement,
+   public static void addCommonElement(GWQueryTicketRqstTO qtReqTO, Element bodyElement,
             Element dataRequestStanza, Element queryStanza, Element queryTicketElement) throws DTIException {
 
       String visualID = qtReqTO.getVisualID();
@@ -465,13 +465,13 @@ public class GWQueryTicketXML {
       }
       queryStanza.addElement("VisualID").addText(visualID);
 
-      List<String> commanTag = new ArrayList<>();
+      List<String> commonTag = new ArrayList<>();
       // list of common tags 
-      commanTag.addAll(Arrays.asList("ItemKind", "Returnable", "Status", "DateSold", "TicketDate", "StartDateTime",
+      commonTag.addAll(Arrays.asList("ItemKind", "Returnable", "Status", "DateSold", "TicketDate", "StartDateTime",
                "DateOpened", "ExpirationDate", "EndDateTime", "ValidUntil", "LockedOut", "VisualID", "Price",
                "UseCount", "Tax", "RemainingUse", "Kind"));
       // add the common tag text of data request to field element
-      addElement("Field", commanTag, dataRequestStanza);
+      addElement("Field", commonTag, dataRequestStanza);
    }
 
    /**

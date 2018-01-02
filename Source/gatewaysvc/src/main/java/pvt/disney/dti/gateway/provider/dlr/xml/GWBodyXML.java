@@ -44,6 +44,7 @@ public class GWBodyXML {
 						DTIErrorCode.INVALID_MSG_CONTENT,
 						"QueryTicket request did not have a fully formed value object.");
 			}
+			
 			GWQueryTicketXML.addQueryTicketElement(qtReqTO, bodyElement);
 			break;
 
