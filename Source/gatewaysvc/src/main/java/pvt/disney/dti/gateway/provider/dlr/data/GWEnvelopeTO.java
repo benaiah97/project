@@ -29,9 +29,6 @@ public class GWEnvelopeTO implements Serializable {
 	private GWHeaderTO headerTO = new GWHeaderTO();
 	private GWBodyTO bodyTO = new GWBodyTO();
 	
-	/** The dti txn type. */
-	private TransactionType dtiTxnType ;
-
 	/**
 	 * 
 	 * @param txnTypeIn
@@ -87,18 +84,4 @@ public class GWEnvelopeTO implements Serializable {
 		this.txnType = txnType;
 	}
 
-   /**
-    * @return the dtiTxnType
-    */
-   public TransactionType getDtiTxnType() {
-      return dtiTxnType;
-   }
-
-   /**
-    * @param dtiTxnType the dtiTxnType to set
-    */
-   public void setDtiTxnType(TransactionType dtiTxnType) {
-      this.dtiTxnType = dtiTxnType;
-   }
-	
 }

@@ -108,7 +108,8 @@ public class DLRQueryTicketRules implements TransformConstants {
     // Set the include renewal attributes flag (as of 2.16.1, JTL)
     queryTicketTO.setIncludeRenewalAttributes(queryReq
         .isIncludeRenewalAttributes());
-
+    queryTicketTO.setDtiTxnType(TransactionType.QUERYTICKET);
+    
     bodyTO.setQueryTicketTO(queryTicketTO);
 
     // Set the source ID to the TS MAC
@@ -129,7 +130,6 @@ public class DLRQueryTicketRules implements TransformConstants {
     // Set the message type to a fixed value
     headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
     
-    envelopeTO.setDtiTxnType(TransactionType.QUERYTICKET);
     xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
 
     return xmlRequest;

@@ -85,6 +85,7 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
       // Set the Visual ID
       queryTicketTO.setVisualID(ticket.getExternal());
+      queryTicketTO.setDtiTxnType(TransactionType.QUERYELIGPRODUCTS);
       bodyTO.setQueryTicketTO(queryTicketTO);
 
       // Set the source ID to the TS MAC
@@ -102,8 +103,6 @@ public class DLRQueryEligibilityProductsRules implements TransformConstants {
 
       // Set the message type to a fixed value
       headerTO.setMessageType(GW_QRY_TKT_MSG_TYPE);
-      
-      envelopeTO.setDtiTxnType(TransactionType.QUERYELIGPRODUCTS);
       
       xmlRequest = GWEnvelopeXML.getXML(envelopeTO);
       
