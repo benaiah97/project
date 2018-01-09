@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ | This is the configuration file for Maven. It can be specified at two levels:
+ |
+ |  1. User Level. This settings.xml file provides configuration for a single user, 
+ |                 and is normally provided in %HOME%/.m2/settings.xml. Private info
+ |                 such as clear text passwords should go in this file.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -s /path/to/user/settings.xml
+ |
+ |  2. Global Level. This settings.xml file provides configuration for all Maven
+ |                 users on a machine (assuming they're all using the same Maven
+ |                 installation). It's normally provided in 
+ |                 ${maven.home}/conf/settings.xml.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -gs /path/to/global/settings.xml
+ |
+ | The sections in this sample file are intended to give you a running start at
+ | getting the most out of your Maven installation. Where appropriate, the default
+ | values (values used when the setting is not specified) are provided.
+ |
+ | Reference site: http://maven.apache.org/settings.html
+ |-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <!-- localRepository
+   | The path to the local repository maven will use to store artifacts. Always set to M2_REPO environment variable.
+   |
+   | Default: ~/.m2/repository
+   | Note: This value overrides the M2_REPO environment variable, if different!
+  -->
+  <localRepository>${env.M2_REPO}</localRepository>
+
+  <!-- interactiveMode
+   | This will determine whether maven prompts you when it needs input. If set to false,
+   | maven will use a sensible default value, perhaps based on some other setting, for
+   | the parameter in question.
+   |
+   | Default: true
+  <interactiveMode>true</interactiveMode>
+  -->
+
+  <!-- offline
+   | Determines whether maven should attempt to connect to the network when executing a build.
+   | This will have an effect on artifact downloads, artifact deployment, and others.
+   |
+   | Default: false
+  <offline>false</offline>
+  -->
+
+  <!-- pluginGroups
+   | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
+   | when invoking a command line like "mvn prefix:goal". Maven will automatically add the group identifiers
+   | "org.apache.maven.plugins" and "org.codehaus.mojo" if these are not already contained in the list.
+   |-->
+  <pluginGroups>
+    <!-- Specifies a further group identifier to use for plugin lookup. Causes all to be searched for updates.
+      <pluginGroup>com.atlassian.confluence.maven.plugins</pluginGroup>
+      <pluginGroup>com.atlassian.maven.plugins</pluginGroup>
+      <pluginGroup>com.sonatype.maven.plugins</pluginGroup>
+      <pluginGroup>org.andromda.maven.plugins</pluginGroup>
+      <pluginGroup>org.apache.activemq.tooling</pluginGroup>
+      <pluginGroup>org.jboss.maven.plugins</pluginGroup>
+      <pluginGroup>org.mortbay.jetty</pluginGroup>
+      <pluginGroup>org.sonatype.plugins</pluginGroup>
+-->
+      <pluginGroup>org.andromda.maven.plugins</pluginGroup>
+   </pluginGroups>
+
+  <!-- proxies
+   | This is a list of proxies which can be used on this machine to connect to the network.
+   | Unless otherwise specified (by system property or command-line switch), the first proxy
+   | specification in this list marked as active will be used.
+   |-->
+  <proxies>
+    <!-- proxy
+     | Specification for one proxy, to be used in connecting to the network.
+     |
+    <proxy>
+      <id></id>
+      <active></active>
+      <protocol></protocol>
+      <host></host>
+      <port></port>
+      <nonProxyHosts></nonProxyHosts>
+    </proxy>
+    -->
+  </proxies>
+
+  <!-- servers
+   | This is a list of authentication profiles, keyed by the server-id used within the system.
+   | Authentication profiles can be used whenever maven must make a connection to a remote server.
+   |-->
+  <servers>
+    <!-- server
+     | Specifies the authentication information to use when connecting to a particular server, identified by
+     | a unique name within the system (referred to by the 'id' attribute below).
+     | 
+     | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are 
+     |       used together.
+     |
+    <server>
+      <id>deploymentRepo</id>
+      <username>repouser</username>
+      <password>repopwd</password>
+    </server>
+    -->
+    
+    <!-- See http://maven.apache.org/guides/mini/guide-encryption.html-->
+    <!-- Another sample, using keys to authenticate.
+    <server>
+      <id>siteServer</id>
+      <privateKey>/path/to/private/key</privateKey>
+      <passphrase>optional; leave empty if not used.</passphrase>
+    </server>
+    -->
+    <server>
+       <id>central</id>
+       <configuration>
+           <timeout>5000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>jboss</id>
+       <configuration>
+           <timeout>5000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>andromda</id>
+       <configuration>
+           <timeout>3000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>apache</id>
+       <configuration>
+           <timeout>5000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>codehaus</id>
+       <configuration>
+           <timeout>5000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>Download</id>
+       <configuration>
+           <timeout>3000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>sonatype</id>
+       <configuration>
+           <timeout>3000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>sonatype-nexus-snapshots</id>
+       <configuration>
+           <timeout>10000</timeout>
+       </configuration>
+    </server>
+    <server>
+       <id>sonatype-nexus-staging</id>
+       <configuration>
+           <timeout>10000</timeout>
+       </configuration>
+    </server>
+    <server>
+      <id>wdw</id>
+      <configuration>
+        <timeout>3000</timeout>
+      </configuration>
+    </server>
+    <server>
+      <id>wdpr</id>
+      <configuration>
+        <timeout>5000</timeout>
+      </configuration>
+    </server>
+    <server>
+      <id>wdpr-build</id>
+      <configuration>
+        <timeout>5000</timeout>
+      </configuration>
+    </server>
+    <server>
+      <id>wdw-build</id>
+      <configuration>
+        <timeout>5000</timeout>
+      </configuration>
+    </server>
+  </servers>
+
+  <!-- mirrors
+   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
+   | 
+   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
+   | However, this repository may have problems with heavy traffic at times, so people have mirrored
+   | it to several places.
+   |
+   | That repository definition will have a unique id, so we can create a mirror reference for that
+   | repository, to be used as an alternate download site. The mirror site will be the preferred 
+   | server for that repository.
+   |-->
+	<mirrors>
+		<mirror>
+			<id>WDPRT-latest</id>
+			<mirrorOf>WDPRT-master</mirrorOf>
+			<name>Central nexus repo latest.</name>
+			<url>https://nexus.disney.com/nexus/content/repositories/WDPRT-latest</url>
+		</mirror>
+		<mirror>
+			<id>WDPRT-release</id>
+			<mirrorOf>WDPRT-master</mirrorOf>
+			<name>Central nexus repo release.</name>
+			<url>https://nexus.disney.com/nexus/content/repositories/WDPRT-release</url>
+		</mirror>
+		<mirror>
+			<id>WDPRT-stage</id>
+			<mirrorOf>WDPRT-master</mirrorOf>
+			<name>Central nexus repo stage.</name>
+			<url>https://nexus.disney.com/nexus/content/repositories/WDPRT-stage</url>
+		</mirror>
+		<!-- START defined to exclude from mirroring -->
+		<mirror>
+			<id>WDPRT-master</id>
+			<mirrorOf>central</mirrorOf>
+			<name>CICD Master repository</name>
+			<url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master</url>
+		</mirror>
+		<mirror>
+			<id>composite-legacy</id>
+			<mirrorOf>WDPRT-master,WDPRT-stage,WDPRT-release,WDPRT-latest</mirrorOf>
+			<name>Java COE (Old Composite) repository</name>
+			<url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url>
+		</mirror>
+		<!-- mirror> <id>WDPRT-master</id> <mirrorOf>!composite-legacy</mirrorOf> 
+			<name>CICD Master repository</name> <url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master</url> 
+			</mirror> <mirror> <id>composite-legacy</id> <mirrorOf>!WDPRT-master</mirrorOf> 
+			<name>Java COE (Old Composite) repository</name> <url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url> 
+			</mirror -->
+		<!-- END defined to exclude from mirroring -->
+		<!-- mirror> <id>disney-public</id> <mirrorOf>!composite-legacy,!WDPRT-master</mirrorOf> 
+			<name>Central nexus repo for Disney</name> <url>https://nexus.disney.com/nexus/content/repositories/public</url> 
+			</mirror -->
+	</mirrors>
+  
+  <!-- profiles
+   | This is a list of profiles which can be activated in a variety of ways, and which can modify
+   | the build process. Profiles provided in the settings.xml are intended to provide local machine-
+   | specific paths and repository locations which allow the build to work in the local environment.
+   |
+   | For example, if you have an integration testing plugin - like cactus - that needs to know where
+   | your Tomcat instance is installed, you can provide a variable here such that the variable is 
+   | dereferenced during the build process to configure the cactus plugin.
+   |
+   | As noted above, profiles can be activated in a variety of ways. One way - the activeProfiles
+   | section of this document (settings.xml) - will be discussed later. Another way essentially
+   | relies on the detection of a system property, either matching a particular value for the property,
+   | or merely testing its existence. Profiles can also be activated by JDK version prefix, where a 
+   | value of '1.4' might activate a profile when the build is executed on a JDK version of '1.4.2_07'.
+   | Finally, the list of active profiles can be specified directly from the command line.
+   |
+   | NOTE: For profiles defined in the settings.xml, you are restricted to specifying only artifact
+   |       repositories, plugin repositories, and free-form properties to be used as configuration
+   |       variables for plugins in the POM.
+   |
+   |-->
+  <profiles>
+    <!-- profile
+     | Specifies a set of introductions to the build process, to be activated using one or more of the
+     | mechanisms described above. For inheritance purposes, and to activate profiles via <activatedProfiles/>
+     | or the command line, profiles have to have an ID that is unique.
+     |
+     | An encouraged best practice for profile identification is to use a consistent naming convention
+     | for profiles, such as 'env-dev', 'env-test', 'env-production', 'user-jdcasey', 'user-brett', etc.
+     | This will make it more intuitive to understand what the set of introduced profiles is attempting
+     | to accomplish, particularly when you only have a list of profile id's for debug.
+     |
+     | This profile example uses the JDK version to trigger activation, and provides a JDK-specific repo.
+    <profile>
+      <id>jdk-1.4</id>
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <repositories>
+        <repository>
+          <id>jdk14</id>
+          <name>Repository for JDK 1.4 builds</name>
+          <url>http://www.myhost.com/maven/jdk14</url>
+          <layout>default</layout>
+          <snapshotPolicy>always</snapshotPolicy>
+        </repository>
+      </repositories>
+    </profile>
+    -->
+    <!-- Use wdpr javacoe nexus repository. Enabled by default, must explicitly enable -Pwdw if using additional profiles -->
+    <profile>
+      <id>dtss</id>
+      <!-- In case we don't want to mirror *, but add additional external repositories locally -->
+      <repositories>
+        <repository>
+          <id>dtss-latest</id>
+          <name>DTSS WDPR Nexus Repository</name>
+          <url>https://nexus.disney.com/nexus/content/repositories/WDPRT-latest</url>
+           <releases>
+              <enabled>true</enabled>
+           </releases>
+        </repository>
+        <repository>
+          <id>dtss-master</id>
+          <name>DTSS WDPR Nexus Repository</name>
+          <url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master</url>
+           <releases>
+              <enabled>true</enabled>
+           </releases>
+        </repository>
+      </repositories>
+    </profile>
+    <!-- In case we don't want to mirror *, but add additional external repositories locally -->
+    <profile>
+      <id>wdw</id>
+      <repositories>
+        <repository>
+          <id>wdw</id>
+          <name>WDW Nexus Repository</name>
+          <url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url>
+           <releases>
+              <enabled>true</enabled>
+           </releases>
+           <snapshots>
+              <enabled>true</enabled>
+           </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>wdw</id>
+          <name>WDW Nexus Repository</name>
+          <url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url>
+           <releases>
+              <enabled>true</enabled>
+           </releases>
+           <snapshots>
+              <enabled>true</enabled>
+           </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <!--Use if you want external repository updates, i.e. external network from a laptop -->
+    <profile>
+      <id>external</id>
+      <repositories>
+        <repository>
+            <id>sonatype</id>
+            <name>Sonatype Repository</name>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            <snapshots>
+              <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+          <id>Download</id>
+          <url>http://download.java.net/maven/2</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>Glassfish</id>
+          <url>http://download.java.net/maven/glassfish</url>
+            <snapshots>
+              <enabled>true</enabled>
+            </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype</id>
+            <name>Sonatype Repository</name>
+            <url>http://oss.sonatype.org/content/groups/public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codehaus</id>
+            <name>Codehaus repository</name>
+            <url>http://repository.codehaus.org</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <!-- If you really want bleeding edge Apache updates -->
+    <profile>
+      <id>apache-snapshots</id>
+      <repositories>
+        <repository>
+            <id>apache</id>
+            <name>Apache Snapshot Repository</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+            <id>apache</id>
+            <name>Apache Snapshot Repository</name>
+            <url>https://repository.apache.org/content/groups/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <!-- If you want the latest built SNAPSHOT artifacts before full integration testing-->
+    <profile>
+      <id>initial-build</id>
+      <repositories>
+        <repository>
+            <id>initial-build</id>
+            <name>WDPR Nexus Initial Build Repository</name>
+            <url>http://javacoe.wdw.disney.com/nexus/content/repositories/initial-build/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+            <id>initial-build</id>
+            <name>WDPR Nexus Initial Build Repository</name>
+            <url>http://javacoe.wdw.disney.com/nexus/content/repositories/initial-build/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    <!-- If you want the latest built SNAPSHOT artifacts before full integration testing-->
+    <profile>
+      <id>wdpro</id>
+      <repositories>
+        <repository>
+            <id>artifactory</id>
+            <name>WDPRO Artifactory Repository</name>
+            <url>https://nexus.disney.com/nexus/content/repositories/wdpro-artifactory-development</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>wdpro-release</id>
+            <name>WDPRO Release</name>
+            <url>http://repo.wdpro.wdig.com/artifactory/Application-RELEASE</url>
+            <snapshots>
+                <updatePolicy>never</updatePolicy>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+
+    <!--
+     | Here is another profile, activated by the system property 'target-env' with a value of 'dev',
+     | which provides a specific path to the Tomcat instance. To use this, your plugin configuration
+     | might hypothetically look like:
+     |
+     | ...
+     | <plugin>
+     |   <groupId>org.myco.myplugins</groupId>
+     |   <artifactId>myplugin</artifactId>
+     |   
+     |   <configuration>
+     |     <tomcatLocation>${tomcatPath}</tomcatLocation>
+     |   </configuration>
+     | </plugin>
+     | ...
+     |
+     | NOTE: If you just wanted to inject this configuration whenever someone set 'target-env' to
+     |       anything, you could just leave off the <value/> inside the activation-property.
+     |
+    <profile>
+      <id>env-dev</id>
+
+      <activation>
+        <property>
+          <name>target-env</name>
+          <value>dev</value>
+        </property>
+      </activation>
+
+      <properties>
+        <tomcatPath>/path/to/tomcat/instance</tomcatPath>
+      </properties>
+    </profile>
+    -->
+    <profile>
+        <id>composite</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <repositories>
+            <repository>
+                <id>WDPRT-master</id>
+                <url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master</url>
+                <releases>
+                    <enabled/>
+                    <updatePolicy/>
+                </releases>
+                <snapshots>
+                    <enabled/>
+                    <updatePolicy/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>composite-legacy</id>
+                <name>WDW Nexus Repository</name>
+                <url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url>
+                <releases>
+                    <enabled/>
+                </releases>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>sonatype</id>
+                <name>Sonatype Repository</name>
+                <url>http://oss.sonatype.org/content/groups/public</url>
+            </repository>
+            <repository>
+                <id>jboss</id>
+                <name>JBoss Repository</name>
+                <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>Download</id>
+                <url>http://download.java.net/maven/2</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>Glassfish</id>
+                <url>http://download.java.net/maven/glassfish</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>			
+            <repository>
+                <id>ThirdParty</id>
+                <url>https://nexus.disney.com/nexus/content/repositories/thirdparty/</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>DTSS-Releases</id>
+                <url>https://nexus.disney.com/nexus/content/repositories/DTSS-Releases/</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>DTSS-Releases</id>
+                <url>https://nexus.disney.com/nexus/content/repositories/DTSS-Releases/</url>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </repository>
+        </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>WDPRT-master</id>
+                <url>https://nexus.disney.com/nexus/content/repositories/WDPRT-master</url>
+                <releases>
+                    <enabled/>
+                    <updatePolicy/>
+                </releases>
+                <snapshots>
+                    <enabled/>
+                    <updatePolicy/>
+                </snapshots>
+            </pluginRepository>
+            <pluginRepository>
+                <id>composite-legacy</id>
+                <name>WDW Nexus Repository</name>
+                <url>http://javacoe.wdw.disney.com/nexus/content/groups/public</url>
+                <releases>
+                    <enabled/>
+                </releases>
+                <snapshots>
+                    <enabled/>
+                </snapshots>
+            </pluginRepository>
+            <pluginRepository>
+                <id>sonatype</id>
+                <name>Sonatype Repository</name>
+                <url>http://oss.sonatype.org/content/groups/public</url>
+            </pluginRepository>
+            <pluginRepository>
+                <id>jboss</id>
+                <name>JBoss Repository</name>
+                <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            </pluginRepository>
+        </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <!-- activeProfiles
+   | List of profiles that are active for all builds unless another profile is explicitly enabled.
+   |
+  <activeProfiles>
+    <activeProfile>alwaysActiveProfile</activeProfile>
+    <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+  </activeProfiles>
+  -->
+  <activeProfiles>
+    <activeProfile>dtss</activeProfile>
+    <activeProfile>composite</activeProfile>
+    <!--activeProfile>wdw</activeProfile>
+    <activeProfile>external</activeProfile-->
+  </activeProfiles>
+</settings>
